@@ -61,7 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\C scripts\VoxelData.cs" />
-    <Compile Include="Assets\Perfeb\FPS.cs" />
+    <Compile Include="Assets\C scripts\Chunk.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
