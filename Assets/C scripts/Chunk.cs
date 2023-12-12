@@ -2,53 +2,127 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chunk : MonoBehaviour
-{
-    //网格过滤器
-    public MeshFilter meshFilter;
-    //网格渲染器
-    public MeshRenderer meshRenderer;
+public class Chunk : MonoBehaviour {
+
+	//Compoment
+	public MeshRenderer meshRenderer;
+	public MeshFilter meshFilter;
+
+	//Data
+	int vertexIndex = 0;
+	List<Vector3> vertices = new List<Vector3> ();
+	List<int> triangles = new List<int> ();
+	List<Vector2> uvs = new List<Vector2> ();
+	bool[,,] voxelMap = new bool[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+
+	void Start () {
+
+		//先创建数据
+		PopulateVoxelMap ();
+
+		//开始遍历，生成数据
+		CreateMeshData ();
+
+		//最够一次性构建所有面
+		CreateMesh ();
+
+	}
+
+	//Block_Type，目前全是空气
+	void PopulateVoxelMap () {
+		
+		for (int y = 0; y < VoxelData.ChunkHeight; y++) {
+			for (int x = 0; x < VoxelData.ChunkWidth; x++) {
+				for (int z = 0; z < VoxelData.ChunkWidth; z++) {
+
+					voxelMap [x, y, z] = true;
+
+					//if (x == 1 && y == 1 && z == 1)
+					//{
+					//	voxelMap[x, y, z] = false;
+					//}
+
+				}
+			}
+		}
+
+	}
 
 
-    void Start()
-    {
-        //顶点的索引
-        int vertexIndex = 0;
-        //三角形下标
-        int triangleIndex = 0;
+	//开始遍历
+	void CreateMeshData () {
 
-        //顶点数组
-        List<Vector3> vertices = new List<Vector3>();
-        //三角形数组
-        List<int> triangles = new List<int>();
-        //UV数组
-        List<Vector2> uvs = new List<Vector2>();
+		for (int y = 0; y < VoxelData.ChunkHeight; y++) {
+			for (int x = 0; x < VoxelData.ChunkWidth; x++) {
+				for (int z = 0; z < VoxelData.ChunkWidth; z++) {
 
-        //遍历绘制序列
-        for (int i = 0; i < 6; i++)
-        {
-            for (int j = 0; j < 6; j++)
-            {
-                triangleIndex = VoxelData.voxelTris[i, j];
+					AddVoxelDataToChunk (new Vector3(x, y, z));
 
-                vertices.Add(VoxelData.voxelVerts[triangleIndex]);
-                triangles.Add(vertexIndex);
-                uvs.Add(VoxelData.voxelUvs[j]);
+				}
+			}
+		}
 
-                vertexIndex++;
+	}
 
-            }
-        }
 
-        Mesh mesh = new Mesh();
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
-        mesh.uv = uvs.ToArray();
+	//面生成的判断
+    //是方块吗----Y不绘制--N绘制
+    //靠近边界----也返回N
+    bool CheckVoxel (Vector3 pos) {
 
-        mesh.RecalculateNormals();
+		int x = Mathf.FloorToInt (pos.x);
+		int y = Mathf.FloorToInt (pos.y);
+		int z = Mathf.FloorToInt (pos.z);
 
-        meshFilter.mesh = mesh;
+		if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1)
+			return false;
 
-    }
+		return voxelMap [x, y, z];
+
+	}
+
+
+	//遍历中：：顺带判断面的生成方向
+	void AddVoxelDataToChunk (Vector3 pos) {
+
+		//判断六个面
+		for (int p = 0; p < 6; p++) { 
+
+			if (!CheckVoxel(pos + VoxelData.faceChecks[p])) {
+				
+				vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 0]]);
+				vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 1]]);
+				vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 2]]);
+				vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 3]]);
+				uvs.Add (VoxelData.voxelUvs [0]);
+				uvs.Add (VoxelData.voxelUvs [1]);
+				uvs.Add (VoxelData.voxelUvs [2]);
+				uvs.Add (VoxelData.voxelUvs [3]);
+				triangles.Add (vertexIndex);
+				triangles.Add (vertexIndex + 1);
+				triangles.Add (vertexIndex + 2);
+				triangles.Add (vertexIndex + 2);
+				triangles.Add (vertexIndex + 1);
+				triangles.Add (vertexIndex + 3);
+				vertexIndex += 4;
+
+			}
+		}
+
+	}
+
+
+	//最后生成面
+	void CreateMesh () {
+
+		Mesh mesh = new Mesh ();
+		mesh.vertices = vertices.ToArray ();
+		mesh.triangles = triangles.ToArray ();
+		mesh.uv = uvs.ToArray ();
+        mesh.Optimize();
+        mesh.RecalculateNormals ();
+		meshFilter.mesh = mesh;
+
+	}
 
 }
