@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Chunk : MonoBehaviour {
 
-	//Compoment
+	//public
 	public MeshRenderer meshRenderer;
 	public MeshFilter meshFilter;
 
-	//Data
+	//一些变量
 	int vertexIndex = 0;
 	List<Vector3> vertices = new List<Vector3> ();
 	List<int> triangles = new List<int> ();
