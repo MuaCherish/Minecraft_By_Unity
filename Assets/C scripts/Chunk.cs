@@ -8,8 +8,7 @@ public class Chunk : MonoBehaviour
     public MeshFilter meshFilter;
     //Íø¸ñäÖÈ¾Æ÷
     public MeshRenderer meshRenderer;
-    //
-    public int testvaties;
+
 
     void Start()
     {
