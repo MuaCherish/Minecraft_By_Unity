@@ -4,7 +4,7 @@ A long-term project for students--beginner
 ## 🗒️My Plans
 - [X] Learn how to generate a face
 - [X] Learn how to generate a Block
-- [ ] Elimination of redundant surfaces
+- [X] Elimination of redundant surfaces
 - [ ] The PerlinNoise 2d and 3d To Generate Terrain
 - [ ] Try to use multithreading
 - [ ] May be Add some flowers or Tree?
