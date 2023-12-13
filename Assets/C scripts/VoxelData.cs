@@ -6,17 +6,18 @@ public static class VoxelData
 {
 
     //chunk大小
-    public static readonly int ChunkWidth = 5;
-    public static readonly int ChunkHeight = 15;
+    public static readonly int ChunkWidth = 16;
+    public static readonly int ChunkHeight = 32;
 
 
-    //public static readonly int TextureAtlasSizeInBlocks = 4;
-    //public static float NormalizedBlockTextureSize
-    //{
+    public static readonly int TextureAtlasSizeInBlocks = 4;
 
-    //    get { return 1f / (float)TextureAtlasSizeInBlocks; }
+    public static float NormalizedBlockTextureSize
+    {
 
-    //}
+        get { return 1f / (float)TextureAtlasSizeInBlocks; }
+
+    }
 
 
     //顶点数组
