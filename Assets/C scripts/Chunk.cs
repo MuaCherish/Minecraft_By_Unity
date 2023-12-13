@@ -15,10 +15,15 @@ public class Chunk : MonoBehaviour {
 	List<Vector2> uvs = new List<Vector2> ();
 	bool[,,] voxelMap = new bool[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
 
-	void Start () {
+    //byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
 
-		//先创建数据
-		PopulateVoxelMap ();
+
+    void Start () {
+
+        //world = GameObject.Find("World").GetComponent<World>();
+
+        //先创建数据
+        PopulateVoxelMap();
 
 		//开始遍历，生成数据
 		CreateMeshData ();
@@ -78,12 +83,12 @@ public class Chunk : MonoBehaviour {
 			return false;
 
 		return voxelMap [x, y, z];
+        //return world.blocktypes[voxelMap [x, y, z]].isSolid;
+    }
 
-	}
 
-
-	//遍历中：：顺带判断面的生成方向
-	void AddVoxelDataToChunk (Vector3 pos) {
+    //遍历中：：顺带判断面的生成方向
+    void AddVoxelDataToChunk (Vector3 pos) {
 
 		//判断六个面
 		for (int p = 0; p < 6; p++) { 
@@ -94,11 +99,15 @@ public class Chunk : MonoBehaviour {
 				vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 1]]);
 				vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 2]]);
 				vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 3]]);
+				
 				uvs.Add (VoxelData.voxelUvs [0]);
 				uvs.Add (VoxelData.voxelUvs [1]);
 				uvs.Add (VoxelData.voxelUvs [2]);
 				uvs.Add (VoxelData.voxelUvs [3]);
-				triangles.Add (vertexIndex);
+
+                //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+
+                triangles.Add (vertexIndex);
 				triangles.Add (vertexIndex + 1);
 				triangles.Add (vertexIndex + 2);
 				triangles.Add (vertexIndex + 2);
@@ -124,5 +133,30 @@ public class Chunk : MonoBehaviour {
 		meshFilter.mesh = mesh;
 
 	}
+
+
+
+
+    //void AddTexture(int textureID)
+    //{
+
+    //    float y = textureID / VoxelData.TextureAtlasSizeInBlocks;
+    //    float x = textureID - (y * VoxelData.TextureAtlasSizeInBlocks);
+
+    //    x *= VoxelData.NormalizedBlockTextureSize;
+    //    y *= VoxelData.NormalizedBlockTextureSize;
+
+    //    y = 1f - y - VoxelData.NormalizedBlockTextureSize;
+
+    //    uvs.Add(new Vector2(x, y));
+    //    uvs.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
+    //    uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
+    //    uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
+
+
+    //}
+
+
+
 
 }
