@@ -5,13 +5,13 @@ using UnityEngine;
 public static class VoxelData
 {
 
-    //chunk大小
+    //chunk澶у皬
     public static readonly int ChunkWidth = 5;
     public static readonly int ChunkHeight = 15;
 
 
 
-    //顶点数组
+    //椤剁偣鏁扮粍
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
 
         new Vector3(0.0f, 0.0f, 0.0f),
@@ -26,7 +26,7 @@ public static class VoxelData
     };
 
 
-
+    //鎸囧畾鏂瑰悜
     public static readonly Vector3[] faceChecks = new Vector3[6]
     {
 
@@ -42,7 +42,7 @@ public static class VoxelData
 
 
 
-    //绘制序列
+    //缁樺埗搴忓垪
     public static readonly int[,] voxelTris = new int[6, 4] {
 
 		{0, 3, 1, 2}, // Back Face
@@ -54,7 +54,7 @@ public static class VoxelData
 
 	};
 
-    //UV数组
+    //UV鏁扮粍
     public static readonly Vector2[] voxelUvs = new Vector2[4] {
 
         new Vector2 (0.0f, 0.0f),
