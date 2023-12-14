@@ -7,7 +7,7 @@ public static class VoxelData
 
     //chunk大小
     public static readonly int ChunkWidth = 16;
-    public static readonly int ChunkHeight = 32;
+    public static readonly int ChunkHeight = 64;
 
 
     public static readonly int TextureAtlasSizeInBlocks = 4;

@@ -206,6 +206,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 214910074}
   meshRenderer: {fileID: 214910073}
+  noise2d_scale_smooth: 0.05
+  noise2d_scale_steep: 0.1
+  noise3d_scale: 0.1
 --- !u!4 &214910076
 Transform:
   m_ObjectHideFlags: 0
@@ -372,6 +375,14 @@ MonoBehaviour:
     rightFaceTexture: 2
   - blockName: Soil
     isSolid: 1
+    backFaceTexture: 1
+    frontFaceTexture: 1
+    topFaceTexture: 1
+    bottomFaceTexture: 1
+    leftFaceTexture: 1
+    rightFaceTexture: 1
+  - blockName: Air
+    isSolid: 0
     backFaceTexture: 1
     frontFaceTexture: 1
     topFaceTexture: 1
