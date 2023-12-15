@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class World : MonoBehaviour
@@ -8,6 +9,31 @@ public class World : MonoBehaviour
 
     public Material material;
     public BlockType[] blocktypes;
+
+    public float noise2d_scale_smooth = 0.05f;
+    public float noise2d_scale_steep = 0.1f;
+    public float noise3d_scale = 0.1f;
+
+    private void Start()
+    {
+        StartCoroutine(SpawnChunksWithDelay());
+    }
+
+
+    IEnumerator SpawnChunksWithDelay()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            for(int j = 0; j < 10; j++)
+            {
+                Chunk newChunk = new Chunk(new Chunk.ChunkCoord(i, j), this, noise2d_scale_smooth, noise2d_scale_steep, noise3d_scale);
+            }
+            
+
+            // µÈ´ý1ÃëÖÓ
+            yield return new WaitForSeconds(1f);
+        }
+    }
 
 }
 
