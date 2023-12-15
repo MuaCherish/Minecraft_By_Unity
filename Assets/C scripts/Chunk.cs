@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using TreeEditor;
 using UnityEngine;
 
-public class Chunk : MonoBehaviour {
+public class Chunk{
 
-    //组件
+	//组件
+	public ChunkCoord coord;
+	GameObject chunkObject;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
 
@@ -20,54 +23,94 @@ public class Chunk : MonoBehaviour {
 	//World脚本
 	World world;
 
-    //噪声类型
-    public float noise2d_scale_smooth = 0.05f;
-    public float noise2d_scale_steep = 0.1f;
-    public float noise3d_scale = 0.1f;
+	//噪声
+    private float noise2d_scale_smooth;
+    private float noise2d_scale_steep;
+    private float noise3d_scale;
+
+    public Chunk(ChunkCoord _coord ,World _world,float noise2d_smooth,float noise2d_steep,float noise3d)
+	{
+		world = _world;
+		coord = _coord;
+
+
+        noise2d_scale_smooth = noise2d_smooth;
+		noise2d_scale_steep = noise2d_steep;
+		noise3d_scale = noise3d;
+
+
+		chunkObject = new GameObject();
+		meshFilter = chunkObject.AddComponent<MeshFilter>();
+		meshRenderer = chunkObject.AddComponent <MeshRenderer>();
+		meshRenderer.sharedMaterial = world.material;
+		chunkObject.transform.SetParent(world.transform);
+
+        chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, 0f, coord.z * VoxelData.ChunkWidth);
+        chunkObject.name = coord.x + ", " + coord.z;
+
+        //先创建数据
+        PopulateVoxelMap(coord);
+
+        //开始遍历，生成数据
+        CreateMeshData();
+
+        //最够一次性构建所有面
+        CreateMesh();
+    }
+
+
+
+
 
     //Start
-    void Start () {
-
-		//    for (int y = 0; y < 10; y++)
-		//    {
-		//        for (int z = 0; z < 10; z++)
-		//        {
-		//            for (int x = 0; x < 10; x++)
-		//{
-		//	float noise = Noise.Perlin3D((float)x * 0.1f, (float)y * 0.1f, (float)z * 0.1f); // 将100改为0.1
-
-		//	if (noise < 0.4)
-		//	{
-		//		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		//		cube.transform.position = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);// 乘以一个适当的放大倍数
-		//	}
+ //   private void Start()
+ //   {
+        
+    
 
 
-		//}
+ //       //    for (int y = 0; y < 10; y++)
+ //       //    {
+ //       //        for (int z = 0; z < 10; z++)
+ //       //        {
+ //       //            for (int x = 0; x < 10; x++)
+ //       //{
+ //       //	float noise = Noise.Perlin3D((float)x * 0.1f, (float)y * 0.1f, (float)z * 0.1f); // 将100改为0.1
 
-		//        }
-		//    }
+ //       //	if (noise < 0.4)
+ //       //	{
+ //       //		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+ //       //		cube.transform.position = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);// 乘以一个适当的放大倍数
+ //       //	}
+
+
+ //       //}
+
+ //       //        }
+ //       //    }
 
 
 
 
 
-		//获取World脚本
-		world = GameObject.Find("World").GetComponent<World>();
+ //       ////获取World脚本
+ //       //world = GameObject.Find("World").GetComponent<World>();
 
-		//先创建数据
-		PopulateVoxelMap();
+	//	//先创建数据
+	//	PopulateVoxelMap();
 
-		//开始遍历，生成数据
-		CreateMeshData();
+	//	//开始遍历，生成数据
+	//	CreateMeshData();
 
-		//最够一次性构建所有面
-		CreateMesh();
+	//	//最够一次性构建所有面
+	//	CreateMesh();
 
-	}
+	//}
 
     //Block_Type序列化
-    void PopulateVoxelMap () {
+    void PopulateVoxelMap (ChunkCoord crood) {
+
+
 
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
 			for (int x = 0; x < VoxelData.ChunkWidth; x++) {
@@ -141,8 +184,8 @@ public class Chunk : MonoBehaviour {
 					else
 					{
 
-						float noise2d_1 = Mathf.Lerp((float)(VoxelData.ChunkHeight/2 - 1), (float)VoxelData.ChunkHeight-1, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + transform.position.z * noise2d_scale_smooth));
-                        float noise2d_2 = Mathf.Lerp((float)(VoxelData.ChunkHeight / 2 - 1), (float)VoxelData.ChunkHeight - 1, Mathf.PerlinNoise((float)x * noise2d_scale_steep + transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + transform.position.z * noise2d_scale_steep));
+						float noise2d_1 = Mathf.Lerp((float)(VoxelData.ChunkHeight/2 - 1), (float)VoxelData.ChunkHeight-1, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
+                        float noise2d_2 = Mathf.Lerp((float)(VoxelData.ChunkHeight / 2 - 1), (float)VoxelData.ChunkHeight - 1, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
 
 						float noiseHigh = noise2d_1 * 0.7f + noise2d_2 * 0.3f;
 
@@ -166,7 +209,7 @@ public class Chunk : MonoBehaviour {
 
 
                             //判断空气
-                            float noise3d = Noise.Perlin3D((float)x * noise3d_scale + transform.position.x * noise3d_scale, (float)y * noise3d_scale + transform.position.y * noise3d_scale, (float)z * noise3d_scale + transform.position.z * noise3d_scale); // 将100改为0.1
+                            float noise3d = Noise.Perlin3D((float)x * noise3d_scale + chunkObject.transform.position.x * noise3d_scale, (float)y * noise3d_scale + y * noise3d_scale, (float)z * noise3d_scale + chunkObject.transform.position.z * noise3d_scale); // 将100改为0.1
 
 							if (noise3d < 0.4f)
 							{
@@ -208,10 +251,10 @@ public class Chunk : MonoBehaviour {
 				for (int z = 0; z < VoxelData.ChunkWidth; z++) {
 
 
-					if (x == 1 && y == 1 && z == 0)
-					{
-						print("");
-					}
+					//if (x == 1 && y == 1 && z == 0)
+					//{
+					//	print("");
+					//}
 
 					AddVoxelDataToChunk (new Vector3(x, y, z));
 
@@ -322,4 +365,36 @@ public class Chunk : MonoBehaviour {
 
 
 	}
+
+
+
+
+    public class ChunkCoord
+    {
+
+        public int x;
+        public int z;
+
+        public ChunkCoord(int _x, int _z)
+        {
+
+            x = _x;
+            z = _z;
+
+        }
+
+        //public bool Equals(ChunkCoord other)
+        //{
+
+        //    if (other == null)
+        //        return false;
+        //    else if (other.x == x && other.z == z)
+        //        return true;
+        //    else
+        //        return false;
+
+        //}
+
+    }
+
 }
