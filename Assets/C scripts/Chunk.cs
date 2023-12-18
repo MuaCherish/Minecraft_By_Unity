@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using TreeEditor;
 using UnityEngine;
 
-public class Chunk{
+public class Chunk:MonoBehaviour{
 
 	//组件
-	public ChunkCoord coord;
+	//public ChunkCoord coord;
 	GameObject chunkObject;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
@@ -28,87 +28,39 @@ public class Chunk{
     private float noise2d_scale_steep;
     private float noise3d_scale;
 
-    public Chunk(ChunkCoord _coord ,World _world,float noise2d_smooth,float noise2d_steep,float noise3d)
+	public Chunk(Vector3 thisPosition, World _world, float noise2d_smooth, float noise2d_steep, float noise3d)
 	{
 		world = _world;
-		coord = _coord;
 
 
-        noise2d_scale_smooth = noise2d_smooth;
+		noise2d_scale_smooth = noise2d_smooth;
 		noise2d_scale_steep = noise2d_steep;
 		noise3d_scale = noise3d;
 
 
 		chunkObject = new GameObject();
 		meshFilter = chunkObject.AddComponent<MeshFilter>();
-		meshRenderer = chunkObject.AddComponent <MeshRenderer>();
+		meshRenderer = chunkObject.AddComponent<MeshRenderer>();
 		meshRenderer.sharedMaterial = world.material;
 		chunkObject.transform.SetParent(world.transform);
 
-        chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, 0f, coord.z * VoxelData.ChunkWidth);
-        chunkObject.name = coord.x + ", " + coord.z;
+		chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
+		chunkObject.name = thisPosition.x + ", " + thisPosition.z;
 
-        //先创建数据
-        PopulateVoxelMap(coord);
+		//先创建数据
+		PopulateVoxelMap();
 
-        //开始遍历，生成数据
-        CreateMeshData();
+		//开始遍历，生成数据
+		CreateMeshData();
 
-        //最够一次性构建所有面
-        CreateMesh();
-    }
-
-
+		//最够一次性构建所有面
+		CreateMesh();
+	}
 
 
 
-    //Start
- //   private void Start()
- //   {
-        
-    
-
-
- //       //    for (int y = 0; y < 10; y++)
- //       //    {
- //       //        for (int z = 0; z < 10; z++)
- //       //        {
- //       //            for (int x = 0; x < 10; x++)
- //       //{
- //       //	float noise = Noise.Perlin3D((float)x * 0.1f, (float)y * 0.1f, (float)z * 0.1f); // 将100改为0.1
-
- //       //	if (noise < 0.4)
- //       //	{
- //       //		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
- //       //		cube.transform.position = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);// 乘以一个适当的放大倍数
- //       //	}
-
-
- //       //}
-
- //       //        }
- //       //    }
-
-
-
-
-
- //       ////获取World脚本
- //       //world = GameObject.Find("World").GetComponent<World>();
-
-	//	//先创建数据
-	//	PopulateVoxelMap();
-
-	//	//开始遍历，生成数据
-	//	CreateMeshData();
-
-	//	//最够一次性构建所有面
-	//	CreateMesh();
-
-	//}
-
-    //Block_Type序列化
-    void PopulateVoxelMap (ChunkCoord crood) {
+	//Block_Type序列化
+	void PopulateVoxelMap () {
 
 
 
@@ -366,35 +318,38 @@ public class Chunk{
 
 	}
 
-
-
-
-    public class ChunkCoord
+    public void DestroyChunk()
     {
-
-        public int x;
-        public int z;
-
-        public ChunkCoord(int _x, int _z)
-        {
-
-            x = _x;
-            z = _z;
-
-        }
-
-        //public bool Equals(ChunkCoord other)
-        //{
-
-        //    if (other == null)
-        //        return false;
-        //    else if (other.x == x && other.z == z)
-        //        return true;
-        //    else
-        //        return false;
-
-        //}
-
+		Destroy(chunkObject);
     }
+
+
+    //public class ChunkCoord
+    //{
+
+    //    public int x;
+    //    public int z;
+
+    //    public ChunkCoord(int _x, int _z)
+    //    {
+
+    //        x = _x;
+    //        z = _z;
+
+    //    }
+
+    //    //public bool Equals(ChunkCoord other)
+    //    //{
+
+    //    //    if (other == null)
+    //    //        return false;
+    //    //    else if (other.x == x && other.z == z)
+    //    //        return true;
+    //    //    else
+    //    //        return false;
+
+    //    //}
+
+    //}
 
 }
