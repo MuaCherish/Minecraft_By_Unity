@@ -6,7 +6,7 @@ A long-term project for students--beginner
 - [X] ~~Learn how to generate a Block~~
 - [X] ~~Elimination of redundant surfaces~~
 - [X] ~~The PerlinNoise 2d and 3d To Generate Terrain~~
-- [ ] Try to use multithreading
+- [X] ~~Try to use Coroutine~~
 - [ ] May be Add some flowers or Tree?
 - [ ] Biological system
 - [ ] Better picture quality..
