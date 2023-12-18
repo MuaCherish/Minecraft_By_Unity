@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -11,8 +12,9 @@ public class World : MonoBehaviour
     public BlockType[] blocktypes;
 
     public float noise2d_scale_smooth = 0.05f;
-    public float noise2d_scale_steep = 0.1f;
-    public float noise3d_scale = 0.1f;
+    public float noise2d_scale_steep = 0.02f;
+    public float noise3d_scale = 0.05f;
+    //hunk newChunk = new Chunk(new Chunk.ChunkCoord(i, j), this, noise2d_scale_smooth, noise2d_scale_steep, noise3d_scale);
 
     private void Start()
     {
@@ -24,16 +26,18 @@ public class World : MonoBehaviour
     {
         for (int i = 0; i < 10; i++)
         {
-            for(int j = 0; j < 10; j++)
+            for (int j = 0; j < 10; j++)
             {
                 Chunk newChunk = new Chunk(new Chunk.ChunkCoord(i, j), this, noise2d_scale_smooth, noise2d_scale_steep, noise3d_scale);
+                yield return new WaitForSeconds(0.8f);
             }
-            
+
 
             // µÈ´ý1ÃëÖÓ
-            yield return new WaitForSeconds(1f);
+            //yield return new WaitForSeconds(1f);
         }
     }
+
 
 }
 
