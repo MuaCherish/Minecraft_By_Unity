@@ -18,7 +18,7 @@ public class Chunk:MonoBehaviour{
 	List<Vector2> uvs = new List<Vector2> ();
 
 	//Block的种类数组
-    byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+    public byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
 
 	//World脚本
 	World world;
@@ -136,8 +136,8 @@ public class Chunk:MonoBehaviour{
 					else
 					{
 
-						float noise2d_1 = Mathf.Lerp((float)(VoxelData.ChunkHeight/2 - 1), (float)VoxelData.ChunkHeight-1, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
-                        float noise2d_2 = Mathf.Lerp((float)(VoxelData.ChunkHeight / 2 - 1), (float)VoxelData.ChunkHeight - 1, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
+						float noise2d_1 = Mathf.Lerp((float)(VoxelData.ChunkHeight/2 - 1), (float)VoxelData.ChunkHeight-3, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
+                        float noise2d_2 = Mathf.Lerp((float)(VoxelData.ChunkHeight / 2 - 1), (float)VoxelData.ChunkHeight - 3, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
 
 						float noiseHigh = noise2d_1 * 0.7f + noise2d_2 * 0.3f;
 

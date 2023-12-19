@@ -5,6 +5,7 @@ using System.Xml;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
+using static UnityEditor.Progress;
 
 public class World : MonoBehaviour
 {
@@ -14,15 +15,24 @@ public class World : MonoBehaviour
     public BlockType[] blocktypes;
 
     [Header("地形生成")]
+    public int renderSize = 4; //渲染区块半径,即renderSize*16f
     public float noise2d_scale_smooth = 0.05f;
     public float noise2d_scale_steep = 0.02f;
     public float noise3d_scale = 0.05f;
 
+    //玩家
+    [Header("玩家碰撞盒")]
+    [Tooltip("Forward Back \n Left Right \n Up Down")]
+    public Transform[] transforms = new Transform[6];
 
-    //固定资产
-    private int renderSize = 4; //渲染区块半径,即renderSize*16f
-    [Header("玩家")]
-    public Transform player;
+
+    //isBlock
+    Chunk chunktemp;
+    [HideInInspector]
+    public bool isBlock = false;
+    [HideInInspector]
+    public bool isnearblock = false;
+    public bool[,] BlockDirection = new bool[1,6];
 
     //全部Chunk位置
     private Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
@@ -58,51 +68,49 @@ public class World : MonoBehaviour
 
     private void Update()
     {
-
+        
         //如果大于16f
-        if (GetVector3Length(player.transform.position - Center_Now) > VoxelData.ChunkWidth)
+        if (GetVector3Length(transforms[5].transform.position - Center_Now) > VoxelData.ChunkWidth)
         {
             //更新Center
-            Center_direction = VtoNormal(player.transform.position - Center_Now);
+            Center_direction = VtoNormal(transforms[5].transform.position - Center_Now);
             Center_Now += Center_direction * VoxelData.ChunkWidth;
-            //Debug.Log(Center_Old);
-
             //调试
             //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             //sphere.transform.position = Center_Old;
             //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
-
-
             AddtoCreateChunks(Center_direction);
-
             AddtoRemoveChunks(Center_direction);
-
-
         }
 
+        //碰撞判断
+        //IsGrounded();
+        isNearBlock();
 
-
-        //Debug.Log((player.transform.position - Center).magnitude);
-        //Debug.DrawLine(Center_Now + v3, player.transform.position + v3, Color.red, Time.deltaTime);
         //Debug.DrawLine(Center_Now, player.transform.position, Color.red, Time.deltaTime);
-
     }
 
+   
 
 
+
+
+
+
+    //----------------------------------World Options---------------------------------------
     //初始化
     void InitMap()
     {
-        Center_Now = player.transform.position;
+        Center_Now = new Vector3(transforms[5].transform.position.x,0, transforms[5].transform.position.z);
 
         //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //sphere.transform.position = Center_Now;
         //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
 
 
-        for (int x = -renderSize + (int)(player.transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(player.transform.position.x / VoxelData.ChunkWidth); x++)
+        for (int x = -renderSize + (int)(transforms[5].transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(transforms[5].transform.position.x / VoxelData.ChunkWidth); x++)
         {
-            for (int z = -renderSize + (int)(player.transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(player.transform.position.x / VoxelData.ChunkWidth); z++)
+            for (int z = -renderSize + (int)(transforms[5].transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(transforms[5].transform.position.x / VoxelData.ChunkWidth); z++)
             {
                 CreateChunk(new Vector3(x, 0, z));
             }
@@ -111,6 +119,10 @@ public class World : MonoBehaviour
         
 
     }
+    //--------------------------------------------------------------------------------------
+
+
+
 
 
     //-----------------------------------Create 协程----------------------------------------
@@ -222,6 +234,10 @@ public class World : MonoBehaviour
             return;
         }
 
+        if (pos.x == 102)
+        {
+
+        }
 
         //GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         //cube.transform.position = new Vector3(x + chunkwidth / 2, 0, z + chunkwidth / 2);
@@ -232,10 +248,6 @@ public class World : MonoBehaviour
          Allchunks.Add(pos, chunk_temp);
     }
     //--------------------------------------------------------------------------------------
-
-
-
-
 
 
 
@@ -360,6 +372,53 @@ public class World : MonoBehaviour
 
 
 
+
+
+    //----------------------------------Player Options---------------------------------------
+    //获取所在区块
+    public Vector3 GetChunkLocation(Transform transform)
+    {
+  
+        return new Vector3((transform.position.x - transform.position.x % VoxelData.ChunkWidth) / VoxelData.ChunkWidth, 0, (transform.position.z - transform.position.z % VoxelData.ChunkWidth) / VoxelData.ChunkWidth);
+    
+    }
+
+    //获取所在相对坐标
+    public Vector3 GetRelalocation(Transform transform)
+    {
+
+        return new Vector3(Mathf.FloorToInt(transform.position.x % VoxelData.ChunkWidth), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z % VoxelData.ChunkWidth));
+
+    }
+
+    //给定坐标，判断是不是Block
+    public void isNearBlock()
+    {
+        isnearblock = false; // 将初始值设为false
+        isBlock = true;
+
+        for (int i = 0; i <= 5; i++)
+        {
+
+            chunktemp = Allchunks[GetChunkLocation(transforms[i])];
+            byte a = chunktemp.voxelMap[(int)GetRelalocation(transforms[i]).x, (int)GetRelalocation(transforms[i]).y, (int)GetRelalocation(transforms[i]).z];
+
+            if (a != 4)
+            {
+                isnearblock = true;
+                BlockDirection[0,i] = true;
+            }else if (a == 4 && i == 5)
+            {
+                isBlock = false;
+            }
+            else
+            {
+                BlockDirection[0,i] = false;
+            }
+        }
+        
+    }
+    //---------------------------------------------------------------------------------------
 
 
 
