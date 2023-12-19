@@ -7,6 +7,7 @@ A long-term project for students--beginner
 - [X] ~~Elimination of redundant surfaces~~
 - [X] ~~The PerlinNoise 2d and 3d To Generate Terrain~~
 - [X] ~~Try to use Coroutine~~
+- [X] ~~Add Character Conotroller~~
 - [ ] May be Add some flowers or Tree?
 - [ ] Biological system
 - [ ] Better picture quality..
