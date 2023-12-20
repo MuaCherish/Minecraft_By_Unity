@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     private bool isnearblock = false;
 
     //Camera
-    public float Mouse_Sensitive = 150;
+    public float Mouse_Sensitive = 100;
     private float Camera_verticalInput;
 
     //input
@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
     public bool enableMouseAcceleration = false;
 
     // 平滑插值系数
-    public float smoothSpeed = 5f;
+    public float smoothSpeed = 10f;
 
 
     //World compoment
