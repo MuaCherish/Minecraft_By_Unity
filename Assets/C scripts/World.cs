@@ -73,6 +73,7 @@ public class World : MonoBehaviour
 
     private void Start()
     {
+        Application.targetFrameRate = 120;
         InitMap();
     }
 
