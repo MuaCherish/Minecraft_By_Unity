@@ -473,10 +473,21 @@ MonoBehaviour:
     bottomFaceTexture: 1
     leftFaceTexture: 1
     rightFaceTexture: 1
-  renderSize: 8
-  noise2d_scale_smooth: 0.05
-  noise2d_scale_steep: 0.02
+  - blockName: Sand
+    isSolid: 1
+    backFaceTexture: 10
+    frontFaceTexture: 10
+    topFaceTexture: 10
+    bottomFaceTexture: 10
+    leftFaceTexture: 10
+    rightFaceTexture: 10
+  renderSize: 4
+  noise2d_scale_smooth: 0.1
+  noise2d_scale_steep: 0.1
   noise3d_scale: 0.05
+  soil_min: 20
+  soil_max: 60
+  sea_level: 35
   transforms:
   - {fileID: 1910341661}
   - {fileID: 1496701866}

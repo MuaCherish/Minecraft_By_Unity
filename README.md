@@ -1,5 +1,5 @@
 # 👻Minecraft_By_Unity
-A long-term project for students--beginner
+A long-term project from beginner
 
 ## 🗒️My Plans
 - [X] ~~Learn how to generate a face~~
