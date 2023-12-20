@@ -27,18 +27,21 @@ public class Chunk:MonoBehaviour{
     private float noise2d_scale_smooth;
     private float noise2d_scale_steep;
     private float noise3d_scale;
+	//private float noise2d_scale_plain;
 
-	public Chunk(Vector3 thisPosition, World _world, float noise2d_smooth, float noise2d_steep, float noise3d)
+
+    public Chunk(Vector3 thisPosition, World _world)
 	{
 		world = _world;
 
 
-		noise2d_scale_smooth = noise2d_smooth;
-		noise2d_scale_steep = noise2d_steep;
-		noise3d_scale = noise3d;
+		noise2d_scale_smooth = world.noise2d_scale_smooth;
+		noise2d_scale_steep = world.noise2d_scale_steep;
+		noise3d_scale = world.noise3d_scale;
+		//noise2d_scale_plain = world.noise2d_scale_plain;
 
 
-		chunkObject = new GameObject();
+        chunkObject = new GameObject();
 		meshFilter = chunkObject.AddComponent<MeshFilter>();
 		meshRenderer = chunkObject.AddComponent<MeshRenderer>();
 		meshRenderer.sharedMaterial = world.material;
@@ -136,10 +139,18 @@ public class Chunk:MonoBehaviour{
 					else
 					{
 
-						float noise2d_1 = Mathf.Lerp((float)(VoxelData.ChunkHeight/2 - 1), (float)VoxelData.ChunkHeight-3, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
-                        float noise2d_2 = Mathf.Lerp((float)(VoxelData.ChunkHeight / 2 - 1), (float)VoxelData.ChunkHeight - 3, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
+						float noise2d_1 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
+                        float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
+                        float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + chunkObject.transform.position.x * 0.1f, (float)z * 0.15f + chunkObject.transform.position.z * 0.15f));
+                        //float noise2d_plain = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_plain + chunkObject.transform.position.x * noise2d_scale_plain, (float)z * noise2d_scale_plain + chunkObject.transform.position.z * noise2d_scale_plain));
 
-						float noiseHigh = noise2d_1 * 0.7f + noise2d_2 * 0.3f;
+                        float noiseHigh = noise2d_1 * 0.5f + noise2d_2 * 0.3f + noise2d_3 * 0.3f;
+
+						//if (noise2d_plain > noiseHigh)
+						//{
+						//	noiseHigh = Mathf.Lerp((float)world.sea_level+1, (float)world.sea_level+4, noiseHigh);
+
+      //                  }
 
                         //ÅÐ¶ÏÄàÍÁ
                         if (y > noiseHigh)
@@ -147,7 +158,15 @@ public class Chunk:MonoBehaviour{
                             voxelMap[x, y, z] = 4;
                         }else if ((y+1) > noiseHigh)
 						{
-                            voxelMap[x, y, z] = 2;
+							if (y > world.sea_level)
+							{
+                                voxelMap[x, y, z] = 2;
+							}
+							else
+							{
+                                voxelMap[x, y, z] = 5;
+                            }
+                            
                         }else if (y > noiseHigh - 7)
 						{
 							voxelMap[x, y, z] = 3;

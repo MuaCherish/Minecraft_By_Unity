@@ -14,11 +14,22 @@ public class World : MonoBehaviour
     public Material material;
     public BlockType[] blocktypes;
 
-    [Header("地形生成")]
+    [Header("噪声范围")]
     public int renderSize = 4; //渲染区块半径,即renderSize*16f
-    public float noise2d_scale_smooth = 0.05f;
-    public float noise2d_scale_steep = 0.02f;
+    public float noise2d_scale_smooth = 0.1f;
+    public float noise2d_scale_steep = 0.05f;
+    //public float noise2d_scale_plain = 0.1f;
     public float noise3d_scale = 0.05f;
+
+
+    [Header("分层结构")]
+    [Range(0, 60)]
+    public float soil_min = 20;
+    [Range(0, 60)]
+    public float soil_max = 60;
+    [Range(0, 60)]
+    public float sea_level = 40;
+    
 
     //玩家
     [Header("玩家碰撞盒")]
@@ -243,7 +254,7 @@ public class World : MonoBehaviour
         //cube.transform.position = new Vector3(x + chunkwidth / 2, 0, z + chunkwidth / 2);
         //cube.transform.localScale = new Vector3(chunkwidth, 1, chunkwidth);
 
-         Chunk chunk_temp = new Chunk(new Vector3(pos.x,0, pos.z), this, noise2d_scale_smooth, noise2d_scale_steep, noise3d_scale);
+         Chunk chunk_temp = new Chunk(new Vector3(pos.x,0, pos.z), this);
 
          Allchunks.Add(pos, chunk_temp);
     }
