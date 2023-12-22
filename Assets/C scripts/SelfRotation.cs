@@ -6,6 +6,8 @@ public class ContinuousRotation : MonoBehaviour
 
     void Update()
     {
+        
+
         // ÈÆXÖáÐý×ª
         transform.Rotate(Vector3.right, rotationSpeed * Time.deltaTime);
     }
