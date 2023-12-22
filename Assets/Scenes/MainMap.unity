@@ -496,12 +496,12 @@ MonoBehaviour:
     leftFaceTexture: 10
     rightFaceTexture: 10
   renderSize: 4
-  noise2d_scale_smooth: 0.1
-  noise2d_scale_steep: 0.05
+  noise2d_scale_smooth: 0.01
+  noise2d_scale_steep: 0.08
   noise3d_scale: 0.1
   soil_min: 20
-  soil_max: 60
-  sea_level: 40
+  soil_max: 50
+  sea_level: 36
   transforms:
   - {fileID: 1910341661}
   - {fileID: 1496701866}
@@ -511,8 +511,8 @@ MonoBehaviour:
   - {fileID: 543300231}
   isBlock: 0
   isnearblock: 0
-  CreateCoroutineDelay: 0.8
-  RemoveCoroutineDelay: 0.4
+  CreateCoroutineDelay: 1
+  RemoveCoroutineDelay: 0.5
 --- !u!4 &699955242
 Transform:
   m_ObjectHideFlags: 0

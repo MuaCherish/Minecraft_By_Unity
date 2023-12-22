@@ -28,6 +28,7 @@ public class Chunk:MonoBehaviour{
     private float noise2d_scale_steep;
     private float noise3d_scale;
 	//private float noise2d_scale_plain;
+	private float noise2d_plain;
 
 
     public Chunk(Vector3 thisPosition, World _world)
@@ -50,8 +51,12 @@ public class Chunk:MonoBehaviour{
 		chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
 		chunkObject.name = thisPosition.x + ", " + thisPosition.z;
 
-		//先创建数据
-		PopulateVoxelMap();
+        //noise2d_plain = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise(chunkObject.transform.position.x * 0.12f,chunkObject.transform.position.z * 0.12f));
+
+
+
+        //先创建数据
+        PopulateVoxelMap();
 
 		//开始遍历，生成数据
 		CreateMeshData();
@@ -66,6 +71,7 @@ public class Chunk:MonoBehaviour{
 	void PopulateVoxelMap () {
 
 
+		
 
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
 			for (int x = 0; x < VoxelData.ChunkWidth; x++) {
@@ -142,18 +148,20 @@ public class Chunk:MonoBehaviour{
 						float noise2d_1 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
                         float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
                         float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + chunkObject.transform.position.x * 0.1f, (float)z * 0.15f + chunkObject.transform.position.z * 0.15f));
-                        //float noise2d_plain = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_plain + chunkObject.transform.position.x * noise2d_scale_plain, (float)z * noise2d_scale_plain + chunkObject.transform.position.z * noise2d_scale_plain));
+                        
 
                         float noiseHigh = noise2d_1 * 0.5f + noise2d_2 * 0.3f + noise2d_3 * 0.3f;
 
-						//if (noise2d_plain > noiseHigh)
+						//if (noiseHigh >= noise2d_plain)
 						//{
-						//	noiseHigh = Mathf.Lerp((float)world.sea_level+1, (float)world.sea_level+4, noiseHigh);
+
+						//	noiseHigh = noise2d_plain;
+
 
       //                  }
 
-                        //判断泥土
-                        if (y > noiseHigh)
+						//判断泥土
+						if (y > noiseHigh)
 						{
                             voxelMap[x, y, z] = 4;
                         }else if ((y+1) > noiseHigh)

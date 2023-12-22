@@ -14,21 +14,24 @@ public class World : MonoBehaviour
     public Material material;
     public BlockType[] blocktypes;
 
-    [Header("ÔëÉù·¶Î§")]
+    [Header("äÖÈ¾")]
     public int renderSize = 4; //äÖÈ¾Çø¿é°ë¾¶,¼´renderSize*16f
+    public float StartToRender = 16f;
+
+    [Header("ÔëÉù·¶Î§")]
     public float noise2d_scale_smooth = 0.1f;
-    public float noise2d_scale_steep = 0.05f;
+    public float noise2d_scale_steep = 0.08f;
     //public float noise2d_scale_plain = 0.1f;
-    public float noise3d_scale = 0.05f;
+    public float noise3d_scale = 0.1f;
 
 
     [Header("·Ö²ã½á¹¹")]
     [Range(0, 60)]
     public float soil_min = 20;
     [Range(0, 60)]
-    public float soil_max = 60;
+    public float soil_max = 50;
     [Range(0, 60)]
-    public float sea_level = 40;
+    public float sea_level = 36;
     
 
     //Íæ¼Ò
@@ -82,7 +85,7 @@ public class World : MonoBehaviour
     {
         
         //Èç¹û´óÓÚ16f
-        if (GetVector3Length(transforms[5].transform.position - Center_Now) > VoxelData.ChunkWidth)
+        if (GetVector3Length(transforms[5].transform.position - Center_Now) > StartToRender)
         {
             //¸üÐÂCenter
             Center_direction = VtoNormal(transforms[5].transform.position - Center_Now);
@@ -413,13 +416,13 @@ public class World : MonoBehaviour
         {
 
             chunktemp = Allchunks[GetChunkLocation(transforms[i])];
-            byte a = chunktemp.voxelMap[(int)GetRelalocation(transforms[i]).x, (int)GetRelalocation(transforms[i]).y, (int)GetRelalocation(transforms[i]).z];
+            byte block_type = chunktemp.voxelMap[(int)GetRelalocation(transforms[i]).x, (int)GetRelalocation(transforms[i]).y, (int)GetRelalocation(transforms[i]).z];
 
-            if (a != 4)
+            if (block_type != 4)
             {
                 isnearblock = true;
                 BlockDirection[0,i] = true;
-            }else if (a == 4 && i == 5)
+            }else if (block_type == 4 && i == 5)
             {
                 isBlock = false;
             }
