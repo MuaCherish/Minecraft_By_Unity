@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -51,6 +52,11 @@ public class PlayerController : MonoBehaviour
     //World compoment
     private GameObject worldObject;
     World world;
+
+
+    //手臂晃动
+    public bool HandShake = false;
+    Vector3 v_temp = new Vector3(0,0,0);
 
 
     void Start()
@@ -129,6 +135,11 @@ public class PlayerController : MonoBehaviour
             velocity.y -= gravity * Time.deltaTime;  // 在空中时应用重力
         }
 
+        //检测手臂晃动
+        
+
+
+
         // 实现玩家跳跃
         Player_Controller.Move(velocity * Time.deltaTime);
 
@@ -139,6 +150,10 @@ public class PlayerController : MonoBehaviour
             SwitchCamera();
         }
     }
+
+
+    
+    
 
 
     //是否靠近方块
