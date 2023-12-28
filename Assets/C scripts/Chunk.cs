@@ -154,11 +154,8 @@ public class Chunk:MonoBehaviour{
 
 						//if (noiseHigh >= noise2d_plain)
 						//{
-
 						//	noiseHigh = noise2d_plain;
-
-
-      //                  }
+						//}
 
 						//ÅÐ¶ÏÄàÍÁ
 						if (y > noiseHigh)
