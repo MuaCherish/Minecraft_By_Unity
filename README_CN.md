@@ -3,8 +3,10 @@
 
 - 海边
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/1.png" width="600px">
+
 - 高山
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/3.png" width="600px">
+
 - 矿洞和地形分层
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/2.png" width="600px">
 
