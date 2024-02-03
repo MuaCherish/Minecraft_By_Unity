@@ -705,7 +705,7 @@ MonoBehaviour:
   StartToRender: 32
   noise2d_scale_smooth: 0.01
   noise2d_scale_steep: 0.04
-  noise3d_scale: 0.1
+  noise3d_scale: 0.085
   soil_min: 15
   soil_max: 55
   sea_level: 30

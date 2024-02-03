@@ -14,24 +14,25 @@ public class World : MonoBehaviour
     public Material material;
     public BlockType[] blocktypes;
 
-    [Header("渲染")]
+    [Header("渲染设置")]
+    [Tooltip("4就是边长为4*16的正方形")]
     public int renderSize = 4; //渲染区块半径,即renderSize*16f
-    public float StartToRender = 16f;
+    [Tooltip("2就是接近2*16的时候开始刷新区块")]
+    public float StartToRender = 2f;
 
     [Header("噪声采样比例(越小拉的越长)")]
-    public float noise2d_scale_smooth = 0.1f;
-    public float noise2d_scale_steep = 0.08f;
-    //public float noise2d_scale_plain = 0.1f;
-    public float noise3d_scale = 0.01f;
+    public float noise2d_scale_smooth = 0.01f;
+    public float noise2d_scale_steep = 0.04f;
+    public float noise3d_scale = 0.085f;
 
 
     [Header("分层结构")]
     [Range(0, 60)]
-    public float soil_min = 20;
+    public float soil_min = 15;
     [Range(0, 60)]
-    public float soil_max = 50;
+    public float soil_max = 55;
     [Range(0, 60)]
-    public float sea_level = 36;
+    public float sea_level = 30;
     
 
     //玩家
@@ -85,7 +86,7 @@ public class World : MonoBehaviour
     {
         
         //如果大于16f
-        if (GetVector3Length(Block_transforms[5].transform.position - Center_Now) > StartToRender)
+        if (GetVector3Length(Block_transforms[5].transform.position - Center_Now) > (StartToRender * 16f))
         {
             //更新Center
             Center_direction = VtoNormal(Block_transforms[5].transform.position - Center_Now);

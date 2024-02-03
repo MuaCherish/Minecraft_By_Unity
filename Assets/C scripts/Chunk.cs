@@ -27,8 +27,6 @@ public class Chunk:MonoBehaviour{
     private float noise2d_scale_smooth;
     private float noise2d_scale_steep;
     private float noise3d_scale;
-	//private float noise2d_scale_plain;
-	private float noise2d_plain;
 
 
 	//≥ı ºªØ
