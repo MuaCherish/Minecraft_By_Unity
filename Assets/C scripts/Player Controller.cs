@@ -201,9 +201,63 @@ public class PlayerController : MonoBehaviour
             if (world.BlockDirection[0, 4])
             {
                 // 顶部接触，禁止向上移动
-                if (Input.GetKey(KeyCode.Space))  // 假设跳跃是通过空格键
+                //if (Input.GetKey(KeyCode.Space))  // 假设跳跃是通过空格键
+                //{
+                //    velocity.y = 0f;
+                //}
+                velocity.y = 0f;
+            }
+
+            if (world.BlockDirection[0, 6])
+            {
+                // 前左侧接触，禁止向前左移动
+                if (horizontalInput < 0f)
                 {
-                    velocity.y = 0f;
+                    horizontalInput = 0f;
+                }
+                if (verticalInput > 0f)
+                {
+                    verticalInput = 0f;
+                }
+
+            }
+
+            if (world.BlockDirection[0, 7])
+            {
+                // 前右侧接触，禁止向前右移动
+                if (horizontalInput >= 0f)
+                {
+                    horizontalInput = 0f;
+                }
+                if (verticalInput > 0f)
+                {
+                    verticalInput = 0f;
+                }
+            }
+
+            if (world.BlockDirection[0, 8])
+            {
+                // 后左侧接触，禁止向后左移动
+                if (horizontalInput < 0f)
+                {
+                    horizontalInput = 0f;
+                }
+                if (verticalInput < 0f)
+                {
+                    verticalInput = 0f;
+                }
+            }
+
+            if (world.BlockDirection[0, 9])
+            {
+                // 后右侧接触，禁止向后右移动
+                if (horizontalInput >= 0f)
+                {
+                    horizontalInput = 0f;
+                }
+                if (verticalInput < 0f)
+                {
+                    verticalInput = 0f;
                 }
             }
         }
