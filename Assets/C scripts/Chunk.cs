@@ -31,6 +31,7 @@ public class Chunk:MonoBehaviour{
 	private float noise2d_plain;
 
 
+	//初始化
     public Chunk(Vector3 thisPosition, World _world)
 	{
 		world = _world;
@@ -65,28 +66,16 @@ public class Chunk:MonoBehaviour{
 		CreateMesh();
 	}
 
-
-
 	//Block_Type序列化
 	void PopulateVoxelMap () {
 
 
 		
-
+		//对一个chunk进行遍历
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
 			for (int x = 0; x < VoxelData.ChunkWidth; x++) {
 				for (int z = 0; z < VoxelData.ChunkWidth; z++) {
 
-
-
-
-                    //int randomInt2 = Random.Range(0, 4);
-
-                    /*
-					 ChunkHeight-8 ~ ChunkHeight：泥土
-					 else：石头
-					 0 ~ 2：基岩层
-					 */
 
                     /*
 					 0：基岩
@@ -95,41 +84,6 @@ public class Chunk:MonoBehaviour{
 					 3：泥土
 					 4：空气
 					*/
-
-                    ////最顶层
-                    //               if (y == VoxelData.ChunkHeight - 1)
-                    //{
-                    //	voxelMap[x, y, z] = 2;
-                    //}//基岩层
-                    //else if (y == 0)
-                    //{
-                    //	voxelMap[x, y, z] = 0;
-                    //}//基岩缓冲层
-                    //else if (y > 0 && y < 3 && randomInt == 1)
-                    //{
-                    //	voxelMap[x, y, z] = 0;
-                    //}//泥土层
-                    //else if (y > VoxelData.ChunkHeight - 6 && y < VoxelData.ChunkHeight)
-                    //{
-                    //	voxelMap[x, y, z] = 3;
-                    //}//泥土缓冲层
-                    //else if (y >= VoxelData.ChunkHeight - 8 && y <= VoxelData.ChunkHeight - 6 && randomInt == 1)
-                    //{
-                    //	voxelMap[x, y, z] = 3;
-                    //}
-                    //else//石头层
-                    //{
-                    //                   float noise = Noise.Perlin3D((float)x * 0.1f, (float)y * 0.1f, (float)z * 0.1f); // 将100改为0.1
-                    //                   if (noise < 0.4)
-                    //                   {
-                    //                       voxelMap[x, y, z] = 4;
-                    //                   }
-                    //                   else
-                    //                   {
-                    //                       voxelMap[x, y, z] = 1;
-                    //                   }
-                    //               }
-
 
 
                     int randomInt = Random.Range(0, 2);
@@ -145,20 +99,17 @@ public class Chunk:MonoBehaviour{
 					else
 					{
 
-						float noise2d_1 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
-                        float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
-                        float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + chunkObject.transform.position.x * 0.1f, (float)z * 0.15f + chunkObject.transform.position.z * 0.15f));
-                        
+						//三个2d噪声
+						float noise2d_1 = Mathf.Lerp((float)world.soil_min, (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
+						float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
+						float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + chunkObject.transform.position.x * 0.1f, (float)z * 0.15f + chunkObject.transform.position.z * 0.15f));
 
-                        float noiseHigh = noise2d_1 * 0.5f + noise2d_2 * 0.3f + noise2d_3 * 0.3f;
+						//噪声叠加
+						float noiseHigh = noise2d_1 * 0.6f + noise2d_2 * 0.4f + noise2d_3 * 0.05f;
 
-						//if (noiseHigh >= noise2d_plain)
-						//{
-						//	noiseHigh = noise2d_plain;
-						//}
 
-						//判断泥土
-						if (y > noiseHigh)
+                        //判断泥土
+                        if (y > noiseHigh)
 						{
                             voxelMap[x, y, z] = 4;
                         }else if ((y+1) > noiseHigh)
@@ -204,15 +155,6 @@ public class Chunk:MonoBehaviour{
 
 					}
 
-
-
-
-
-					//if ((x == 1 && y == 1 && z == 0) || (x == 1 && y == 1 && z == 1))
-					//{
-					//	voxelMap[x, y, z] = 4;
-					//}
-
 				}
 			}
 		}
@@ -225,12 +167,6 @@ public class Chunk:MonoBehaviour{
 		for (int y = 0; y < VoxelData.ChunkHeight; y++) {
 			for (int x = 0; x < VoxelData.ChunkWidth; x++) {
 				for (int z = 0; z < VoxelData.ChunkWidth; z++) {
-
-
-					//if (x == 1 && y == 1 && z == 0)
-					//{
-					//	print("");
-					//}
 
 					AddVoxelDataToChunk (new Vector3(x, y, z));
 
@@ -342,38 +278,10 @@ public class Chunk:MonoBehaviour{
 
 	}
 
+	//销毁自己
     public void DestroyChunk()
     {
 		Destroy(chunkObject);
     }
-
-
-    //public class ChunkCoord
-    //{
-
-    //    public int x;
-    //    public int z;
-
-    //    public ChunkCoord(int _x, int _z)
-    //    {
-
-    //        x = _x;
-    //        z = _z;
-
-    //    }
-
-    //    //public bool Equals(ChunkCoord other)
-    //    //{
-
-    //    //    if (other == null)
-    //    //        return false;
-    //    //    else if (other.x == x && other.z == z)
-    //    //        return true;
-    //    //    else
-    //    //        return false;
-
-    //    //}
-
-    //}
 
 }

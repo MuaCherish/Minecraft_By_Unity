@@ -18,11 +18,11 @@ public class World : MonoBehaviour
     public int renderSize = 4; //渲染区块半径,即renderSize*16f
     public float StartToRender = 16f;
 
-    [Header("噪声范围")]
+    [Header("噪声采样比例(越小拉的越长)")]
     public float noise2d_scale_smooth = 0.1f;
     public float noise2d_scale_steep = 0.08f;
     //public float noise2d_scale_plain = 0.1f;
-    public float noise3d_scale = 0.1f;
+    public float noise3d_scale = 0.01f;
 
 
     [Header("分层结构")]
@@ -37,7 +37,7 @@ public class World : MonoBehaviour
     //玩家
     [Header("玩家碰撞盒")]
     [Tooltip("Forward Back \n Left Right \n Up Down")]
-    public Transform[] transforms = new Transform[6];
+    public Transform[] Block_transforms = new Transform[10];
 
 
     //isBlock
@@ -46,7 +46,7 @@ public class World : MonoBehaviour
     public bool isBlock = false;
     [HideInInspector]
     public bool isnearblock = false;
-    public bool[,] BlockDirection = new bool[1,6];
+    public bool[,] BlockDirection = new bool[1,10];
 
     //全部Chunk位置
     private Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
@@ -85,10 +85,10 @@ public class World : MonoBehaviour
     {
         
         //如果大于16f
-        if (GetVector3Length(transforms[5].transform.position - Center_Now) > StartToRender)
+        if (GetVector3Length(Block_transforms[5].transform.position - Center_Now) > StartToRender)
         {
             //更新Center
-            Center_direction = VtoNormal(transforms[5].transform.position - Center_Now);
+            Center_direction = VtoNormal(Block_transforms[5].transform.position - Center_Now);
             Center_Now += Center_direction * VoxelData.ChunkWidth;
             //调试
             //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -116,16 +116,16 @@ public class World : MonoBehaviour
     //初始化
     void InitMap()
     {
-        Center_Now = new Vector3(transforms[5].transform.position.x,0, transforms[5].transform.position.z);
+        Center_Now = new Vector3(Block_transforms[5].transform.position.x,0, Block_transforms[5].transform.position.z);
 
         //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //sphere.transform.position = Center_Now;
         //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
 
 
-        for (int x = -renderSize + (int)(transforms[5].transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(transforms[5].transform.position.x / VoxelData.ChunkWidth); x++)
+        for (int x = -renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x++)
         {
-            for (int z = -renderSize + (int)(transforms[5].transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(transforms[5].transform.position.x / VoxelData.ChunkWidth); z++)
+            for (int z = -renderSize + (int)(Block_transforms[5].transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); z++)
             {
                 CreateChunk(new Vector3(x, 0, z));
             }
@@ -412,11 +412,11 @@ public class World : MonoBehaviour
         isnearblock = false; // 将初始值设为false
         isBlock = true;
 
-        for (int i = 0; i <= 5; i++)
+        for (int i = 0; i <= 9; i++)
         {
 
-            chunktemp = Allchunks[GetChunkLocation(transforms[i])];
-            byte block_type = chunktemp.voxelMap[(int)GetRelalocation(transforms[i]).x, (int)GetRelalocation(transforms[i]).y, (int)GetRelalocation(transforms[i]).z];
+            chunktemp = Allchunks[GetChunkLocation(Block_transforms[i])];
+            byte block_type = chunktemp.voxelMap[(int)GetRelalocation(Block_transforms[i]).x, (int)GetRelalocation(Block_transforms[i]).y, (int)GetRelalocation(Block_transforms[i]).z];
 
             if (block_type != 4)
             {
