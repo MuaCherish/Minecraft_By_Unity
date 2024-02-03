@@ -1,6 +1,9 @@
 # 👻Minecraft_By_Unity
 A long-term project from beginner
 
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/1.png" width="600px">
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/2.png" width="600px">
+
 ## 🗒️My Plans
 - [X] ~~Learn how to generate a face~~
 - [X] ~~Learn how to generate a Block~~
