@@ -701,7 +701,7 @@ MonoBehaviour:
     bottomFaceTexture: 10
     leftFaceTexture: 10
     rightFaceTexture: 10
-  renderSize: 1
+  renderSize: 7
   StartToRender: 2
   noise2d_scale_smooth: 0.01
   noise2d_scale_steep: 0.04

@@ -101,8 +101,7 @@ public class World : MonoBehaviour
         }
 
         //碰撞判断
-        //IsGrounded();
-        isNearBlock();
+        isHitWall();
 
         //Debug.DrawLine(Center_Now, player.transform.position, Color.red, Time.deltaTime);
     }
@@ -335,7 +334,7 @@ public class World : MonoBehaviour
         if (WatingToRemove_Chunks.Count > 0 && RemoveCoroutineState == false)
         {
             StartCoroutine(RemoveChunksQueue());
-            Debug.Log("Remove 协程启动");
+            //Debug.Log("Remove 协程启动");
             RemoveCoroutineState = true;
             //hasExecuted2 = false;
         }
@@ -392,40 +391,43 @@ public class World : MonoBehaviour
 
 
     //----------------------------------Player Options---------------------------------------
-    //获取所在区块
-    public Vector3 GetChunkLocation(Transform transform)
+    //Vector3 --> 大区块坐标
+    public Vector3 GetChunkLocation(Vector3 vec)
     {
-  
-        return new Vector3((transform.position.x - transform.position.x % VoxelData.ChunkWidth) / VoxelData.ChunkWidth, 0, (transform.position.z - transform.position.z % VoxelData.ChunkWidth) / VoxelData.ChunkWidth);
+        return new Vector3((vec.x - vec.x % VoxelData.ChunkWidth) / VoxelData.ChunkWidth, 0, (vec.z - vec.z % VoxelData.ChunkWidth) / VoxelData.ChunkWidth);
     
     }
 
-    //获取所在相对坐标
-    public Vector3 GetRelalocation(Transform transform)
+    //Vector3 --> 大区块对象
+    public Chunk GetChunkObject(Vector3 pos)
     {
 
-        return new Vector3(Mathf.FloorToInt(transform.position.x % VoxelData.ChunkWidth), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z % VoxelData.ChunkWidth));
+        Allchunks.TryGetValue(GetChunkLocation(pos), out Chunk chunktemp);
+        return chunktemp;
+    }
+
+
+    //Vector3 --> 区块里的相对坐标
+    public Vector3 GetRelalocation(Vector3 vec)
+    {
+        return new Vector3(Mathf.FloorToInt(vec.x % VoxelData.ChunkWidth), Mathf.FloorToInt(vec.y), Mathf.FloorToInt(vec.z % VoxelData.ChunkWidth));
 
     }
 
-    //给定坐标，判断是不是Block
-    public void isNearBlock()
+    //判断是否撞墙
+    public void isHitWall()
     {
         isnearblock = false; // 将初始值设为false
         isBlock = true;
 
         for (int i = 0; i <= 9; i++)
         {
-            Allchunks.TryGetValue(GetChunkLocation(Block_transforms[i]), out Chunk ccc);
-            //chunktemp = Allchunks[GetChunkLocation(Block_transforms[i])];
-            chunktemp = ccc;
-            byte block_type = chunktemp.voxelMap[(int)GetRelalocation(Block_transforms[i]).x, (int)GetRelalocation(Block_transforms[i]).y, (int)GetRelalocation(Block_transforms[i]).z];
 
-            if (block_type != 4)
+            if (GetBlockType(Block_transforms[i].position) != 4)
             {
                 isnearblock = true;
                 BlockDirection[0,i] = true;
-            }else if (block_type == 4 && i == 5)
+            }else if (GetBlockType(Block_transforms[i].position) == 4 && i == 5)
             {
                 isBlock = false;
             }
@@ -436,6 +438,19 @@ public class World : MonoBehaviour
         }
         
     }
+
+    //返回方块类型
+    public byte GetBlockType(Vector3 pos)
+    {
+        Allchunks.TryGetValue(GetChunkLocation(pos), out Chunk chunktemp);
+        byte block_type = chunktemp.voxelMap[(int)GetRelalocation(pos).x, (int)GetRelalocation(pos).y, (int)GetRelalocation(pos).z];
+
+
+        return block_type;
+    }
+
+
+
     //---------------------------------------------------------------------------------------
 
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class PlayerController : MonoBehaviour
 {
@@ -56,7 +57,14 @@ public class PlayerController : MonoBehaviour
 
     //手臂晃动
     public bool HandShake = false;
-    Vector3 v_temp = new Vector3(0,0,0);
+    Vector3 v_temp = new Vector3(0, 0, 0);
+
+    //放置与破坏
+    [Header("手的长度/最短采样距离")]
+    public Transform cam;
+    public float reach = 8f;
+    private float checkIncrement = 0.1f;
+    
 
 
     void Start()
@@ -136,7 +144,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //检测手臂晃动
-        
+
 
 
 
@@ -149,11 +157,110 @@ public class PlayerController : MonoBehaviour
             // 切换摄像机
             SwitchCamera();
         }
+
+
+        //实现放置与破坏
+        CreateAndDestroyBlock();
+
+
     }
 
 
-    
-    
+
+
+    //放置与销毁
+    void CreateAndDestroyBlock()
+    {
+        //左键销毁泥土
+        if(Input.GetMouseButtonDown(0))
+        {
+            if (RayCast_now() != Vector3.zero)
+            {
+                world.GetChunkObject(RayCast_now()).EditData(world.GetRelalocation(RayCast_now()),4);
+                print($"绝对坐标为：{RayCast_now()}");
+                //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
+                //print($"方块类型为：{world.GetBlockType(RayCast())}");
+            }
+
+
+        }
+
+        //右键放置泥土
+        if (Input.GetMouseButtonDown(1))
+        {
+
+            if (RayCast_last() != Vector3.zero)
+            {
+                world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()),3);
+                print($"绝对坐标为：{RayCast_last()}");
+                //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
+                //print($"方块类型为：{world.GetBlockType(RayCast())}");
+            }
+
+        }
+
+        
+    }
+
+
+    //射线检测——返回打中的方块的相对坐标——没打中就是(0,0,0)
+    Vector3 RayCast_now()
+    {
+        float step = checkIncrement;
+        //Vector3 lastPos = new Vector3();
+
+        while (step < reach)
+        {
+
+            Vector3 pos = cam.position + (cam.forward * step);
+
+            //检测
+            if (world.GetBlockType(pos) != 4)
+            {
+
+
+                return pos;
+
+            }
+
+            //lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+
+            step += checkIncrement;
+
+        }
+
+        return new Vector3(0f,0f,0f);
+    }
+
+
+    //射线检测——返回打中的方块的前一帧
+    Vector3 RayCast_last()
+    {
+        float step = checkIncrement;
+        Vector3 lastPos = new Vector3();
+
+        while (step < reach)
+        {
+
+            Vector3 pos = cam.position + (cam.forward * step);
+
+            //检测
+            if (world.GetBlockType(pos) != 4)
+            {
+
+
+                return lastPos;
+
+            }
+
+            lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+
+            step += checkIncrement;
+
+        }
+
+        return new Vector3(0f, 0f, 0f);
+    }
 
 
     //是否靠近方块
