@@ -4,87 +4,86 @@ using System.Collections.Generic;
 using TreeEditor;
 using UnityEngine;
 
-public class Chunk:MonoBehaviour{
+public class Chunk : MonoBehaviour {
 
-	//组件
-	//public ChunkCoord coord;
-	GameObject chunkObject;
+    //组件
+    //public ChunkCoord coord;
+    GameObject chunkObject;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
 
-	//Mesh的绘制
-	int vertexIndex = 0;
-	List<Vector3> vertices = new List<Vector3> ();
-	List<int> triangles = new List<int> ();
-	List<Vector2> uvs = new List<Vector2> ();
+    //Mesh的绘制
+    int vertexIndex = 0;
+    List<Vector3> vertices = new List<Vector3>();
+    List<int> triangles = new List<int>();
+    List<Vector2> uvs = new List<Vector2>();
 
-	//Block的种类数组
+    //Block的种类数组
     public byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
 
-	//World脚本
-	World world;
+    //World脚本
+    World world;
 
-	//噪声
+    //噪声
     private float noise2d_scale_smooth;
     private float noise2d_scale_steep;
     private float noise3d_scale;
 
-	//全部chunks
-	private Dictionary<Vector3, Chunk> Copy_All_Chunks;
-	private Vector3 ThisChunkLocation;
-	private bool hasExec = true;
-	//private Vector3 localVec;
-	private int x;
-	private int y;
-	private int z;
+    //全部chunks
+    private Dictionary<Vector3, Chunk> Copy_All_Chunks;
+    private Vector3 ThisChunkLocation;
+    private bool hasExec = true;
+    //private Vector3 localVec;
+    private int x;
+    private int y;
+    private int z;
 
     //初始化
     public Chunk(Vector3 thisPosition, World _world)
-	{
-		world = _world;
+    {
+        world = _world;
 
-		Copy_All_Chunks = world.Allchunks;
+        Copy_All_Chunks = world.Allchunks;
 
         noise2d_scale_smooth = world.noise2d_scale_smooth;
-		noise2d_scale_steep = world.noise2d_scale_steep;
-		noise3d_scale = world.noise3d_scale;
+        noise2d_scale_steep = world.noise2d_scale_steep;
+        noise3d_scale = world.noise3d_scale;
 
-		x = 0;
-		y = 0; 
-		z = 0;
+        x = 0;
+        y = 0;
+        z = 0;
 
         chunkObject = new GameObject();
-		meshFilter = chunkObject.AddComponent<MeshFilter>();
-		meshRenderer = chunkObject.AddComponent<MeshRenderer>();
-		meshRenderer.sharedMaterial = world.material;
-		chunkObject.transform.SetParent(world.transform);
+        meshFilter = chunkObject.AddComponent<MeshFilter>();
+        meshRenderer = chunkObject.AddComponent<MeshRenderer>();
+        meshRenderer.sharedMaterial = world.material;
+        chunkObject.transform.SetParent(world.transform);
 
-		chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
-		chunkObject.name = thisPosition.x + ", " + thisPosition.z;
+        chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
+        chunkObject.name = thisPosition.x + ", " + thisPosition.z;
 
-		//noise2d_plain = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise(chunkObject.transform.position.x * 0.12f,chunkObject.transform.position.z * 0.12f));
-		//print($"当前坐标：{chunkObject.name}，查询的allchunk：{Copy_All_Chunks.Count}");
-		ThisChunkLocation = thisPosition;
+        //noise2d_plain = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise(chunkObject.transform.position.x * 0.12f,chunkObject.transform.position.z * 0.12f));
+        //print($"当前坐标：{chunkObject.name}，查询的allchunk：{Copy_All_Chunks.Count}");
+        ThisChunkLocation = thisPosition;
 
         //先创建数据
         PopulateVoxelMap();
 
-		//开始遍历，生成数据
-		CreateMeshData();
+        //开始遍历，生成数据
+        UpdateChunk();
 
-		//最够一次性构建所有面
-		CreateMesh();
-	}
+     
+    }
 
-	//Block_Type序列化
-	void PopulateVoxelMap () {
+    //Block_Type序列化
+    void PopulateVoxelMap() {
 
 
-		
-		//对一个chunk进行遍历
+
+        //对一个chunk进行遍历
         for (int y = 0; y < VoxelData.ChunkHeight; y++) {
-			for (int x = 0; x < VoxelData.ChunkWidth; x++) {
-				for (int z = 0; z < VoxelData.ChunkWidth; z++) {
+            for (int x = 0; x < VoxelData.ChunkWidth; x++) {
+                for (int z = 0; z < VoxelData.ChunkWidth; z++) {
 
 
                     /*
@@ -100,60 +99,60 @@ public class Chunk:MonoBehaviour{
 
                     //判断基岩
                     if (y == 0)
-					{
+                    {
                         voxelMap[x, y, z] = 0;
-                    }else if (y > 0 && y < 3 && randomInt == 1)
-					{
+                    } else if (y > 0 && y < 3 && randomInt == 1)
+                    {
                         voxelMap[x, y, z] = 0;
-					}
-					else
-					{
+                    }
+                    else
+                    {
 
-						//三个2d噪声
-						float noise2d_1 = Mathf.Lerp((float)world.soil_min, (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
-						float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
-						float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + chunkObject.transform.position.x * 0.1f, (float)z * 0.15f + chunkObject.transform.position.z * 0.15f));
+                        //三个2d噪声
+                        float noise2d_1 = Mathf.Lerp((float)world.soil_min, (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
+                        float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
+                        float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + chunkObject.transform.position.x * 0.1f, (float)z * 0.15f + chunkObject.transform.position.z * 0.15f));
 
-						//噪声叠加
-						float noiseHigh = noise2d_1 * 0.6f + noise2d_2 * 0.4f + noise2d_3 * 0.05f;
+                        //噪声叠加
+                        float noiseHigh = noise2d_1 * 0.6f + noise2d_2 * 0.4f + noise2d_3 * 0.05f;
 
 
                         //判断泥土
                         if (y > noiseHigh)
-						{
+                        {
                             voxelMap[x, y, z] = 4;
-                        }else if ((y+1) > noiseHigh)
-						{
-							if (y > world.sea_level)
-							{
+                        } else if ((y + 1) > noiseHigh)
+                        {
+                            if (y > world.sea_level)
+                            {
                                 voxelMap[x, y, z] = 2;
-							}
-							else
-							{
+                            }
+                            else
+                            {
                                 voxelMap[x, y, z] = 5;
                             }
-                            
-                        }else if (y > noiseHigh - 7)
-						{
-							voxelMap[x, y, z] = 3;
-						}else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && randomInt == 1)
-						{
+
+                        } else if (y > noiseHigh - 7)
+                        {
                             voxelMap[x, y, z] = 3;
-						}
-						else
-						{
+                        } else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && randomInt == 1)
+                        {
+                            voxelMap[x, y, z] = 3;
+                        }
+                        else
+                        {
 
 
 
                             //判断空气
                             float noise3d = Noise.Perlin3D((float)x * noise3d_scale + chunkObject.transform.position.x * noise3d_scale, (float)y * noise3d_scale + y * noise3d_scale, (float)z * noise3d_scale + chunkObject.transform.position.z * noise3d_scale); // 将100改为0.1
 
-							if (noise3d < 0.4f)
-							{
+                            if (noise3d < 0.4f)
+                            {
                                 voxelMap[x, y, z] = 4;
-							}
-							else
-							{
+                            }
+                            else
+                            {
                                 voxelMap[x, y, z] = 1;
                             }
 
@@ -163,28 +162,58 @@ public class Chunk:MonoBehaviour{
 
 
 
-					}
+                    }
 
-				}
-			}
-		}
+                }
+            }
+        }
 
-	}
+    }
 
-	//开始遍历
-	void CreateMeshData () {
+    //开始遍历
+    public void UpdateChunk() {
 
-		for (y = 0; y < VoxelData.ChunkHeight; y++) {
-			for (x = 0; x < VoxelData.ChunkWidth; x++) {
-				for (z = 0; z < VoxelData.ChunkWidth; z++) {
+        ClearMeshData();
 
-                    AddVoxelDataToChunk (new Vector3(x, y, z));
+        for (y = 0; y < VoxelData.ChunkHeight; y++) {
+            for (x = 0; x < VoxelData.ChunkWidth; x++) {
+                for (z = 0; z < VoxelData.ChunkWidth; z++) {
 
-				}
-			}
-		}
+                    if (world.blocktypes[voxelMap[x, y, z]].isSolid)
+                    {
+                        UpdateMeshData(new Vector3(x, y, z));
+                    }
 
-	}
+
+                }
+            }
+        }
+
+        //最够一次性构建所有面
+        CreateMesh();
+
+    }
+
+    void ClearMeshData()
+    {
+        vertexIndex = 0;
+        vertices.Clear();
+        triangles.Clear();
+        uvs.Clear();
+    }
+
+    //编辑方块
+    public void EditData(Vector3 pos, byte targetBlocktype)
+    {
+
+        int x = Mathf.FloorToInt(pos.x);
+        int y = Mathf.FloorToInt(pos.y);
+        int z = Mathf.FloorToInt(pos.z);
+
+        voxelMap[x, y, z] = targetBlocktype;
+
+        UpdateChunk();
+    }
 
 	//面生成的判断
     //是方块吗----Y不绘制----N绘制
@@ -322,7 +351,7 @@ public class Chunk:MonoBehaviour{
     }
 
     //遍历中：：顺带判断面的生成方向
-    void AddVoxelDataToChunk (Vector3 pos) {
+    void UpdateMeshData (Vector3 pos) {
 
 		//判断六个面
 		for (int p = 0; p < 6; p++) {
