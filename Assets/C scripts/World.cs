@@ -50,7 +50,8 @@ public class World : MonoBehaviour
     public bool[,] BlockDirection = new bool[1,10];
 
     //全部Chunk位置
-    private Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
+    [HideInInspector]
+    public Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
 
     //等待添加队列
     private bool CreateCoroutineState = false;
@@ -250,16 +251,16 @@ public class World : MonoBehaviour
             return;
         }
 
-        if (pos.x == 102)
-        {
-
-        }
+        //if (pos.x == 99 && pos.z == 100)
+        //{
+        //    print("");
+        //}
 
         //GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         //cube.transform.position = new Vector3(x + chunkwidth / 2, 0, z + chunkwidth / 2);
         //cube.transform.localScale = new Vector3(chunkwidth, 1, chunkwidth);
 
-         Chunk chunk_temp = new Chunk(new Vector3(pos.x,0, pos.z), this);
+        Chunk chunk_temp = new Chunk(new Vector3(pos.x,0, pos.z), this);
 
          Allchunks.Add(pos, chunk_temp);
     }
@@ -415,8 +416,9 @@ public class World : MonoBehaviour
 
         for (int i = 0; i <= 9; i++)
         {
-
-            chunktemp = Allchunks[GetChunkLocation(Block_transforms[i])];
+            Allchunks.TryGetValue(GetChunkLocation(Block_transforms[i]), out Chunk ccc);
+            //chunktemp = Allchunks[GetChunkLocation(Block_transforms[i])];
+            chunktemp = ccc;
             byte block_type = chunktemp.voxelMap[(int)GetRelalocation(Block_transforms[i]).x, (int)GetRelalocation(Block_transforms[i]).y, (int)GetRelalocation(Block_transforms[i]).z];
 
             if (block_type != 4)
