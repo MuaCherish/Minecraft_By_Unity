@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TreeEditor;
@@ -28,18 +29,29 @@ public class Chunk:MonoBehaviour{
     private float noise2d_scale_steep;
     private float noise3d_scale;
 
+	//全部chunks
+	private Dictionary<Vector3, Chunk> Copy_All_Chunks;
+	private Vector3 ThisChunkLocation;
+	private bool hasExec = true;
+	//private Vector3 localVec;
+	private int x;
+	private int y;
+	private int z;
 
-	//初始化
+    //初始化
     public Chunk(Vector3 thisPosition, World _world)
 	{
 		world = _world;
 
+		Copy_All_Chunks = world.Allchunks;
 
-		noise2d_scale_smooth = world.noise2d_scale_smooth;
+        noise2d_scale_smooth = world.noise2d_scale_smooth;
 		noise2d_scale_steep = world.noise2d_scale_steep;
 		noise3d_scale = world.noise3d_scale;
-		//noise2d_scale_plain = world.noise2d_scale_plain;
 
+		x = 0;
+		y = 0; 
+		z = 0;
 
         chunkObject = new GameObject();
 		meshFilter = chunkObject.AddComponent<MeshFilter>();
@@ -50,9 +62,9 @@ public class Chunk:MonoBehaviour{
 		chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
 		chunkObject.name = thisPosition.x + ", " + thisPosition.z;
 
-        //noise2d_plain = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise(chunkObject.transform.position.x * 0.12f,chunkObject.transform.position.z * 0.12f));
-
-
+		//noise2d_plain = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise(chunkObject.transform.position.x * 0.12f,chunkObject.transform.position.z * 0.12f));
+		//print($"当前坐标：{chunkObject.name}，查询的allchunk：{Copy_All_Chunks.Count}");
+		ThisChunkLocation = thisPosition;
 
         //先创建数据
         PopulateVoxelMap();
@@ -84,7 +96,7 @@ public class Chunk:MonoBehaviour{
 					*/
 
 
-                    int randomInt = Random.Range(0, 2);
+                    int randomInt = UnityEngine.Random.Range(0, 2);
 
                     //判断基岩
                     if (y == 0)
@@ -162,11 +174,11 @@ public class Chunk:MonoBehaviour{
 	//开始遍历
 	void CreateMeshData () {
 
-		for (int y = 0; y < VoxelData.ChunkHeight; y++) {
-			for (int x = 0; x < VoxelData.ChunkWidth; x++) {
-				for (int z = 0; z < VoxelData.ChunkWidth; z++) {
+		for (y = 0; y < VoxelData.ChunkHeight; y++) {
+			for (x = 0; x < VoxelData.ChunkWidth; x++) {
+				for (z = 0; z < VoxelData.ChunkWidth; z++) {
 
-					AddVoxelDataToChunk (new Vector3(x, y, z));
+                    AddVoxelDataToChunk (new Vector3(x, y, z));
 
 				}
 			}
@@ -175,7 +187,7 @@ public class Chunk:MonoBehaviour{
 	}
 
 	//面生成的判断
-    //是方块吗----Y不绘制--N绘制
+    //是方块吗----Y不绘制----N绘制
     //靠近边界----也返回N
     bool CheckVoxel (Vector3 pos,int _p) {
 
@@ -183,26 +195,130 @@ public class Chunk:MonoBehaviour{
 		int y = Mathf.FloorToInt (pos.y);
 		int z = Mathf.FloorToInt (pos.z);
 
+		//print($"{x},{y},{z}");
+
+
 		//如果目标出界
 		if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1)
 		{
-			//自己是不是空气
-			if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4)
-			{
-				return true;
-			}
-			else
-			{
+
+            //if (ThisChunkLocation == new Vector3(100f,0f,99f))
+            //{
+            //	print("");
+            //}
+
+
+            //自己是不是空气
+            if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4)
+            {
+                return true;
+            }
+            else
+            {
                 return false;
             }
-		}//另判断自己和目标是不是空气
-		else if((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && voxelMap[x,y,z] == 4)
+
+
+
+            //目标处是否存在chunk
+            //if (Copy_All_Chunks.TryGetValue(VoxelData.faceChecks[_p] + ThisChunkLocation, out Chunk cc))
+            //{
+
+            //    if (hasExec)
+            //    {
+            //        //print($"当前Chunk：{ThisChunkLocation}，目标Chunk：{ThisChunkLocation + VoxelData.faceChecks[_p]}");
+            //        hasExec = false;
+            //    }
+
+            //    //判断一下方向
+            //    //Z方向
+            //    if (VoxelData.faceChecks[_p] == new Vector3(0, 0, -1))
+            //    {
+            //        //自己是空气，目标是Block，则返回false
+            //        if ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && cc.voxelMap[x, y, VoxelData.ChunkWidth - 1] != 4)
+            //        {
+            //            return false;
+            //        }
+            //        else
+            //        {
+            //            return true;
+            //        }
+            //    }
+            //    else if (VoxelData.faceChecks[_p] == new Vector3(0, 0, 1))
+            //    {
+            //        //自己是空气，目标是Block，则返回false
+            //        if ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && cc.voxelMap[x, y, 0] != 4)
+            //        {
+            //            return false;
+            //        }
+            //        else
+            //        {
+            //            return true;
+            //        }
+            //    }
+            //    //x方向
+            //    else if (VoxelData.faceChecks[_p] == new Vector3(-1, 0, 0))
+            //    {
+            //        //自己是空气，目标是Block，则返回false
+            //        if ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && cc.voxelMap[VoxelData.ChunkWidth - 1, y, z] != 4)
+            //        {
+            //            return false;
+            //        }
+            //        else
+            //        {
+            //            return true;
+            //        }
+            //    }
+            //    else if (VoxelData.faceChecks[_p] == new Vector3(1, 0, 0))
+            //    {
+            //        //自己是空气，目标是Block，则返回false
+            //        if ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && cc.voxelMap[0, y, z] != 4)
+            //        {
+            //            return false;
+            //        }
+            //        else
+            //        {
+            //            return true;
+            //        }
+            //    }
+
+
+            //    //自己是空气，目标是Block，则返回false
+            //    //if ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && cc.voxelMap[x & 16, y & 16, z & 16] != 4)
+            //    //{
+            //    //	return false;
+            //    //}
+            //    //else
+            //    //{
+            //    //	return true;
+            //    //}
+
+            //}
+            //else
+            //{
+            //    //自己是不是空气
+            //    if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4)
+            //    {
+            //        return true;
+            //    }
+            //    else
+            //    {
+            //        return false;
+            //    }
+            //}
+
+
+
+
+        }//另判断自己和目标是不是空气
+        else if((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && voxelMap[x,y,z] == 4)
 		{
             return true;
         }
 
-		//return voxelMap [x, y, z];
+
         return world.blocktypes[voxelMap [x, y, z]].isSolid;
+
     }
 
     //遍历中：：顺带判断面的生成方向
@@ -211,8 +327,13 @@ public class Chunk:MonoBehaviour{
 		//判断六个面
 		for (int p = 0; p < 6; p++) {
 
+            //if (pos == new Vector3(16,32,16))
+            //{
+            //    print("");
+            //}
 
-			if (!CheckVoxel(pos + VoxelData.faceChecks[p],p)) {
+
+            if (!CheckVoxel(pos + VoxelData.faceChecks[p],p)) {
 
                 byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
 
@@ -242,6 +363,8 @@ public class Chunk:MonoBehaviour{
 		}
 
 	}
+
+
 
 	//最后生成网格体
 	void CreateMesh () {
