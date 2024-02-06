@@ -32,7 +32,7 @@ public class Chunk : MonoBehaviour {
     //È«²¿chunks
     private Dictionary<Vector3, Chunk> Copy_All_Chunks;
     private Vector3 ThisChunkLocation;
-    private bool hasExec = true;
+    //private bool hasExec = true;
     //private Vector3 localVec;
     private int x;
     private int y;
