@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [Header("摄像机")]
     public Camera FirstPersonCamera;
     public Camera ThirdPersonCamera;
+    public Transform cam;
 
     // Player Object
     private GameObject Player_Object;
@@ -25,6 +26,7 @@ public class PlayerController : MonoBehaviour
     public float Jump_Speed = 6;
     public float gravity = 25f;
     public float shift_scale = 2;
+    [HideInInspector]
     public Vector3 velocity;
     private bool isGround = false;
     private bool isnearblock = false;
@@ -35,9 +37,12 @@ public class PlayerController : MonoBehaviour
     private float Camera_verticalInput;
 
     //input
+    [HideInInspector]
     public float horizontalInput;
+    [HideInInspector]
     public float verticalInput;
     Vector3 playerForward;
+    [HideInInspector]
     public int Face_flag = -1;
     Vector3 directionToXZ;
     private float max_hand_length = 0.7f;
@@ -64,16 +69,19 @@ public class PlayerController : MonoBehaviour
 
     //debug
     public GameObject debugscreen;
+    public bool debug_ray = false;
 
     //手臂晃动
+    [HideInInspector]
     public bool HandShake = false;
+    [HideInInspector]
     public bool isPlacing = false;
 
     //放置与破坏
-    [Header("手的长度/最短采样距离")]
-    public Transform cam;
+    [Header("手的长度")]
     public float reach = 8f;
     private float checkIncrement = 0.01f;
+    [HideInInspector]
     public float ray_length = 0f;
 
 
@@ -86,9 +94,9 @@ public class PlayerController : MonoBehaviour
         //获取World脚本
         worldObject = GameObject.Find("World");
         world = worldObject.GetComponent<World>();
-
+       
         //初始化人物位置
-        Player_Object.transform.position = world.Start_Position;
+        Player_Object.transform.position = new Vector3(world.Start_Position.x + 0.5f, world.Start_Position.y, world.Start_Position.z + 0.5f);
 
         //Hide
         HideCursor();
@@ -441,7 +449,10 @@ public class PlayerController : MonoBehaviour
             Vector3 pos = cam.position + (cam.forward * step);
 
             // 绘制射线以便调试
-            //Debug.DrawRay(cam.position, cam.forward * step, Color.red, 100f);
+            if (debug_ray)
+            {
+                Debug.DrawRay(cam.position, cam.forward * step, Color.red, 100f);
+            }
 
             //是固体 && 不是基岩则返回
             if (world.GetBlockType(pos) != 4 && world.GetBlockType(pos) != 0)
@@ -474,12 +485,14 @@ public class PlayerController : MonoBehaviour
             Vector3 pos = cam.position + (cam.forward * step);
 
             // 绘制射线以便调试
-            Debug.DrawRay(cam.position, cam.forward * step, Color.red,100f);
+            if (debug_ray)
+            {
+                Debug.DrawRay(cam.position, cam.forward * step, Color.red, 100f);
+            }
 
             //检测
             if (world.GetBlockType(pos) != 4)
             {
-
                 //print($"last射线检测：{(lastPos - cam.position).magnitude}");
                 ray_length = (lastPos - cam.position).magnitude;
                 return lastPos;
