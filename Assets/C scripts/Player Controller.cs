@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
         //Hide
         HideCursor();
          
-        //other
+        //other 
         debugscreen.SetActive(false);
     }
 
