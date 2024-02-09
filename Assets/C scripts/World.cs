@@ -39,7 +39,10 @@ public class World : MonoBehaviour
     [Header("玩家碰撞盒")]
     [Tooltip("Forward Back \n Left Right \n Up Down")]
     public Transform[] Block_transforms = new Transform[10];
-
+    public byte ERROR_CODE_OUTOFVOXELMAP = 255;
+    public Vector3 Start_Position = new Vector3(1600f, 63f, 1600f);
+    //public GameObject FirstCamera;
+    //private PlayerController playercontroller;
 
     //isBlock
     Chunk chunktemp;
@@ -79,7 +82,9 @@ public class World : MonoBehaviour
     private void Start()
     {
         Application.targetFrameRate = 120;
+        //playercontroller = FirstCamera.GetComponent<PlayerController>();
         InitMap();
+        Init_Player_Location();
     }
 
 
@@ -391,6 +396,23 @@ public class World : MonoBehaviour
 
 
     //----------------------------------Player Options---------------------------------------
+
+    //初始化人物位置
+    void Init_Player_Location()
+    {
+        //从<1600,63,1600>向下遍历，直到坐标符合条件
+        while (GetBlockType(Start_Position) == 4)
+        {
+            Start_Position.y -= 1f;
+        }
+
+        Start_Position.y += 2f;
+
+
+    }
+
+
+
     //Vector3 --> 大区块坐标
     public Vector3 GetChunkLocation(Vector3 vec)
     {
@@ -420,13 +442,23 @@ public class World : MonoBehaviour
         isnearblock = false; // 将初始值设为false
         isBlock = true;
 
+        //遍历碰撞盒
         for (int i = 0; i <= 9; i++)
         {
 
-            if (GetBlockType(Block_transforms[i].position) != 4)
+            //if (GetBlockType(Block_transforms[i].position) == ERROR_CODE)
+            //{
+            //    // 处理跳跃数据
+            //    playercontroller.velocity.y -= playercontroller.gravity * Time.deltaTime;  // 在空中时应用重力
+            //}
+
+
+            if (GetBlockType(Block_transforms[i].position) != 4 && GetBlockType(Block_transforms[i].position) != ERROR_CODE_OUTOFVOXELMAP)
             {
                 isnearblock = true;
                 BlockDirection[0,i] = true;
+
+            //如果5不是空气，则判定为离地
             }else if (GetBlockType(Block_transforms[i].position) == 4 && i == 5)
             {
                 isBlock = false;
@@ -443,6 +475,22 @@ public class World : MonoBehaviour
     public byte GetBlockType(Vector3 pos)
     {
         Allchunks.TryGetValue(GetChunkLocation(pos), out Chunk chunktemp);
+
+        //如果玩家在刷新区外
+        //if (chunktemp == null)
+        //{
+        //    return ERROR_CODE;
+        //}
+
+        //如果玩家在区内，但Y值太高
+
+        if ((int)GetRelalocation(pos).y >= VoxelData.ChunkHeight)
+        {
+            //isBlock = false;
+            //isnearblock = false;
+            return ERROR_CODE_OUTOFVOXELMAP;
+        }
+
         byte block_type = chunktemp.voxelMap[(int)GetRelalocation(pos).x, (int)GetRelalocation(pos).y, (int)GetRelalocation(pos).z];
 
 
