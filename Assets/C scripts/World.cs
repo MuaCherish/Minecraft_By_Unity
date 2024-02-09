@@ -39,7 +39,9 @@ public class World : MonoBehaviour
     [Header("Íæ¼ÒÅö×²ºÐ")]
     [Tooltip("Forward Back \n Left Right \n Up Down")]
     public Transform[] Block_transforms = new Transform[10];
+    [HideInInspector]
     public byte ERROR_CODE_OUTOFVOXELMAP = 255;
+    [HideInInspector]
     public Vector3 Start_Position = new Vector3(1600f, 63f, 1600f);
     //public GameObject FirstCamera;
     //private PlayerController playercontroller;
