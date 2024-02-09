@@ -20,13 +20,15 @@ public class PlayerController : MonoBehaviour
 
     //Player Variable
     [Header("玩家设置")]
+    //private Vector3 Start_Position = new Vector3(1600f,63f,1600f);
     public float Move_Speed = 4;
     public float Jump_Speed = 6;
     public float gravity = 25f;
     public float shift_scale = 2;
-    private Vector3 velocity;
+    public Vector3 velocity;
     private bool isGround = false;
     private bool isnearblock = false;
+    
 
     //Camera
     public float Mouse_Sensitive = 100;
@@ -36,8 +38,9 @@ public class PlayerController : MonoBehaviour
     public float horizontalInput;
     public float verticalInput;
     Vector3 playerForward;
-    public int Face_flag = 0;
+    public int Face_flag = -1;
     Vector3 directionToXZ;
+    private float max_hand_length = 0.7f;
 
     //mouse
     float targetMouseSpeedX;
@@ -70,7 +73,7 @@ public class PlayerController : MonoBehaviour
     [Header("手的长度/最短采样距离")]
     public Transform cam;
     public float reach = 8f;
-    private float checkIncrement = 0.1f;
+    private float checkIncrement = 0.01f;
     public float ray_length = 0f;
 
 
@@ -79,11 +82,13 @@ public class PlayerController : MonoBehaviour
         // Init player
         Player_Object = transform.parent.gameObject;
         Player_Controller = Player_Object.GetComponent<CharacterController>();
-        
 
         //获取World脚本
         worldObject = GameObject.Find("World");
         world = worldObject.GetComponent<World>();
+
+        //初始化人物位置
+        Player_Object.transform.position = world.Start_Position;
 
         //Hide
         HideCursor();
@@ -116,6 +121,8 @@ public class PlayerController : MonoBehaviour
 
 
     //----------------------------------- player ----------------------------------------
+
+    
 
     //获取玩家输入
     void GetInput()
@@ -182,8 +189,8 @@ public class PlayerController : MonoBehaviour
             isPlacing = true;
             //print("右键");
 
-            //如果打到 && 距离大于2f
-            if (RayCast_last() != Vector3.zero && (RayCast_last() - cam.position).magnitude > 2f)
+            //如果打到 && 距离大于2f && 且不是脚底下
+            if (RayCast_last() != Vector3.zero && (RayCast_last() - cam.position).magnitude > max_hand_length && world.GetRelalocation(RayCast_last()) != world.GetRelalocation(new Vector3(world.Block_transforms[5].position.x, world.Block_transforms[5].position.y + 1f, world.Block_transforms[5].position.z)))
             {
                 world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()), 3);
                 //print($"绝对坐标为：{RayCast_last()}");
@@ -211,6 +218,7 @@ public class PlayerController : MonoBehaviour
             // 处理各个方向的限制
             if (world.BlockDirection[0, 0])
             {
+                Face_flag = 0;
                 // 正面接触，禁止向前移动
                 if (verticalInput > 0f)
                 {
@@ -220,6 +228,7 @@ public class PlayerController : MonoBehaviour
 
             if (world.BlockDirection[0, 1])
             {
+                Face_flag = 1;
                 // 后面接触，禁止向后移动
                 if (verticalInput < 0f)
                 {
@@ -229,6 +238,7 @@ public class PlayerController : MonoBehaviour
 
             if (world.BlockDirection[0, 2])
             {
+                Face_flag = 2;
                 // 左侧接触，禁止向左移动
                 if (horizontalInput < 0f)
                 {
@@ -238,6 +248,7 @@ public class PlayerController : MonoBehaviour
 
             if (world.BlockDirection[0, 3])
             {
+                Face_flag = 3;
                 // 右侧接触，禁止向右移动
                 if (horizontalInput > 0f)
                 {
@@ -252,11 +263,13 @@ public class PlayerController : MonoBehaviour
                 //{
                 //    velocity.y = 0f;
                 //}
+                Face_flag = 4;
                 velocity.y = 0f;
             }
 
             if (world.BlockDirection[0, 6])
             {
+                Face_flag = 6;
                 // 前左侧接触，禁止向前左移动
                 if (horizontalInput < 0f)
                 {
@@ -271,6 +284,7 @@ public class PlayerController : MonoBehaviour
 
             if (world.BlockDirection[0, 7])
             {
+                Face_flag = 7;
                 // 前右侧接触，禁止向前右移动
                 if (horizontalInput >= 0f)
                 {
@@ -284,6 +298,7 @@ public class PlayerController : MonoBehaviour
 
             if (world.BlockDirection[0, 8])
             {
+                Face_flag = 8;
                 // 后左侧接触，禁止向后左移动
                 if (horizontalInput < 0f)
                 {
@@ -297,6 +312,7 @@ public class PlayerController : MonoBehaviour
 
             if (world.BlockDirection[0, 9])
             {
+                Face_flag = 9;
                 // 后右侧接触，禁止向后右移动
                 if (horizontalInput >= 0f)
                 {
@@ -308,6 +324,10 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            Face_flag = -1;
+        }
 
         //移动数据处理
         playerForward = transform.forward;
@@ -315,9 +335,18 @@ public class PlayerController : MonoBehaviour
         Player_Direction = playerForward.normalized * verticalInput + transform.right * horizontalInput;
 
 
+        //if (transform.position.y >= (VoxelData.ChunkHeight - 1))
+        //{
+        //    // 处理跳跃数据
+        //     velocity.y -= gravity * Time.deltaTime;  // 在空中时应用重力
+        //}
+
+
+
         //鼠标视角数据处理
         Camera_verticalInput -= currentMouseSpeedY;
         Camera_verticalInput = Mathf.Clamp(Camera_verticalInput, -90f, 90f);
+
 
         //鼠标平滑加速度处理
         if (enableMouseAcceleration)
@@ -411,6 +440,9 @@ public class PlayerController : MonoBehaviour
 
             Vector3 pos = cam.position + (cam.forward * step);
 
+            // 绘制射线以便调试
+            //Debug.DrawRay(cam.position, cam.forward * step, Color.red, 100f);
+
             //是固体 && 不是基岩则返回
             if (world.GetBlockType(pos) != 4 && world.GetBlockType(pos) != 0)
             {
@@ -441,6 +473,9 @@ public class PlayerController : MonoBehaviour
 
             Vector3 pos = cam.position + (cam.forward * step);
 
+            // 绘制射线以便调试
+            Debug.DrawRay(cam.position, cam.forward * step, Color.red,100f);
+
             //检测
             if (world.GetBlockType(pos) != 4)
             {
@@ -451,7 +486,8 @@ public class PlayerController : MonoBehaviour
 
             }
 
-            lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+            //lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+            lastPos = pos;
 
             step += checkIncrement;
 
