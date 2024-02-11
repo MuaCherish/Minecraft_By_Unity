@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
     //World compoment
     private GameObject worldObject;
-    World world;
+    public World world;
 
     //debug
     public GameObject debugscreen;
@@ -84,22 +84,27 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]
     public float ray_length = 0f;
 
+    //UI Manager
+    //public GameObject UIManager;
+    public CanvasManager CanvasManager;
+
+    bool hasExec = true;
+
+
 
     void Start()
     {
         // Init player
         Player_Object = transform.parent.gameObject;
         Player_Controller = Player_Object.GetComponent<CharacterController>();
-
+        //CanvasManager = UIManager.GetComponent<CanvasManager>();
+        
         //获取World脚本
-        worldObject = GameObject.Find("World");
-        world = worldObject.GetComponent<World>();
+        //worldObject = GameObject.Find("World");
+        //world = worldObject.GetComponent<World>();
        
         //初始化人物位置
-        Player_Object.transform.position = new Vector3(world.Start_Position.x + 0.5f, world.Start_Position.y, world.Start_Position.z + 0.5f);
-
-        //Hide
-        HideCursor();
+        //Player_Object.transform.position = new Vector3(world.Start_Position.x, world.Start_Position.y, world.Start_Position.z);
          
         //other 
         debugscreen.SetActive(false);
@@ -108,20 +113,41 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        //获取world数据
-        Get_World_Data();
 
-        //获取输入
-        GetInput();
+        //Debug.Log($"{Player_Object.transform.position}");
 
-        //数据处理
-        InputDataProcess();
+        if (CanvasManager.isGamePlaying)
+        {
 
-        //操作实现
-        OprateAchievement();
+            
 
-        //交互数据计算
-        Set_Connect_Data();
+            //获取world数据
+            Get_World_Data();
+
+            //获取输入
+            GetInput();
+
+            //数据处理
+            InputDataProcess();
+
+            //操作实现
+            OprateAchievement();
+
+            //交互数据计算
+            Set_Connect_Data();
+
+            if (hasExec)
+            {
+                //Hide
+                HideCursor();
+
+                //初始化人物位置
+                Player_Object.transform.position = new Vector3(world.Start_Position.x, world.Start_Position.y, world.Start_Position.z);
+
+                hasExec = false;
+            }
+        }
+        
     }
 
 
