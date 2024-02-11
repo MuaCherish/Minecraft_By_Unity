@@ -71,6 +71,7 @@ public class World : MonoBehaviour
 
     //协程
     [Header("协程延迟时间")]
+    public float InitCorountineDelay = 1f;
     public float CreateCoroutineDelay = 0.2f;
     public float RemoveCoroutineDelay = 0.5f;
 
@@ -78,39 +79,88 @@ public class World : MonoBehaviour
     private Vector3 Center_Now;
     private Vector3 Center_direction; //这个代表了方向
 
-    //private Vector3 v3 = new Vector3(0, 2, 0);
-
+    //UI Manager
+    //public GameObject UIManager;
+    public CanvasManager CanvasManager;
+    //[HideInInspector]
+    //public bool isWorldInit = false;
+    [HideInInspector]
+    public float initprogress = 0f;
 
     private void Start()
     {
         Application.targetFrameRate = 120;
-        //playercontroller = FirstCamera.GetComponent<PlayerController>();
-        InitMap();
+        //CanvasManager = UIManager.GetComponent<CanvasManager>();
+        //StartCoroutine(Init_Map_Thread());
+        //Init_Player_Location();
+    }
+
+
+
+    IEnumerator Init_Map_Thread()
+    {
+        Center_Now = new Vector3(Block_transforms[5].transform.position.x, 0, Block_transforms[5].transform.position.z);
+
+        //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //sphere.transform.position = Center_Now;
+        //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
+        float temp = 0f;
+
+        for (int x = -renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x++)
+        {
+            for (int z = -renderSize + (int)(Block_transforms[5].transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); z++)
+            {
+                CreateChunk(new Vector3(x, 0, z));
+
+
+                float max = renderSize * renderSize * 4;
+                temp++;
+                initprogress = Mathf.Lerp(0f,0.9f,temp / max);
+
+                yield return new WaitForSeconds(InitCorountineDelay);
+            }
+        }
+
         Init_Player_Location();
+        initprogress = 1f;
+
+
+        yield return null;
     }
 
 
     private void Update()
     {
-        
-        //如果大于16f
-        if (GetVector3Length(Block_transforms[5].transform.position - Center_Now) > (StartToRender * 16f))
+        if (CanvasManager.OnclickToInitMap)
         {
-            //更新Center
-            Center_direction = VtoNormal(Block_transforms[5].transform.position - Center_Now);
-            Center_Now += Center_direction * VoxelData.ChunkWidth;
-            //调试
-            //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            //sphere.transform.position = Center_Old;
-            //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
-            AddtoCreateChunks(Center_direction);
-            AddtoRemoveChunks(Center_direction);
+            StartCoroutine(Init_Map_Thread());
+            CanvasManager.OnclickToInitMap = false;
         }
 
-        //碰撞判断
-        isHitWall();
 
-        //Debug.DrawLine(Center_Now, player.transform.position, Color.red, Time.deltaTime);
+
+        if (CanvasManager.isGamePlaying)
+        {
+            //如果大于16f
+            if (GetVector3Length(Block_transforms[5].transform.position - Center_Now) > (StartToRender * 16f))
+            {
+                //更新Center
+                Center_direction = VtoNormal(Block_transforms[5].transform.position - Center_Now);
+                Center_Now += Center_direction * VoxelData.ChunkWidth;
+                //调试
+                //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                //sphere.transform.position = Center_Old;
+                //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
+                AddtoCreateChunks(Center_direction);
+                AddtoRemoveChunks(Center_direction);
+            }
+
+            //碰撞判断
+            isHitWall();
+
+            //Debug.DrawLine(Center_Now, player.transform.position, Color.red, Time.deltaTime);
+        }
+
     }
 
    
@@ -121,27 +171,7 @@ public class World : MonoBehaviour
 
 
     //----------------------------------World Options---------------------------------------
-    //初始化
-    void InitMap()
-    {
-        Center_Now = new Vector3(Block_transforms[5].transform.position.x,0, Block_transforms[5].transform.position.z);
 
-        //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        //sphere.transform.position = Center_Now;
-        //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
-
-
-        for (int x = -renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x++)
-        {
-            for (int z = -renderSize + (int)(Block_transforms[5].transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); z++)
-            {
-                CreateChunk(new Vector3(x, 0, z));
-            }
-        }
-
-        
-
-    }
     //--------------------------------------------------------------------------------------
 
 
@@ -257,16 +287,16 @@ public class World : MonoBehaviour
             return;
         }
 
-        //if (pos.x == 99 && pos.z == 100)
+        //if (pos.x >= 98 && pos.z >= 102)
         //{
         //    print("");
         //}
-
+        //Debug.Log($"{Allchunks.Count}");
         //GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         //cube.transform.position = new Vector3(x + chunkwidth / 2, 0, z + chunkwidth / 2);
         //cube.transform.localScale = new Vector3(chunkwidth, 1, chunkwidth);
-
-        Chunk chunk_temp = new Chunk(new Vector3(pos.x,0, pos.z), this);
+        
+        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this);
 
          Allchunks.Add(pos, chunk_temp);
     }
@@ -476,6 +506,10 @@ public class World : MonoBehaviour
     //返回方块类型
     public byte GetBlockType(Vector3 pos)
     {
+
+
+
+
         Allchunks.TryGetValue(GetChunkLocation(pos), out Chunk chunktemp);
 
         //如果玩家在刷新区外
