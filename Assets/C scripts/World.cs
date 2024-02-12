@@ -4,17 +4,17 @@ using System.Threading.Tasks;
 using System.Xml;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
-using static UnityEditor.Progress;
+//using static UnityEditor.PlayerSettings;
+//using static UnityEditor.Progress;
 
 public class World : MonoBehaviour
 {
 
-    [Header("方块类型")]
+    [Header("Material-方块类型")]
     public Material material;
     public BlockType[] blocktypes;
 
-    [Header("渲染设置")]
+    [Header("World-渲染设置")]
     [Tooltip("4就是边长为4*16的正方形")]
     public int renderSize = 4; //渲染区块半径,即renderSize*16f
     [Tooltip("2就是接近2*16的时候开始刷新区块")]
@@ -26,25 +26,31 @@ public class World : MonoBehaviour
     public float noise3d_scale = 0.085f;
 
 
-    [Header("分层结构")]
+    [Header("Chunk-分层结构")]
     [Range(0, 60)]
     public float soil_min = 15;
     [Range(0, 60)]
     public float soil_max = 55;
     [Range(0, 60)]
     public float sea_level = 30;
-    
+    public int TreeCount = 5;
+    public int TreeHigh_min = 5;
+    public int TreeHigh_max = 7;
+
 
     //玩家
-    [Header("玩家碰撞盒")]
+    [Header("Player-玩家碰撞盒")]
     [Tooltip("Forward Back \n Left Right \n Up Down")]
     public Transform[] Block_transforms = new Transform[10];
     [HideInInspector]
     public byte ERROR_CODE_OUTOFVOXELMAP = 255;
     [HideInInspector]
     public Vector3 Start_Position = new Vector3(1600f, 63f, 1600f);
+    [HideInInspector]
+    public string foot_BlockType = "None";
     //public GameObject FirstCamera;
     //private PlayerController playercontroller;
+    
 
     //isBlock
     Chunk chunktemp;
@@ -70,7 +76,7 @@ public class World : MonoBehaviour
     private Chunk obj;
 
     //协程
-    [Header("协程延迟时间")]
+    [Header("Corountine-协程延迟时间")]
     public float InitCorountineDelay = 1f;
     public float CreateCoroutineDelay = 0.2f;
     public float RemoveCoroutineDelay = 0.5f;
@@ -81,6 +87,7 @@ public class World : MonoBehaviour
 
     //UI Manager
     //public GameObject UIManager;
+    [Header("UI-UI设置")]
     public CanvasManager CanvasManager;
     //[HideInInspector]
     //public bool isWorldInit = false;
@@ -90,9 +97,7 @@ public class World : MonoBehaviour
     private void Start()
     {
         Application.targetFrameRate = 120;
-        //CanvasManager = UIManager.GetComponent<CanvasManager>();
-        //StartCoroutine(Init_Map_Thread());
-        //Init_Player_Location();
+
     }
 
 
@@ -157,6 +162,9 @@ public class World : MonoBehaviour
 
             //碰撞判断
             isHitWall();
+
+            //更新脚下方块
+            getFoodBlockType();
 
             //Debug.DrawLine(Center_Now, player.transform.position, Color.red, Time.deltaTime);
         }
@@ -443,7 +451,23 @@ public class World : MonoBehaviour
 
     }
 
-
+    //获取脚下方块
+    void getFoodBlockType()
+    {
+        switch (GetBlockType(Block_transforms[5].transform.position))
+        {
+            case 0: foot_BlockType = "BedRock"; break;
+            case 1: foot_BlockType = "Stone"; break;
+            case 2: foot_BlockType = "Grass"; break;
+            case 3: foot_BlockType = "Soil"; break;
+            case 4: foot_BlockType = "Air"; break;
+            case 5: foot_BlockType = "Sand"; break;
+            case 6: foot_BlockType = "Wood"; break;
+            case 7: foot_BlockType = "Leaves"; break;
+            case 8: foot_BlockType = "Water"; break;
+            default: foot_BlockType = "None"; break;
+        }
+    }
 
     //Vector3 --> 大区块坐标
     public Vector3 GetChunkLocation(Vector3 vec)
