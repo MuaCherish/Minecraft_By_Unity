@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TreeEditor;
 using UnityEngine;
 
 public class Chunk : MonoBehaviour {
@@ -23,6 +22,7 @@ public class Chunk : MonoBehaviour {
 
     //World脚本
     World world;
+    int treecount;
 
     //噪声
     private float noise2d_scale_smooth;
@@ -53,6 +53,8 @@ public class Chunk : MonoBehaviour {
         y = 0;
         z = 0;
 
+        treecount = world.TreeCount;
+
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
@@ -72,10 +74,10 @@ public class Chunk : MonoBehaviour {
         //开始遍历，生成数据
         UpdateChunk();
 
-     
+
     }
 
-    //Block_Type序列化
+    //方块类型的初始化
     void PopulateVoxelMap() {
 
 
@@ -92,6 +94,10 @@ public class Chunk : MonoBehaviour {
 					 2：草地
 					 3：泥土
 					 4：空气
+                     5：沙子
+                     6：木头
+                     7：树叶
+                     8：水
 					*/
 
 
@@ -120,7 +126,36 @@ public class Chunk : MonoBehaviour {
                         //判断泥土
                         if (y > noiseHigh)
                         {
-                            voxelMap[x, y, z] = 4;
+
+                            //if (y - 1 < noiseHigh)
+                            //{
+                            //    if (UnityEngine.Random.Range(0, 100) > 90)
+                            //    {
+                            //        voxelMap[x, y, z] = 6;
+                            //    }
+                            //    else
+                            //    {
+                            //        voxelMap[x, y, z] = 4;
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    voxelMap[x, y, z] = 4;
+                            //}
+
+
+                            //如果y小于海平面则为水，否则为空气
+                            if (y - 1 < world.sea_level)
+                            {
+                                voxelMap[x, y, z] = 8;
+                            }
+                            else
+                            {
+                                voxelMap[x, y, z] = 4;
+                            }
+                            
+
+
                         } else if ((y + 1) > noiseHigh)
                         {
                             if (y > world.sea_level)
@@ -168,7 +203,168 @@ public class Chunk : MonoBehaviour {
             }
         }
 
+
+        //补充树
+        CreateTree();
+
+        //voxelMap[0, 0, 0] = 6;
+
     }
+
+
+
+    //tree
+    void CreateTree()
+    {
+        //[确定XZ]xoz上随便选择5个点
+        while (treecount-- != 0)
+        {
+            int random_x = UnityEngine.Random.Range(2, VoxelData.ChunkWidth - 2);
+            int random_z = UnityEngine.Random.Range(2, VoxelData.ChunkWidth - 2);
+            int random_y = VoxelData.ChunkHeight;
+            bool needTree = true;
+            int random_Tree_High = UnityEngine.Random.Range(world.TreeHigh_min, world.TreeHigh_max + 1);
+
+            //[确定Y]向下遍历直到地表上一层
+            while (random_y-- != 0)
+            {
+                //如果是沙子或者树叶或者水面，不生成树
+                if (voxelMap[random_x, random_y - 1, random_z] == 5 || voxelMap[random_x, random_y - 1, random_z] == 7 || voxelMap[random_x, random_y - 1, random_z] == 8)
+                {
+                    needTree = false;
+                    break;
+                }
+
+
+                //如果树顶超过最大高度，不生成
+                //else if (random_y + random_Tree_High >= VoxelData.ChunkHeight)
+                //{
+                //    needTree = false;
+                //    break;
+                //}
+
+                //如果碰到固体则生成
+                else if (voxelMap[random_x, random_y - 1, random_z] != 4)
+                {
+                    needTree = true;
+                    break;
+                }
+            }
+
+
+            //定好树桩后，向上延伸5~7层树干
+            if (needTree)
+            {
+
+                for (int i = 0; i <= random_Tree_High; i++)
+                {
+                    voxelMap[random_x, random_y + i, random_z] = 6;
+                }
+
+                //生成树叶
+                CreateLeaves(random_x, random_y + random_Tree_High, random_z);
+
+            }
+
+
+            //Debug.Log($"{random_x}, {random_y}, {random_z}");
+        }
+    }
+
+    //leaves
+    void CreateLeaves(int _x, int _y, int _z)
+    {
+        int randomInt = UnityEngine.Random.Range(0, 2);
+
+
+        //第一层
+        if (randomInt == 0)
+        {
+            SetLeaves(_x, _y + 1, _z);
+        }
+        else if(randomInt == 1)
+        {
+            SetLeaves(_x, _y + 1, _z + 1);
+            SetLeaves(_x - 1, _y + 1, _z);
+            SetLeaves(_x, _y + 1, _z);
+            SetLeaves(_x + 1, _y + 1, _z);
+            SetLeaves(_x, _y + 1, _z - 1);
+        }
+
+        //第二层
+        SetLeaves(_x - 1, _y, _z);
+        SetLeaves(_x + 1, _y, _z);
+        SetLeaves(_x, _y, _z - 1);
+        SetLeaves(_x, _y, _z + 1);
+
+        //第三层
+        SetLeaves(_x - 1, _y - 1, _z + 2);
+        SetLeaves(_x, _y - 1, _z + 2);
+        SetLeaves(_x + 1, _y - 1, _z + 2);
+
+        SetLeaves(_x - 2, _y - 1, _z + 1);
+        SetLeaves(_x - 1, _y - 1, _z + 1);
+        SetLeaves(_x, _y - 1, _z + 1);
+        SetLeaves(_x + 1, _y - 1, _z + 1);
+        SetLeaves(_x + 2, _y - 1, _z + 1);
+
+        SetLeaves(_x - 2, _y - 1, _z);
+        SetLeaves(_x - 1, _y - 1, _z);
+        SetLeaves(_x + 1, _y - 1, _z);
+        SetLeaves(_x + 2, _y - 1, _z);
+
+        SetLeaves(_x - 2, _y - 1, _z - 1);
+        SetLeaves(_x - 1, _y - 1, _z - 1);
+        SetLeaves(_x, _y - 1, _z - 1);
+        SetLeaves(_x + 1, _y - 1, _z - 1);
+        SetLeaves(_x + 2, _y - 1, _z - 1);
+
+        SetLeaves(_x - 1, _y - 1, _z - 2);
+        SetLeaves(_x, _y - 1, _z - 2);
+        SetLeaves(_x + 1, _y - 1, _z - 2);
+
+        //第四层
+        SetLeaves(_x - 1, _y - 2, _z + 2);
+        SetLeaves(_x, _y - 2, _z + 2);
+        SetLeaves(_x + 1, _y - 2, _z + 2);
+
+        SetLeaves(_x - 2, _y - 2, _z + 1);
+        SetLeaves(_x - 1, _y - 2, _z + 1);
+        SetLeaves(_x, _y - 2, _z + 1);
+        SetLeaves(_x + 1, _y - 2, _z + 1);
+        SetLeaves(_x + 2, _y - 2, _z + 1);
+
+        SetLeaves(_x - 2, _y - 2, _z);
+        SetLeaves(_x - 1, _y - 2, _z);
+        SetLeaves(_x + 1, _y - 2, _z);
+        SetLeaves(_x + 2, _y - 2, _z);
+
+        SetLeaves(_x - 2, _y - 2, _z - 1);
+        SetLeaves(_x - 1, _y - 2, _z - 1);
+        SetLeaves(_x, _y - 2, _z - 1);
+        SetLeaves(_x + 1, _y - 2, _z - 1);
+        SetLeaves(_x + 2, _y - 2, _z - 1);
+
+        SetLeaves(_x - 1, _y - 2, _z - 2);
+        SetLeaves(_x, _y - 2, _z - 2);
+        SetLeaves(_x + 1, _y - 2, _z - 2);
+
+    }
+
+    //leaves设定值，防止碰到树木
+    void SetLeaves(int x,int y,int z)
+    {
+        //如果是固体，就不用生成树叶了
+        if (voxelMap[x,y,z] != 4)
+        {
+            return;
+        }
+        else
+        {
+            voxelMap[x, y, z] = 7;
+        }
+    }
+
 
     //开始遍历
     public void UpdateChunk() {
@@ -392,8 +588,6 @@ public class Chunk : MonoBehaviour {
 		}
 
 	}
-
-
 
 	//最后生成网格体
 	void CreateMesh () {

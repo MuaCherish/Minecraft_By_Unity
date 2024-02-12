@@ -8,6 +8,7 @@ public class DebugScreen : MonoBehaviour
 {
     public TextMeshProUGUI textMeshPro;
     private PlayerController playercontroller;
+    public World world;
     public GameObject FirstCamera;
     string Block_Direction;
 
@@ -71,6 +72,7 @@ public class DebugScreen : MonoBehaviour
         //textMeshPro.text += $"theta:{playercontroller.theta}\n";
         textMeshPro.text += $"BlockDirection:{Block_Direction}\n";
         textMeshPro.text += $"Ray.Length: {playercontroller.ray_length:F2}\n";
+        textMeshPro.text += $"Ground£º{world.foot_BlockType}\n";
     }
 
 }
