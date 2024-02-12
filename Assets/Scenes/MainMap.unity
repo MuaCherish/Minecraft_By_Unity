@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: b5c5b3e3b64a9264fa5cae60b27a8fbf, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44058412, g: 0.48921537, b: 0.56935847, a: 1}
+  m_IndirectSpecularColor: {r: 0.25377524, g: 0.46429473, b: 0.78751594, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -221,6 +221,7 @@ Transform:
   - {fileID: 206851374}
   - {fileID: 725891946}
   - {fileID: 1716443914}
+  - {fileID: 2034767316}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &206851373
@@ -238,7 +239,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &206851374
 Transform:
   m_ObjectHideFlags: 0
@@ -675,6 +676,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textMeshPro: {fileID: 439713266}
+  world: {fileID: 699955241}
   FirstCamera: {fileID: 458402023}
 --- !u!114 &439713266
 MonoBehaviour:
@@ -1259,16 +1261,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5a2505646a31148878c810f0e06954, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: f7b0d38390e6ff445a1600a5322e29a2, type: 2}
+  material: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
   blocktypes:
   - blockName: BedRock
     isSolid: 1
-    backFaceTexture: 9
-    frontFaceTexture: 9
-    topFaceTexture: 9
-    bottomFaceTexture: 9
-    leftFaceTexture: 9
-    rightFaceTexture: 9
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 17
+    bottomFaceTexture: 17
+    leftFaceTexture: 17
+    rightFaceTexture: 17
   - blockName: Stone
     isSolid: 1
     backFaceTexture: 0
@@ -1281,7 +1283,7 @@ MonoBehaviour:
     isSolid: 1
     backFaceTexture: 2
     frontFaceTexture: 2
-    topFaceTexture: 7
+    topFaceTexture: 11
     bottomFaceTexture: 1
     leftFaceTexture: 2
     rightFaceTexture: 2
@@ -1303,20 +1305,47 @@ MonoBehaviour:
     rightFaceTexture: 1
   - blockName: Sand
     isSolid: 1
-    backFaceTexture: 10
-    frontFaceTexture: 10
+    backFaceTexture: 18
+    frontFaceTexture: 18
+    topFaceTexture: 18
+    bottomFaceTexture: 18
+    leftFaceTexture: 18
+    rightFaceTexture: 18
+  - blockName: wood
+    isSolid: 1
+    backFaceTexture: 9
+    frontFaceTexture: 9
     topFaceTexture: 10
     bottomFaceTexture: 10
-    leftFaceTexture: 10
-    rightFaceTexture: 10
+    leftFaceTexture: 9
+    rightFaceTexture: 9
+  - blockName: leave
+    isSolid: 1
+    backFaceTexture: 5
+    frontFaceTexture: 5
+    topFaceTexture: 5
+    bottomFaceTexture: 5
+    leftFaceTexture: 5
+    rightFaceTexture: 5
+  - blockName: water
+    isSolid: 1
+    backFaceTexture: 4
+    frontFaceTexture: 4
+    topFaceTexture: 4
+    bottomFaceTexture: 4
+    leftFaceTexture: 4
+    rightFaceTexture: 4
   renderSize: 5
   StartToRender: 1
   noise2d_scale_smooth: 0.01
   noise2d_scale_steep: 0.04
   noise3d_scale: 0.085
   soil_min: 15
-  soil_max: 55
+  soil_max: 60
   sea_level: 30
+  TreeCount: 5
+  TreeHigh_min: 5
+  TreeHigh_max: 7
   Block_transforms:
   - {fileID: 1910341661}
   - {fileID: 1496701866}
@@ -1330,6 +1359,7 @@ MonoBehaviour:
   - {fileID: 582433691}
   ERROR_CODE_OUTOFVOXELMAP: 255
   Start_Position: {x: 1600, y: 63, z: 1600}
+  foot_BlockType: None
   isBlock: 0
   isnearblock: 0
   InitCorountineDelay: 0.1
@@ -2160,7 +2190,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1357337470
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2946,6 +2976,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2034767315
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2034767316}
+  m_Layer: 0
+  m_Name: "\u66F4\u65B0github\u7684\u56FE\u7247"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2034767316
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2034767315}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 178200458}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2045659060
 GameObject:
   m_ObjectHideFlags: 0
