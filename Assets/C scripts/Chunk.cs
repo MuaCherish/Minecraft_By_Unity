@@ -39,9 +39,47 @@ public class Chunk : MonoBehaviour {
     private int z;
 
     //初始化
+    //private void Start()
+    //{
+    //    world = _world;
+
+    //    Copy_All_Chunks = world.Allchunks;
+
+    //    noise2d_scale_smooth = world.noise2d_scale_smooth;
+    //    noise2d_scale_steep = world.noise2d_scale_steep;
+    //    noise3d_scale = world.noise3d_scale;
+
+    //    x = 0;
+    //    y = 0;
+    //    z = 0;
+
+    //    treecount = world.TreeCount;
+
+    //    chunkObject = new GameObject();
+    //    meshFilter = chunkObject.AddComponent<MeshFilter>();
+    //    meshRenderer = chunkObject.AddComponent<MeshRenderer>();
+    //    meshRenderer.sharedMaterial = world.material;
+    //    chunkObject.transform.SetParent(world.transform);
+
+    //    chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
+    //    chunkObject.name = thisPosition.x + ", " + thisPosition.z;
+
+    //    //noise2d_plain = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise(chunkObject.transform.position.x * 0.12f,chunkObject.transform.position.z * 0.12f));
+    //    //print($"当前坐标：{chunkObject.name}，查询的allchunk：{Copy_All_Chunks.Count}");
+    //    ThisChunkLocation = thisPosition;
+
+    //    //先创建数据
+    //    PopulateVoxelMap();
+
+    //    //开始遍历，生成数据
+    //    UpdateChunk();
+    //}
+
     public Chunk(Vector3 thisPosition, World _world)
     {
         world = _world;
+
+        UnityEngine.Random.InitState(world.Seed);
 
         Copy_All_Chunks = world.Allchunks;
 
@@ -74,7 +112,7 @@ public class Chunk : MonoBehaviour {
         //开始遍历，生成数据
         UpdateChunk();
 
-
+        
     }
 
     //方块类型的初始化
@@ -98,6 +136,7 @@ public class Chunk : MonoBehaviour {
                      6：木头
                      7：树叶
                      8：水
+                     9：煤炭
 					*/
 
 
@@ -113,6 +152,8 @@ public class Chunk : MonoBehaviour {
                     }
                     else
                     {
+
+
 
                         //三个2d噪声
                         float noise2d_1 = Mathf.Lerp((float)world.soil_min, (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
@@ -181,6 +222,7 @@ public class Chunk : MonoBehaviour {
 
                             //判断空气
                             float noise3d = Noise.Perlin3D((float)x * noise3d_scale + chunkObject.transform.position.x * noise3d_scale, (float)y * noise3d_scale + y * noise3d_scale, (float)z * noise3d_scale + chunkObject.transform.position.z * noise3d_scale); // 将100改为0.1
+                            int random_Coal = UnityEngine.Random.Range(0,100);
 
                             if (noise3d < 0.4f)
                             {
@@ -188,7 +230,15 @@ public class Chunk : MonoBehaviour {
                             }
                             else
                             {
-                                voxelMap[x, y, z] = 1;
+                                if (random_Coal < 2)
+                                {
+                                    voxelMap[x, y, z] = 9;
+                                }
+                                else
+                                {
+                                    voxelMap[x, y, z] = 1;
+                                }
+                                
                             }
 
 
@@ -375,8 +425,13 @@ public class Chunk : MonoBehaviour {
             for (x = 0; x < VoxelData.ChunkWidth; x++) {
                 for (z = 0; z < VoxelData.ChunkWidth; z++) {
 
-                    if (world.blocktypes[voxelMap[x, y, z]].isSolid)
+                    if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == 8)
                     {
+                        //if (voxelMap[x, y, z] == 8)
+                        //{
+                        //    print("");
+                        //}
+
                         UpdateMeshData(new Vector3(x, y, z));
                     }
 
@@ -431,6 +486,8 @@ public class Chunk : MonoBehaviour {
             //{
             //	print("");
             //}
+
+            
 
 
             //自己是不是空气
@@ -539,6 +596,32 @@ public class Chunk : MonoBehaviour {
         else if((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && voxelMap[x,y,z] == 4)
 		{
             return true;
+        }else if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 8 && voxelMap[x, y, z] == 8)
+        {
+            return true;
+        }
+        else
+        {
+            //如果自己是水
+            //if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 8)
+            //{
+            //    //上方时
+            //    if (_p == 2 || voxelMap[x, y, z] == 4)
+            //    {
+            //        return false;
+            //    }
+            //    else // 前后左右一律不生成
+            //    {
+            //        return true;
+            //    }
+            //}
+
+            //(如果自己是水，目标是空气) || (自己是空气，目标是水)
+            if ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 8 && voxelMap[x, y, z] == 4) || (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4 && voxelMap[x, y, z] == 8))
+            {
+                return false;
+            }
+
         }
 
 
@@ -552,11 +635,13 @@ public class Chunk : MonoBehaviour {
 		//判断六个面
 		for (int p = 0; p < 6; p++) {
 
-            //if (pos == new Vector3(16,32,16))
+            //if (x == 10 && y == 37 && z == 14)
             //{
             //    print("");
             //}
 
+            //voxelMap[pos + VoxelData.faceChecks[p]]
+            //Debug.Log(pos);
 
             if (!CheckVoxel(pos + VoxelData.faceChecks[p],p)) {
 
@@ -626,6 +711,18 @@ public class Chunk : MonoBehaviour {
     public void DestroyChunk()
     {
 		Destroy(chunkObject);
+    }
+
+    //隐藏自己
+    public void HideChunk()
+    {
+        chunkObject.SetActive(false);
+    }
+
+    //显示自己
+    public void ShowChunk()
+    {
+        chunkObject.SetActive(true);
     }
 
 }

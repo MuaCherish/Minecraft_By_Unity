@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public Camera FirstPersonCamera;
     public Camera ThirdPersonCamera;
     public Transform cam;
+    public GameObject ThirdCam;
 
     // Player Object
     private GameObject Player_Object;
@@ -87,8 +88,9 @@ public class PlayerController : MonoBehaviour
     //UI Manager
     //public GameObject UIManager;
     public CanvasManager CanvasManager;
-
+    public GameObject EscScreen;
     bool hasExec = true;
+    bool isEscing = false;
 
 
 
@@ -167,6 +169,23 @@ public class PlayerController : MonoBehaviour
             debugscreen.SetActive(!debugscreen.activeSelf);
         }
 
+
+        //EscScreen
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isEscing = !isEscing;
+            //Debug.Log($"{isEscing}");
+            EscScreen.SetActive(!EscScreen.activeSelf);
+        }
+
+        //QuitGame
+        if (Input.GetKeyDown(KeyCode.Q) && isEscing)
+        {
+            //Debug.Log("isQuiting");
+            Application.Quit();
+        }
+
+
         // 移动
         horizontalInput = Input.GetAxisRaw("Horizontal") * (Input.GetKey(KeyCode.LeftShift) ? Move_Speed * shift_scale : Move_Speed);
         verticalInput = Input.GetAxisRaw("Vertical") * (Input.GetKey(KeyCode.LeftShift) ? Move_Speed * shift_scale : Move_Speed);
@@ -193,6 +212,11 @@ public class PlayerController : MonoBehaviour
             velocity.y -= gravity * Time.deltaTime;  // 在空中时应用重力
         }
 
+        //swiming
+        //if (world.isSwiming)
+        //{
+        //    velocity.y -= 0.5f * gravity * Time.deltaTime;
+        //}
 
         // 获取玩家摄像机切换
         if (Input.GetKeyDown(KeyCode.V))
@@ -541,6 +565,7 @@ public class PlayerController : MonoBehaviour
         // 切换摄像机状态
         if (FirstPersonCamera.enabled)
         {
+            ThirdCam.SetActive(true);
             EnableCamera(ThirdPersonCamera);
             DisableCamera(FirstPersonCamera);
         }

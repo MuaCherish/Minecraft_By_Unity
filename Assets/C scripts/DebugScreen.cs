@@ -68,11 +68,15 @@ public class DebugScreen : MonoBehaviour
     {
         //textMeshPro.text += $"\n";
         textMeshPro.text = $"FPS:{Mathf.Ceil(fps):F2}\n";
+        textMeshPro.text += $"PlayerChunkPosition:{world.GetChunkLocation(world.Block_transforms[5].position)}\n";
+        textMeshPro.text += $"PlayerRelaPosition:{world.GetRelalocation(world.Block_transforms[5].position)}\n";
         textMeshPro.text += $"PlayerInput:<{playercontroller.verticalInput},{playercontroller.horizontalInput}>\n";
         //textMeshPro.text += $"theta:{playercontroller.theta}\n";
         textMeshPro.text += $"BlockDirection:{Block_Direction}\n";
         textMeshPro.text += $"Ray.Length: {playercontroller.ray_length:F2}\n";
-        textMeshPro.text += $"Ground£º{world.foot_BlockType}\n";
+        textMeshPro.text += $"Ground:{world.foot_BlockType}\n";
+        textMeshPro.text += $"isGround:{world.isBlock}\n";
+        textMeshPro.text += $"isSwiming:{world.isSwiming}\n";
     }
 
 }
