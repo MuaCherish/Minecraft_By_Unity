@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 //using static UnityEditor.PlayerSettings;
 //using static UnityEditor.Progress;
@@ -16,9 +17,10 @@ public class World : MonoBehaviour
 
     [Header("World-渲染设置")]
     [Tooltip("4就是边长为4*16的正方形")]
-    public int renderSize = 4; //渲染区块半径,即renderSize*16f
+    public int renderSize = 5; //渲染区块半径,即renderSize*16f
     [Tooltip("2就是接近2*16的时候开始刷新区块")]
     public float StartToRender = 2f;
+    //public float LookToRender = 1f;
 
     [Header("噪声采样比例(越小拉的越长)")]
     public float noise2d_scale_smooth = 0.01f;
@@ -27,6 +29,7 @@ public class World : MonoBehaviour
 
 
     [Header("Chunk-分层结构")]
+    public int Seed = 0;
     [Range(0, 60)]
     public float soil_min = 15;
     [Range(0, 60)]
@@ -56,6 +59,8 @@ public class World : MonoBehaviour
     Chunk chunktemp;
     [HideInInspector]
     public bool isBlock = false;
+    [HideInInspector]
+    public bool isSwiming = false;
     [HideInInspector]
     public bool isnearblock = false;
     public bool[,] BlockDirection = new bool[1,10];
@@ -94,48 +99,25 @@ public class World : MonoBehaviour
     [HideInInspector]
     public float initprogress = 0f;
 
+
+
+
+
+
+
     private void Start()
     {
         Application.targetFrameRate = 120;
 
+        // 设置种子值
+        Seed = Random.Range(0, 100);
+
+        sea_level = Random.Range(20, 38);
     }
-
-
-
-    IEnumerator Init_Map_Thread()
-    {
-        Center_Now = new Vector3(Block_transforms[5].transform.position.x, 0, Block_transforms[5].transform.position.z);
-
-        //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        //sphere.transform.position = Center_Now;
-        //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
-        float temp = 0f;
-
-        for (int x = -renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x++)
-        {
-            for (int z = -renderSize + (int)(Block_transforms[5].transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); z++)
-            {
-                CreateChunk(new Vector3(x, 0, z));
-
-
-                float max = renderSize * renderSize * 4;
-                temp++;
-                initprogress = Mathf.Lerp(0f,0.9f,temp / max);
-
-                yield return new WaitForSeconds(InitCorountineDelay);
-            }
-        }
-
-        Init_Player_Location();
-        initprogress = 1f;
-
-
-        yield return null;
-    }
-
 
     private void Update()
     {
+        //初始化地图
         if (CanvasManager.OnclickToInitMap)
         {
             StartCoroutine(Init_Map_Thread());
@@ -143,7 +125,7 @@ public class World : MonoBehaviour
         }
 
 
-
+        //游戏开始
         if (CanvasManager.isGamePlaying)
         {
             //如果大于16f
@@ -152,10 +134,13 @@ public class World : MonoBehaviour
                 //更新Center
                 Center_direction = VtoNormal(Block_transforms[5].transform.position - Center_Now);
                 Center_Now += Center_direction * VoxelData.ChunkWidth;
+
                 //调试
                 //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 //sphere.transform.position = Center_Old;
                 //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
+
+                //添加Chunk
                 AddtoCreateChunks(Center_direction);
                 AddtoRemoveChunks(Center_direction);
             }
@@ -171,7 +156,7 @@ public class World : MonoBehaviour
 
     }
 
-   
+
 
 
 
@@ -179,7 +164,41 @@ public class World : MonoBehaviour
 
 
     //----------------------------------World Options---------------------------------------
+    //初始化地图
+    IEnumerator Init_Map_Thread()
+    {
+        Center_Now = new Vector3(Block_transforms[5].transform.position.x, 0, Block_transforms[5].transform.position.z);
 
+        //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //sphere.transform.position = Center_Now;
+        //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
+        float temp = 0f;
+
+        for (int x = -renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x++)
+        {
+            for (int z = -renderSize + (int)(Block_transforms[5].transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); z++)
+            {
+
+
+                //Create
+                CreateChunk(new Vector3(x, 0, z));
+
+
+                float max = renderSize * renderSize * 4;
+                temp++;
+                initprogress = Mathf.Lerp(0f, 0.9f, temp / max);
+
+                yield return new WaitForSeconds(InitCorountineDelay);
+            }
+        }
+
+        Init_Player_Location();
+        yield return new WaitForSeconds(1f);
+        initprogress = 1f;
+
+
+        yield return null;
+    }
     //--------------------------------------------------------------------------------------
 
 
@@ -306,7 +325,15 @@ public class World : MonoBehaviour
         
         Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this);
 
-         Allchunks.Add(pos, chunk_temp);
+
+        //判断一下是否在可视范围内，设置它的可见性
+        //if ((GetChunkLocation(Center_Now) - pos).magnitude > LookToRender)
+        //{
+        //    chunk_temp.HideChunk();
+        //}
+
+
+        Allchunks.Add(pos, chunk_temp);
     }
     //--------------------------------------------------------------------------------------
 
@@ -465,6 +492,7 @@ public class World : MonoBehaviour
             case 6: foot_BlockType = "Wood"; break;
             case 7: foot_BlockType = "Leaves"; break;
             case 8: foot_BlockType = "Water"; break;
+            case 9: foot_BlockType = "Coal"; break;
             default: foot_BlockType = "None"; break;
         }
     }
@@ -512,17 +540,39 @@ public class World : MonoBehaviour
             if (GetBlockType(Block_transforms[i].position) != 4 && GetBlockType(Block_transforms[i].position) != ERROR_CODE_OUTOFVOXELMAP)
             {
                 isnearblock = true;
-                BlockDirection[0,i] = true;
+                BlockDirection[0, i] = true;
+            } 
+            //else if(GetBlockType(Block_transforms[i].position) == 8 && i == 5）
+            //{
 
-            //如果5不是空气，则判定为离地
-            }else if (GetBlockType(Block_transforms[i].position) == 4 && i == 5)
+            //    isSwiming = true;
+            
+
+            
+            //}
+            //如果5是空气，则判定为离地
+            else if (GetBlockType(Block_transforms[i].position) == 4 && i == 5)
             {
                 isBlock = false;
+                isSwiming = false;
+
+
             }
             else
             {
                 BlockDirection[0,i] = false;
+                
             }
+
+            //swiming
+            if (GetBlockType(Block_transforms[i].position) == 8 && i == 5)
+            {
+                isSwiming = true;
+            }
+            
+
+
+
         }
         
     }

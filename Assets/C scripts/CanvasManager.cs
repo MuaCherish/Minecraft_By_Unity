@@ -23,10 +23,7 @@ public class CanvasManager : MonoBehaviour
     [HideInInspector]
     public bool OnclickToInitMap = false;
 
-    private void Start()
-    {
-        //world = worldObject.GetComponent<World>();
-    }
+    
 
 
     //当点击开始游戏时
@@ -39,7 +36,12 @@ public class CanvasManager : MonoBehaviour
         //world.StartToUnitMap();
     }
 
-
+    //Quit Game
+    //public void QuitGame()
+    //{
+    //    Debug.Log("isQuiting");
+    //    Application.Quit();
+    //}
 
 
     //当加载完成时

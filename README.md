@@ -11,7 +11,11 @@ A long-term project from beginner
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/6.png" width="600px">
 
 - Mine and terrain statification
-<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/2.png" width="600px">
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/7.png" width="600px">
+
+- Map
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/map1.png" width="600px">
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/map2.png" width="600px">
 
 ## 🗒️My Plans
 - [X] ~~Learn how to generate a face~~
@@ -20,7 +24,7 @@ A long-term project from beginner
 - [X] ~~The PerlinNoise 2d and 3d To Generate Terrain~~
 - [X] ~~Try to use Coroutine~~
 - [X] ~~Add Character Conotroller~~
-- [ ] May be Add some flowers or Tree?
+- [X] ~~May be Add some flowers or Tree?~~
 - [ ] Biological system
 - [ ] Better picture quality..
 - [ ] More stuff? maybe
@@ -29,4 +33,3 @@ A long-term project from beginner
 ## 📽️Reference video：
 1. [https://www.youtube.com/watch?v=CSa5O6knuwI]
 2. [https://www.youtube.com/watch?v=Nj8gt_92c-M]
-3. [https://www.youtube.com/watch?v=h66IN1Pndd0&t=1087s]
