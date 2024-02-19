@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chunk : MonoBehaviour {
+public class Chunk : MonoBehaviour
+{
 
     //组件
     //public ChunkCoord coord;
@@ -30,81 +31,35 @@ public class Chunk : MonoBehaviour {
     private float noise3d_scale;
 
     //全部chunks
-    private Dictionary<Vector3, Chunk> Copy_All_Chunks;
-    private Vector3 ThisChunkLocation;
-    //private bool hasExec = true;
-    //private Vector3 localVec;
     private int x;
     private int y;
     private int z;
 
-    //初始化
-    //private void Start()
-    //{
-    //    world = _world;
 
-    //    Copy_All_Chunks = world.Allchunks;
-
-    //    noise2d_scale_smooth = world.noise2d_scale_smooth;
-    //    noise2d_scale_steep = world.noise2d_scale_steep;
-    //    noise3d_scale = world.noise3d_scale;
-
-    //    x = 0;
-    //    y = 0;
-    //    z = 0;
-
-    //    treecount = world.TreeCount;
-
-    //    chunkObject = new GameObject();
-    //    meshFilter = chunkObject.AddComponent<MeshFilter>();
-    //    meshRenderer = chunkObject.AddComponent<MeshRenderer>();
-    //    meshRenderer.sharedMaterial = world.material;
-    //    chunkObject.transform.SetParent(world.transform);
-
-    //    chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
-    //    chunkObject.name = thisPosition.x + ", " + thisPosition.z;
-
-    //    //noise2d_plain = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise(chunkObject.transform.position.x * 0.12f,chunkObject.transform.position.z * 0.12f));
-    //    //print($"当前坐标：{chunkObject.name}，查询的allchunk：{Copy_All_Chunks.Count}");
-    //    ThisChunkLocation = thisPosition;
-
-    //    //先创建数据
-    //    PopulateVoxelMap();
-
-    //    //开始遍历，生成数据
-    //    UpdateChunk();
-    //}
-
+    //Start()
     public Chunk(Vector3 thisPosition, World _world)
     {
+        //从world获取参数
         world = _world;
-
         UnityEngine.Random.InitState(world.Seed);
-
-        Copy_All_Chunks = world.Allchunks;
-
         noise2d_scale_smooth = world.noise2d_scale_smooth;
         noise2d_scale_steep = world.noise2d_scale_steep;
         noise3d_scale = world.noise3d_scale;
+        treecount = world.TreeCount;
 
+        //坐标
         x = 0;
         y = 0;
         z = 0;
 
-        treecount = world.TreeCount;
-
+        //ChunkObject
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = world.material;
-        chunkObject.transform.SetParent(world.transform);
-
+        chunkObject.transform.SetParent(world.Chunks.transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
         chunkObject.name = thisPosition.x + ", " + thisPosition.z;
-
-        //noise2d_plain = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise(chunkObject.transform.position.x * 0.12f,chunkObject.transform.position.z * 0.12f));
-        //print($"当前坐标：{chunkObject.name}，查询的allchunk：{Copy_All_Chunks.Count}");
-        ThisChunkLocation = thisPosition;
 
         //先创建数据
         PopulateVoxelMap();
@@ -112,18 +67,21 @@ public class Chunk : MonoBehaviour {
         //开始遍历，生成数据
         UpdateChunk();
 
-        
     }
 
     //方块类型的初始化
-    void PopulateVoxelMap() {
+    void PopulateVoxelMap()
+    {
 
 
 
         //对一个chunk进行遍历
-        for (int y = 0; y < VoxelData.ChunkHeight; y++) {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++) {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++) {
+        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        {
+            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            {
+                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                {
 
 
                     /*
@@ -146,7 +104,8 @@ public class Chunk : MonoBehaviour {
                     if (y == 0)
                     {
                         voxelMap[x, y, z] = 0;
-                    } else if (y > 0 && y < 3 && randomInt == 1)
+                    }
+                    else if (y > 0 && y < 3 && randomInt == 1)
                     {
                         voxelMap[x, y, z] = 0;
                     }
@@ -194,10 +153,11 @@ public class Chunk : MonoBehaviour {
                             {
                                 voxelMap[x, y, z] = 4;
                             }
-                            
 
 
-                        } else if ((y + 1) > noiseHigh)
+
+                        }
+                        else if ((y + 1) > noiseHigh)
                         {
                             if (y > world.sea_level)
                             {
@@ -208,10 +168,12 @@ public class Chunk : MonoBehaviour {
                                 voxelMap[x, y, z] = 5;
                             }
 
-                        } else if (y > noiseHigh - 7)
+                        }
+                        else if (y > noiseHigh - 7)
                         {
                             voxelMap[x, y, z] = 3;
-                        } else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && randomInt == 1)
+                        }
+                        else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && randomInt == 1)
                         {
                             voxelMap[x, y, z] = 3;
                         }
@@ -221,8 +183,8 @@ public class Chunk : MonoBehaviour {
 
 
                             //判断空气
-                            float noise3d = Noise.Perlin3D((float)x * noise3d_scale + chunkObject.transform.position.x * noise3d_scale, (float)y * noise3d_scale + y * noise3d_scale, (float)z * noise3d_scale + chunkObject.transform.position.z * noise3d_scale); // 将100改为0.1
-                            int random_Coal = UnityEngine.Random.Range(0,100);
+                            float noise3d = Perlin3D((float)x * noise3d_scale + chunkObject.transform.position.x * noise3d_scale, (float)y * noise3d_scale + y * noise3d_scale, (float)z * noise3d_scale + chunkObject.transform.position.z * noise3d_scale); // 将100改为0.1
+                            int random_Coal = UnityEngine.Random.Range(0, 100);
 
                             if (noise3d < 0.4f)
                             {
@@ -238,7 +200,7 @@ public class Chunk : MonoBehaviour {
                                 {
                                     voxelMap[x, y, z] = 1;
                                 }
-                                
+
                             }
 
 
@@ -258,10 +220,8 @@ public class Chunk : MonoBehaviour {
         CreateTree();
 
         //voxelMap[0, 0, 0] = 6;
-
+        //isVoxelMapPopulated = true;
     }
-
-
 
     //tree
     void CreateTree()
@@ -332,7 +292,7 @@ public class Chunk : MonoBehaviour {
         {
             SetLeaves(_x, _y + 1, _z);
         }
-        else if(randomInt == 1)
+        else if (randomInt == 1)
         {
             SetLeaves(_x, _y + 1, _z + 1);
             SetLeaves(_x - 1, _y + 1, _z);
@@ -402,10 +362,10 @@ public class Chunk : MonoBehaviour {
     }
 
     //leaves设定值，防止碰到树木
-    void SetLeaves(int x,int y,int z)
+    void SetLeaves(int x, int y, int z)
     {
         //如果是固体，就不用生成树叶了
-        if (voxelMap[x,y,z] != 4)
+        if (voxelMap[x, y, z] != 4)
         {
             return;
         }
@@ -417,13 +377,17 @@ public class Chunk : MonoBehaviour {
 
 
     //开始遍历
-    public void UpdateChunk() {
+    public void UpdateChunk()
+    {
 
         ClearMeshData();
 
-        for (y = 0; y < VoxelData.ChunkHeight; y++) {
-            for (x = 0; x < VoxelData.ChunkWidth; x++) {
-                for (z = 0; z < VoxelData.ChunkWidth; z++) {
+        for (y = 0; y < VoxelData.ChunkHeight; y++)
+        {
+            for (x = 0; x < VoxelData.ChunkWidth; x++)
+            {
+                for (z = 0; z < VoxelData.ChunkWidth; z++)
+                {
 
                     if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == 8)
                     {
@@ -466,28 +430,29 @@ public class Chunk : MonoBehaviour {
         UpdateChunk();
     }
 
-	//面生成的判断
+    //面生成的判断
     //是方块吗----Y不绘制----N绘制
     //靠近边界----也返回N
-    bool CheckVoxel (Vector3 pos,int _p) {
+    bool CheckVoxel(Vector3 pos, int _p)
+    {
 
-		int x = Mathf.FloorToInt (pos.x);
-		int y = Mathf.FloorToInt (pos.y);
-		int z = Mathf.FloorToInt (pos.z);
+        int x = Mathf.FloorToInt(pos.x);
+        int y = Mathf.FloorToInt(pos.y);
+        int z = Mathf.FloorToInt(pos.z);
 
-		//print($"{x},{y},{z}");
+        //print($"{x},{y},{z}");
 
 
-		//如果目标出界
-		if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1)
-		{
+        //如果目标出界
+        if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1)
+        {
 
             //if (ThisChunkLocation == new Vector3(100f,0f,99f))
             //{
             //	print("");
             //}
 
-            
+
 
 
             //自己是不是空气
@@ -593,10 +558,11 @@ public class Chunk : MonoBehaviour {
 
 
         }//另判断自己和目标是不是空气
-        else if((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && voxelMap[x,y,z] == 4)
-		{
+        else if ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && voxelMap[x, y, z] == 4)
+        {
             return true;
-        }else if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 8 && voxelMap[x, y, z] == 8)
+        }
+        else if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 8 && voxelMap[x, y, z] == 8)
         {
             return true;
         }
@@ -625,15 +591,17 @@ public class Chunk : MonoBehaviour {
         }
 
 
-        return world.blocktypes[voxelMap [x, y, z]].isSolid;
+        return world.blocktypes[voxelMap[x, y, z]].isSolid;
 
     }
 
     //遍历中：：顺带判断面的生成方向
-    void UpdateMeshData (Vector3 pos) {
+    void UpdateMeshData(Vector3 pos)
+    {
 
-		//判断六个面
-		for (int p = 0; p < 6; p++) {
+        //判断六个面
+        for (int p = 0; p < 6; p++)
+        {
 
             //if (x == 10 && y == 37 && z == 14)
             //{
@@ -643,74 +611,76 @@ public class Chunk : MonoBehaviour {
             //voxelMap[pos + VoxelData.faceChecks[p]]
             //Debug.Log(pos);
 
-            if (!CheckVoxel(pos + VoxelData.faceChecks[p],p)) {
+            if (!CheckVoxel(pos + VoxelData.faceChecks[p], p))
+            {
 
                 byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
 
-                vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 0]]);
-				vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 1]]);
-				vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 2]]);
-				vertices.Add (pos + VoxelData.voxelVerts [VoxelData.voxelTris [p, 3]]);
+                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
+                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
+                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
+                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
 
-				//uvs.Add (VoxelData.voxelUvs [0]);
-				//uvs.Add (VoxelData.voxelUvs [1]);
-				//uvs.Add (VoxelData.voxelUvs [2]);
-				//uvs.Add (VoxelData.voxelUvs [3]);
-				//AddTexture(1);
+                //uvs.Add (VoxelData.voxelUvs [0]);
+                //uvs.Add (VoxelData.voxelUvs [1]);
+                //uvs.Add (VoxelData.voxelUvs [2]);
+                //uvs.Add (VoxelData.voxelUvs [3]);
+                //AddTexture(1);
 
-				//根据p生成对应的面，对应的UV
+                //根据p生成对应的面，对应的UV
                 AddTexture(world.blocktypes[blockID].GetTextureID(p));
 
-                triangles.Add (vertexIndex);
-				triangles.Add (vertexIndex + 1);
-				triangles.Add (vertexIndex + 2);
-				triangles.Add (vertexIndex + 2);
-				triangles.Add (vertexIndex + 1);
-				triangles.Add (vertexIndex + 3);
-				vertexIndex += 4;
+                triangles.Add(vertexIndex);
+                triangles.Add(vertexIndex + 1);
+                triangles.Add(vertexIndex + 2);
+                triangles.Add(vertexIndex + 2);
+                triangles.Add(vertexIndex + 1);
+                triangles.Add(vertexIndex + 3);
+                vertexIndex += 4;
 
-			}
-		}
+            }
+        }
 
-	}
+    }
 
-	//最后生成网格体
-	void CreateMesh () {
+    //最后生成网格体
+    void CreateMesh()
+    {
 
-		Mesh mesh = new Mesh ();
-		mesh.vertices = vertices.ToArray ();
-		mesh.triangles = triangles.ToArray ();
-		mesh.uv = uvs.ToArray ();
+        Mesh mesh = new Mesh();
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.uv = uvs.ToArray();
         mesh.Optimize();
-        mesh.RecalculateNormals ();
-		meshFilter.mesh = mesh;
+        mesh.RecalculateNormals();
+        meshFilter.mesh = mesh;
 
-	}
+    }
 
-	//生成面——UV的处理
-	void AddTexture(int textureID)
-	{
+    //生成面——UV的处理
+    void AddTexture(int textureID)
+    {
 
-		float y = textureID / VoxelData.TextureAtlasSizeInBlocks;
-		float x = textureID - (y * VoxelData.TextureAtlasSizeInBlocks);
+        float y = textureID / VoxelData.TextureAtlasSizeInBlocks;
+        float x = textureID - (y * VoxelData.TextureAtlasSizeInBlocks);
 
-		x *= VoxelData.NormalizedBlockTextureSize;
-		y *= VoxelData.NormalizedBlockTextureSize;
+        x *= VoxelData.NormalizedBlockTextureSize;
+        y *= VoxelData.NormalizedBlockTextureSize;
 
-		y = 1f - y - VoxelData.NormalizedBlockTextureSize;
+        y = 1f - y - VoxelData.NormalizedBlockTextureSize;
 
-		uvs.Add(new Vector2(x, y));
-		uvs.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
-		uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
-		uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
+        uvs.Add(new Vector2(x, y));
+        uvs.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
+        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
+        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
 
 
-	}
+    }
 
-	//销毁自己
+    //销毁自己
     public void DestroyChunk()
     {
-		Destroy(chunkObject);
+        Destroy(chunkObject);
     }
 
     //隐藏自己
@@ -723,6 +693,23 @@ public class Chunk : MonoBehaviour {
     public void ShowChunk()
     {
         chunkObject.SetActive(true);
+    }
+
+    //3d噪声
+    public static float Perlin3D(float x, float y, float z)
+    {
+
+        float AB = Mathf.PerlinNoise(x, y);
+        float BC = Mathf.PerlinNoise(y, z);
+        float AC = Mathf.PerlinNoise(x, z);
+
+        float BA = Mathf.PerlinNoise(y, x);
+        float CB = Mathf.PerlinNoise(z, y);
+        float CA = Mathf.PerlinNoise(z, x);
+
+        float ABC = AB + BC + AC + BA + CB + CA;
+        return ABC / 6f;
+
     }
 
 }
