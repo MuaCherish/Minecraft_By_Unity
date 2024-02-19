@@ -7,47 +7,41 @@ using UnityEngine.UI;
 public class CanvasManager : MonoBehaviour
 {
 
+    [Header("Screen")]
     public GameObject StartScreen;
     public GameObject LoadingScreen;
+    public GameObject debugscreen;
+    public GameObject EscScreen;
     public GameObject CursorCross;
+
+    [Header("UI")]
     public Slider slider;
     public TextMeshProUGUI tmp;
     public GameObject scrollbar;
 
-    public bool isLoading = false;
-    public bool isGamePlaying = false;
+    //游戏状态判断
+    bool isEscing = false;
 
-    //world
-    //public GameObject worldObject;
+    //world 
     public World world;
-    [HideInInspector]
-    public bool OnclickToInitMap = false;
-
-    
 
 
-    //当点击开始游戏时
+    //开始界面 -> 加载界面
     public void OnClickEvent()
     {
+        //界面显示
         StartScreen.SetActive(false);
         LoadingScreen.SetActive(true);
-        OnclickToInitMap = true;
-        isLoading = true;
-        //world.StartToUnitMap();
+
+
+        world.game_state = Game_State.Loading;
     }
 
-    //Quit Game
-    //public void QuitGame()
-    //{
-    //    Debug.Log("isQuiting");
-    //    Application.Quit();
-    //}
-
-
-    //当加载完成时
+    //加载界面 -> 游戏界面
     private void Update()
     {
-        if (isLoading)
+        //加载中
+        if (world.game_state == Game_State.Loading)
         {
             //Slider
             slider.value = world.initprogress;
@@ -56,26 +50,45 @@ public class CanvasManager : MonoBehaviour
             tmp.text = $"{(world.initprogress * 100):F2} %";
 
             //ScrollBar
-            //X:1~3.46
-            //Y:1~3.15
-            float x = Mathf.Lerp(1f,3.46f,world.initprogress);
-            float y = Mathf.Lerp(1f,3.15f, world.initprogress);
-            scrollbar.transform.localScale = new Vector3(x,y,1f);
+            float x = Mathf.Lerp(1f, 3.46f, world.initprogress);
+            float y = Mathf.Lerp(1f, 3.15f, world.initprogress);
+            scrollbar.transform.localScale = new Vector3(x, y, 1f);
 
+            //如果进度条满了
             if (world.initprogress == 1)
             {
-                isLoading = false;
-
-                isGamePlaying = true;
-
+                world.game_state = Game_State.Playing;
             }
 
         }
 
-        if (isGamePlaying)
+        //加载完成
+        if (world.game_state == Game_State.Playing)
         {
             LoadingScreen.SetActive(false);
             CursorCross.SetActive(true);
+
+            //Debug面板
+            if (Input.GetKeyDown(KeyCode.F3))
+            {
+                debugscreen.SetActive(!debugscreen.activeSelf);
+            }
+
+            //EscScreen
+            //if (Input.GetKeyDown(KeyCode.Escape))
+            //{
+            //    isEscing = !isEscing;
+            //    //Debug.Log($"{isEscing}");
+            //    EscScreen.SetActive(!EscScreen.activeSelf);
+            //}
+
+            //QuitGame
+            if (Input.GetKeyDown(KeyCode.Q) && isEscing)
+            {
+                //Debug.Log("isQuiting");
+                Application.Quit();
+            }
+
         }
     }
 

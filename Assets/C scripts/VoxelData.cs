@@ -9,7 +9,6 @@ public static class VoxelData
     public static readonly int ChunkWidth = 16;
     public static readonly int ChunkHeight = 64;
 
-
     public static readonly int TextureAtlasSizeInBlocks = 8;
 
     public static float NormalizedBlockTextureSize
@@ -49,12 +48,10 @@ public static class VoxelData
     };
 
 
-
-
     //绘制序列
     public static readonly int[,] voxelTris = new int[6, 4] {
 
-		{0, 3, 1, 2}, // Back Face
+        {0, 3, 1, 2}, // Back Face
 		{5, 6, 4, 7}, // Front Face
 		{3, 7, 2, 6}, // Top Face
 		{1, 5, 0, 4}, // Bottom Face

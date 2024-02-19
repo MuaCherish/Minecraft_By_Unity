@@ -8,8 +8,17 @@ using UnityEngine;
 //using static UnityEditor.PlayerSettings;
 //using static UnityEditor.Progress;
 
+public enum Game_State
+{
+    Start, Loading, Playing,
+}
+
+
+
 public class World : MonoBehaviour
 {
+    [Header("游戏状态")]
+    public Game_State game_state = Game_State.Start;
 
     [Header("Material-方块类型")]
     public Material material;
@@ -20,7 +29,6 @@ public class World : MonoBehaviour
     public int renderSize = 5; //渲染区块半径,即renderSize*16f
     [Tooltip("2就是接近2*16的时候开始刷新区块")]
     public float StartToRender = 2f;
-    //public float LookToRender = 1f;
 
     [Header("噪声采样比例(越小拉的越长)")]
     public float noise2d_scale_smooth = 0.01f;
@@ -42,18 +50,16 @@ public class World : MonoBehaviour
 
 
     //玩家
-    [Header("Player-玩家碰撞盒")]
-    [Tooltip("Forward Back \n Left Right \n Up Down")]
-    public Transform[] Block_transforms = new Transform[10];
+    [Header("Player-玩家脚底坐标")]
+    public Transform PlayerFoot;
     [HideInInspector]
     public byte ERROR_CODE_OUTOFVOXELMAP = 255;
     [HideInInspector]
     public Vector3 Start_Position = new Vector3(1600f, 63f, 1600f);
     [HideInInspector]
     public string foot_BlockType = "None";
-    //public GameObject FirstCamera;
-    //private PlayerController playercontroller;
-    
+
+
 
     //isBlock
     Chunk chunktemp;
@@ -63,7 +69,7 @@ public class World : MonoBehaviour
     public bool isSwiming = false;
     [HideInInspector]
     public bool isnearblock = false;
-    public bool[,] BlockDirection = new bool[1,10];
+    public bool[,] BlockDirection = new bool[1, 10];
 
     //全部Chunk位置
     [HideInInspector]
@@ -91,48 +97,64 @@ public class World : MonoBehaviour
     private Vector3 Center_direction; //这个代表了方向
 
     //UI Manager
-    //public GameObject UIManager;
-    [Header("UI-UI设置")]
-    public CanvasManager CanvasManager;
-    //[HideInInspector]
-    //public bool isWorldInit = false;
     [HideInInspector]
     public float initprogress = 0f;
 
 
+    //Chunks父级
+    [HideInInspector]
+    public GameObject Chunks;
 
-
-
+    bool hasExec = true;
 
 
     private void Start()
     {
+        //帧数
         Application.targetFrameRate = 120;
+
+        //设置chunks
+        Chunks = new GameObject();
+        Chunks.name = "Chunks";
+        Chunks.transform.SetParent(GameObject.Find("Environment").transform);
 
         // 设置种子值
         Seed = Random.Range(0, 100);
 
+        //设置水平面
         sea_level = Random.Range(20, 38);
     }
 
     private void Update()
     {
         //初始化地图
-        if (CanvasManager.OnclickToInitMap)
+        if (game_state == Game_State.Loading)
         {
             StartCoroutine(Init_Map_Thread());
-            CanvasManager.OnclickToInitMap = false;
         }
 
 
         //游戏开始
-        if (CanvasManager.isGamePlaying)
+        if (game_state == Game_State.Playing)
         {
+
+            if (hasExec)
+            {
+                // 将鼠标锁定在屏幕中心
+                Cursor.lockState = CursorLockMode.Locked;
+                //鼠标不可视
+                Cursor.visible = false;
+
+                hasExec = false;
+            }
+
+
+
             //如果大于16f
-            if (GetVector3Length(Block_transforms[5].transform.position - Center_Now) > (StartToRender * 16f))
+            if (GetVector3Length(PlayerFoot.transform.position - Center_Now) > (StartToRender * 16f))
             {
                 //更新Center
-                Center_direction = VtoNormal(Block_transforms[5].transform.position - Center_Now);
+                Center_direction = VtoNormal(PlayerFoot.transform.position - Center_Now);
                 Center_Now += Center_direction * VoxelData.ChunkWidth;
 
                 //调试
@@ -146,7 +168,7 @@ public class World : MonoBehaviour
             }
 
             //碰撞判断
-            isHitWall();
+            //isHitWall();
 
             //更新脚下方块
             getFoodBlockType();
@@ -167,16 +189,16 @@ public class World : MonoBehaviour
     //初始化地图
     IEnumerator Init_Map_Thread()
     {
-        Center_Now = new Vector3(Block_transforms[5].transform.position.x, 0, Block_transforms[5].transform.position.z);
+        Center_Now = new Vector3(PlayerFoot.transform.position.x, 0, PlayerFoot.transform.position.z);
 
         //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //sphere.transform.position = Center_Now;
         //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
         float temp = 0f;
 
-        for (int x = -renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); x++)
+        for (int x = -renderSize + (int)(PlayerFoot.transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(PlayerFoot.transform.position.x / VoxelData.ChunkWidth); x++)
         {
-            for (int z = -renderSize + (int)(Block_transforms[5].transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(Block_transforms[5].transform.position.x / VoxelData.ChunkWidth); z++)
+            for (int z = -renderSize + (int)(PlayerFoot.transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(PlayerFoot.transform.position.x / VoxelData.ChunkWidth); z++)
             {
 
 
@@ -322,7 +344,7 @@ public class World : MonoBehaviour
         //GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         //cube.transform.position = new Vector3(x + chunkwidth / 2, 0, z + chunkwidth / 2);
         //cube.transform.localScale = new Vector3(chunkwidth, 1, chunkwidth);
-        
+
         Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this);
 
 
@@ -481,7 +503,7 @@ public class World : MonoBehaviour
     //获取脚下方块
     void getFoodBlockType()
     {
-        switch (GetBlockType(Block_transforms[5].transform.position))
+        switch (GetBlockType(PlayerFoot.transform.position))
         {
             case 0: foot_BlockType = "BedRock"; break;
             case 1: foot_BlockType = "Stone"; break;
@@ -501,7 +523,7 @@ public class World : MonoBehaviour
     public Vector3 GetChunkLocation(Vector3 vec)
     {
         return new Vector3((vec.x - vec.x % VoxelData.ChunkWidth) / VoxelData.ChunkWidth, 0, (vec.z - vec.z % VoxelData.ChunkWidth) / VoxelData.ChunkWidth);
-    
+
     }
 
     //Vector3 --> 大区块对象
@@ -521,61 +543,61 @@ public class World : MonoBehaviour
     }
 
     //判断是否撞墙
-    public void isHitWall()
-    {
-        isnearblock = false; // 将初始值设为false
-        isBlock = true;
+    //public void isHitWall()
+    //{
+    //    isnearblock = false; // 将初始值设为false
+    //    isBlock = true;
 
-        //遍历碰撞盒
-        for (int i = 0; i <= 9; i++)
-        {
+    //    //遍历碰撞盒
+    //    for (int i = 0; i <= 9; i++)
+    //    {
 
-            //if (GetBlockType(Block_transforms[i].position) == ERROR_CODE)
-            //{
-            //    // 处理跳跃数据
-            //    playercontroller.velocity.y -= playercontroller.gravity * Time.deltaTime;  // 在空中时应用重力
-            //}
-
-
-            if (GetBlockType(Block_transforms[i].position) != 4 && GetBlockType(Block_transforms[i].position) != ERROR_CODE_OUTOFVOXELMAP)
-            {
-                isnearblock = true;
-                BlockDirection[0, i] = true;
-            } 
-            //else if(GetBlockType(Block_transforms[i].position) == 8 && i == 5）
-            //{
-
-            //    isSwiming = true;
-            
-
-            
-            //}
-            //如果5是空气，则判定为离地
-            else if (GetBlockType(Block_transforms[i].position) == 4 && i == 5)
-            {
-                isBlock = false;
-                isSwiming = false;
+    //        //if (GetBlockType(Block_transforms[i].position) == ERROR_CODE)
+    //        //{
+    //        //    // 处理跳跃数据
+    //        //    playercontroller.velocity.y -= playercontroller.gravity * Time.deltaTime;  // 在空中时应用重力
+    //        //}
 
 
-            }
-            else
-            {
-                BlockDirection[0,i] = false;
-                
-            }
+    //        if (GetBlockType(PlayerFoot.position) != 4 && GetBlockType(PlayerFoot.position) != ERROR_CODE_OUTOFVOXELMAP)
+    //        {
+    //            isnearblock = true;
+    //            BlockDirection[0, i] = true;
+    //        }
+    //        //else if(GetBlockType(Block_transforms[i].position) == 8 && i == 5）
+    //        //{
 
-            //swiming
-            if (GetBlockType(Block_transforms[i].position) == 8 && i == 5)
-            {
-                isSwiming = true;
-            }
-            
+    //        //    isSwiming = true;
 
 
 
-        }
-        
-    }
+    //        //}
+    //        //如果5是空气，则判定为离地
+    //        else if (GetBlockType(Block_transforms[i].position) == 4 && i == 5)
+    //        {
+    //            isBlock = false;
+    //            isSwiming = false;
+
+
+    //        }
+    //        else
+    //        {
+    //            BlockDirection[0, i] = false;
+
+    //        }
+
+    //        //swiming
+    //        if (GetBlockType(Block_transforms[i].position) == 8 && i == 5)
+    //        {
+    //            isSwiming = true;
+    //        }
+
+
+
+
+    //    }
+
+    //}
 
     //返回方块类型
     public byte GetBlockType(Vector3 pos)
@@ -687,7 +709,22 @@ public class World : MonoBehaviour
     }
     //----------------------------------------------------------------------------------------
 
+    //对玩家碰撞盒的方块判断
+    public bool CheckForVoxel(Vector3 pos)
+    {
+        //计算相对坐标
+        Vector3 vec = GetRelalocation(new Vector3(pos.x, pos.y, pos.z));
 
+        //判断XOZ上有没有出界
+        if (!Allchunks.ContainsKey(GetChunkLocation(pos))) { return true; }
+
+        //判断Y上有没有出界
+        if (vec.y >= VoxelData.ChunkHeight) { return false; }
+
+        //返回固体还是空气
+        return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z]].isSolid;
+
+    }
 
 
 
@@ -738,5 +775,8 @@ public class BlockType
         }
 
     }
+
+
+
 
 }
