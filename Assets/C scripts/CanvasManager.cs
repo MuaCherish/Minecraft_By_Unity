@@ -17,7 +17,7 @@ public class CanvasManager : MonoBehaviour
     [Header("UI")]
     public Slider slider;
     public TextMeshProUGUI tmp;
-    public GameObject scrollbar;
+    public GameObject handle;
 
     //游戏状态判断
     bool isEscing = false;
@@ -32,7 +32,7 @@ public class CanvasManager : MonoBehaviour
         //界面显示
         StartScreen.SetActive(false);
         LoadingScreen.SetActive(true);
-
+        HideCursor();
 
         world.game_state = Game_State.Loading;
     }
@@ -50,9 +50,9 @@ public class CanvasManager : MonoBehaviour
             tmp.text = $"{(world.initprogress * 100):F2} %";
 
             //ScrollBar
-            float x = Mathf.Lerp(1f, 3.46f, world.initprogress);
-            float y = Mathf.Lerp(1f, 3.15f, world.initprogress);
-            scrollbar.transform.localScale = new Vector3(x, y, 1f);
+            float x = Mathf.Lerp(1f, 3.4f, world.initprogress);
+            float y = Mathf.Lerp(1f, 3.26f, world.initprogress);
+            handle.transform.localScale = new Vector3(x, y, 1f);
 
             //如果进度条满了
             if (world.initprogress == 1)
@@ -90,6 +90,14 @@ public class CanvasManager : MonoBehaviour
             }
 
         }
+    }
+
+    void HideCursor()
+    {
+        // 将鼠标锁定在屏幕中心
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        //鼠标不可视
+        UnityEngine.Cursor.visible = false;
     }
 
 

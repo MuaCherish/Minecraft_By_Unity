@@ -11,7 +11,7 @@ public class DebugScreen : MonoBehaviour
     //public PlayerController playercontroller;
     public Player player;
     public World world;
-    string Block_Direction;
+    //string Block_Direction;
 
     //º∆À„FPS
     private int count;
@@ -66,11 +66,11 @@ public class DebugScreen : MonoBehaviour
         textMeshPro.text += $"PlayerRelaPosition:{world.GetRelalocation(world.PlayerFoot.position)}\n";
         //textMeshPro.text += $"PlayerInput:<{playercontroller.verticalInput},{playercontroller.horizontalInput}>\n";
         textMeshPro.text += $"PlayerInput:<{player.verticalInput},{player.horizontalInput}>\n";
-        textMeshPro.text += $"BlockDirection:{Block_Direction}\n";
+        //textMeshPro.text += $"BlockDirection:{Block_Direction}\n";
         //textMeshPro.text += $"Ray.Length: {playercontroller.ray_length:F2}\n";
-        textMeshPro.text += $"Ground:{world.foot_BlockType}\n";
-        textMeshPro.text += $"isGround:{world.isBlock}\n";
-        textMeshPro.text += $"isSwiming:{world.isSwiming}\n";
+        //textMeshPro.text += $"Ground:{world.foot_BlockType}\n";
+        //textMeshPro.text += $"isGround:{world.isBlock}\n";
+        //textMeshPro.text += $"isSwiming:{world.isSwiming}\n";
     }
 
 }

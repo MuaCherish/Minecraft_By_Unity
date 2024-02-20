@@ -1,9 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public static class VoxelData
 {
+    //方块宏定义
+    /*
+	0：基岩BedRock
+	1：石头Stone
+	2：草地Grass
+	3：泥土Soil
+	4：空气Air
+    5：沙子Sand
+    6：木头Wood
+    7：树叶Leaves
+    8：水Water
+    9：煤炭Coal
+	*/
+    public static readonly Byte BedRock = 0;
+    public static readonly Byte Stone = 1;
+    public static readonly Byte Grass = 2;
+    public static readonly Byte Soil = 3;
+    public static readonly Byte Air = 4;
+    public static readonly Byte Sand = 5;
+    public static readonly Byte Wood = 6;
+    public static readonly Byte Leaves = 7;
+    public static readonly Byte Water = 8;
+    public static readonly Byte Coal = 9;
+
 
     //chunk大小
     public static readonly int ChunkWidth = 16;
