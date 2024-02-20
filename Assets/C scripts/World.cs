@@ -37,6 +37,7 @@ public class World : MonoBehaviour
 
 
     [Header("Chunk-分层结构")]
+    public bool isRandomSeed = true;
     public int Seed = 0;
     [Range(0, 60)]
     public float soil_min = 15;
@@ -56,20 +57,21 @@ public class World : MonoBehaviour
     public byte ERROR_CODE_OUTOFVOXELMAP = 255;
     [HideInInspector]
     public Vector3 Start_Position = new Vector3(1600f, 63f, 1600f);
-    [HideInInspector]
-    public string foot_BlockType = "None";
+    //[HideInInspector]
+    //public string foot_BlockType = "None";
 
 
 
     //isBlock
-    Chunk chunktemp;
-    [HideInInspector]
-    public bool isBlock = false;
-    [HideInInspector]
-    public bool isSwiming = false;
-    [HideInInspector]
-    public bool isnearblock = false;
-    public bool[,] BlockDirection = new bool[1, 10];
+    //Chunk chunktemp;
+    //[HideInInspector]
+    //public bool isBlock = false;
+    //[HideInInspector]
+    //public bool isSwiming = false;
+    //[HideInInspector]
+    //public bool isnearblock = false;
+    //public bool[,] BlockDirection = new bool[1, 10];
+
 
     //全部Chunk位置
     [HideInInspector]
@@ -105,11 +107,15 @@ public class World : MonoBehaviour
     [HideInInspector]
     public GameObject Chunks;
 
+
+    //其他变量
     bool hasExec = true;
 
 
+    //----------------------------------周期函数---------------------------------------
+
     private void Start()
-    {
+    { 
         //帧数
         Application.targetFrameRate = 120;
 
@@ -118,12 +124,25 @@ public class World : MonoBehaviour
         Chunks.name = "Chunks";
         Chunks.transform.SetParent(GameObject.Find("Environment").transform);
 
-        // 设置种子值
-        Seed = Random.Range(0, 100);
+        // 允许设置随机值
+        if(isRandomSeed)
+        {
+            //设置种子
+            Seed = Random.Range(0, 100);
 
-        //设置水平面
-        sea_level = Random.Range(20, 38);
+            //设置水平面
+            sea_level = Random.Range(20, 38);
+        }
+           
+
+        
     }
+
+    //private void FixedUpdate()
+    //{
+    //    if (game_state == Game_State.Playing)
+    //        getFoodBlockType();
+    //}
 
     private void Update()
     {
@@ -171,12 +190,17 @@ public class World : MonoBehaviour
             //isHitWall();
 
             //更新脚下方块
-            getFoodBlockType();
+            //getFoodBlockType();
 
             //Debug.DrawLine(Center_Now, player.transform.position, Color.red, Time.deltaTime);
         }
 
     }
+
+
+    //---------------------------------------------------------------------------------------
+
+
 
 
 
@@ -490,7 +514,7 @@ public class World : MonoBehaviour
     void Init_Player_Location()
     {
         //从<1600,63,1600>向下遍历，直到坐标符合条件
-        while (GetBlockType(Start_Position) == 4)
+        while (GetBlockType(Start_Position) == VoxelData.Air)
         {
             Start_Position.y -= 1f;
         }
@@ -501,23 +525,23 @@ public class World : MonoBehaviour
     }
 
     //获取脚下方块
-    void getFoodBlockType()
-    {
-        switch (GetBlockType(PlayerFoot.transform.position))
-        {
-            case 0: foot_BlockType = "BedRock"; break;
-            case 1: foot_BlockType = "Stone"; break;
-            case 2: foot_BlockType = "Grass"; break;
-            case 3: foot_BlockType = "Soil"; break;
-            case 4: foot_BlockType = "Air"; break;
-            case 5: foot_BlockType = "Sand"; break;
-            case 6: foot_BlockType = "Wood"; break;
-            case 7: foot_BlockType = "Leaves"; break;
-            case 8: foot_BlockType = "Water"; break;
-            case 9: foot_BlockType = "Coal"; break;
-            default: foot_BlockType = "None"; break;
-        }
-    }
+    //void getFoodBlockType()
+    //{
+    //    switch (GetBlockType(PlayerFoot.transform.position))
+    //    {
+    //        case 0: foot_BlockType = "BedRock"; break;
+    //        case 1: foot_BlockType = "Stone"; break;
+    //        case 2: foot_BlockType = "Grass"; break;
+    //        case 3: foot_BlockType = "Soil"; break;
+    //        case 4: foot_BlockType = "Air"; break;
+    //        case 5: foot_BlockType = "Sand"; break;
+    //        case 6: foot_BlockType = "Wood"; break;
+    //        case 7: foot_BlockType = "Leaves"; break;
+    //        case 8: foot_BlockType = "Water"; break;
+    //        case 9: foot_BlockType = "Coal"; break;
+    //        default: foot_BlockType = "None"; break;
+    //    }
+    //}
 
     //Vector3 --> 大区块坐标
     public Vector3 GetChunkLocation(Vector3 vec)

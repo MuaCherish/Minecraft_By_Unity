@@ -7,14 +7,18 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
-    private bool isGrounded;
-    private bool isSprinting;
+    //玩家状态
+    [Header("玩家状态")]
+    public bool isGrounded;
+    public bool isSprinting;
+    public bool isSwiming;
 
     [Header("Transforms")]
     public Transform cam;
     public World world;
 
     [Header("角色参数")]
+    public Transform foot;
     public float walkSpeed = 4f;
     public float sprintSpeed = 8f;
     public float jumpForce = 6f;
@@ -25,6 +29,7 @@ public class Player : MonoBehaviour
     public float playerHeight = 1.7f;
     public float extend_delta = 0.1f;
     public float delta = 0.05f;
+    
 
     //输入
     [HideInInspector]
@@ -32,7 +37,8 @@ public class Player : MonoBehaviour
     [HideInInspector]
     public float verticalInput;
     private float mouseHorizontal;
-    private float mouseVertical;
+    private float mouseVerticalspeed;
+    private float Camera_verticalInput;
     private Vector3 velocity;
     private float verticalMomentum = 0;
     private bool jumpRequest;
@@ -49,6 +55,9 @@ public class Player : MonoBehaviour
     //debug
     [Header("debug")]
     public bool showBlockMesh = false;
+    public float water_jumpforce = 3f;
+    public float watergravity = -3f;
+    public float mult = 2f;
 
 
     //碰撞检测的坐标
@@ -89,16 +98,22 @@ public class Player : MonoBehaviour
     Vector3 right_右下 = new Vector3();
 
 
-   
+    //--------------------------------- 周期函数 --------------------------------------
 
-
-    //碰撞检测
     private void FixedUpdate()
     {
         if (world.game_state == Game_State.Playing)
         {
+            //计算碰撞点
             update_block();
+
+            //计算玩家状态
+            GetPlayerState();
+
+            //计算输入数据
             CalculateVelocity();
+
+            //实现操作
             AchieveInput();
 
         }
@@ -125,14 +140,34 @@ public class Player : MonoBehaviour
 
     }
 
+    //---------------------------------------------------------------------------------
+
+
+
+
+
+
+    //--------------------------------- 玩家操作 --------------------------------------
 
     //数据计算
     private void CalculateVelocity()
     {
+        //玩家视角处理
+        Camera_verticalInput -= mouseVerticalspeed;
+        Camera_verticalInput = Mathf.Clamp(Camera_verticalInput, -90f, 90f);
 
         // 计算重力
-        if (verticalMomentum > gravity)
-            verticalMomentum += Time.fixedDeltaTime * gravity;
+        if (!isSwiming)
+        {
+            if (verticalMomentum > gravity)
+                verticalMomentum += Time.fixedDeltaTime * gravity;
+        }
+        else
+        {
+            if (verticalMomentum > watergravity)
+                verticalMomentum += mult * Time.fixedDeltaTime * watergravity;
+        }
+        
 
         // 计算速度
         if (isSprinting)
@@ -181,20 +216,24 @@ public class Player : MonoBehaviour
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
         mouseHorizontal = Input.GetAxis("Mouse X");
-        mouseVertical = Input.GetAxis("Mouse Y");
+        mouseVerticalspeed = Input.GetAxis("Mouse Y");
 
         if (Input.GetButtonDown("Sprint"))
             isSprinting = true;
         if (Input.GetButtonUp("Sprint"))
             isSprinting = false;
 
-        if (isGrounded && Input.GetButtonDown("Jump"))
+        if (isGrounded && Input.GetKey(KeyCode.Space))
+            jumpRequest = true;
+
+        // 如果在水中按下跳跃键，触发跳跃请求
+        if (isSwiming && Input.GetKey(KeyCode.Space))
             jumpRequest = true;
 
         //左键销毁泥土
         if (Input.GetMouseButtonDown(0))
         {
-            //如果打到 && 不是基岩
+            //如果打到 && 不是水体
             if (RayCast_now() != Vector3.zero)
             {
                 world.GetChunkObject(RayCast_now()).EditData(world.GetRelalocation(RayCast_now()), 4);
@@ -213,7 +252,7 @@ public class Player : MonoBehaviour
             //print("右键");
 
             //如果打到 && 距离大于2f && 且不是脚底下
-            if (RayCast_last() != Vector3.zero && (RayCast_last() - cam.position).magnitude > max_hand_length && world.GetRelalocation(RayCast_last()) != world.GetRelalocation(new Vector3(world.PlayerFoot.position.x, world.PlayerFoot.position.y + 1f, world.PlayerFoot.position.z)))
+            if (RayCast_last() != Vector3.zero && (RayCast_last() - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(RayCast_last().x, RayCast_last().y - 1f, RayCast_last().z)))
             {
                 world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()), 3);
                 //print($"绝对坐标为：{RayCast_last()}");
@@ -232,16 +271,29 @@ public class Player : MonoBehaviour
     {
         if (jumpRequest)
         {
-            verticalMomentum = jumpForce;
+            if(isSwiming)
+            {
+                verticalMomentum = water_jumpforce;
+            }
+            else
+            {
+                verticalMomentum = jumpForce; 
+            }
+
             isGrounded = false;
             jumpRequest = false;
-            
         }
+
+
         transform.Rotate(Vector3.up * mouseHorizontal);
-        cam.Rotate(Vector3.right * -mouseVertical);
+        //cam.Rotate(Vector3.right * -mouseVertical);
+        cam.localRotation = Quaternion.Euler(Camera_verticalInput, 0, 0);
         transform.Translate(velocity, Space.World);
     }
 
+
+
+    //--------------------------------------------------------------------------------
 
 
 
@@ -249,7 +301,7 @@ public class Player : MonoBehaviour
 
     //----------------------------------碰撞检测---------------------------------------
 
-    //更新碰撞盒
+    //更新16个碰撞点
     void update_block()
     {
 
@@ -346,7 +398,8 @@ public class Player : MonoBehaviour
 
     }
 
-    //碰撞检测
+    //碰撞方向的检测（-Z方向为front）
+    //方块的角度
     public bool front
     {
 
@@ -445,8 +498,8 @@ public class Player : MonoBehaviour
             //    Debug.DrawRay(cam.position, cam.forward * step, Color.red, 100f);
             //}
 
-            //是固体 && 不是基岩则返回
-            if (world.GetBlockType(pos) != 4 && world.GetBlockType(pos) != 0)
+            //是固体 && 不是基岩 && 不是水则返回
+            if (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water)
             {
 
                 //print($"now射线检测：{(pos-cam.position).magnitude}");
@@ -482,7 +535,7 @@ public class Player : MonoBehaviour
             //}
 
             //检测
-            if (world.GetBlockType(pos) != 4)
+            if (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.Water)
             {
                 //print($"last射线检测：{(lastPos - cam.position).magnitude}");
                 ray_length = (lastPos - cam.position).magnitude;
@@ -588,6 +641,76 @@ public class Player : MonoBehaviour
     }
 
     //-------------------------------------------------------------------------------------
+
+
+
+
+
+
+    //----------------------------------- 玩家状态 -------------------------------------------
+
+    //记录玩家状态
+    void GetPlayerState()
+    {
+        //是否游泳
+        //当前方块 || y+1方块是不是水
+        if (world.GetBlockType(foot.transform.position) == VoxelData.Water || world.GetBlockType(new Vector3(foot.transform.position.x, foot.transform.position.y + 1f, foot.transform.position.z)) == VoxelData.Water)
+        {
+            isSwiming = true;
+        }
+        else
+        {
+            isSwiming = false;
+        }
+    }
+
+
+    //-------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+    //---------------------------------- 工具类 ---------------------------------------------
+
+    //检查给定的坐标是否和foot的四个点有相同，只要有一个相同则返回true
+    bool CanPutBlock(Vector3 pos)
+    {
+
+        if (world.GetRelalocation(pos) == world.GetRelalocation(down_左上))
+        {
+            return true;
+        }else if (world.GetRelalocation(pos) == world.GetRelalocation(down_右上))
+        {
+            return true;
+        }
+        else if (world.GetRelalocation(pos) == world.GetRelalocation(down_左下))
+        {
+            return true;
+        }
+        else if (world.GetRelalocation(pos) == world.GetRelalocation(down_右下))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+    //-------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
 
 
 }

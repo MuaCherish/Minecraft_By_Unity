@@ -11,7 +11,7 @@ public class Chunk : MonoBehaviour
     GameObject chunkObject;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
-
+    
     //Mesh的绘制
     int vertexIndex = 0;
     List<Vector3> vertices = new List<Vector3>();
@@ -35,6 +35,10 @@ public class Chunk : MonoBehaviour
     private int y;
     private int z;
 
+    
+
+
+    //---------------------------------- 周期函数 ---------------------------------------
 
     //Start()
     public Chunk(Vector3 thisPosition, World _world)
@@ -62,15 +66,26 @@ public class Chunk : MonoBehaviour
         chunkObject.name = thisPosition.x + ", " + thisPosition.z;
 
         //先创建数据
-        PopulateVoxelMap();
+        CreateData();
 
         //开始遍历，生成数据
-        UpdateChunk();
+        DataToChunk();
 
     }
 
+
+    //-----------------------------------------------------------------------------------
+
+
+
+
+
+
+
+    //---------------------------------- Data部分 ---------------------------------------
+
     //方块类型的初始化
-    void PopulateVoxelMap()
+    void CreateData()
     {
 
 
@@ -103,11 +118,11 @@ public class Chunk : MonoBehaviour
                     //判断基岩
                     if (y == 0)
                     {
-                        voxelMap[x, y, z] = 0;
+                        voxelMap[x, y, z] = VoxelData.BedRock;
                     }
                     else if (y > 0 && y < 3 && randomInt == 1)
                     {
-                        voxelMap[x, y, z] = 0;
+                        voxelMap[x, y, z] = VoxelData.BedRock;
                     }
                     else
                     {
@@ -135,7 +150,7 @@ public class Chunk : MonoBehaviour
                             //    }
                             //    else
                             //    {
-                            //        voxelMap[x, y, z] = 4;
+                            //        voxelMap[x, y, z] = VoxelData.Air;
                             //    }
                             //}
                             //else
@@ -147,11 +162,11 @@ public class Chunk : MonoBehaviour
                             //如果y小于海平面则为水，否则为空气
                             if (y - 1 < world.sea_level)
                             {
-                                voxelMap[x, y, z] = 8;
+                                voxelMap[x, y, z] = VoxelData.Water;
                             }
                             else
                             {
-                                voxelMap[x, y, z] = 4;
+                                voxelMap[x, y, z] = VoxelData.Air;
                             }
 
 
@@ -161,21 +176,21 @@ public class Chunk : MonoBehaviour
                         {
                             if (y > world.sea_level)
                             {
-                                voxelMap[x, y, z] = 2;
+                                voxelMap[x, y, z] = VoxelData.Grass;
                             }
                             else
                             {
-                                voxelMap[x, y, z] = 5;
+                                voxelMap[x, y, z] = VoxelData.Sand;
                             }
 
                         }
                         else if (y > noiseHigh - 7)
                         {
-                            voxelMap[x, y, z] = 3;
+                            voxelMap[x, y, z] = VoxelData.Soil;
                         }
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && randomInt == 1)
                         {
-                            voxelMap[x, y, z] = 3;
+                            voxelMap[x, y, z] = VoxelData.Soil;
                         }
                         else
                         {
@@ -188,17 +203,17 @@ public class Chunk : MonoBehaviour
 
                             if (noise3d < 0.4f)
                             {
-                                voxelMap[x, y, z] = 4;
+                                voxelMap[x, y, z] = VoxelData.Air;
                             }
                             else
                             {
                                 if (random_Coal < 2)
                                 {
-                                    voxelMap[x, y, z] = 9;
+                                    voxelMap[x, y, z] = VoxelData.Coal;
                                 }
                                 else
                                 {
-                                    voxelMap[x, y, z] = 1;
+                                    voxelMap[x, y, z] = VoxelData.Stone;
                                 }
 
                             }
@@ -239,7 +254,7 @@ public class Chunk : MonoBehaviour
             while (random_y-- != 0)
             {
                 //如果是沙子或者树叶或者水面，不生成树
-                if (voxelMap[random_x, random_y - 1, random_z] == 5 || voxelMap[random_x, random_y - 1, random_z] == 7 || voxelMap[random_x, random_y - 1, random_z] == 8)
+                if (voxelMap[random_x, random_y - 1, random_z] == VoxelData.Sand || voxelMap[random_x, random_y - 1, random_z] == VoxelData.Leaves || voxelMap[random_x, random_y - 1, random_z] == VoxelData.Water)
                 {
                     needTree = false;
                     break;
@@ -254,7 +269,7 @@ public class Chunk : MonoBehaviour
                 //}
 
                 //如果碰到固体则生成
-                else if (voxelMap[random_x, random_y - 1, random_z] != 4)
+                else if (voxelMap[random_x, random_y - 1, random_z] != VoxelData.Air)
                 {
                     needTree = true;
                     break;
@@ -268,7 +283,7 @@ public class Chunk : MonoBehaviour
 
                 for (int i = 0; i <= random_Tree_High; i++)
                 {
-                    voxelMap[random_x, random_y + i, random_z] = 6;
+                    voxelMap[random_x, random_y + i, random_z] = VoxelData.Wood;
                 }
 
                 //生成树叶
@@ -365,19 +380,28 @@ public class Chunk : MonoBehaviour
     void SetLeaves(int x, int y, int z)
     {
         //如果是固体，就不用生成树叶了
-        if (voxelMap[x, y, z] != 4)
+        if (voxelMap[x, y, z] != VoxelData.Air)
         {
             return;
         }
         else
         {
-            voxelMap[x, y, z] = 7;
+            voxelMap[x, y, z] = VoxelData.Leaves;
         }
     }
 
 
+    //------------------------------------------------------------------------------------
+
+
+
+
+
+
+    //---------------------------------- Mesh部分 ----------------------------------------
+
     //开始遍历
-    public void UpdateChunk()
+    public void DataToChunk()
     {
 
         ClearMeshData();
@@ -389,15 +413,18 @@ public class Chunk : MonoBehaviour
                 for (z = 0; z < VoxelData.ChunkWidth; z++)
                 {
 
-                    if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == 8)
-                    {
-                        //if (voxelMap[x, y, z] == 8)
-                        //{
-                        //    print("");
-                        //}
+                    //如果是小花，调用另一个updatemesh算法
+                    //if(voxelMap[x, y - 1, z] == 9)
+                    //{
+                    //    updateMeshFlower(new Vector3(x, y, z));
+                    //    continue;
+                    //}
 
+
+                    //空气就直接跳过，除非是水面上的空气
+                    if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water)
                         UpdateMeshData(new Vector3(x, y, z));
-                    }
+                    
 
 
                 }
@@ -409,6 +436,7 @@ public class Chunk : MonoBehaviour
 
     }
 
+    //清除网格
     void ClearMeshData()
     {
         vertexIndex = 0;
@@ -427,7 +455,7 @@ public class Chunk : MonoBehaviour
 
         voxelMap[x, y, z] = targetBlocktype;
 
-        UpdateChunk();
+        DataToChunk();
     }
 
     //面生成的判断
@@ -456,7 +484,7 @@ public class Chunk : MonoBehaviour
 
 
             //自己是不是空气
-            if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4)
+            if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air || voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Water)
             {
                 return true;
             }
@@ -557,19 +585,31 @@ public class Chunk : MonoBehaviour
 
 
 
-        }//另判断自己和目标是不是空气
-        else if ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4) && voxelMap[x, y, z] == 4)
-        {
-            return true;
-        }
-        else if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 8 && voxelMap[x, y, z] == 8)
-        {
-            return true;
         }
         else
         {
+
+            //判断自己和目标是不是都是空气 || 自己和目标是不是都是水
+            //不生成面的情况
+            if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air) && voxelMap[x, y, z] == VoxelData.Air) || ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Water) && voxelMap[x, y, z] == VoxelData.Water))
+            {
+                return true;
+            }
+            else // 生成面的情况
+            {
+                //(如果自己是水，目标是空气) || (自己是空气，目标是水)
+                if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Water) && voxelMap[x, y, z] == VoxelData.Air))
+                {
+                    return false;
+                }else if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air) && voxelMap[x, y, z] == VoxelData.Water))
+                {
+                    return false;
+                }
+            }
+
+
             //如果自己是水
-            //if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 8)
+            //if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Water)
             //{
             //    //上方时
             //    if (_p == 2 || voxelMap[x, y, z] == 4)
@@ -582,11 +622,7 @@ public class Chunk : MonoBehaviour
             //    }
             //}
 
-            //(如果自己是水，目标是空气) || (自己是空气，目标是水)
-            if ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 8 && voxelMap[x, y, z] == 4) || (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == 4 && voxelMap[x, y, z] == 8))
-            {
-                return false;
-            }
+
 
         }
 
@@ -596,6 +632,7 @@ public class Chunk : MonoBehaviour
     }
 
     //遍历中：：顺带判断面的生成方向
+    //创建mesh里的参数
     void UpdateMeshData(Vector3 pos)
     {
 
@@ -644,6 +681,7 @@ public class Chunk : MonoBehaviour
     }
 
     //最后生成网格体
+    //mesh实体化
     void CreateMesh()
     {
 
@@ -676,6 +714,23 @@ public class Chunk : MonoBehaviour
 
 
     }
+
+    //生成小花小草
+    void updateMeshFlower()
+    {
+        
+    }
+
+
+
+    //------------------------------------------------------------------------------------
+
+
+
+
+
+
+    //---------------------------------- 辅助部分 ----------------------------------------
 
     //销毁自己
     public void DestroyChunk()
@@ -711,5 +766,8 @@ public class Chunk : MonoBehaviour
         return ABC / 6f;
 
     }
+
+
+    //----------------------------------------------------------------------------------
 
 }
