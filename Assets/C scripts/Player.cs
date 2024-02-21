@@ -12,9 +12,12 @@ public class Player : MonoBehaviour
     public bool isGrounded;
     public bool isSprinting;
     public bool isSwiming;
+    public bool isMoving;
 
     [Header("Transforms")]
     public Transform cam;
+    public Transform HighlightBlock;
+    public GameObject HighlightBlockObject;
     public World world;
 
     [Header("角色参数")]
@@ -29,7 +32,16 @@ public class Player : MonoBehaviour
     public float playerHeight = 1.7f;
     public float extend_delta = 0.1f;
     public float delta = 0.05f;
-    
+
+    [Header("打掉方块需要的时间")]
+    public float destroyTime = 2f;
+    // 用于跟踪玩家是否按下左键
+    //private bool isLeftMouseDown;
+    //已经过去的时间
+    private float elapsedTime = 0.0f;
+    private Material material; // 物体的材质
+    private Color initialColor; // 初始颜色
+    private bool isDestroying;
 
     //输入
     [HideInInspector]
@@ -100,6 +112,16 @@ public class Player : MonoBehaviour
 
     //--------------------------------- 周期函数 --------------------------------------
 
+    void Start()
+    {
+        // 获取物体上的材质
+        Renderer renderer = HighlightBlockObject.GetComponent<Renderer>();
+        material = renderer.material;
+
+        // 保存初始颜色
+        initialColor = material.color;
+    }
+
     private void FixedUpdate()
     {
         if (world.game_state == Game_State.Playing)
@@ -127,7 +149,9 @@ public class Player : MonoBehaviour
         if (world.game_state == Game_State.Playing)
         {
             GetPlayerInputs();
-            
+            placeCursorBlocks();
+
+
 
             if (showBlockMesh)
             {
@@ -190,9 +214,17 @@ public class Player : MonoBehaviour
             velocity.x = 0;
 
 
+        //检查是否移动
+        if (velocity.x != 0f || velocity.z != 0f)
+        {
+            isMoving = true;
+        }
+        else
+        {
+            isMoving = false;
+        }
 
-
-
+        //重力判断
         if (velocity.y < 0)
         {
             velocity.y = checkDownSpeed(velocity.y);
@@ -231,12 +263,24 @@ public class Player : MonoBehaviour
             jumpRequest = true;
 
         //左键销毁泥土
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKey(KeyCode.Mouse0))
         {
-            //如果打到 && 不是水体
+            //如果打到
             if (RayCast_now() != Vector3.zero)
             {
-                world.GetChunkObject(RayCast_now()).EditData(world.GetRelalocation(RayCast_now()), 4);
+                
+                //如果正在销毁则不执行
+                if (!isDestroying)
+                {
+                    Debug.Log("执行销毁");
+                    elapsedTime = 0.0f;
+                    StartCoroutine(DestroySoilWithDelay(RayCast_now()));
+                }
+                
+
+                //world.GetChunkObject(RayCast_now()).EditData(world.GetRelalocation(RayCast_now()), 4);
+
+
                 //print($"绝对坐标为：{RayCast_now()}");
                 //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
                 //print($"方块类型为：{world.GetBlockType(RayCast())}");
@@ -262,6 +306,90 @@ public class Player : MonoBehaviour
 
 
         }
+
+        // 如果松开左键，则取消销毁泥土的逻辑
+        //if (Input.GetMouseButtonUp(0))
+        //{
+        //    isLeftMouseDown = false;
+        //    elapsedTime = 0.0f;
+        //    material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
+        //}
+
+
+    }
+
+    // 等待2秒后执行销毁泥土的方法
+    IEnumerator DestroySoilWithDelay(Vector3 position)
+    {
+
+        isDestroying = true;
+
+        // 记录协程开始执行时的时间
+        float startTime = Time.time;
+
+        // 等待2秒
+        while (Time.time - startTime < destroyTime)
+        {
+            // 计算透明度插值
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / destroyTime);
+            float targetAlpha = Mathf.Lerp(initialColor.a, 1f, t);
+
+            // 更新材质的颜色和透明度
+            material.color = new Color(initialColor.r, initialColor.g, initialColor.b, targetAlpha);
+
+
+            // 如果玩家在等待期间松开了左键，则取消销毁泥土的逻辑
+            if (!Input.GetMouseButton(0))
+            {
+                elapsedTime = 0.0f;
+                isDestroying = false;
+                material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
+                yield break;
+            }
+
+            yield return null;
+        }
+
+
+        // 执行销毁泥土的逻辑
+        isDestroying = false;
+        world.GetChunkObject(position).EditData(world.GetRelalocation(position), 4);
+        
+        //print($"绝对坐标为：{position}");
+        //print($"相对坐标为：{world.GetRelalocation(position)}");
+        //print($"方块类型为：{world.GetBlockType(position)}");
+    }
+
+
+    private void placeCursorBlocks()
+    {
+
+        float step = checkIncrement;
+        Vector3 lastPos = new Vector3();
+
+        while (step < reach)
+        {
+
+            Vector3 pos = cam.position + (cam.forward * step);
+
+            if (world.CheckForVoxel(pos))
+            {
+
+                HighlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x) + 0.5f, Mathf.FloorToInt(pos.y) + 0.5f, Mathf.FloorToInt(pos.z) + 0.5f);
+                HighlightBlock.gameObject.SetActive(true);
+
+                return;
+
+            }
+
+            lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+
+            step += checkIncrement;
+
+        }
+
+        HighlightBlock.gameObject.SetActive(false);
 
     }
 
