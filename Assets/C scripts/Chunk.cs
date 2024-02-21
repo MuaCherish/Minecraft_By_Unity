@@ -453,6 +453,11 @@ public class Chunk : MonoBehaviour
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
 
+        if (y >= 62)
+        {
+            return;
+        }
+
         voxelMap[x, y, z] = targetBlocktype;
 
         DataToChunk();

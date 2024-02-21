@@ -13,17 +13,21 @@ public class Player : MonoBehaviour
     public bool isSprinting;
     public bool isSwiming;
     public bool isMoving;
+    public bool isSquating;
 
     [Header("Transforms")]
     public Transform cam;
+    //public GameObject camera;
     public Transform HighlightBlock;
     public GameObject HighlightBlockObject;
     public World world;
 
     [Header("角色参数")]
     public Transform foot;
+    private bool hasExec = true;
     public float walkSpeed = 4f;
     public float sprintSpeed = 8f;
+    public float squatSpeed = 1f;
     public float jumpForce = 6f;
     public float gravity = -15f;
 
@@ -42,6 +46,9 @@ public class Player : MonoBehaviour
     private Material material; // 物体的材质
     private Color initialColor; // 初始颜色
     private bool isDestroying;
+    public bool isChangeBlock = false;
+    private Vector3 OldPointLocation;
+    //bool hasExec2 = true;
 
     //输入
     [HideInInspector]
@@ -109,6 +116,12 @@ public class Player : MonoBehaviour
     Vector3 right_左下 = new Vector3();
     Vector3 right_右下 = new Vector3();
 
+    //调试专用
+    public bool _Front;
+    public bool _Back;
+    public bool _Left;
+    public bool _Right;
+
 
     //--------------------------------- 周期函数 --------------------------------------
 
@@ -126,6 +139,14 @@ public class Player : MonoBehaviour
     {
         if (world.game_state == Game_State.Playing)
         {
+            //初始化人物位置
+            if (hasExec)
+            {
+                InitPlayerLocation();
+                hasExec = false;
+            }
+
+
             //计算碰撞点
             update_block();
 
@@ -157,10 +178,17 @@ public class Player : MonoBehaviour
             {
                 drawdebug();
             }
-        }
-         
 
-        
+            _Front = front;
+            _Back = back;
+            _Left = left;
+            _Right = right;
+
+
+        }
+
+
+
 
     }
 
@@ -191,13 +219,22 @@ public class Player : MonoBehaviour
             if (verticalMomentum > watergravity)
                 verticalMomentum += mult * Time.fixedDeltaTime * watergravity;
         }
-        
+
 
         // 计算速度
         if (isSprinting)
+        {
             velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.fixedDeltaTime * sprintSpeed;
+        }
+        else if (isSquating)
+        {
+            velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.fixedDeltaTime * squatSpeed;
+        }
         else
+        {
             velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.fixedDeltaTime * walkSpeed;
+        }
+            
 
         // 合并数据
         velocity += Vector3.up * verticalMomentum * Time.fixedDeltaTime;
@@ -233,14 +270,14 @@ public class Player : MonoBehaviour
         {
             velocity.y = checkUpSpeed(velocity.y);
         }
-       
-            
+
+
 
 
 
     }
 
-    
+
     //接收操作
     private void GetPlayerInputs()
     {
@@ -262,21 +299,51 @@ public class Player : MonoBehaviour
         if (isSwiming && Input.GetKey(KeyCode.Space))
             jumpRequest = true;
 
+
+        //按住Ctrl键，摄像机将下降一定高度
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            isSquating = true;
+        }
+
+        //松开Ctrl键，摄像机还原
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            isSquating = false;
+        }
+
+
+        //如果点击鼠标左键,记录OldPointLocation
+        if (Input.GetMouseButtonDown(0))
+        {
+            OldPointLocation = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
+        }
+
         //左键销毁泥土
         if (Input.GetKey(KeyCode.Mouse0))
         {
+            //isLeftMouseDown = true;
+            //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
+            Vector3 pointvector = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
+
+            if (pointvector != OldPointLocation)
+            {
+                isChangeBlock = true;
+                OldPointLocation = pointvector;
+            }
+
             //如果打到
             if (RayCast_now() != Vector3.zero)
             {
-                
+
                 //如果正在销毁则不执行
                 if (!isDestroying)
                 {
-                    Debug.Log("执行销毁");
+                    //Debug.Log("执行销毁");
                     elapsedTime = 0.0f;
                     StartCoroutine(DestroySoilWithDelay(RayCast_now()));
                 }
-                
+
 
                 //world.GetChunkObject(RayCast_now()).EditData(world.GetRelalocation(RayCast_now()), 4);
 
@@ -293,7 +360,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             isPlacing = true;
-            //print("右键");
+
 
             //如果打到 && 距离大于2f && 且不是脚底下
             if (RayCast_last() != Vector3.zero && (RayCast_last() - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(RayCast_last().x, RayCast_last().y - 1f, RayCast_last().z)))
@@ -307,13 +374,8 @@ public class Player : MonoBehaviour
 
         }
 
-        // 如果松开左键，则取消销毁泥土的逻辑
-        //if (Input.GetMouseButtonUp(0))
-        //{
-        //    isLeftMouseDown = false;
-        //    elapsedTime = 0.0f;
-        //    material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
-        //}
+
+
 
 
     }
@@ -339,11 +401,12 @@ public class Player : MonoBehaviour
             material.color = new Color(initialColor.r, initialColor.g, initialColor.b, targetAlpha);
 
 
-            // 如果玩家在等待期间松开了左键，则取消销毁泥土的逻辑
-            if (!Input.GetMouseButton(0))
+            // 如果玩家在等待期间松开了左键 || 转移了目标，则取消销毁泥土的逻辑
+            if (!Input.GetMouseButton(0) || isChangeBlock)
             {
                 elapsedTime = 0.0f;
                 isDestroying = false;
+                isChangeBlock = false;
                 material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
                 yield break;
             }
@@ -351,11 +414,11 @@ public class Player : MonoBehaviour
             yield return null;
         }
 
-
+        //如果成功过了两秒
         // 执行销毁泥土的逻辑
         isDestroying = false;
-        world.GetChunkObject(position).EditData(world.GetRelalocation(position), 4);
-        
+        world.GetChunkObject(position).EditData(world.GetRelalocation(position), VoxelData.Air);
+
         //print($"绝对坐标为：{position}");
         //print($"相对坐标为：{world.GetRelalocation(position)}");
         //print($"方块类型为：{world.GetBlockType(position)}");
@@ -379,6 +442,7 @@ public class Player : MonoBehaviour
                 HighlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x) + 0.5f, Mathf.FloorToInt(pos.y) + 0.5f, Mathf.FloorToInt(pos.z) + 0.5f);
                 HighlightBlock.gameObject.SetActive(true);
 
+
                 return;
 
             }
@@ -397,15 +461,17 @@ public class Player : MonoBehaviour
     //实现操作
     private void AchieveInput()
     {
+
+        //重力实现
         if (jumpRequest)
         {
-            if(isSwiming)
+            if (isSwiming)
             {
                 verticalMomentum = water_jumpforce;
             }
             else
             {
-                verticalMomentum = jumpForce; 
+                verticalMomentum = jumpForce;
             }
 
             isGrounded = false;
@@ -413,10 +479,44 @@ public class Player : MonoBehaviour
         }
 
 
+        //下蹲实现
+        //0.81~0.388
+        if (isSquating)
+        {
+            float high = cam.localPosition.y - 2 * Time.deltaTime;
+
+            if (high <= 0.388f)
+            {
+                high = 0.388f;
+            }
+
+            cam.localPosition = new Vector3(cam.localPosition.x, high, cam.localPosition.z);
+        }
+        else
+        {
+            float high = cam.localPosition.y + 2 * Time.deltaTime;
+
+            if (high >= 0.81f)
+            {
+                high = 0.81f;
+            }
+
+            cam.localPosition = new Vector3(cam.localPosition.x, high, cam.localPosition.z);
+        }
+
+
+
+        //视角和移动实现
         transform.Rotate(Vector3.up * mouseHorizontal);
         //cam.Rotate(Vector3.right * -mouseVertical);
         cam.localRotation = Quaternion.Euler(Camera_verticalInput, 0, 0);
         transform.Translate(velocity, Space.World);
+    }
+
+
+    private void InitPlayerLocation()
+    {
+        transform.position = world.Start_Position;
     }
 
 
@@ -479,7 +579,7 @@ public class Player : MonoBehaviour
     //碰撞检测（脚下）
     private float checkDownSpeed(float downSpeed)
     {
-      
+
 
         if (
             world.CheckForVoxel(down_左上) ||
@@ -505,7 +605,7 @@ public class Player : MonoBehaviour
     //碰撞检测（头上）
     private float checkUpSpeed(float upSpeed)
     {
-        
+
 
 
         if (
@@ -530,21 +630,39 @@ public class Player : MonoBehaviour
     //方块的角度
     public bool front
     {
-
+       
         get
         {
-            if (
+            //正常情况
+            if (!isSquating)
+            {
+                if (
                 world.CheckForVoxel(front_左上) ||
                 world.CheckForVoxel(front_右上) ||
                 world.CheckForVoxel(front_左下) ||
-                world.CheckForVoxel(front_右下) 
+                world.CheckForVoxel(front_右下)
                 )
-            {
-                
-                return true;
+                {
+
+                    return true;
+                }
+                else
+                    return false;
             }
+            //蹲下情况
             else
-                return false;
+            {
+                //(左下固体 && 左下延伸不是固体) || (右下固体 && 右下延伸不是固体)
+                if ((world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x, down_左下.y, down_左下.z + extend_delta))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x, down_右下.y, down_右下.z + extend_delta))))
+                {
+
+                    return true;
+                }
+                else
+                    return false;
+            }
+
+            
         }
 
     }
@@ -553,15 +671,29 @@ public class Player : MonoBehaviour
 
         get
         {
-            if (
+            if (!isSquating)
+            {
+                if (
                 world.CheckForVoxel(back_左上) ||
                 world.CheckForVoxel(back_右上) ||
                 world.CheckForVoxel(back_左下) ||
                 world.CheckForVoxel(back_右下)
                 )
-                return true;
+                    return true;
+                else
+                    return false;
+            }
             else
-                return false;
+            {
+                //(左上固体 && 左上延伸不是固体) || (右上固体 && 右上延伸不是固体)
+                if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x, down_左上.y, down_左上.z - extend_delta))) || (world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x, down_右上.y, down_右上.z - extend_delta))))
+                {
+
+                    return true;
+                }
+                else
+                    return false;
+            }
         }
 
     }
@@ -570,15 +702,35 @@ public class Player : MonoBehaviour
 
         get
         {
-            if (
+            if (!isSquating)
+            {
+                if (
                 world.CheckForVoxel(left_左上) ||
                 world.CheckForVoxel(left_右上) ||
                 world.CheckForVoxel(left_左下) ||
                 world.CheckForVoxel(left_右下)
                 )
-                return true;
+                    return true;
+                else
+                    return false;
+            }
             else
-                return false;
+            {
+                
+                //(右上固体 && 右上延伸不是固体) || (右下固体 && 右下延伸不是固体)
+                if ((world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x - extend_delta, down_右下.y, down_右下.z))))
+                {
+
+                    return true;
+                }
+                else
+                    return false;
+
+
+
+            }
+
+            
         }
 
     }
@@ -587,15 +739,32 @@ public class Player : MonoBehaviour
 
         get
         {
-            if (
+
+            if (!isSquating)
+            {
+                if (
                 world.CheckForVoxel(right_左上) ||
                 world.CheckForVoxel(right_右上) ||
                 world.CheckForVoxel(right_左下) ||
                 world.CheckForVoxel(right_右下)
                 )
-                return true;
+                    return true;
+                else
+                    return false;
+            }
             else
-                return false;
+            {
+                //(左上固体 && 左上延伸不是固体) || (左下固体 && 左下延伸不是固体)
+                if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x + extend_delta, down_左上.y, down_左上.z))) || (world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x + extend_delta, down_左下.y, down_左下.z))))
+                {
+
+                    return true;
+                }
+                else
+                    return false;
+            }
+
+            
         }
 
     }
