@@ -17,6 +17,22 @@ public static class VoxelData
     7：树叶Leaves
     8：水Water
     9：煤炭Coal
+    10:白桦木BirchWood
+    11:蓝色花BlueFlower
+    12:白色花1号WhiteFlower_1
+    13:白色花2号WhiteFlower_2
+    14:黄色花YellowFlower
+    15:火把Candle
+    16:仙人掌Cactus
+    17:TNT
+    18:工作台WorkTable
+    19:南瓜Pumpkin
+    20:玻璃Glass
+    21:青晶石Blue_Crystal
+    22:钻石Diamond
+    23:铁矿Iron
+    24:金矿Gold
+    25:竹子Bamboo
 	*/
     public static readonly Byte BedRock = 0;
     public static readonly Byte Stone = 1;
@@ -28,7 +44,22 @@ public static class VoxelData
     public static readonly Byte Leaves = 7;
     public static readonly Byte Water = 8;
     public static readonly Byte Coal = 9;
-
+    public static readonly Byte BirchWood = 10;
+    public static readonly Byte BlueFlower = 11;
+    public static readonly Byte WhiteFlower_1 = 12;
+    public static readonly Byte WhiteFlower_2 = 13;
+    public static readonly Byte YellowFlower = 14;
+    public static readonly Byte Candle = 15;
+    public static readonly Byte Cactus = 16;
+    public static readonly Byte TNT = 17;
+    public static readonly Byte WorkTable = 18;
+    public static readonly Byte Pumpkin = 19;
+    public static readonly Byte Glass = 20;
+    public static readonly Byte Blue_Crystal = 21;
+    public static readonly Byte Diamond = 22;
+    public static readonly Byte Iron = 23;
+    public static readonly Byte Gold = 24;
+    public static readonly Byte Bamboo = 25;
 
     //chunk大小
     public static readonly int ChunkWidth = 16;
