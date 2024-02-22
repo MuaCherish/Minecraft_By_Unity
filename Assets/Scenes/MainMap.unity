@@ -1083,16 +1083,16 @@ MonoBehaviour:
     bottomFaceTexture: 3
     leftFaceTexture: 3
     rightFaceTexture: 3
-  renderSize: 6
+  renderSize: 1
   StartToRender: 2
   noise2d_scale_smooth: 0.01
   noise2d_scale_steep: 0.04
   noise3d_scale: 0.085
-  isRandomSeed: 1
+  isRandomSeed: 0
   Seed: 0
   soil_min: 15
   soil_max: 60
-  sea_level: 36
+  sea_level: 40
   TreeCount: 5
   TreeHigh_min: 3
   TreeHigh_max: 5
@@ -2795,6 +2795,7 @@ MonoBehaviour:
   isSprinting: 0
   isSwiming: 0
   isMoving: 0
+  isSquating: 0
   cam: {fileID: 1727421507}
   HighlightBlock: {fileID: 1443460313}
   HighlightBlockObject: {fileID: 1443460309}
@@ -2802,6 +2803,7 @@ MonoBehaviour:
   foot: {fileID: 656216633}
   walkSpeed: 4
   sprintSpeed: 8
+  squatSpeed: 1
   jumpForce: 6
   gravity: -15
   playerWidth: 0.8
@@ -2809,6 +2811,7 @@ MonoBehaviour:
   extend_delta: 0.1
   delta: 0.05
   destroyTime: 1
+  isChangeBlock: 0
   horizontalInput: 0
   verticalInput: 0
   reach: 8
@@ -2818,6 +2821,10 @@ MonoBehaviour:
   water_jumpforce: 4
   watergravity: -3
   mult: 3
+  _Front: 0
+  _Back: 0
+  _Left: 0
+  _Right: 0
 --- !u!4 &1504082081
 Transform:
   m_ObjectHideFlags: 0

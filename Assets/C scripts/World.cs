@@ -50,6 +50,16 @@ public class World : MonoBehaviour
     public int TreeHigh_max = 7;
 
 
+    [Header("生成概率(n分之一)")]
+    public int Random_Bamboo;
+    public int Random_Coal;
+    public int Random_Iron;
+    public int Random_Gold;
+    public int Random_Blue_Crystal;
+    public int Random_Diamond;
+
+
+
     //玩家
     [Header("Player-玩家脚底坐标")]
     public Transform PlayerFoot;
@@ -131,7 +141,7 @@ public class World : MonoBehaviour
             Seed = Random.Range(0, 100);
 
             //设置水平面
-            sea_level = Random.Range(20, 38);
+            sea_level = Random.Range(20, 42);
         }
            
 
@@ -745,6 +755,9 @@ public class World : MonoBehaviour
         //判断Y上有没有出界
         if (vec.y >= VoxelData.ChunkHeight) { return false; }
 
+        //竹子返回true
+        if (GetBlockType(pos) == VoxelData.Bamboo) { return true; }
+
         //返回固体还是空气
         return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z]].isSolid;
 
@@ -762,7 +775,9 @@ public class BlockType
 {
 
     public string blockName;
+    public float DestroyTime;
     public bool isSolid;
+    public bool isTransparent;
 
     [Header("Texture Values")]
     public int backFaceTexture;

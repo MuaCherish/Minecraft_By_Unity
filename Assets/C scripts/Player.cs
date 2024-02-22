@@ -27,7 +27,8 @@ public class Player : MonoBehaviour
     private bool hasExec = true;
     public float walkSpeed = 4f;
     public float sprintSpeed = 8f;
-    public float squatSpeed = 1f;
+    public float squatWalkSpeed = 1f;
+    public float squatSpeed = 3f;
     public float jumpForce = 6f;
     public float gravity = -15f;
 
@@ -38,7 +39,7 @@ public class Player : MonoBehaviour
     public float delta = 0.05f;
 
     [Header("打掉方块需要的时间")]
-    public float destroyTime = 2f;
+    //public float destroyTime = 2f;
     // 用于跟踪玩家是否按下左键
     //private bool isLeftMouseDown;
     //已经过去的时间
@@ -46,7 +47,7 @@ public class Player : MonoBehaviour
     private Material material; // 物体的材质
     private Color initialColor; // 初始颜色
     private bool isDestroying;
-    public bool isChangeBlock = false;
+    private bool isChangeBlock = false;
     private Vector3 OldPointLocation;
     //bool hasExec2 = true;
 
@@ -117,10 +118,6 @@ public class Player : MonoBehaviour
     Vector3 right_右下 = new Vector3();
 
     //调试专用
-    public bool _Front;
-    public bool _Back;
-    public bool _Left;
-    public bool _Right;
 
 
     //--------------------------------- 周期函数 --------------------------------------
@@ -178,13 +175,6 @@ public class Player : MonoBehaviour
             {
                 drawdebug();
             }
-
-            _Front = front;
-            _Back = back;
-            _Left = left;
-            _Right = right;
-
-
         }
 
 
@@ -228,7 +218,7 @@ public class Player : MonoBehaviour
         }
         else if (isSquating)
         {
-            velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.fixedDeltaTime * squatSpeed;
+            velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.fixedDeltaTime * squatWalkSpeed;
         }
         else
         {
@@ -388,13 +378,14 @@ public class Player : MonoBehaviour
 
         // 记录协程开始执行时的时间
         float startTime = Time.time;
+        float destroy_time = world.blocktypes[world.GetBlockType(position)].DestroyTime;
 
         // 等待2秒
-        while (Time.time - startTime < destroyTime)
+        while (Time.time - startTime < destroy_time)
         {
             // 计算透明度插值
             elapsedTime += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsedTime / destroyTime);
+            float t = Mathf.Clamp01(elapsedTime / destroy_time);
             float targetAlpha = Mathf.Lerp(initialColor.a, 1f, t);
 
             // 更新材质的颜色和透明度
@@ -483,7 +474,7 @@ public class Player : MonoBehaviour
         //0.81~0.388
         if (isSquating)
         {
-            float high = cam.localPosition.y - 2 * Time.deltaTime;
+            float high = cam.localPosition.y - squatSpeed * Time.deltaTime;
 
             if (high <= 0.388f)
             {
@@ -494,7 +485,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            float high = cam.localPosition.y + 2 * Time.deltaTime;
+            float high = cam.localPosition.y + squatSpeed * Time.deltaTime;
 
             if (high >= 0.81f)
             {
@@ -795,8 +786,8 @@ public class Player : MonoBehaviour
             //    Debug.DrawRay(cam.position, cam.forward * step, Color.red, 100f);
             //}
 
-            //是固体 && 不是基岩 && 不是水则返回
-            if (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water)
+            //(是竹子 || (是固体 && 不是基岩 && 不是水)则返回
+            if (world.GetBlockType(pos) == VoxelData.Bamboo || (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water))
             {
 
                 //print($"now射线检测：{(pos-cam.position).magnitude}");

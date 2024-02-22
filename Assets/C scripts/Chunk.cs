@@ -35,8 +35,9 @@ public class Chunk : MonoBehaviour
     private int y;
     private int z;
 
-    
-
+    //待生成列表
+    Queue<Vector3> Coals = new Queue<Vector3>();
+    Queue<Vector3> Bamboos = new Queue<Vector3>();
 
     //---------------------------------- 周期函数 ---------------------------------------
 
@@ -52,9 +53,9 @@ public class Chunk : MonoBehaviour
         treecount = world.TreeCount;
 
         //坐标
-        x = 0;
-        y = 0;
-        z = 0;
+        //x = 0;
+        //y = 0;
+        //z = 0;
 
         //ChunkObject
         chunkObject = new GameObject();
@@ -138,7 +139,7 @@ public class Chunk : MonoBehaviour
                         float noiseHigh = noise2d_1 * 0.6f + noise2d_2 * 0.4f + noise2d_3 * 0.05f;
 
 
-                        //判断泥土
+                        //空气部分
                         if (y > noiseHigh)
                         {
 
@@ -166,12 +167,33 @@ public class Chunk : MonoBehaviour
                             }
                             else
                             {
-                                voxelMap[x, y, z] = VoxelData.Air;
+
+                                //地表2层
+                                if (y - 1 < noiseHigh)
+                                {
+                                    //竹子
+                                    if (UnityEngine.Random.Range(0, world.Random_Bamboo) < 1)
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Air;
+                                        Bamboos.Enqueue(new Vector3(x, y, z));
+                                    }
+                                    else
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Air;
+                                    }
+                                    
+                                }
+                                else
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Air;
+                                }
+
+                                
                             }
 
 
 
-                        }
+                        }//地表1层
                         else if ((y + 1) > noiseHigh)
                         {
                             if (y > world.sea_level)
@@ -184,6 +206,9 @@ public class Chunk : MonoBehaviour
                             }
 
                         }
+
+
+                        //泥土的判断
                         else if (y > noiseHigh - 7)
                         {
                             voxelMap[x, y, z] = VoxelData.Soil;
@@ -192,6 +217,8 @@ public class Chunk : MonoBehaviour
                         {
                             voxelMap[x, y, z] = VoxelData.Soil;
                         }
+
+                        //地下判断
                         else
                         {
 
@@ -199,17 +226,35 @@ public class Chunk : MonoBehaviour
 
                             //判断空气
                             float noise3d = Perlin3D((float)x * noise3d_scale + chunkObject.transform.position.x * noise3d_scale, (float)y * noise3d_scale + y * noise3d_scale, (float)z * noise3d_scale + chunkObject.transform.position.z * noise3d_scale); // 将100改为0.1
-                            int random_Coal = UnityEngine.Random.Range(0, 100);
 
+                            //空气
                             if (noise3d < 0.4f)
                             {
                                 voxelMap[x, y, z] = VoxelData.Air;
                             }
                             else
                             {
-                                if (random_Coal < 2)
+                                //煤炭
+                                if (UnityEngine.Random.Range(0, world.Random_Coal) < 1)
                                 {
-                                    voxelMap[x, y, z] = VoxelData.Coal;
+                                    voxelMap[x, y, z] = VoxelData.Stone;
+                                    Coals.Enqueue(new Vector3(x,y,z));
+                                }//铁
+                                else if (UnityEngine.Random.Range(0, world.Random_Iron) < 1)
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Iron;
+                                }//金
+                                else if (UnityEngine.Random.Range(0, world.Random_Gold) < 1)
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Gold;
+                                }//青金石
+                                else if (UnityEngine.Random.Range(0, world.Random_Blue_Crystal) < 1)
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Blue_Crystal;
+                                }//钻石
+                                else if (UnityEngine.Random.Range(0, world.Random_Diamond) < 1)
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Diamond;
                                 }
                                 else
                                 {
@@ -234,9 +279,21 @@ public class Chunk : MonoBehaviour
         //补充树
         CreateTree();
 
-        //voxelMap[0, 0, 0] = 6;
-        //isVoxelMapPopulated = true;
+        //补充煤炭
+        foreach (var item in Coals)
+        {
+            CreateCoal((int)item.x, (int)item.y, (int)item.z);
+        }
+
+        //补充竹子
+        foreach (var item in Bamboos)
+        {
+            CreateBamboo((int)item.x, (int)item.y, (int)item.z);
+        }
+
     }
+
+    //---------------------------------- Tree ----------------------------------------
 
     //tree
     void CreateTree()
@@ -253,8 +310,8 @@ public class Chunk : MonoBehaviour
             //[确定Y]向下遍历直到地表上一层
             while (random_y-- != 0)
             {
-                //如果是沙子或者树叶或者水面，不生成树
-                if (voxelMap[random_x, random_y - 1, random_z] == VoxelData.Sand || voxelMap[random_x, random_y - 1, random_z] == VoxelData.Leaves || voxelMap[random_x, random_y - 1, random_z] == VoxelData.Water)
+                //如果是沙子或者树叶或者水面或者竹子，不生成树
+                if (voxelMap[random_x, random_y - 1, random_z] == VoxelData.Sand || voxelMap[random_x, random_y - 1, random_z] == VoxelData.Leaves || voxelMap[random_x, random_y - 1, random_z] == VoxelData.Water || voxelMap[random_x, random_y - 1, random_z] == VoxelData.Bamboo)
                 {
                     needTree = false;
                     break;
@@ -391,6 +448,118 @@ public class Chunk : MonoBehaviour
     }
 
 
+
+    //---------------------------------- Coal ----------------------------------------
+
+    //煤炭
+    void CreateCoal(int xtemp, int ytemp, int ztemp)
+    {
+        int random_Coal_up = UnityEngine.Random.Range(0, 100);
+        int random_Coal_down = UnityEngine.Random.Range(0, 100);
+
+        //上一层
+        if (random_Coal_up < 50)
+        {
+            SetCoal(xtemp - 1, ytemp + 1, ztemp - 1);
+            SetCoal(xtemp, ytemp + 1, ztemp - 1);
+            SetCoal(xtemp + 1, ytemp + 1, ztemp - 1);
+
+            SetCoal(xtemp - 1, ytemp + 1, ztemp);
+            SetCoal(xtemp, ytemp + 1, ztemp - 1);
+            SetCoal(xtemp + 1, ytemp + 1, ztemp);
+
+            SetCoal(xtemp - 1, ytemp + 1, ztemp + 1);
+            SetCoal(xtemp, ytemp + 1, ztemp + 1);
+            SetCoal(xtemp + 1, ytemp + 1, ztemp + 1);
+        }
+
+
+        //中一层
+        SetCoal(xtemp - 1, ytemp, ztemp - 1);
+        SetCoal(xtemp, ytemp, ztemp - 1);
+        SetCoal(xtemp + 1, ytemp, ztemp - 1);
+
+        SetCoal(xtemp - 1, ytemp, ztemp);
+        SetCoal(xtemp, ytemp, ztemp - 1);
+        SetCoal(xtemp + 1, ytemp, ztemp);
+
+        SetCoal(xtemp - 1, ytemp, ztemp + 1);
+        SetCoal(xtemp, ytemp, ztemp + 1);
+        SetCoal(xtemp + 1, ytemp, ztemp + 1);
+
+        //下一层
+        if (random_Coal_down < 50)
+        {
+            SetCoal(xtemp - 1, ytemp - 1, ztemp - 1);
+            SetCoal(xtemp, ytemp - 1, ztemp - 1);
+            SetCoal(xtemp + 1, ytemp - 1, ztemp - 1);
+
+            SetCoal(xtemp - 1, ytemp - 1, ztemp);
+            SetCoal(xtemp, ytemp - 1, ztemp - 1);
+            SetCoal(xtemp + 1, ytemp - 1, ztemp);
+
+            SetCoal(xtemp - 1, ytemp - 1, ztemp + 1);
+            SetCoal(xtemp, ytemp - 1, ztemp + 1);
+            SetCoal(xtemp + 1, ytemp - 1, ztemp + 1);
+        } 
+    }
+
+    //如果是空气 || 出界则不生成
+    void SetCoal(int _x, int _y, int _z)
+    {
+        //如果出界
+        if (isOutOfRange(_x,_y,_z))
+        {
+            return;
+        }
+        else
+        {
+            if(voxelMap[_x, _y, _z] == VoxelData.Stone)
+                voxelMap[_x, _y, _z] = VoxelData.Coal;
+        }
+
+        
+    }
+
+    //---------------------------------- Bamboo ----------------------------------------
+
+    //生成竹子
+    void CreateBamboo(int x,int y,int z)
+    {
+        //先确定根
+        if (BambooJudge(x,y,z))
+        {
+            //向上延申1~2根
+            //如果是空气则覆盖为竹子
+            for (int temp = 0; temp < UnityEngine.Random.Range(1,4); temp ++)
+            {
+                voxelMap[x,y + temp,z] = VoxelData.Bamboo;
+            }
+
+        }
+
+
+
+    }
+
+    //生成判断
+    //如果脚下有一个为水，则为true
+    bool BambooJudge(int x,int y,int z)
+    {
+        for (int _x = 0; _x < 1; _x ++)
+        {
+            for (int _z = 0; _z < 1; _z++)
+            {
+                if (voxelMap[_x,y - 1, _z] == VoxelData.Water)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     //------------------------------------------------------------------------------------
 
 
@@ -420,9 +589,21 @@ public class Chunk : MonoBehaviour
                     //    continue;
                     //}
 
+                    if (x == 9 && y == 41 && z == 0)
+                    {
+                        print("");
+                    }
 
-                    //空气就直接跳过，除非是水面上的空气
-                    if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water)
+
+
+                    //如果自己是竹子 && 自己下面是空气 则自己变为空气
+                    if (voxelMap[x,y,z] == VoxelData.Bamboo && voxelMap[x, y - 1, z] == VoxelData.Air)
+                    {
+                        voxelMap[x, y, z] = VoxelData.Air;
+                    }
+
+                    //(是固体 || 是水 || 是水面上一层 || 是竹子)才生成
+                    if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water || voxelMap[x, y, z] == VoxelData.Bamboo)
                         UpdateMeshData(new Vector3(x, y, z));
                     
 
@@ -593,6 +774,18 @@ public class Chunk : MonoBehaviour
         }
         else
         {
+            //自己是空气 && 目标是竹子 则不绘制
+            if (voxelMap[x, y, z] == VoxelData.Bamboo && voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air)
+            {
+                return true;
+            }
+
+
+            //判断是不是透明方块
+            if (world.blocktypes[voxelMap[x, y, z]].isTransparent)
+            {
+                return false;
+            }
 
             //判断自己和目标是不是都是空气 || 自己和目标是不是都是水
             //不生成面的情况
@@ -772,6 +965,18 @@ public class Chunk : MonoBehaviour
 
     }
 
+    //是否出界
+    bool isOutOfRange(int x,int y,int z)
+    {
+        if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     //----------------------------------------------------------------------------------
 
