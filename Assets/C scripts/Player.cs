@@ -18,9 +18,12 @@ public class Player : MonoBehaviour
     [Header("Transforms")]
     public Transform cam;
     //public GameObject camera;
+    public Animation camaraAnimation;
     public Transform HighlightBlock;
     public GameObject HighlightBlockObject;
     public World world;
+    public CanvasManager canvasManager;
+    //public Transform myfoot;
 
     [Header("角色参数")]
     public Transform foot;
@@ -31,6 +34,7 @@ public class Player : MonoBehaviour
     public float squatSpeed = 3f;
     public float jumpForce = 6f;
     public float gravity = -15f;
+    public float MaxHurtHigh = 7f;
 
     [Header("碰撞参数")]
     public float playerWidth = 0.3f;
@@ -79,6 +83,8 @@ public class Player : MonoBehaviour
     public float watergravity = -3f;
     public float mult = 2f;
 
+    //摔落伤害
+    public float new_foot_high = -100f;
 
     //碰撞检测的坐标
     // 上面的四个点
@@ -166,9 +172,18 @@ public class Player : MonoBehaviour
     {
         if (world.game_state == Game_State.Playing)
         {
-            GetPlayerInputs();
-            placeCursorBlocks();
-
+            if (!canvasManager.isPausing)
+            {
+                GetPlayerInputs();
+                placeCursorBlocks();
+            }
+            else
+            {
+                horizontalInput = 0f;
+                verticalInput = 0f;
+                mouseHorizontal = 0f;
+                mouseVerticalspeed = 0f;
+            }
 
 
             if (showBlockMesh)
@@ -380,7 +395,7 @@ public class Player : MonoBehaviour
         float startTime = Time.time;
         float destroy_time = world.blocktypes[world.GetBlockType(position)].DestroyTime;
 
-        // 等待2秒
+        // 等待
         while (Time.time - startTime < destroy_time)
         {
             // 计算透明度插值
@@ -408,6 +423,8 @@ public class Player : MonoBehaviour
         //如果成功过了两秒
         // 执行销毁泥土的逻辑
         isDestroying = false;
+        elapsedTime = 0.0f;
+        material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
         world.GetChunkObject(position).EditData(world.GetRelalocation(position), VoxelData.Air);
 
         //print($"绝对坐标为：{position}");
@@ -427,7 +444,7 @@ public class Player : MonoBehaviour
 
             Vector3 pos = cam.position + (cam.forward * step);
 
-            if (world.CheckForVoxel(pos))
+            if (world.eyesCheckForVoxel(pos))
             {
 
                 HighlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x) + 0.5f, Mathf.FloorToInt(pos.y) + 0.5f, Mathf.FloorToInt(pos.z) + 0.5f);
@@ -624,24 +641,46 @@ public class Player : MonoBehaviour
        
         get
         {
-            //正常情况
-            if (!isSquating)
-            {
-                if (
+            ////正常情况
+            //if (!isSquating)
+            //{
+            //    if (
+            //    world.CheckForVoxel(front_左上) ||
+            //    world.CheckForVoxel(front_右上) ||
+            //    world.CheckForVoxel(front_左下) ||
+            //    world.CheckForVoxel(front_右下)
+            //    )
+            //    {
+
+            //        return true;
+            //    }
+            //    else
+            //        return false;
+            //}
+            ////蹲下情况
+            //else
+            //{
+            //    //(左下固体 && 左下延伸不是固体) || (右下固体 && 右下延伸不是固体)
+            //    if ((world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x, down_左下.y, down_左下.z + extend_delta))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x, down_右下.y, down_右下.z + extend_delta))))
+            //    {
+
+            //        return true;
+            //    }
+            //    else
+            //        return false;
+            //}
+
+
+            if (
                 world.CheckForVoxel(front_左上) ||
                 world.CheckForVoxel(front_右上) ||
                 world.CheckForVoxel(front_左下) ||
                 world.CheckForVoxel(front_右下)
                 )
-                {
+            {
 
-                    return true;
-                }
-                else
-                    return false;
-            }
-            //蹲下情况
-            else
+                return true;
+            }else if (isSquating)
             {
                 //(左下固体 && 左下延伸不是固体) || (右下固体 && 右下延伸不是固体)
                 if ((world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x, down_左下.y, down_左下.z + extend_delta))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x, down_右下.y, down_右下.z + extend_delta))))
@@ -652,6 +691,8 @@ public class Player : MonoBehaviour
                 else
                     return false;
             }
+            else
+                return false;
 
             
         }
@@ -662,7 +703,38 @@ public class Player : MonoBehaviour
 
         get
         {
-            if (!isSquating)
+            //if (!isSquating)
+            //{
+            //    if (
+            //    world.CheckForVoxel(back_左上) ||
+            //    world.CheckForVoxel(back_右上) ||
+            //    world.CheckForVoxel(back_左下) ||
+            //    world.CheckForVoxel(back_右下)
+            //    )
+            //        return true;
+            //    else
+            //        return false;
+            //}
+            //else
+            //{
+            //    //(左上固体 && 左上延伸不是固体) || (右上固体 && 右上延伸不是固体)
+            //    if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x, down_左上.y, down_左上.z - extend_delta))) || (world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x, down_右上.y, down_右上.z - extend_delta))))
+            //    {
+
+            //        return true;
+            //    }
+            //    else
+            //        return false;
+            //}
+
+            if (
+                world.CheckForVoxel(back_左上) ||
+                world.CheckForVoxel(back_右上) ||
+                world.CheckForVoxel(back_左下) ||
+                world.CheckForVoxel(back_右下)
+                )
+                return true;
+            else if (isSquating)
             {
                 if (
                 world.CheckForVoxel(back_左上) ||
@@ -673,41 +745,62 @@ public class Player : MonoBehaviour
                     return true;
                 else
                     return false;
+
+
+
             }
             else
-            {
-                //(左上固体 && 左上延伸不是固体) || (右上固体 && 右上延伸不是固体)
-                if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x, down_左上.y, down_左上.z - extend_delta))) || (world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x, down_右上.y, down_右上.z - extend_delta))))
-                {
+                return false;
 
-                    return true;
-                }
-                else
-                    return false;
-            }
         }
+            
 
     }
+
     public bool left
     {
 
         get
         {
-            if (!isSquating)
-            {
-                if (
+            //if (!isSquating)
+            //{
+            //    if (
+            //    world.CheckForVoxel(left_左上) ||
+            //    world.CheckForVoxel(left_右上) ||
+            //    world.CheckForVoxel(left_左下) ||
+            //    world.CheckForVoxel(left_右下)
+            //    )
+            //        return true;
+            //    else
+            //        return false;
+            //}
+            //else
+            //{
+                
+            //    //(右上固体 && 右上延伸不是固体) || (右下固体 && 右下延伸不是固体)
+            //    if ((world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x - extend_delta, down_右下.y, down_右下.z))))
+            //    {
+
+            //        return true;
+            //    }
+            //    else
+            //        return false;
+
+
+
+            //}
+
+
+            if (
                 world.CheckForVoxel(left_左上) ||
                 world.CheckForVoxel(left_右上) ||
                 world.CheckForVoxel(left_左下) ||
                 world.CheckForVoxel(left_右下)
                 )
-                    return true;
-                else
-                    return false;
-            }
-            else
+                return true;
+            else if (isSquating)
             {
-                
+
                 //(右上固体 && 右上延伸不是固体) || (右下固体 && 右下延伸不是固体)
                 if ((world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x - extend_delta, down_右下.y, down_右下.z))))
                 {
@@ -720,8 +813,12 @@ public class Player : MonoBehaviour
 
 
             }
+            else 
+                return false;
 
             
+
+
         }
 
     }
@@ -731,19 +828,38 @@ public class Player : MonoBehaviour
         get
         {
 
-            if (!isSquating)
-            {
-                if (
+            //if (!isSquating)
+            //{
+            //    if (
+            //    world.CheckForVoxel(right_左上) ||
+            //    world.CheckForVoxel(right_右上) ||
+            //    world.CheckForVoxel(right_左下) ||
+            //    world.CheckForVoxel(right_右下)
+            //    )
+            //        return true;
+            //    else
+            //        return false;
+            //}
+            //else
+            //{
+            //    //(左上固体 && 左上延伸不是固体) || (左下固体 && 左下延伸不是固体)
+            //    if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x + extend_delta, down_左上.y, down_左上.z))) || (world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x + extend_delta, down_左下.y, down_左下.z))))
+            //    {
+
+            //        return true;
+            //    }
+            //    else
+            //        return false;
+            //}
+
+            if (
                 world.CheckForVoxel(right_左上) ||
                 world.CheckForVoxel(right_右上) ||
                 world.CheckForVoxel(right_左下) ||
                 world.CheckForVoxel(right_右下)
                 )
-                    return true;
-                else
-                    return false;
-            }
-            else
+                return true;
+            else if (isSquating)
             {
                 //(左上固体 && 左上延伸不是固体) || (左下固体 && 左下延伸不是固体)
                 if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x + extend_delta, down_左上.y, down_左上.z))) || (world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x + extend_delta, down_左下.y, down_左下.z))))
@@ -754,6 +870,8 @@ public class Player : MonoBehaviour
                 else
                     return false;
             }
+            else
+                return false;
 
             
         }
@@ -950,7 +1068,29 @@ public class Player : MonoBehaviour
         {
             isSwiming = false;
         }
+
+
+        //记录玩家摔落
+        if (foot.transform.position.y > new_foot_high)
+        {
+            new_foot_high = transform.position.y;
+        }
+
+        //判断玩家是否受伤
+        if (isGrounded || isSwiming)
+        {
+            if ((new_foot_high - foot.transform.position.y) > MaxHurtHigh)
+            {
+                
+                camaraAnimation.Play();
+            }
+
+            new_foot_high = foot.transform.position.y;
+        }
+    
     }
+
+   
 
 
     //-------------------------------------------------------------------------------------

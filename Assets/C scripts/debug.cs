@@ -4,51 +4,55 @@ using UnityEngine;
 
 public class debug : MonoBehaviour
 {
-    public float fadeDuration = 2.0f; // 渐变持续时间为2秒
-    private Material material; // 物体的材质
-    private Color initialColor; // 初始颜色
-    private float elapsedTime = 0.0f; // 已经过的时间
-    private bool isMouseDown = false; // 鼠标左键是否按下
+    public Material material1;
+    public Material material2;
+
+    private MeshFilter meshFilter;
+    private MeshRenderer meshRenderer;
 
     void Start()
     {
-        // 获取物体上的材质
-        Renderer renderer = GetComponent<Renderer>();
-        material = renderer.material;
+        GameObject obj = new GameObject();
+        meshFilter = obj.AddComponent<MeshFilter>();
+        meshRenderer = obj.AddComponent<MeshRenderer>();
 
-        // 保存初始颜色
-        initialColor = material.color;
-    }
-
-    void Update()
-    {
-        // 如果鼠标左键按下
-        if (Input.GetMouseButtonDown(0))
+        // 顶点定义
+        Vector3[] vertices = new Vector3[]
         {
-            isMouseDown = true;
-            elapsedTime = 0.0f;
-        }
+            new Vector3(0, 0, 0),
+            new Vector3(0, 1, 0),
+            new Vector3(1, 0, 0),
+            new Vector3(1, 1, 0)
+        };
 
-        // 如果鼠标左键松开
-        else if (Input.GetMouseButtonUp(0))
+        // 设置正面的三角形序列
+        int[] trianglesFront = new int[] { 0, 1, 2, 2, 1, 3 };
+        // 设置反面的三角形序列（注意顺序）
+        int[] trianglesBack = new int[] { 2, 1, 0, 3, 1, 2 };
+
+        // 设置 UV
+        Vector2[] uvs = new Vector2[] 
         {
-            isMouseDown = false;
-            elapsedTime = 0.0f;
-            // 直接将透明度归零
-            material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
-            return;
-        }
+            new Vector2(0, 0),
+            new Vector2(0, 1),
+            new Vector2(1, 0),
+            new Vector2(1, 1)
+        };
 
-        // 如果鼠标左键一直按住
-        if (isMouseDown)
-        {
-            // 计算透明度插值
-            elapsedTime += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsedTime / fadeDuration);
-            float targetAlpha = Mathf.Lerp(initialColor.a, 1f, t);
+        // 设置材质
+        Material[] materials = new Material[] { material1, material2 };
 
-            // 更新材质的颜色和透明度
-            material.color = new Color(initialColor.r, initialColor.g, initialColor.b, targetAlpha);
-        }
+        // 创建 Mesh
+        Mesh mesh = new Mesh();
+        mesh.vertices = vertices;
+        mesh.subMeshCount = 2;
+        mesh.SetTriangles(trianglesFront, 0);
+        mesh.SetTriangles(trianglesBack, 1);
+        mesh.uv = uvs; // 设置 UV
+        mesh.SetUVs(0,uvs);
+
+        // 应用 Mesh 和材质
+        meshFilter.mesh = mesh;
+        meshRenderer.sharedMaterials = materials;
     }
 }
