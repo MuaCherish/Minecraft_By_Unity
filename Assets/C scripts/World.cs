@@ -341,8 +341,19 @@ public class World : MonoBehaviour
             //如果队列中没有数据，就关闭协程
             if (WatingToCreate_Chunks.Count > 0)
             {
-                CreateChunk(WatingToCreate_Chunks[0]);
+                //如果查到的chunk已经存在，则唤醒
+                //不存在则生成
+                if(Allchunks.TryGetValue(WatingToCreate_Chunks[0], out obj))
+                {
+                    obj.ShowChunk();
+                }
+                else
+                {
+                    CreateChunk(WatingToCreate_Chunks[0]);
+                }
+
                 WatingToCreate_Chunks.RemoveAt(0);
+
             }
             else
             {
@@ -483,8 +494,10 @@ public class World : MonoBehaviour
             {
                 if (Allchunks.TryGetValue(WatingToRemove_Chunks[0], out obj))
                 {
-                    obj.DestroyChunk();
-                    Allchunks.Remove(WatingToRemove_Chunks[0]);
+                    //obj.DestroyChunk();
+                    obj.HideChunk();
+                    
+                    //Allchunks.Remove(WatingToRemove_Chunks[0]);
                     WatingToRemove_Chunks.RemoveAt(0);
                 }
                 else
@@ -744,7 +757,35 @@ public class World : MonoBehaviour
     //----------------------------------------------------------------------------------------
 
     //对玩家碰撞盒的方块判断
+    //true：有碰撞
     public bool CheckForVoxel(Vector3 pos)
+    {
+        //计算相对坐标
+        Vector3 vec = GetRelalocation(new Vector3(pos.x, pos.y, pos.z));
+
+        //查一下该地形是否存在
+        //Allchunks.TryGetValue(GetChunkLocation(pos), out obj);
+        //if (obj.myState == false)
+        //{
+        //    return true;
+        //}
+
+        //判断XOZ上有没有出界
+        if (!Allchunks.ContainsKey(GetChunkLocation(pos))) { return true; }
+
+        //判断Y上有没有出界
+        if (vec.y >= VoxelData.ChunkHeight) { return false; }
+
+        //竹子返回false
+        if (GetBlockType(pos) == VoxelData.Bamboo) { return false; }
+
+        //返回固体还是空气
+        return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z]].isSolid;
+
+    }
+
+    //放置高亮方块的
+    public bool eyesCheckForVoxel(Vector3 pos)
     {
         //计算相对坐标
         Vector3 vec = GetRelalocation(new Vector3(pos.x, pos.y, pos.z));

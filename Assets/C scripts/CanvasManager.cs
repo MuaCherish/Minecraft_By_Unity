@@ -7,20 +7,35 @@ using UnityEngine.UI;
 public class CanvasManager : MonoBehaviour
 {
 
-    [Header("Screen")]
-    public GameObject StartScreen;
-    public GameObject LoadingScreen;
-    public GameObject debugscreen;
-    public GameObject EscScreen;
-    public GameObject CursorCross;
+    [Header("Transform")]
+    public Transform Camera;
 
-    [Header("UI")]
+
+    //Start && Init
+    [Header("Start && Init")]
+    public GameObject Start_Screen;
+
+    //Loading
+    [Header("Locading")]
+    public GameObject Loading_Screen;
     public Slider slider;
     public TextMeshProUGUI tmp;
     public GameObject handle;
 
+    //Playing
+    [Header("Playing")]
+    public GameObject Playing_Screen;
+    public GameObject Debug_Screen;
+    public GameObject CursorCross_Screen;
+    public GameObject Swimming_Screen;
+
+    //Pause
+    [Header("Pause")]
+    public GameObject Pause_Screen;
+
+
     //游戏状态判断
-    bool isEscing = false;
+    public bool isPausing = false;
 
     //world 
     public World world;
@@ -30,8 +45,8 @@ public class CanvasManager : MonoBehaviour
     public void OnClickEvent()
     {
         //界面显示
-        StartScreen.SetActive(false);
-        LoadingScreen.SetActive(true);
+        Start_Screen.SetActive(false);
+        Loading_Screen.SetActive(true);
         HideCursor();
 
         world.game_state = Game_State.Loading;
@@ -65,28 +80,39 @@ public class CanvasManager : MonoBehaviour
         //加载完成
         if (world.game_state == Game_State.Playing)
         {
-            LoadingScreen.SetActive(false);
-            CursorCross.SetActive(true);
+            Loading_Screen.SetActive(false);
+            Playing_Screen.SetActive(true);
+            CursorCross_Screen.SetActive(true);
 
             //Debug面板
             if (Input.GetKeyDown(KeyCode.F3))
             {
-                debugscreen.SetActive(!debugscreen.activeSelf);
+                Debug_Screen.SetActive(!Debug_Screen.activeSelf);
             }
 
             //EscScreen
-            //if (Input.GetKeyDown(KeyCode.Escape))
-            //{
-            //    isEscing = !isEscing;
-            //    //Debug.Log($"{isEscing}");
-            //    EscScreen.SetActive(!EscScreen.activeSelf);
-            //}
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                isPausing = !isPausing;
+                Playing_Screen.SetActive(!Playing_Screen.activeSelf);
+                Pause_Screen.SetActive(!Pause_Screen.activeSelf);
+            }
 
             //QuitGame
-            if (Input.GetKeyDown(KeyCode.Q) && isEscing)
+            if (Input.GetKeyDown(KeyCode.Q) && isPausing)
             {
                 //Debug.Log("isQuiting");
                 Application.Quit();
+            }
+
+            //SwimmingScreen
+            if (world.GetBlockType(Camera.transform.position) == VoxelData.Water)
+            {
+                Swimming_Screen.SetActive(true);
+            }
+            else
+            {
+                Swimming_Screen.SetActive(false);
             }
 
         }

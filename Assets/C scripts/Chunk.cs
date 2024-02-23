@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Chunk : MonoBehaviour
 {
+    //自身状态
+    public bool myState = false;
 
     //组件
     //public ChunkCoord coord;
@@ -44,6 +46,9 @@ public class Chunk : MonoBehaviour
     //Start()
     public Chunk(Vector3 thisPosition, World _world)
     {
+        //苏醒
+        myState = true;
+
         //从world获取参数
         world = _world;
         UnityEngine.Random.InitState(world.Seed);
@@ -62,6 +67,7 @@ public class Chunk : MonoBehaviour
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = world.material;
+        
         chunkObject.transform.SetParent(world.Chunks.transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
         chunkObject.name = thisPosition.x + ", " + thisPosition.z;
@@ -480,7 +486,7 @@ public class Chunk : MonoBehaviour
         SetCoal(xtemp + 1, ytemp, ztemp - 1);
 
         SetCoal(xtemp - 1, ytemp, ztemp);
-        SetCoal(xtemp, ytemp, ztemp - 1);
+        SetCoal(xtemp, ytemp, ztemp);
         SetCoal(xtemp + 1, ytemp, ztemp);
 
         SetCoal(xtemp - 1, ytemp, ztemp + 1);
@@ -589,10 +595,10 @@ public class Chunk : MonoBehaviour
                     //    continue;
                     //}
 
-                    if (x == 9 && y == 41 && z == 0)
-                    {
-                        print("");
-                    }
+                    //if (x == 10 && y == 42 && z == 1)
+                    //{
+                    //    print("");
+                    //}
 
 
 
@@ -774,7 +780,7 @@ public class Chunk : MonoBehaviour
         }
         else
         {
-            //自己是空气 && 目标是竹子 则不绘制
+            //自己是空气 && 目标是竹子 则绘制
             if (voxelMap[x, y, z] == VoxelData.Bamboo && voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air)
             {
                 return true;
@@ -846,10 +852,10 @@ public class Chunk : MonoBehaviour
             //voxelMap[pos + VoxelData.faceChecks[p]]
             //Debug.Log(pos);
 
+            byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
+
             if (!CheckVoxel(pos + VoxelData.faceChecks[p], p))
             {
-
-                byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
 
                 vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
                 vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
@@ -939,12 +945,14 @@ public class Chunk : MonoBehaviour
     //隐藏自己
     public void HideChunk()
     {
+        myState = false;
         chunkObject.SetActive(false);
     }
 
     //显示自己
     public void ShowChunk()
     {
+        myState = true;
         chunkObject.SetActive(true);
     }
 

@@ -14,8 +14,8 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.33490568, g: 0.33016646, b: 0.33016646, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
   m_LinearFogStart: 0
@@ -27,7 +27,7 @@ RenderSettings:
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: b5c5b3e3b64a9264fa5cae60b27a8fbf, type: 2}
-  m_HaloStrength: 0.5
+  m_HaloStrength: 0.226
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
   m_HaloTexture: {fileID: 0}
@@ -519,7 +519,7 @@ MonoBehaviour:
   m_fontSize: 20
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
@@ -971,6 +971,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1504082081}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &689754365
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 689754366}
+  - component: {fileID: 689754368}
+  - component: {fileID: 689754367}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &689754366
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689754365}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1081291214}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1000, y: 1000}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &689754367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689754365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 5e951416ba44b614e9c556d39d468a27, type: 2}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.3137255}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &689754368
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689754365}
+  m_CullTransparentMesh: 1
 --- !u!1 &699955240
 GameObject:
   m_ObjectHideFlags: 0
@@ -1004,7 +1079,9 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
   blocktypes:
   - blockName: BedRock
+    DestroyTime: 0
     isSolid: 1
+    isTransparent: 0
     backFaceTexture: 17
     frontFaceTexture: 17
     topFaceTexture: 17
@@ -1012,7 +1089,9 @@ MonoBehaviour:
     leftFaceTexture: 17
     rightFaceTexture: 17
   - blockName: Stone
+    DestroyTime: 2
     isSolid: 1
+    isTransparent: 0
     backFaceTexture: 0
     frontFaceTexture: 0
     topFaceTexture: 0
@@ -1020,7 +1099,9 @@ MonoBehaviour:
     leftFaceTexture: 0
     rightFaceTexture: 0
   - blockName: Grass
+    DestroyTime: 0.5
     isSolid: 1
+    isTransparent: 0
     backFaceTexture: 2
     frontFaceTexture: 2
     topFaceTexture: 11
@@ -1028,7 +1109,9 @@ MonoBehaviour:
     leftFaceTexture: 2
     rightFaceTexture: 2
   - blockName: Soil
+    DestroyTime: 0.5
     isSolid: 1
+    isTransparent: 0
     backFaceTexture: 1
     frontFaceTexture: 1
     topFaceTexture: 1
@@ -1036,15 +1119,19 @@ MonoBehaviour:
     leftFaceTexture: 1
     rightFaceTexture: 1
   - blockName: Air
+    DestroyTime: 0
     isSolid: 0
-    backFaceTexture: 4
-    frontFaceTexture: 4
-    topFaceTexture: 4
-    bottomFaceTexture: 4
-    leftFaceTexture: 4
-    rightFaceTexture: 4
+    isTransparent: 0
+    backFaceTexture: 13
+    frontFaceTexture: 13
+    topFaceTexture: 255
+    bottomFaceTexture: 255
+    leftFaceTexture: 13
+    rightFaceTexture: 13
   - blockName: Sand
+    DestroyTime: 0.5
     isSolid: 1
+    isTransparent: 0
     backFaceTexture: 18
     frontFaceTexture: 18
     topFaceTexture: 18
@@ -1052,7 +1139,9 @@ MonoBehaviour:
     leftFaceTexture: 18
     rightFaceTexture: 18
   - blockName: wood
+    DestroyTime: 2
     isSolid: 1
+    isTransparent: 0
     backFaceTexture: 9
     frontFaceTexture: 9
     topFaceTexture: 10
@@ -1060,15 +1149,19 @@ MonoBehaviour:
     leftFaceTexture: 9
     rightFaceTexture: 9
   - blockName: leave
+    DestroyTime: 0.4
     isSolid: 1
-    backFaceTexture: 5
-    frontFaceTexture: 5
-    topFaceTexture: 5
-    bottomFaceTexture: 5
-    leftFaceTexture: 5
-    rightFaceTexture: 5
+    isTransparent: 1
+    backFaceTexture: 12
+    frontFaceTexture: 12
+    topFaceTexture: 12
+    bottomFaceTexture: 12
+    leftFaceTexture: 12
+    rightFaceTexture: 12
   - blockName: water
+    DestroyTime: 0
     isSolid: 0
+    isTransparent: 0
     backFaceTexture: 4
     frontFaceTexture: 4
     topFaceTexture: 4
@@ -1076,15 +1169,177 @@ MonoBehaviour:
     leftFaceTexture: 4
     rightFaceTexture: 4
   - blockName: Coal
+    DestroyTime: 3
     isSolid: 1
+    isTransparent: 0
     backFaceTexture: 3
     frontFaceTexture: 3
     topFaceTexture: 3
     bottomFaceTexture: 3
     leftFaceTexture: 3
     rightFaceTexture: 3
-  renderSize: 1
-  StartToRender: 2
+  - blockName: BirchWood
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 0
+    backFaceTexture: 7
+    frontFaceTexture: 7
+    topFaceTexture: 6
+    bottomFaceTexture: 6
+    leftFaceTexture: 7
+    rightFaceTexture: 7
+  - blockName: BlueFlower
+    DestroyTime: 0.1
+    isSolid: 1
+    isTransparent: 1
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 14
+    bottomFaceTexture: 14
+    leftFaceTexture: 17
+    rightFaceTexture: 17
+  - blockName: whiteFlower_1
+    DestroyTime: 0.1
+    isSolid: 1
+    isTransparent: 1
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 15
+    bottomFaceTexture: 15
+    leftFaceTexture: 17
+    rightFaceTexture: 17
+  - blockName: whiteFlower_2
+    DestroyTime: 0.1
+    isSolid: 1
+    isTransparent: 1
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 22
+    bottomFaceTexture: 22
+    leftFaceTexture: 17
+    rightFaceTexture: 17
+  - blockName: yellowFlower
+    DestroyTime: 0.1
+    isSolid: 1
+    isTransparent: 1
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 20
+    bottomFaceTexture: 20
+    leftFaceTexture: 17
+    rightFaceTexture: 17
+  - blockName: Candle
+    DestroyTime: 0.4
+    isSolid: 1
+    isTransparent: 1
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 21
+    bottomFaceTexture: 21
+    leftFaceTexture: 17
+    rightFaceTexture: 17
+  - blockName: Cactus
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 1
+    backFaceTexture: 30
+    frontFaceTexture: 30
+    topFaceTexture: 29
+    bottomFaceTexture: 29
+    leftFaceTexture: 30
+    rightFaceTexture: 30
+  - blockName: TNT
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    backFaceTexture: 33
+    frontFaceTexture: 33
+    topFaceTexture: 32
+    bottomFaceTexture: 34
+    leftFaceTexture: 33
+    rightFaceTexture: 33
+  - blockName: WorkTable
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 0
+    backFaceTexture: 41
+    frontFaceTexture: 41
+    topFaceTexture: 40
+    bottomFaceTexture: 43
+    leftFaceTexture: 42
+    rightFaceTexture: 42
+  - blockName: Pumpkin
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 0
+    backFaceTexture: 50
+    frontFaceTexture: 49
+    topFaceTexture: 48
+    bottomFaceTexture: 51
+    leftFaceTexture: 50
+    rightFaceTexture: 50
+  - blockName: Glass
+    DestroyTime: 0.2
+    isSolid: 1
+    isTransparent: 1
+    backFaceTexture: 60
+    frontFaceTexture: 60
+    topFaceTexture: 60
+    bottomFaceTexture: 60
+    leftFaceTexture: 60
+    rightFaceTexture: 60
+  - blockName: Blue_Crystal
+    DestroyTime: 3
+    isSolid: 1
+    isTransparent: 0
+    backFaceTexture: 56
+    frontFaceTexture: 56
+    topFaceTexture: 56
+    bottomFaceTexture: 56
+    leftFaceTexture: 56
+    rightFaceTexture: 56
+  - blockName: Diamond
+    DestroyTime: 5
+    isSolid: 1
+    isTransparent: 0
+    backFaceTexture: 57
+    frontFaceTexture: 57
+    topFaceTexture: 57
+    bottomFaceTexture: 57
+    leftFaceTexture: 57
+    rightFaceTexture: 57
+  - blockName: Iron
+    DestroyTime: 3
+    isSolid: 1
+    isTransparent: 0
+    backFaceTexture: 58
+    frontFaceTexture: 58
+    topFaceTexture: 58
+    bottomFaceTexture: 58
+    leftFaceTexture: 58
+    rightFaceTexture: 58
+  - blockName: Gold
+    DestroyTime: 3
+    isSolid: 1
+    isTransparent: 0
+    backFaceTexture: 59
+    frontFaceTexture: 59
+    topFaceTexture: 59
+    bottomFaceTexture: 59
+    leftFaceTexture: 59
+    rightFaceTexture: 59
+  - blockName: bamboo
+    DestroyTime: 0.1
+    isSolid: 0
+    isTransparent: 1
+    backFaceTexture: 13
+    frontFaceTexture: 13
+    topFaceTexture: 255
+    bottomFaceTexture: 255
+    leftFaceTexture: 13
+    rightFaceTexture: 13
+  renderSize: 6
+  StartToRender: 1
   noise2d_scale_smooth: 0.01
   noise2d_scale_steep: 0.04
   noise3d_scale: 0.085
@@ -1096,12 +1351,18 @@ MonoBehaviour:
   TreeCount: 5
   TreeHigh_min: 3
   TreeHigh_max: 5
+  Random_Bamboo: 50
+  Random_Coal: 500
+  Random_Iron: 700
+  Random_Gold: 1000
+  Random_Blue_Crystal: 1000
+  Random_Diamond: 2000
   PlayerFoot: {fileID: 656216633}
   ERROR_CODE_OUTOFVOXELMAP: 255
   Start_Position: {x: 1600, y: 63, z: 1600}
   InitCorountineDelay: 0.0001
-  CreateCoroutineDelay: 1.1
-  RemoveCoroutineDelay: 2
+  CreateCoroutineDelay: 0.5
+  RemoveCoroutineDelay: 0.5
   initprogress: 0
   Chunks: {fileID: 0}
 --- !u!4 &699955242
@@ -1479,6 +1740,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   world: {fileID: 699955241}
   player: {fileID: 1504082080}
+  canvasmanager: {fileID: 1026571032}
 --- !u!111 &943284632
 Animation:
   m_ObjectHideFlags: 0
@@ -1623,14 +1885,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49ac7649e39f1914ba03353ce8b42f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartScreen: {fileID: 1362257022}
-  LoadingScreen: {fileID: 849139296}
-  debugscreen: {fileID: 1357337469}
-  EscScreen: {fileID: 1036927491}
-  CursorCross: {fileID: 1776943869}
+  Camera: {fileID: 1727421507}
+  Start_Screen: {fileID: 1362257022}
+  Loading_Screen: {fileID: 849139296}
   slider: {fileID: 2130517686}
   tmp: {fileID: 1108986468}
   handle: {fileID: 1495635534}
+  Playing_Screen: {fileID: 1971234941}
+  Debug_Screen: {fileID: 1357337469}
+  CursorCross_Screen: {fileID: 1776943869}
+  Swimming_Screen: {fileID: 1081291213}
+  Pause_Screen: {fileID: 1036927491}
+  isPausing: 0
   world: {fileID: 699955241}
 --- !u!1 &1036927491
 GameObject:
@@ -1644,7 +1910,7 @@ GameObject:
   - component: {fileID: 1036927494}
   - component: {fileID: 1036927493}
   m_Layer: 5
-  m_Name: Esc_Screen
+  m_Name: Pause_Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1707,6 +1973,82 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1036927491}
+  m_CullTransparentMesh: 1
+--- !u!1 &1081291213
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1081291214}
+  - component: {fileID: 1081291216}
+  - component: {fileID: 1081291215}
+  m_Layer: 5
+  m_Name: Swiming_Screen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1081291214
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1081291213}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 689754366}
+  m_Father: {fileID: 1971234942}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 504, y: 764}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1081291215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1081291213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.16862746, g: 0.16862746, b: 0.16862746, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1081291216
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1081291213}
   m_CullTransparentMesh: 1
 --- !u!1 &1108986467
 GameObject:
@@ -2373,7 +2715,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 439713264}
-  m_Father: {fileID: 1660979562}
+  m_Father: {fileID: 1971234942}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -2797,21 +3139,23 @@ MonoBehaviour:
   isMoving: 0
   isSquating: 0
   cam: {fileID: 1727421507}
+  camaraAnimation: {fileID: 1727421510}
   HighlightBlock: {fileID: 1443460313}
   HighlightBlockObject: {fileID: 1443460309}
   world: {fileID: 699955241}
+  canvasManager: {fileID: 1026571032}
   foot: {fileID: 656216633}
-  walkSpeed: 4
-  sprintSpeed: 8
-  squatSpeed: 1
-  jumpForce: 6
-  gravity: -15
+  walkSpeed: 3.5
+  sprintSpeed: 5
+  squatWalkSpeed: 1
+  squatSpeed: 3
+  jumpForce: 6.5
+  gravity: -20
+  MaxHurtHigh: 7
   playerWidth: 0.8
   playerHeight: 1.8
   extend_delta: 0.1
   delta: 0.05
-  destroyTime: 1
-  isChangeBlock: 0
   horizontalInput: 0
   verticalInput: 0
   reach: 8
@@ -2821,10 +3165,7 @@ MonoBehaviour:
   water_jumpforce: 4
   watergravity: -3
   mult: 3
-  _Front: 0
-  _Back: 0
-  _Left: 0
-  _Right: 0
+  new_foot_high: 0
 --- !u!4 &1504082081
 Transform:
   m_ObjectHideFlags: 0
@@ -2939,8 +3280,7 @@ RectTransform:
   m_Children:
   - {fileID: 1362257023}
   - {fileID: 849139297}
-  - {fileID: 1776943870}
-  - {fileID: 1357337470}
+  - {fileID: 1971234942}
   - {fileID: 1036927492}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3162,6 +3502,7 @@ GameObject:
   - component: {fileID: 1727421507}
   - component: {fileID: 1727421509}
   - component: {fileID: 1727421508}
+  - component: {fileID: 1727421510}
   m_Layer: 0
   m_Name: Eyes
   m_TagString: Untagged
@@ -3245,6 +3586,22 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!111 &1727421510
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727421506}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 2ad66a1c4e0f3094890ae4153404cbcc, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 2ad66a1c4e0f3094890ae4153404cbcc, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &1776943869
 GameObject:
   m_ObjectHideFlags: 0
@@ -3276,7 +3633,7 @@ RectTransform:
   m_Children:
   - {fileID: 848655827}
   - {fileID: 296542156}
-  m_Father: {fileID: 1660979562}
+  m_Father: {fileID: 1971234942}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3363,6 +3720,84 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1971234941
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1971234942}
+  - component: {fileID: 1971234944}
+  - component: {fileID: 1971234943}
+  m_Layer: 5
+  m_Name: Playing_Screen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1971234942
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971234941}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.8275, y: 1.1831, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1776943870}
+  - {fileID: 1081291214}
+  - {fileID: 1357337470}
+  m_Father: {fileID: 1660979562}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1971234943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971234941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1971234944
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971234941}
+  m_CullTransparentMesh: 1
 --- !u!1 &2002573244
 GameObject:
   m_ObjectHideFlags: 0

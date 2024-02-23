@@ -5,6 +5,8 @@ public class HandShake : MonoBehaviour
     private Animation animationComponent;
     public World world;
     public Player player;
+    private float timer = 0f;
+    public CanvasManager canvasmanager;
 
     void Start()
     {
@@ -15,21 +17,31 @@ public class HandShake : MonoBehaviour
     {
         if (world.game_state == Game_State.Playing)
         {
-            // 左键按下时播放一次动画
-            if (Input.GetKey(KeyCode.Mouse0))
+
+            if (!canvasmanager.isPausing)
             {
-                PlayFirstAnimation();
-            }else if (Input.GetMouseButtonDown(1))
-            {
-                PlayFirstAnimation();
-            }
-            else
-            {
-                if (player.isMoving)
+                // 左键按下时播放一次动画
+                if (Input.GetKey(KeyCode.Mouse0))
                 {
-                    PlaySecondAnimation();
+                    PlayFirstAnimation();
+                }
+                else if (Input.GetMouseButtonDown(1))
+                {
+                    timer = 0f;
+                    PlayFirstAnimation();
+                }
+                else
+                {
+                    if (player.isMoving && (timer > 0.2f))
+                    {
+                        PlaySecondAnimation();
+                    }
+
+                    timer += Time.deltaTime;
                 }
             }
+
+            
 
             
 
