@@ -24,10 +24,12 @@ public class CanvasManager : MonoBehaviour
 
     //Playing
     [Header("Playing")]
-    public GameObject Playing_Screen;
+    //public GameObject Playing_Screen;
     public GameObject Debug_Screen;
+    public GameObject ToolBar;
     public GameObject CursorCross_Screen;
     public GameObject Swimming_Screen;
+    
 
     //Pause
     [Header("Pause")]
@@ -35,6 +37,7 @@ public class CanvasManager : MonoBehaviour
 
 
     //ÓÎÏ·×´Ì¬ÅÐ¶Ï
+    [HideInInspector]
     public bool isPausing = false;
 
     //world 
@@ -81,8 +84,17 @@ public class CanvasManager : MonoBehaviour
         if (world.game_state == Game_State.Playing)
         {
             Loading_Screen.SetActive(false);
-            Playing_Screen.SetActive(true);
-            CursorCross_Screen.SetActive(true);
+
+            if (isPausing)
+            {
+                ToolBar.SetActive(false);
+                CursorCross_Screen.SetActive(false);
+            }
+            else
+            {
+                ToolBar.SetActive(true);
+                CursorCross_Screen.SetActive(true);
+            }
 
             //DebugÃæ°å
             if (Input.GetKeyDown(KeyCode.F3))
@@ -94,7 +106,8 @@ public class CanvasManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 isPausing = !isPausing;
-                Playing_Screen.SetActive(!Playing_Screen.activeSelf);
+
+                
                 Pause_Screen.SetActive(!Pause_Screen.activeSelf);
             }
 
@@ -106,7 +119,7 @@ public class CanvasManager : MonoBehaviour
             }
 
             //SwimmingScreen
-            if (world.GetBlockType(Camera.transform.position) == VoxelData.Water)
+            if (world.GetBlockType(Camera.transform.position) == VoxelData.Water && !isPausing)
             {
                 Swimming_Screen.SetActive(true);
             }
