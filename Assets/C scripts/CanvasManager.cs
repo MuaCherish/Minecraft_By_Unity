@@ -17,6 +17,8 @@ public class CanvasManager : MonoBehaviour
 
     //Loading
     [Header("Locading")]
+    public GameObject Player;
+    public GameObject MainCamera;
     public GameObject Loading_Screen;
     public Slider slider;
     public TextMeshProUGUI tmp;
@@ -29,7 +31,7 @@ public class CanvasManager : MonoBehaviour
     public GameObject ToolBar;
     public GameObject CursorCross_Screen;
     public GameObject Swimming_Screen;
-    
+
 
     //Pause
     [Header("Pause")]
@@ -45,19 +47,30 @@ public class CanvasManager : MonoBehaviour
 
 
     //开始界面 -> 加载界面
-    public void OnClickEvent()
-    {
-        //界面显示
-        Start_Screen.SetActive(false);
-        Loading_Screen.SetActive(true);
-        HideCursor();
 
-        world.game_state = Game_State.Loading;
-    }
 
     //加载界面 -> 游戏界面
     private void Update()
     {
+
+        //开始界面
+        if (Input.anyKeyDown)
+        {
+            //界面显示
+            Start_Screen.SetActive(false);
+            Loading_Screen.SetActive(true);
+            HideCursor();
+
+            MainCamera.SetActive(false);
+            Player.SetActive(true);
+
+
+            world.game_state = Game_State.Loading;
+        }
+
+
+
+
         //加载中
         if (world.game_state == Game_State.Loading)
         {
@@ -107,7 +120,7 @@ public class CanvasManager : MonoBehaviour
             {
                 isPausing = !isPausing;
 
-                
+
                 Pause_Screen.SetActive(!Pause_Screen.activeSelf);
             }
 

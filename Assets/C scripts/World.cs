@@ -125,7 +125,7 @@ public class World : MonoBehaviour
     //----------------------------------周期函数---------------------------------------
 
     private void Start()
-    { 
+    {
         //帧数
         Application.targetFrameRate = 120;
 
@@ -135,7 +135,7 @@ public class World : MonoBehaviour
         Chunks.transform.SetParent(GameObject.Find("Environment").transform);
 
         // 允许设置随机值
-        if(isRandomSeed)
+        if (isRandomSeed)
         {
             //设置种子
             Seed = Random.Range(0, 100);
@@ -143,9 +143,9 @@ public class World : MonoBehaviour
             //设置水平面
             sea_level = Random.Range(20, 42);
         }
-           
 
-        
+        //初始化一个小岛
+        Start_Screen_Init();
     }
 
     //private void FixedUpdate()
@@ -220,6 +220,15 @@ public class World : MonoBehaviour
 
 
     //----------------------------------World Options---------------------------------------
+    //主菜单地图
+    public void Start_Screen_Init()
+    {
+        CreateChunk(new Vector3(0, 0, 0));
+
+    }
+
+
+
     //初始化地图
     IEnumerator Init_Map_Thread()
     {
@@ -343,7 +352,7 @@ public class World : MonoBehaviour
             {
                 //如果查到的chunk已经存在，则唤醒
                 //不存在则生成
-                if(Allchunks.TryGetValue(WatingToCreate_Chunks[0], out obj))
+                if (Allchunks.TryGetValue(WatingToCreate_Chunks[0], out obj))
                 {
                     obj.ShowChunk();
                 }
@@ -496,7 +505,7 @@ public class World : MonoBehaviour
                 {
                     //obj.DestroyChunk();
                     obj.HideChunk();
-                    
+
                     //Allchunks.Remove(WatingToRemove_Chunks[0]);
                     WatingToRemove_Chunks.RemoveAt(0);
                 }
