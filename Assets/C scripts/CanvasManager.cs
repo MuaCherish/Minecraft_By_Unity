@@ -14,6 +14,7 @@ public class CanvasManager : MonoBehaviour
     //Start && Init
     [Header("Start && Init")]
     public GameObject Start_Screen;
+    private bool hasExec = true;
 
     //Loading
     [Header("Locading")]
@@ -56,16 +57,23 @@ public class CanvasManager : MonoBehaviour
         //开始界面
         if (Input.anyKeyDown)
         {
-            //界面显示
-            Start_Screen.SetActive(false);
-            Loading_Screen.SetActive(true);
-            HideCursor();
 
-            MainCamera.SetActive(false);
-            Player.SetActive(true);
+            if (hasExec)
+            {
+                //界面显示
+                Start_Screen.SetActive(false);
+                Loading_Screen.SetActive(true);
+                HideCursor();
+
+                MainCamera.SetActive(false);
+                Player.SetActive(true);
 
 
-            world.game_state = Game_State.Loading;
+                world.game_state = Game_State.Loading;
+
+                hasExec = false;
+            }
+            
         }
 
 
