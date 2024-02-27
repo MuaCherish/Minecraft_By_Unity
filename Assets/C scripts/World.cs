@@ -10,7 +10,7 @@ using UnityEngine;
 
 public enum Game_State
 {
-    Start, Loading, Playing,
+    Start, Loading, Playing,Pause,
 }
 
 

@@ -284,6 +284,7 @@ GameObject:
   m_Component:
   - component: {fileID: 251049297}
   - component: {fileID: 251049299}
+  - component: {fileID: 251049300}
   m_Layer: 0
   m_Name: CullCamera
   m_TagString: Untagged
@@ -357,6 +358,14 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!81 &251049300
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 251049296}
+  m_Enabled: 0
 --- !u!1 &290117662
 GameObject:
   m_ObjectHideFlags: 0
@@ -733,6 +742,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 311627842}
   m_CullTransparentMesh: 1
+--- !u!1 &325552234
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 325552235}
+  - component: {fileID: 325552237}
+  m_Layer: 0
+  m_Name: Music Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &325552235
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325552234}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 475922108}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &325552237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325552234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdc161cd79a9120449f2ba6d11af91f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  world: {fileID: 699955241}
+  player: {fileID: 1504082080}
+  audioclips:
+  - {fileID: 8300000, guid: 2e6043ce8604c1643854644f89e3bebd, type: 3}
+  - {fileID: 8300000, guid: e52f848daf7fded428def2ba3389a90b, type: 3}
+  - {fileID: 8300000, guid: 773ada525be96cc4a86bde268f1e8e71, type: 3}
+  - {fileID: 8300000, guid: eca9d60a74398c04b933635bf45a61c3, type: 3}
+  - {fileID: 8300000, guid: d56f66aca076c4c4cb0176e36febb058, type: 3}
+  - {fileID: 8300000, guid: a4d3797a076e5ea449a760fdf852bcb6, type: 3}
+  - {fileID: 8300000, guid: 3b110f34bcf43c5429f4838acad6b05c, type: 3}
+  - {fileID: 8300000, guid: 8ca616b5ebaec6a489a447000d6ff3b4, type: 3}
+  - {fileID: 8300000, guid: d5016f1f93fa4e84c85689b5df15a7de, type: 3}
+  - {fileID: 8300000, guid: bf2c2f8977e7d5e42b5e08c60c9e81b6, type: 3}
+  - {fileID: 8300000, guid: fb065b6966328b74eb25eaecfb40a9e2, type: 3}
+  - {fileID: 8300000, guid: cf2fd7cb1b4da644983ecee1b67e2c68, type: 3}
+  - {fileID: 8300000, guid: 894ac3762c35a0840b3669c9b6217121, type: 3}
+  - {fileID: 8300000, guid: 932ff0fde01bf994a865289a4144a1a7, type: 3}
+  - {fileID: 8300000, guid: 9212733cedec09f409d1a79261456847, type: 3}
+  - {fileID: 8300000, guid: f24ee401997043549a40acf2e3da30ed, type: 3}
+  Audio_envitonment: {fileID: 0}
+  Audio_player_place: {fileID: 0}
+  Audio_player_broke: {fileID: 0}
+  Audio_player_move: {fileID: 0}
+  isbroking: 0
+  isPlacing: 0
 --- !u!1 &327620483
 GameObject:
   m_ObjectHideFlags: 0
@@ -1237,6 +1315,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 229468792}
+  - {fileID: 325552235}
   - {fileID: 1026571031}
   - {fileID: 699955242}
   m_Father: {fileID: 0}
@@ -1703,7 +1782,7 @@ MonoBehaviour:
     leftFaceTexture: 0
     rightFaceTexture: 0
   - blockName: Grass
-    DestroyTime: 0.5
+    DestroyTime: 1
     isSolid: 1
     isTransparent: 0
     backFaceTexture: 2
@@ -1713,7 +1792,7 @@ MonoBehaviour:
     leftFaceTexture: 2
     rightFaceTexture: 2
   - blockName: Soil
-    DestroyTime: 0.5
+    DestroyTime: 1
     isSolid: 1
     isTransparent: 0
     backFaceTexture: 1
@@ -1733,7 +1812,7 @@ MonoBehaviour:
     leftFaceTexture: 13
     rightFaceTexture: 13
   - blockName: Sand
-    DestroyTime: 0.5
+    DestroyTime: 1
     isSolid: 1
     isTransparent: 0
     backFaceTexture: 18
@@ -1743,7 +1822,7 @@ MonoBehaviour:
     leftFaceTexture: 18
     rightFaceTexture: 18
   - blockName: wood
-    DestroyTime: 2
+    DestroyTime: 3.1
     isSolid: 1
     isTransparent: 0
     backFaceTexture: 9
@@ -1753,7 +1832,7 @@ MonoBehaviour:
     leftFaceTexture: 9
     rightFaceTexture: 9
   - blockName: leave
-    DestroyTime: 0.4
+    DestroyTime: 0.7
     isSolid: 1
     isTransparent: 1
     backFaceTexture: 12
@@ -1942,12 +2021,12 @@ MonoBehaviour:
     bottomFaceTexture: 255
     leftFaceTexture: 13
     rightFaceTexture: 13
-  renderSize: 6
+  renderSize: 1
   StartToRender: 1
   noise2d_scale_smooth: 0.01
   noise2d_scale_steep: 0.04
   noise3d_scale: 0.085
-  isRandomSeed: 1
+  isRandomSeed: 0
   Seed: 0
   soil_min: 15
   soil_max: 60
@@ -2335,7 +2414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &849139297
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2868,6 +2947,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Camera: {fileID: 1727421507}
+  musicmanager: {fileID: 325552237}
   Start_Screen: {fileID: 1362257022}
   Player: {fileID: 1504082079}
   MainCamera: {fileID: 1325896182}
@@ -2933,7 +3013,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.16862746, g: 0.16862746, b: 0.16862746, a: 1}
+  m_Color: {r: 0.16862746, g: 0.16862746, b: 0.16862746, a: 0.5647059}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3276,7 +3356,7 @@ RectTransform:
   m_Father: {fileID: 1961155553}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3640,7 +3720,7 @@ RectTransform:
   m_Father: {fileID: 1719032951}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3693,6 +3773,7 @@ GameObject:
   - component: {fileID: 1325896184}
   - component: {fileID: 1325896183}
   - component: {fileID: 1325896185}
+  - component: {fileID: 1325896186}
   m_Layer: 0
   m_Name: StartCamera
   m_TagString: Untagged
@@ -3760,7 +3841,7 @@ Transform:
   m_GameObject: {fileID: 1325896182}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1498.9929, y: -31.301357, z: -1268.2792}
+  m_LocalPosition: {x: -1498.9929, y: -24.53, z: -1268.2792}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3778,6 +3859,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67880f9451aae4e4aad2cdd5368c7402, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!81 &1325896186
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325896182}
+  m_Enabled: 1
 --- !u!1 &1340293382
 GameObject:
   m_ObjectHideFlags: 0
@@ -3981,7 +4070,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1362257023
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4271,7 +4360,7 @@ RectTransform:
   m_Father: {fileID: 1823691734}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.2, y: 1}
   m_AnchoredPosition: {x: 8, y: 0}
   m_SizeDelta: {x: 22.249996, y: 20}
   m_Pivot: {x: 0.54, y: 0.5}
@@ -4315,6 +4404,7 @@ MonoBehaviour:
   HighlightBlockObject: {fileID: 1443460309}
   world: {fileID: 699955241}
   canvasManager: {fileID: 1026571032}
+  musicmanager: {fileID: 325552237}
   foot: {fileID: 656216633}
   walkSpeed: 3.5
   sprintSpeed: 5
@@ -4322,7 +4412,7 @@ MonoBehaviour:
   squatSpeed: 3
   jumpForce: 6.5
   gravity: -20
-  MaxHurtHigh: 7
+  MaxHurtHigh: 4
   playerWidth: 0.8
   playerHeight: 1.8
   extend_delta: 0.1
@@ -4337,6 +4427,7 @@ MonoBehaviour:
   watergravity: -3
   mult: 3
   new_foot_high: 0
+  broke_Block_type: 0
 --- !u!4 &1504082081
 Transform:
   m_ObjectHideFlags: 0
@@ -4674,6 +4765,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1727421507}
+  - component: {fileID: 1727421511}
   - component: {fileID: 1727421509}
   - component: {fileID: 1727421510}
   m_Layer: 0
@@ -4767,6 +4859,14 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!81 &1727421511
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727421506}
+  m_Enabled: 1
 --- !u!1 &1748391380
 GameObject:
   m_ObjectHideFlags: 0
