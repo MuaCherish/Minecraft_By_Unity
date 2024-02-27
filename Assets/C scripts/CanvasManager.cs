@@ -9,7 +9,7 @@ public class CanvasManager : MonoBehaviour
 
     [Header("Transform")]
     public Transform Camera;
-
+    public MusicManager musicmanager;
 
     //Start && Init
     [Header("Start && Init")]
@@ -53,6 +53,30 @@ public class CanvasManager : MonoBehaviour
     //加载界面 -> 游戏界面
     private void Update()
     {
+        //EscScreen
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isPausing = !isPausing;
+            Pause_Screen.SetActive(!Pause_Screen.activeSelf);
+
+            if (isPausing)
+            {
+                world.game_state = Game_State.Pause;
+                ToolBar.SetActive(false);
+                CursorCross_Screen.SetActive(false);
+                //musicmanager.Audio_envitonment.Pause();
+            }
+            else
+            {
+                world.game_state = Game_State.Playing;
+                ToolBar.SetActive(true);
+                CursorCross_Screen.SetActive(true);
+                //musicmanager.Audio_envitonment.UnPause();
+            }
+        }
+
+
+
 
         //开始界面
         if (Input.anyKeyDown)
@@ -105,17 +129,8 @@ public class CanvasManager : MonoBehaviour
         if (world.game_state == Game_State.Playing)
         {
             Loading_Screen.SetActive(false);
-
-            if (isPausing)
-            {
-                ToolBar.SetActive(false);
-                CursorCross_Screen.SetActive(false);
-            }
-            else
-            {
-                ToolBar.SetActive(true);
-                CursorCross_Screen.SetActive(true);
-            }
+            ToolBar.SetActive(true);
+            CursorCross_Screen.SetActive(true);
 
             //Debug面板
             if (Input.GetKeyDown(KeyCode.F3))
@@ -123,14 +138,6 @@ public class CanvasManager : MonoBehaviour
                 Debug_Screen.SetActive(!Debug_Screen.activeSelf);
             }
 
-            //EscScreen
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                isPausing = !isPausing;
-
-
-                Pause_Screen.SetActive(!Pause_Screen.activeSelf);
-            }
 
             //QuitGame
             if (Input.GetKeyDown(KeyCode.Q) && isPausing)

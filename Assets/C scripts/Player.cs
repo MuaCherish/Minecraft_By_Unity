@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     public GameObject HighlightBlockObject;
     public World world;
     public CanvasManager canvasManager;
+    public MusicManager musicmanager;
     //public Transform myfoot;
 
     [Header("角色参数")]
@@ -86,6 +87,10 @@ public class Player : MonoBehaviour
     //摔落伤害
     public float new_foot_high = -100f;
 
+    //music
+    public byte broke_Block_type = 255;
+
+
     //碰撞检测的坐标
     // 上面的四个点
     Vector3 up_左上 = new Vector3();
@@ -148,7 +153,6 @@ public class Player : MonoBehaviour
                 InitPlayerLocation();
                 hasExec = false;
             }
-
 
             //计算碰撞点
             update_block();
@@ -334,13 +338,13 @@ public class Player : MonoBehaviour
             if (pointvector != OldPointLocation)
             {
                 isChangeBlock = true;
+                musicmanager.isbroking = false;
                 OldPointLocation = pointvector;
             }
 
             //如果打到
             if (RayCast_now() != Vector3.zero)
             {
-
                 //如果正在销毁则不执行
                 if (!isDestroying)
                 {
@@ -425,6 +429,7 @@ public class Player : MonoBehaviour
         isDestroying = false;
         elapsedTime = 0.0f;
         material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
+        musicmanager.isbroking = false;
         world.GetChunkObject(position).EditData(world.GetRelalocation(position), VoxelData.Air);
 
         //print($"绝对坐标为：{position}");
@@ -446,6 +451,8 @@ public class Player : MonoBehaviour
 
             if (world.eyesCheckForVoxel(pos))
             {
+                //music
+                broke_Block_type = world.GetBlockType(pos);
 
                 HighlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x) + 0.5f, Mathf.FloorToInt(pos.y) + 0.5f, Mathf.FloorToInt(pos.z) + 0.5f);
                 HighlightBlock.gameObject.SetActive(true);
@@ -907,6 +914,7 @@ public class Player : MonoBehaviour
             //(是竹子 || (是固体 && 不是基岩 && 不是水)则返回
             if (world.GetBlockType(pos) == VoxelData.Bamboo || (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water))
             {
+                
 
                 //print($"now射线检测：{(pos-cam.position).magnitude}");
                 ray_length = (pos - cam.position).magnitude;
@@ -920,6 +928,7 @@ public class Player : MonoBehaviour
 
         }
 
+        broke_Block_type = 255;
         return new Vector3(0f, 0f, 0f);
     }
 
@@ -958,6 +967,9 @@ public class Player : MonoBehaviour
 
         return new Vector3(0f, 0f, 0f);
     }
+
+
+
     //-------------------------------------------------------------------------------------
 
 
