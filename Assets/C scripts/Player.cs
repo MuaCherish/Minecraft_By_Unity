@@ -24,6 +24,7 @@ public class Player : MonoBehaviour
     public World world;
     public CanvasManager canvasManager;
     public MusicManager musicmanager;
+    public Transform leg;
     //public Transform myfoot;
 
     [Header("角色参数")]
@@ -52,8 +53,9 @@ public class Player : MonoBehaviour
     private Material material; // 物体的材质
     private Color initialColor; // 初始颜色
     private bool isDestroying;
-    private bool isChangeBlock = false;
+    public bool isChangeBlock = false;
     private Vector3 OldPointLocation;
+    //public bool canPlace = false;
     //bool hasExec2 = true;
 
     //输入
@@ -65,7 +67,7 @@ public class Player : MonoBehaviour
     private float mouseVerticalspeed;
     private float Camera_verticalInput;
     private Vector3 velocity;
-    private float verticalMomentum = 0;
+    public float verticalMomentum = 0;
     private bool jumpRequest;
 
     //raycast
@@ -270,7 +272,7 @@ public class Player : MonoBehaviour
             isMoving = false;
         }
 
-        //重力判断
+        //跳跃顶墙判断
         if (velocity.y < 0)
         {
             velocity.y = checkDownSpeed(velocity.y);
@@ -297,16 +299,31 @@ public class Player : MonoBehaviour
         mouseVerticalspeed = Input.GetAxis("Mouse Y");
 
         if (Input.GetButtonDown("Sprint"))
+        {
             isSprinting = true;
+            musicmanager.Audio_player_moving.pitch = 1.5f;
+        }
+            
         if (Input.GetButtonUp("Sprint"))
+        {
             isSprinting = false;
+        musicmanager.Audio_player_moving.pitch = 1f;
+        }
+            
 
         if (isGrounded && Input.GetKey(KeyCode.Space))
             jumpRequest = true;
 
-        // 如果在水中按下跳跃键，触发跳跃请求
-        if (isSwiming && Input.GetKey(KeyCode.Space))
+        // 如果在水中按下跳跃键 && leg低于水面，触发跳跃请求 
+        if (isSwiming && Input.GetKey(KeyCode.Space) && (leg.position.y - 0.1f < world.sea_level))
+        {
             jumpRequest = true;
+        }else if (isSwiming && Input.GetKey(KeyCode.Space) && (front || back || left || right))
+        {
+            jumpRequest = true;
+        }
+
+
 
 
         //按住Ctrl键，摄像机将下降一定高度
@@ -374,11 +391,14 @@ public class Player : MonoBehaviour
             //如果打到 && 距离大于2f && 且不是脚底下
             if (RayCast_last() != Vector3.zero && (RayCast_last() - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(RayCast_last().x, RayCast_last().y - 1f, RayCast_last().z)))
             {
+
                 world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()), 3);
                 //print($"绝对坐标为：{RayCast_last()}");
                 //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
                 //print($"方块类型为：{world.GetBlockType(RayCast())}");
             }
+
+        
 
 
         }
@@ -417,6 +437,7 @@ public class Player : MonoBehaviour
                 elapsedTime = 0.0f;
                 isDestroying = false;
                 isChangeBlock = false;
+                musicmanager.isbroking = false;
                 material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
                 yield break;
             }
@@ -451,7 +472,6 @@ public class Player : MonoBehaviour
 
             if (world.eyesCheckForVoxel(pos))
             {
-                //music
                 broke_Block_type = world.GetBlockType(pos);
 
                 HighlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x) + 0.5f, Mathf.FloorToInt(pos.y) + 0.5f, Mathf.FloorToInt(pos.z) + 0.5f);
@@ -462,6 +482,8 @@ public class Player : MonoBehaviour
 
             }
 
+
+            broke_Block_type = VoxelData.notHit;
             lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
 
             step += checkIncrement;
@@ -592,9 +614,11 @@ public class Player : MonoBehaviour
     }
 
     //碰撞检测（脚下）
+    //如果在游泳中，那么到达(膝盖 - 2*delta)后就把速度设为0
+    //除非接触碰撞
+    //world.GetBlockType(new Vector3(leg.position.x, leg.position.y + extend_delta, leg.position.z)) ==  VoxelData.Air
     private float checkDownSpeed(float downSpeed)
     {
-
 
         if (
             world.CheckForVoxel(down_左上) ||
@@ -615,13 +639,13 @@ public class Player : MonoBehaviour
 
         }
 
+
+
     }
 
     //碰撞检测（头上）
     private float checkUpSpeed(float upSpeed)
     {
-
-
 
         if (
             world.CheckForVoxel(up_左上) ||
@@ -638,6 +662,8 @@ public class Player : MonoBehaviour
             return upSpeed;
 
         }
+
+
 
     }
 
@@ -1093,13 +1119,13 @@ public class Player : MonoBehaviour
         {
             if ((new_foot_high - foot.transform.position.y) > MaxHurtHigh)
             {
-                
+                musicmanager.PlaySound_fallGround();
                 camaraAnimation.Play();
             }
 
             new_foot_high = foot.transform.position.y;
         }
-    
+
     }
 
    
@@ -1118,6 +1144,12 @@ public class Player : MonoBehaviour
     //检查给定的坐标是否和foot的四个点有相同，只要有一个相同则返回true
     bool CanPutBlock(Vector3 pos)
     {
+        //如果等于eyes的坐标提前返回true
+        if (world.GetRelalocation(new Vector3(pos.x, pos.y + 1f, pos.z)) == world.GetRelalocation(cam.position))
+        {
+            return true;
+        }
+
 
         if (world.GetRelalocation(pos) == world.GetRelalocation(down_左上))
         {
