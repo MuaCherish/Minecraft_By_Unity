@@ -68,7 +68,7 @@ public class World : MonoBehaviour
     [HideInInspector]
     public Vector3 Start_Position = new Vector3(1600f, 63f, 1600f);
     //[HideInInspector]
-    //public string foot_BlockType = "None";
+    //public byte foot_BlockType = VoxelData.Air;
 
 
 
@@ -151,7 +151,7 @@ public class World : MonoBehaviour
     //private void FixedUpdate()
     //{
     //    if (game_state == Game_State.Playing)
-    //        getFoodBlockType();
+    //        updateFoodBlockType();
     //}
 
     private void Update()
@@ -199,8 +199,7 @@ public class World : MonoBehaviour
             //碰撞判断
             //isHitWall();
 
-            //更新脚下方块
-            //getFoodBlockType();
+            
 
             //Debug.DrawLine(Center_Now, player.transform.position, Color.red, Time.deltaTime);
         }
@@ -557,8 +556,10 @@ public class World : MonoBehaviour
     }
 
     //获取脚下方块
-    //void getFoodBlockType()
+    //void updateFoodBlockType()
     //{
+        
+
     //    switch (GetBlockType(PlayerFoot.transform.position))
     //    {
     //        case 0: foot_BlockType = "BedRock"; break;
@@ -659,15 +660,12 @@ public class World : MonoBehaviour
     public byte GetBlockType(Vector3 pos)
     {
 
-
-
-
         Allchunks.TryGetValue(GetChunkLocation(pos), out Chunk chunktemp);
 
         //如果玩家在刷新区外
         //if (chunktemp == null)
         //{
-        //    return ERROR_CODE;
+        //    return VoxelData.notChunk;
         //}
 
         //如果玩家在区内，但Y值太高
@@ -684,6 +682,7 @@ public class World : MonoBehaviour
 
         return block_type;
     }
+
 
 
 
