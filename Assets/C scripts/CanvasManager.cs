@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class CanvasManager : MonoBehaviour
 {
-
     [Header("Transforms")]
     //场景对象
     public World world;
@@ -93,8 +92,8 @@ public class CanvasManager : MonoBehaviour
             tmp.text = $"{(world.initprogress * 100):F2} %";
 
             //ScrollBar
-            float x = Mathf.Lerp(1f, 3.4f, world.initprogress);
-            float y = Mathf.Lerp(1f, 3.26f, world.initprogress);
+            float x = Mathf.Lerp(1f, 5f, world.initprogress);
+            float y = Mathf.Lerp(1f, 5f, world.initprogress);
             handle.transform.localScale = new Vector3(x, y, 1f);
 
             //如果进度条满了
@@ -278,16 +277,43 @@ public class CanvasManager : MonoBehaviour
         //music
         musicmanager.PlaySound_Click();
 
-        //Pause_Screen.SetActive(false);
+        StartCoroutine(Help_Animation_Open());
+
+    }
+
+    //Help动画
+    IEnumerator Help_Animation_Open()
+    {
         HowToPlay_Screen.SetActive(true);
+        yield return null;
+
+        for (float y = 0; y <= 1; y += 0.1f)
+        {
+            HowToPlay_Screen.transform.localScale = new Vector3(1f, y, 1f);
+            yield return null;
+        }
 
         
     }
 
+    IEnumerator Help_Animation_Close()
+    {
+        for (float y = 1; y >= 0; y -= 0.1f)
+        {
+            HowToPlay_Screen.transform.localScale = new Vector3(1f, y, 1f);
+            yield return null;
+        }
+
+        HowToPlay_Screen.SetActive(false);
+
+    }
+
+
+
+    //Help_Close
     public void Back_Pause_Screen()
     {
-        HowToPlay_Screen.SetActive(false);
-        //Pause_Screen.SetActive(true);
+        StartCoroutine(Help_Animation_Close());
 
         //music
         musicmanager.PlaySound_Click();
