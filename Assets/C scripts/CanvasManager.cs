@@ -1,105 +1,85 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CanvasManager : MonoBehaviour
 {
 
-    [Header("Transform")]
+    [Header("Transforms")]
+    //场景对象
+    public World world;
     public Transform Camera;
     public MusicManager musicmanager;
-
-    //Start && Init
-    [Header("Start && Init")]
-    public GameObject Start_Screen;
-    private bool hasExec = true;
-
-    //Loading
-    [Header("Locading")]
-    public GameObject Player;
     public GameObject MainCamera;
+    public GameObject PlayerObject;
+    public Player player;
+
+    //主要屏幕
+    public GameObject Start_Screen;
+    public GameObject Init_Screen;
     public GameObject Loading_Screen;
+
+    //过渡对象
     public Slider slider;
     public TextMeshProUGUI tmp;
     public GameObject handle;
 
-    //Playing
-    [Header("Playing")]
-    //public GameObject Playing_Screen;
+    //Playing屏幕内容
     public GameObject Debug_Screen;
     public GameObject ToolBar;
     public GameObject CursorCross_Screen;
     public GameObject Swimming_Screen;
-
-
-    //Pause
-    [Header("Pause")]
     public GameObject Pause_Screen;
+    public GameObject HowToPlay_Screen;
+
+    //修改值参数
+    public Slider slider_bgm;
+    public Slider slider_sound;
+    public Slider slider_render_speed;
+    public Toggle toggle_SpaceMode;  
+    public Toggle toggle_SuperMing;
 
 
     //游戏状态判断
     [HideInInspector]
     public bool isPausing = false;
 
-    //world 
-    public World world;
+
+    //修改值
+    [Header("Options")]
+    //bgm
+    public float volume_bgm = 0.5f;
+    private float previous_bgm = 0.5f;
+
+    //sound
+    public float volume_sound = 0.5f;
+    private float previous_sound = 0.5f;
+    
+    //render speed
+    public float render_speed = 0.5f;
+    private float previous_render_speed = 0.5f;
+
+    //isSpaceMode
+    public bool SpaceMode_isOn = false;
+    private bool previous_spaceMode_isOn = false;
+
+    //isSpaceMode
+    public bool SuperMining_isOn = false;
+    private bool previous_SuperMining_isOn = false;
+
+    //一次性代码
+    bool hasExec_Playing = true;
 
 
-    //开始界面 -> 加载界面
+    //----------------------------------- 生命周期 ---------------------------------------
 
-
-    //加载界面 -> 游戏界面
     private void Update()
     {
         //EscScreen
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            isPausing = !isPausing;
-            Pause_Screen.SetActive(!Pause_Screen.activeSelf);
-
-            if (isPausing)
-            {
-                world.game_state = Game_State.Pause;
-                ToolBar.SetActive(false);
-                CursorCross_Screen.SetActive(false);
-                //musicmanager.Audio_envitonment.Pause();
-            }
-            else
-            {
-                world.game_state = Game_State.Playing;
-                ToolBar.SetActive(true);
-                CursorCross_Screen.SetActive(true);
-                //musicmanager.Audio_envitonment.UnPause();
-            }
-        }
-
-
-
-
-        //开始界面
-        if (Input.anyKeyDown)
-        {
-
-            if (hasExec)
-            {
-                //界面显示
-                Start_Screen.SetActive(false);
-                Loading_Screen.SetActive(true);
-                HideCursor();
-
-                MainCamera.SetActive(false);
-                Player.SetActive(true);
-
-
-                world.game_state = Game_State.Loading;
-
-                hasExec = false;
-            }
-            
-        }
-
+        Show_Esc_Screen();
 
 
 
@@ -123,14 +103,24 @@ public class CanvasManager : MonoBehaviour
                 world.game_state = Game_State.Playing;
             }
 
+
+
         }
 
         //加载完成
         if (world.game_state == Game_State.Playing)
         {
-            Loading_Screen.SetActive(false);
-            ToolBar.SetActive(true);
-            CursorCross_Screen.SetActive(true);
+
+            if (hasExec_Playing)
+            {
+                Loading_Screen.SetActive(false);
+                ToolBar.SetActive(true);
+                CursorCross_Screen.SetActive(true);
+
+                hasExec_Playing = false;
+            }
+
+            
 
             //Debug面板
             if (Input.GetKeyDown(KeyCode.F3))
@@ -138,13 +128,6 @@ public class CanvasManager : MonoBehaviour
                 Debug_Screen.SetActive(!Debug_Screen.activeSelf);
             }
 
-
-            //QuitGame
-            if (Input.GetKeyDown(KeyCode.Q) && isPausing)
-            {
-                //Debug.Log("isQuiting");
-                Application.Quit();
-            }
 
             //SwimmingScreen
             if (world.GetBlockType(Camera.transform.position) == VoxelData.Water && !isPausing)
@@ -155,10 +138,269 @@ public class CanvasManager : MonoBehaviour
             {
                 Swimming_Screen.SetActive(false);
             }
-
+            
         }
     }
 
+    private void FixedUpdate()
+    {
+        UpdatePauseScreenValue();
+    }
+
+    //----------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+    //----------------------------------- Start_Screen ---------------------------------------
+    //Start -> Init
+    public void ClickToInit()
+    {
+        //screen切换
+        Start_Screen.SetActive(false);
+        Init_Screen.SetActive(true);
+
+        //music
+        musicmanager.PlaySound_Click();
+    }
+
+    //----------------------------------------------------------------------------------------
+
+
+
+
+
+
+    //----------------------------------- Init_Screen ---------------------------------------
+    //Init -> Loading
+    public void ClickToLoading()
+    {
+        //清内存
+        MainCamera.SetActive(false);
+
+        //screen切换
+        Init_Screen.SetActive(false);
+        Loading_Screen.SetActive(true);
+
+        //游戏状态切换
+        world.game_state = Game_State.Loading;
+
+        //主摄像机切换
+        PlayerObject.SetActive(true);
+        MainCamera.SetActive(false);
+
+        //其他
+        HideCursor();
+
+        //music
+        musicmanager.PlaySound_Click();
+
+    }
+
+    //Init -> Start
+    public void BackToStart()
+    {
+        //screen切换
+        Init_Screen.SetActive(false);
+        Start_Screen.SetActive(true);
+
+        //music
+        musicmanager.PlaySound_Click();
+    }
+    //---------------------------------------------------------------------------------------
+
+
+
+
+
+
+    //--------------------------------- Loading_Screen -------------------------------------
+
+
+    //--------------------------------------------------------------------------------------
+
+
+
+
+
+
+    //--------------------------------- Playing_Screen -------------------------------------
+    //Ese_Screen
+    void Show_Esc_Screen()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && !isPausing)
+        {
+            isPausing = !isPausing;
+            Pause_Screen.SetActive(!Pause_Screen.activeSelf);
+
+            //music
+            musicmanager.PlaySound_Click();
+
+            Cursor.lockState = CursorLockMode.None;
+            //可视
+            Cursor.visible = true;
+
+            world.game_state = Game_State.Pause;
+            ToolBar.SetActive(false);
+            CursorCross_Screen.SetActive(false);
+        }
+    }
+
+    //back to menu
+    public void Click_EscMenu()
+    {
+        isPausing = !isPausing;
+        Pause_Screen.SetActive(!Pause_Screen.activeSelf);
+
+        //music
+        musicmanager.PlaySound_Click();
+
+
+        // 将鼠标锁定在屏幕中心
+        Cursor.lockState = CursorLockMode.Locked;
+
+        //鼠标不可视
+        Cursor.visible = false;
+
+        world.game_state = Game_State.Playing;
+        ToolBar.SetActive(true);
+        CursorCross_Screen.SetActive(true);
+    }
+
+
+    //打开操作指南
+    public void Click_HowToPlay()
+    {
+        //music
+        musicmanager.PlaySound_Click();
+
+        //Pause_Screen.SetActive(false);
+        HowToPlay_Screen.SetActive(true);
+
+        
+    }
+
+    public void Back_Pause_Screen()
+    {
+        HowToPlay_Screen.SetActive(false);
+        //Pause_Screen.SetActive(true);
+
+        //music
+        musicmanager.PlaySound_Click();
+    }
+
+
+    //--------------------------------------------------------------------------------------
+
+
+
+
+
+
+    //---------------------------------- 实时修改值 ------------------------------------------
+    
+    //更新值
+    void UpdatePauseScreenValue()
+    {
+        //bgm volume
+        volume_bgm = slider_bgm.value;
+        if (volume_bgm != previous_bgm)
+        {
+            //bgm
+            musicmanager.Audio_envitonment.volume = Mathf.Lerp(0f, 1f, volume_bgm);
+
+            //更新previous
+            previous_bgm = volume_bgm;
+        }
+
+
+        //sound volume
+        volume_sound = slider_sound.value;
+        if (volume_sound != previous_sound)
+        {
+            //sound
+            musicmanager.Audio_player_place.volume = Mathf.Lerp(0f, 1f, volume_sound);
+            musicmanager.Audio_player_broke.volume = Mathf.Lerp(0f, 1f, volume_sound);
+            musicmanager.Audio_player_moving.volume = Mathf.Lerp(0f, 1f, volume_sound);
+            musicmanager.Audio_player_falling.volume = Mathf.Lerp(0f, 1f, volume_sound);
+            musicmanager.Audio_player_diving.volume = Mathf.Lerp(0f, 1f, volume_sound);
+            musicmanager.Audio_Click.volume = Mathf.Lerp(0f, 1f, volume_sound);
+
+            //更新previous
+            previous_sound = volume_sound;
+        }
+
+        //render speed
+        render_speed = slider_render_speed.value;
+
+        if (render_speed > 0.9f)
+        {
+            render_speed = 0.9f;
+        }
+
+        if (render_speed != previous_render_speed)
+        {
+            //delay = 1 - speed
+            world.CreateCoroutineDelay = 1 - render_speed; 
+            world.RemoveCoroutineDelay = 1 - render_speed;
+
+            //更新previous
+            previous_render_speed = render_speed;
+        }
+
+
+        //space mode
+        SpaceMode_isOn = toggle_SpaceMode.isOn;
+        if (SpaceMode_isOn != previous_spaceMode_isOn)
+        {
+            if (SpaceMode_isOn)
+            {
+                player.gravity = -3f;
+                player.isSpaceMode = true;
+            }
+            else
+            {
+                player.gravity = -20f;
+                player.isSpaceMode = false;
+            }
+
+            //更新previous
+            previous_spaceMode_isOn = SpaceMode_isOn;
+        }
+
+
+        //SuperMining
+        SuperMining_isOn = toggle_SuperMing.isOn;
+        if (SuperMining_isOn != previous_SuperMining_isOn)
+        {
+            if (SuperMining_isOn)
+            {
+                player.isSuperMining = true;
+            }
+            else
+            {
+                player.isSuperMining = false;
+            }
+
+            //更新previous
+            previous_SuperMining_isOn = SuperMining_isOn;
+        }
+
+    }
+
+
+    //---------------------------------------------------------------------------------------
+
+
+
+
+
+
+    //------------------------------------ 工具类 -------------------------------------------
     void HideCursor()
     {
         // 将鼠标锁定在屏幕中心
@@ -166,6 +408,18 @@ public class CanvasManager : MonoBehaviour
         //鼠标不可视
         UnityEngine.Cursor.visible = false;
     }
+
+    public void QuitGame()
+    {
+        //music
+        musicmanager.PlaySound_Click();
+
+        Application.Quit();
+    }
+
+    //--------------------------------------------------------------------------------------
+
+
 
 
 }

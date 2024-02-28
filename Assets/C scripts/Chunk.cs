@@ -51,11 +51,13 @@ public class Chunk : MonoBehaviour
 
         //从world获取参数
         world = _world;
+        
         UnityEngine.Random.InitState(world.Seed);
         noise2d_scale_smooth = world.noise2d_scale_smooth;
         noise2d_scale_steep = world.noise2d_scale_steep;
         noise3d_scale = world.noise3d_scale;
         treecount = world.TreeCount;
+
 
         //坐标
         //x = 0;
@@ -70,7 +72,9 @@ public class Chunk : MonoBehaviour
         
         chunkObject.transform.SetParent(world.Chunks.transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
-        chunkObject.name = thisPosition.x + ", " + thisPosition.z;
+        chunkObject.name = thisPosition.x + "," + thisPosition.z;
+
+        //print(world.sea_level + $"+ {chunkObject.name}");
 
         //先创建数据
         CreateData();

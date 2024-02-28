@@ -23,6 +23,7 @@ public class HandShake : MonoBehaviour
                 // 左键按下时播放一次动画
                 if (Input.GetKey(KeyCode.Mouse0))
                 {
+                    //Debug.Log("HandShake Mouse0");
                     PlayFirstAnimation();
                 }
                 else if (Input.GetMouseButtonDown(1))
