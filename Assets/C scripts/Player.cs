@@ -92,6 +92,10 @@ public class Player : MonoBehaviour
     //music
     public byte broke_Block_type = 255;
 
+    //特殊模式
+    public bool isSpaceMode = false;
+    public bool isSuperMining = false;
+
 
     //碰撞检测的坐标
     // 上面的四个点
@@ -155,6 +159,12 @@ public class Player : MonoBehaviour
                 InitPlayerLocation();
                 hasExec = false;
             }
+
+            //if (world.GetBlockType(foot.position) == VoxelData.Water)
+            //{
+            //    print("");
+            //}
+
 
             //计算碰撞点
             update_block();
@@ -348,6 +358,7 @@ public class Player : MonoBehaviour
         //左键销毁泥土
         if (Input.GetKey(KeyCode.Mouse0))
         {
+            //Debug.Log("Player Mouse0");
             //isLeftMouseDown = true;
             //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
             Vector3 pointvector = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
@@ -412,12 +423,17 @@ public class Player : MonoBehaviour
     // 等待2秒后执行销毁泥土的方法
     IEnumerator DestroySoilWithDelay(Vector3 position)
     {
-
         isDestroying = true;
 
         // 记录协程开始执行时的时间
         float startTime = Time.time;
         float destroy_time = world.blocktypes[world.GetBlockType(position)].DestroyTime;
+
+        //是否开启快速挖掘
+        if (isSuperMining)
+        {
+            destroy_time = 0.1f;
+        }
 
         // 等待
         while (Time.time - startTime < destroy_time)
@@ -614,9 +630,6 @@ public class Player : MonoBehaviour
     }
 
     //碰撞检测（脚下）
-    //如果在游泳中，那么到达(膝盖 - 2*delta)后就把速度设为0
-    //除非接触碰撞
-    //world.GetBlockType(new Vector3(leg.position.x, leg.position.y + extend_delta, leg.position.z)) ==  VoxelData.Air
     private float checkDownSpeed(float downSpeed)
     {
 
@@ -1109,22 +1122,33 @@ public class Player : MonoBehaviour
 
 
         //记录玩家摔落
-        if (foot.transform.position.y > new_foot_high)
-        {
-            new_foot_high = transform.position.y;
-        }
 
-        //判断玩家是否受伤
-        if (isGrounded || isSwiming)
+        //是否是太空模式
+        if (!isSpaceMode)
         {
-            if ((new_foot_high - foot.transform.position.y) > MaxHurtHigh)
+            //玩家如果落水则new_foot_high重置
+            if (foot.transform.position.y > new_foot_high || isSwiming)
             {
-                musicmanager.PlaySound_fallGround();
-                camaraAnimation.Play();
+                new_foot_high = transform.position.y;
             }
 
-            new_foot_high = foot.transform.position.y;
+
+
+            //判断玩家是否受伤
+            if (isGrounded)
+            {
+                if ((new_foot_high - foot.transform.position.y) > MaxHurtHigh)
+                {
+                    musicmanager.PlaySound_fallGround();
+                    camaraAnimation.Play();
+                }
+
+                new_foot_high = foot.transform.position.y;
+            }
         }
+
+
+        
 
     }
 

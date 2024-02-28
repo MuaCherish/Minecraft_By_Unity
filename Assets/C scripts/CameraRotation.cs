@@ -7,7 +7,7 @@ public class CameraRotation : MonoBehaviour
     private Vector3 Center = new Vector3(1f,40f,13f);
     private Vector3 LookAtTransform = new Vector3(8f,38f,6f);
     private float radius = 20f;
-    private float rotationSpeed = 10f;
+    private float rotationSpeed = 5f;
 
     private Vector3 offset;
 

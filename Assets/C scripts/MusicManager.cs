@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MusicManager : MonoBehaviour
 {
     //Transformers
+    [Header("Transforms")]
     public World world;
     public Player player;
     public Transform eyes;
@@ -15,15 +17,24 @@ public class MusicManager : MonoBehaviour
     public Transform foot;
 
     //片段
+    [Header("音乐片段")]
     public AudioClip[] audioclips;
 
     //音源
+    [HideInInspector]
     public AudioSource Audio_envitonment;
+    [HideInInspector]
     public AudioSource Audio_player_place;
+    [HideInInspector]
     public AudioSource Audio_player_broke;
+    [HideInInspector]
     public AudioSource Audio_player_moving;
+    [HideInInspector]
     public AudioSource Audio_player_falling;
+    [HideInInspector]
     public AudioSource Audio_player_diving;
+    [HideInInspector]
+    public AudioSource Audio_Click;
 
     //协程
     private Coroutine environmentCoroutine;
@@ -32,15 +43,25 @@ public class MusicManager : MonoBehaviour
     private bool isPausing = false;
 
     //place and broke
+    [HideInInspector]
     public bool isbroking = false;
 
     //moving
+    [Header("玩家/leg/foot状态")]
     public bool hasExec_isGround = true;
     public bool hasExec_isSwiming = true;
     public byte leg_blocktype;
+    [HideInInspector]
     public byte previous_leg_blocktype = VoxelData.Air;
     public byte foot_blocktype;
     //public byte previous_foot_blocktype = VoxelData.Air;
+
+    //一次性代码
+    bool hasExec_StopEnvironment = true;
+
+
+
+    //---------------------------------- 周期函数 ----------------------------------------
 
     private void Start()
     {
@@ -50,10 +71,12 @@ public class MusicManager : MonoBehaviour
         Audio_envitonment.loop = false;
         Audio_envitonment.Play();
 
-        //place and broke
+        //place
         Audio_player_place = gameObject.AddComponent<AudioSource>();
-        Audio_player_broke = gameObject.AddComponent<AudioSource>();
         Audio_player_place.loop = false;
+
+        //broke
+        Audio_player_broke = gameObject.AddComponent<AudioSource>();
         Audio_player_broke.loop = false;
 
         //moving
@@ -71,6 +94,11 @@ public class MusicManager : MonoBehaviour
         Audio_player_diving.clip = audioclips[VoxelData.dive];
         Audio_player_diving.volume = 0.5f;
         Audio_player_diving.loop = true;
+
+        //Click_Music
+        Audio_Click = gameObject.AddComponent<AudioSource>();
+        Audio_Click.volume = 0.5f;
+        Audio_Click.loop = false;
     }
 
     private void Update()
@@ -83,12 +111,29 @@ public class MusicManager : MonoBehaviour
     }
 
 
+    //---------------------------------------------------------------------------------------
+
+
+    
+
+
+
     //---------------------------------- envitonment ----------------------------------------
+    public void PlaySound_Click()
+    {
+        Audio_Click.PlayOneShot(audioclips[VoxelData.click]);
+    }
+
     void Fun_environment()
     {
         if (world.game_state == Game_State.Loading)
         {
-            Audio_envitonment.Stop();
+            if (hasExec_StopEnvironment)
+            {
+                Audio_envitonment.Stop();
+                hasExec_StopEnvironment = false;
+            }
+            
         }
         else if (world.game_state == Game_State.Playing)
         {
@@ -167,6 +212,7 @@ public class MusicManager : MonoBehaviour
         }
     }
 
+
     //---------------------------------------------------------------------------------------
 
 
@@ -177,50 +223,45 @@ public class MusicManager : MonoBehaviour
     //-------------------------------- place and Broke --------------------------------------
     void FUN_PlaceandBroke()
     {
+        //place and broke
         if (world.game_state == Game_State.Playing)
         {
-            //place and broke
-            if (world.game_state == Game_State.Playing)
+
+            //只有没有破坏的情况下才执行
+            if (!isbroking)
             {
-
-                //只有没有破坏的情况下才执行
-                if (!isbroking)
+                //左键破坏
+                if (Input.GetMouseButton(0))
                 {
-                    //左键破坏
-                    if (Input.GetMouseButton(0))
+                    //如果打中
+                    if (player.broke_Block_type != VoxelData.notHit)
                     {
-                        //如果打中
-                        if (player.broke_Block_type != VoxelData.notHit)
-                        {
-                            isbroking = true;
-                            update_Clips();
-                            Audio_player_broke.Play();
-                        }
-                        else
-                        {
-                            Audio_player_broke.Stop();
-                        }
+                        isbroking = true;
+                        update_Clips();
+                        Audio_player_broke.Play();
                     }
-                }
-
-
-
-                //松开左键
-                if (Input.GetMouseButtonUp(0))
-                {
-                    isbroking = false;
-                    Audio_player_broke.Stop();
-
-                }
-
-                //右键放置
-                if (Input.GetMouseButtonDown(1))
-                {
-                    Audio_player_place.PlayOneShot(audioclips[VoxelData.place_normal]);
+                    else
+                    {
+                        Audio_player_broke.Stop();
+                    }
                 }
             }
 
 
+
+            //松开左键
+            if (Input.GetMouseButtonUp(0))
+            {
+                isbroking = false;
+                Audio_player_broke.Stop();
+
+            }
+
+            //右键放置
+            if (Input.GetMouseButtonDown(1))
+            {
+                Audio_player_place.PlayOneShot(audioclips[VoxelData.place_normal]);
+            }
         }
     }
 
@@ -310,7 +351,13 @@ public class MusicManager : MonoBehaviour
                 if (hasExec_isGround)
                 {
                     //Debug.Log("切换到水中");
-                    player.verticalMomentum = 0f;
+
+                    //如果玩家离地高度为0，那么就变0 
+                    if (player.new_foot_high - player.transform.position.y <= 0f)
+                    {
+                        player.verticalMomentum = 0f;
+                    }
+
                     hasExec_isSwiming = true;
                     Audio_player_moving.clip = audioclips[VoxelData.moving_water];
                     hasExec_isGround = false;
@@ -339,7 +386,13 @@ public class MusicManager : MonoBehaviour
                 if (hasExec_isGround)
                 {
                     //Debug.Log("切换到水中");
-                    player.verticalMomentum = 0f;
+
+                    //如果玩家离地高度为0，那么就变0 
+                    if (player.new_foot_high - player.transform.position.y <= 0f)
+                    {
+                        player.verticalMomentum = 0f;
+                    }
+
                     hasExec_isSwiming = true;
                     Audio_player_moving.clip = audioclips[VoxelData.moving_water];
                     hasExec_isGround = false;
@@ -400,8 +453,21 @@ public class MusicManager : MonoBehaviour
         }
     }
 
+
+    //--------------------------------------------------------------------------------------
+
+
+
+
+
+
+    //------------------------------------ 工具类 -------------------------------------------
+
+
+
     //---------------------------------------------------------------------------------------
 
+
+
+
 }
-
-

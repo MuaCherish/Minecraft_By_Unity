@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml;
+using TMPro;
 using Unity.VisualScripting;
 //using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UI;
 //using static UnityEditor.PlayerSettings;
 //using static UnityEditor.Progress;
 
@@ -17,6 +19,10 @@ public enum Game_State
 
 public class World : MonoBehaviour
 {
+    [Header("Transforms")]
+    public TMP_InputField input_Seed;
+    public TMP_InputField input_RenderSize;
+
     [Header("游戏状态")]
     public Game_State game_state = Game_State.Start;
 
@@ -28,7 +34,7 @@ public class World : MonoBehaviour
     [Tooltip("4就是边长为4*16的正方形")]
     public int renderSize = 5; //渲染区块半径,即renderSize*16f
     [Tooltip("2就是接近2*16的时候开始刷新区块")]
-    public float StartToRender = 2f;
+    public float StartToRender = 1f;
 
     [Header("噪声采样比例(越小拉的越长)")]
     public float noise2d_scale_smooth = 0.01f;
@@ -101,7 +107,7 @@ public class World : MonoBehaviour
     //协程
     [Header("Corountine-协程延迟时间")]
     public float InitCorountineDelay = 1f;
-    public float CreateCoroutineDelay = 0.2f;
+    public float CreateCoroutineDelay = 0.5f;
     public float RemoveCoroutineDelay = 0.5f;
 
     //生成方向
@@ -120,6 +126,7 @@ public class World : MonoBehaviour
 
     //其他变量
     bool hasExec = true;
+    bool hasExec_SetSeed = true;
 
 
     //----------------------------------周期函数---------------------------------------
@@ -148,20 +155,30 @@ public class World : MonoBehaviour
         Start_Screen_Init();
     }
 
-    //private void FixedUpdate()
-    //{
-    //    if (game_state == Game_State.Playing)
-    //        updateFoodBlockType();
-    //}
+
 
     private void Update()
     {
         //初始化地图
         if (game_state == Game_State.Loading)
         {
-            StartCoroutine(Init_Map_Thread());
-        }
+            if (hasExec_SetSeed)
+            {
+                //检查是否输入种子
+                CheckSeed();
 
+                //检查是否输入RenderSize
+                CheckRenderSize();
+
+                //开始初始化
+                StartCoroutine(Init_Map_Thread());
+
+                hasExec_SetSeed = false;
+            }
+
+            
+        }
+        
 
         //游戏开始
         if (game_state == Game_State.Playing)
@@ -174,7 +191,6 @@ public class World : MonoBehaviour
                 //鼠标不可视
                 Cursor.visible = false;
 
-                hasExec = false;
             }
 
 
@@ -224,6 +240,65 @@ public class World : MonoBehaviour
     {
         CreateChunk(new Vector3(0, 0, 0));
 
+    }
+
+    //检查种子
+    void CheckSeed()
+    {
+        if (input_Seed != null && string.IsNullOrEmpty(input_Seed.text))
+        {
+            //Debug.Log("种子为空！");
+        }
+        else
+        {
+            //Debug.Log("种子不为空！");
+
+            //设置种子
+            int number;
+            if (int.TryParse(input_Seed.text, out number))
+            {
+                // 转换成功，number 中存储了输入字段中的数字
+                //Debug.Log("种子为: " + number);
+                Seed = number;
+
+                //设置水平面
+                sea_level = Random.Range(20, 42);
+            }
+            else
+            {
+                // 转换失败，输入字段中的字符串不是有效的整数
+                Debug.Log("种子转换失败！");
+            }
+
+
+        }
+    }
+
+    //检查渲染范围
+    void CheckRenderSize()
+    {
+        //size如果是6则跳过，否则则赋值
+
+        int number;
+
+        if (int.TryParse(input_RenderSize.text, out number))
+        {
+            // 转换成功，number 中存储了输入字段中的数字
+            //Debug.Log("种子为: " + number);
+            if (number == 6)
+            {
+                return;
+            }
+
+
+            renderSize = number;
+
+        }
+        else
+        {
+            // 转换失败，输入字段中的字符串不是有效的整数
+            Debug.Log("RenderSIze转换失败！");
+        }
     }
 
 
