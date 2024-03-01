@@ -612,6 +612,8 @@ public class Chunk : MonoBehaviour
                         voxelMap[x, y, z] = VoxelData.Air;
                     }
 
+
+
                     //(是固体 || 是水 || 是水面上一层 || 是竹子)才生成
                     if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water || voxelMap[x, y, z] == VoxelData.Bamboo)
                         UpdateMeshData(new Vector3(x, y, z));
