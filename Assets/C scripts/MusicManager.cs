@@ -37,6 +37,7 @@ public class MusicManager : MonoBehaviour
     public AudioSource Audio_Click;
 
     //协程
+    private Coroutine fadetoStopenvironment;
     private Coroutine environmentCoroutine;
 
     //envitonment
@@ -57,7 +58,6 @@ public class MusicManager : MonoBehaviour
     //public byte previous_foot_blocktype = VoxelData.Air;
 
     //一次性代码
-    bool hasExec_StopEnvironment = true;
 
 
 
@@ -128,12 +128,36 @@ public class MusicManager : MonoBehaviour
     {
         if (world.game_state == Game_State.Loading)
         {
-            if (hasExec_StopEnvironment)
+            if (fadetoStopenvironment == null)
             {
-                Audio_envitonment.Stop();
-                hasExec_StopEnvironment = false;
+                fadetoStopenvironment = StartCoroutine(Fade_Stop_Environment());
             }
-            
+
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                isPausing = !isPausing;
+
+                if (isPausing)
+                {
+                    Audio_player_diving.volume = 0f;
+                    Audio_player_moving.volume = 0f;
+                    Audio_envitonment.Pause();
+                }
+                else
+                {
+                    Audio_player_diving.volume = 0.5f;
+                    Audio_player_moving.volume = 0.7f;
+                    Audio_envitonment.UnPause();
+                }
+
+            }
+
+
+
+
+
+
         }
         else if (world.game_state == Game_State.Playing)
         {
@@ -143,25 +167,23 @@ public class MusicManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        
+
+
+    }
+
+    IEnumerator Fade_Stop_Environment()
+    {
+        float backup_volume = Audio_envitonment.volume;
+
+        for (float i = backup_volume; i >= 0; i -= 0.05f)
         {
-            isPausing = !isPausing;
-
-            if (isPausing)
-            {
-                Audio_player_diving.volume = 0f;
-                Audio_player_moving.volume = 0f;
-                Audio_envitonment.Pause();
-            }
-            else
-            {
-                Audio_player_diving.volume = 0.5f;
-                Audio_player_moving.volume = 0.7f;
-                Audio_envitonment.UnPause();
-            }
-
+            Audio_envitonment.volume = i;
+            yield return null;
         }
 
+        Audio_envitonment.Stop();
+        Audio_envitonment.volume = backup_volume;
 
     }
 
@@ -257,13 +279,15 @@ public class MusicManager : MonoBehaviour
 
             }
 
-            //右键放置
-            if (Input.GetMouseButtonDown(1))
-            {
-                Audio_player_place.PlayOneShot(audioclips[VoxelData.place_normal]);
-            }
         }
     }
+
+    public void PlaySoung_Place()
+    {
+        Audio_player_place.PlayOneShot(audioclips[VoxelData.place_normal]);
+    }
+
+
 
     //type映射到clips
     private void update_Clips()
@@ -322,10 +346,10 @@ public class MusicManager : MonoBehaviour
                 Audio_player_moving.Pause();
             }
             // 如果音频正在播放，并且玩家不在地面上且不在游泳中，则暂停音频
-            else if (Audio_player_moving.isPlaying && !player.isGrounded && !player.isSwiming)
-            {
-                Audio_player_moving.Pause();
-            }
+            //else if (Audio_player_moving.isPlaying && !player.isGrounded && !player.isSwiming)
+            //{
+            //    Audio_player_moving.Pause();
+            //}
 
 
 

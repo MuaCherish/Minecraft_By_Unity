@@ -88,6 +88,9 @@ public class Player : MonoBehaviour
 
     //摔落伤害
     public float new_foot_high = -100f;
+    public float angle = 50f;
+    public float cycleLength = 16f; // 动画周期长度
+    public float speed = 200f; // 控制时间的增长速度 
 
     //music
     public byte broke_Block_type = 255;
@@ -402,6 +405,8 @@ public class Player : MonoBehaviour
             //如果打到 && 距离大于2f && 且不是脚底下
             if (RayCast_last() != Vector3.zero && (RayCast_last() - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(RayCast_last().x, RayCast_last().y - 1f, RayCast_last().z)))
             {
+
+                musicmanager.PlaySoung_Place();
 
                 world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()), 3);
                 //print($"绝对坐标为：{RayCast_last()}");
@@ -1140,7 +1145,8 @@ public class Player : MonoBehaviour
                 if ((new_foot_high - foot.transform.position.y) > MaxHurtHigh)
                 {
                     musicmanager.PlaySound_fallGround();
-                    camaraAnimation.Play();
+                    //camaraAnimation.Play();
+                    StartCoroutine(Animation_Behurt());
                 }
 
                 new_foot_high = foot.transform.position.y;
@@ -1152,8 +1158,30 @@ public class Player : MonoBehaviour
 
     }
 
-   
 
+    IEnumerator Animation_Behurt()
+    {
+        Vector3 startRotation = transform.localRotation.eulerAngles;
+        Vector3 targetRotation = startRotation + new Vector3(0f, 0f, angle);
+
+        float elapsedTime = 0f;
+        while (elapsedTime < cycleLength / 2f)
+        {
+            elapsedTime += Time.deltaTime * speed;
+            transform.localRotation = Quaternion.Euler(Vector3.Lerp(startRotation, targetRotation, elapsedTime / (cycleLength / 2f)));
+            yield return null;
+        }
+
+        elapsedTime = 0f;
+        while (elapsedTime < cycleLength / 2f)
+        {
+            elapsedTime += Time.deltaTime * speed;
+            transform.localRotation = Quaternion.Euler(Vector3.Lerp(targetRotation, startRotation, elapsedTime / (cycleLength / 2f)));
+            yield return null;
+        }
+
+        transform.localRotation = Quaternion.Euler(startRotation); // 保证动画结束时物体回到初始角度
+    }
 
     //-------------------------------------------------------------------------------------
 

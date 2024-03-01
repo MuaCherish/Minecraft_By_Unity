@@ -77,8 +77,7 @@ public class CanvasManager : MonoBehaviour
 
     private void Update()
     {
-        //EscScreen
-        Show_Esc_Screen();
+        
 
 
 
@@ -119,7 +118,11 @@ public class CanvasManager : MonoBehaviour
                 hasExec_Playing = false;
             }
 
-            
+
+            //EscScreen
+            Show_Esc_Screen();
+
+
 
             //Debug√Ê∞Â
             if (Input.GetKeyDown(KeyCode.F3))
@@ -293,7 +296,7 @@ public class CanvasManager : MonoBehaviour
             yield return null;
         }
 
-        
+        HowToPlay_Screen.transform.localScale = new Vector3(1f, 1f, 1f);
     }
 
     IEnumerator Help_Animation_Close()
