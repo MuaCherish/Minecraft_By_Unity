@@ -4794,11 +4794,11 @@ MonoBehaviour:
   isRandomSeed: 1
   Seed: 0
   soil_min: 15
-  soil_max: 60
-  sea_level: 40
+  soil_max: 50
+  sea_level: 50
   TreeCount: 5
   TreeHigh_min: 3
-  TreeHigh_max: 5
+  TreeHigh_max: 10
   Random_Bamboo: 50
   Random_Coal: 500
   Random_Iron: 700
@@ -10750,8 +10750,9 @@ MonoBehaviour:
   watergravity: -2
   mult: 3
   new_foot_high: 0
-  hurt_range: 16
-  hurt_speed: 200
+  angle: 50
+  cycleLength: 16
+  speed: 200
   broke_Block_type: 0
   isSpaceMode: 0
   isSuperMining: 0
