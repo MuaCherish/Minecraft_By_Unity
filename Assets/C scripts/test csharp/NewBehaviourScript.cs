@@ -18,7 +18,6 @@ public class NewBehaviourScript : MonoBehaviour
     IEnumerator Animation_Behurt()
     {
         Vector3 startRotation = transform.localRotation.eulerAngles;
-        Debug.Log(startRotation);
         Vector3 targetRotation = startRotation + new Vector3(0f, 0f, angle);
 
         float elapsedTime = 0f;
