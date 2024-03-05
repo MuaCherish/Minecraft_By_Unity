@@ -117,6 +117,13 @@ public static class VoxelData
     public static readonly int bgm_3 = 16;
 
 
+    //Select
+    public static readonly float[] SelectLocation_x = new float[9]
+    {
+        45f,126f,206f,286f,366f,445f,526f,606f,686f,
+    };
+
+
 
     //chunk大小
     public static readonly int ChunkWidth = 16;

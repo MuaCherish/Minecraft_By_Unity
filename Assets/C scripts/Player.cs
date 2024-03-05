@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour
     public CanvasManager canvasManager;
     public MusicManager musicmanager;
     public Transform leg;
+    public GameObject selectblock;
     //public Transform myfoot;
 
     [Header("角色参数")]
@@ -55,14 +57,17 @@ public class Player : MonoBehaviour
     private bool isDestroying;
     public bool isChangeBlock = false;
     private Vector3 OldPointLocation;
-    //public bool canPlace = false;
-    //bool hasExec2 = true;
+
+    //place
+    private byte placeBlock_Index = VoxelData.WorkTable;
 
     //输入
     [HideInInspector]
     public float horizontalInput;
     [HideInInspector]
     public float verticalInput;
+    [HideInInspector]
+    public float scrollWheelInput;
     private float mouseHorizontal;
     private float mouseVerticalspeed;
     private float Camera_verticalInput;
@@ -98,6 +103,9 @@ public class Player : MonoBehaviour
     //特殊模式
     public bool isSpaceMode = false;
     public bool isSuperMining = false;
+
+    //select
+    int selectindex = 1;
 
 
     //碰撞检测的坐标
@@ -310,6 +318,17 @@ public class Player : MonoBehaviour
         verticalInput = Input.GetAxis("Vertical");
         mouseHorizontal = Input.GetAxis("Mouse X");
         mouseVerticalspeed = Input.GetAxis("Mouse Y");
+        scrollWheelInput = Input.GetAxis("Mouse ScrollWheel");
+        //对selectblock下标进行计算
+        if (selectindex == 9)
+        {
+            selectindex = 0;
+        }
+        else if (selectindex == -1)
+        {
+            selectindex = 9;
+        }
+
 
         if (Input.GetButtonDown("Sprint"))
         {
@@ -408,7 +427,7 @@ public class Player : MonoBehaviour
 
                 musicmanager.PlaySoung_Place();
 
-                world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()), 3);
+                world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()), placeBlock_Index);
                 //print($"绝对坐标为：{RayCast_last()}");
                 //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
                 //print($"方块类型为：{world.GetBlockType(RayCast())}");
@@ -419,9 +438,20 @@ public class Player : MonoBehaviour
 
         }
 
+        //选择方块
+        SelectBlock();
 
-
-
+        //滚轮选择
+        // 如果往下滚动
+        if (scrollWheelInput < 0f)
+        {
+            selectindex++; 
+        }
+        // 如果往上滚动
+        else if (scrollWheelInput > 0f)
+        {
+            selectindex--; 
+        }
 
     }
 
@@ -478,6 +508,50 @@ public class Player : MonoBehaviour
         //print($"相对坐标为：{world.GetRelalocation(position)}");
         //print($"方块类型为：{world.GetBlockType(position)}");
     }
+
+
+    //获取玩家按1~9
+    private void SelectBlock()
+    {
+        // 检测按键1到9
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            selectindex = 0;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            selectindex = 1;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            selectindex = 2;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            selectindex = 3;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            selectindex = 4;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            selectindex = 5;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            selectindex = 6;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            selectindex = 7;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            selectindex = 8;
+        }
+    }
+
 
 
     private void placeCursorBlocks()
@@ -561,6 +635,15 @@ public class Player : MonoBehaviour
 
             cam.localPosition = new Vector3(cam.localPosition.x, high, cam.localPosition.z);
         }
+
+
+        //选择方块实现
+        if (selectindex >= 0 && selectindex <= 9)
+        {
+            selectblock.GetComponent<RectTransform>().anchoredPosition = new Vector2(VoxelData.SelectLocation_x[selectindex], 0);
+
+        }
+
 
 
 
@@ -1152,7 +1235,6 @@ public class Player : MonoBehaviour
                 new_foot_high = foot.transform.position.y;
             }
         }
-
 
         
 
