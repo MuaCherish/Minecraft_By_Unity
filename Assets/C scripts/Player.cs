@@ -1,4 +1,4 @@
-using System;
+//using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
     public MusicManager musicmanager;
     public Transform leg;
     public GameObject selectblock;
+    public GameObject Eye_Light;
     //public Transform myfoot;
 
     [Header("角色参数")]
@@ -105,7 +106,7 @@ public class Player : MonoBehaviour
     public bool isSuperMining = false;
 
     //select
-    int selectindex = 1;
+    int selectindex = 0;
 
 
     //碰撞检测的坐标
@@ -319,14 +320,18 @@ public class Player : MonoBehaviour
         mouseHorizontal = Input.GetAxis("Mouse X");
         mouseVerticalspeed = Input.GetAxis("Mouse Y");
         scrollWheelInput = Input.GetAxis("Mouse ScrollWheel");
-        //对selectblock下标进行计算
-        if (selectindex == 9)
+
+
+        //玩家按一下R，随机切换一下手中的物品
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            selectindex = 0;
+            placeBlock_Index = (byte)Random.Range(0,25);
         }
-        else if (selectindex == -1)
+
+        //玩家按一下F可以切换手电
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            selectindex = 9;
+            Eye_Light.SetActive(!Eye_Light.activeSelf);
         }
 
 
@@ -445,13 +450,17 @@ public class Player : MonoBehaviour
         // 如果往下滚动
         if (scrollWheelInput < 0f)
         {
-            selectindex++; 
+            if (selectindex > 8)
+                selectindex++; 
         }
         // 如果往上滚动
         else if (scrollWheelInput > 0f)
         {
-            selectindex--; 
+            if (selectindex < 0)
+                selectindex--; 
         }
+
+
 
     }
 
