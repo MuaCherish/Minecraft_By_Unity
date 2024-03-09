@@ -338,9 +338,7 @@ public class CanvasManager : MonoBehaviour
         {
             if (hasExec_PromptScreen_isShow == false)
             {
-                prompt_Text.text = "You can press <F> \r\nto open \"FlashLight\"";
-                StartCoroutine(Show_Animation_PromptScreen());
-                hasExec_PromptScreen_isShow = true;
+                First_Prompt_PlayerThe_Flashlight();
             }
             
         }
@@ -355,6 +353,13 @@ public class CanvasManager : MonoBehaviour
             }
         }
 
+    }
+
+    public void First_Prompt_PlayerThe_Flashlight()
+    {
+        prompt_Text.text = "You can press <F> \r\nto open \"FlashLight\"";
+        StartCoroutine(Show_Animation_PromptScreen());
+        hasExec_PromptScreen_isShow = true;
     }
 
     IEnumerator Show_Animation_PromptScreen()
