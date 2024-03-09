@@ -33,6 +33,9 @@ public class CanvasManager : MonoBehaviour
     public GameObject Swimming_Screen;
     public GameObject Pause_Screen;
     public GameObject HowToPlay_Screen;
+    public GameObject Prompt_Screen;
+    public GameObject prompt;
+    public TextMeshProUGUI prompt_Text;
 
     //修改值参数
     public Slider slider_bgm;
@@ -69,8 +72,13 @@ public class CanvasManager : MonoBehaviour
     public bool SuperMining_isOn = false;
     private bool previous_SuperMining_isOn = false;
 
+    //pormpt
+    public float promptShowspeed = 400f; 
+
     //一次性代码
     bool hasExec_Playing = true;
+    bool hasExec_PromptScreen_isShow = false;
+    bool hasExec_PromptScreen_isHide = true;
 
 
     //----------------------------------- 生命周期 ---------------------------------------
@@ -78,9 +86,6 @@ public class CanvasManager : MonoBehaviour
     private void Update()
     {
         
-
-
-
         //加载中
         if (world.game_state == Game_State.Loading)
         {
@@ -114,6 +119,7 @@ public class CanvasManager : MonoBehaviour
                 Loading_Screen.SetActive(false);
                 ToolBar.SetActive(true);
                 CursorCross_Screen.SetActive(true);
+                Prompt_Screen.SetActive(true);
 
                 hasExec_Playing = false;
             }
@@ -147,6 +153,8 @@ public class CanvasManager : MonoBehaviour
     private void FixedUpdate()
     {
         UpdatePauseScreenValue();
+
+        Prompt_FlashLight();
     }
 
     //----------------------------------------------------------------------------------------
@@ -323,6 +331,72 @@ public class CanvasManager : MonoBehaviour
     }
 
 
+    //手电筒的提示
+    void Prompt_FlashLight()
+    { 
+        if (player.transform.position.y <= world.soil_min + 5f)
+        {
+            if (hasExec_PromptScreen_isShow == false)
+            {
+                prompt_Text.text = "You can press <F> \r\nto open \"FlashLight\"";
+                StartCoroutine(Show_Animation_PromptScreen());
+                hasExec_PromptScreen_isShow = true;
+            }
+            
+        }
+
+        if (Input.GetKeyDown(KeyCode.F) && hasExec_PromptScreen_isShow)
+        {
+            if (hasExec_PromptScreen_isHide)
+            {
+                StartCoroutine(Hide_Animation_PromptScreen());
+
+                hasExec_PromptScreen_isHide = false;
+            }
+        }
+
+    }
+
+    IEnumerator Show_Animation_PromptScreen()
+    {
+        //保存原来值
+        Vector2 oldPosition = prompt.GetComponent<RectTransform>().anchoredPosition;
+        float sx = oldPosition.x;
+
+        //-344~344缓慢拉出来
+        while (sx <= 344f)
+        {
+            sx += Time.deltaTime * promptShowspeed;
+            prompt.GetComponent<RectTransform>().anchoredPosition = new Vector2(sx, oldPosition.y);
+            yield return null;
+        }
+
+        //矫正位置
+        prompt.GetComponent<RectTransform>().anchoredPosition = new Vector2(344f, oldPosition.y);
+        yield return null;
+    }
+
+    IEnumerator Hide_Animation_PromptScreen()
+    {
+        //保存原来值
+        Vector2 oldPosition = prompt.GetComponent<RectTransform>().anchoredPosition;
+        float sx = oldPosition.x;
+
+        //-344~344缓慢拉出来
+        while (sx >= -344f)
+        {
+            sx -= Time.deltaTime * promptShowspeed;
+            prompt.GetComponent<RectTransform>().anchoredPosition = new Vector2(sx, oldPosition.y);
+            yield return null;
+        }
+
+        //矫正位置
+        prompt.GetComponent<RectTransform>().anchoredPosition = new Vector2(-344f, oldPosition.y);
+        prompt_Text.text = "";
+        yield return null;
+    }
+
+
     //--------------------------------------------------------------------------------------
 
 
@@ -331,7 +405,7 @@ public class CanvasManager : MonoBehaviour
 
 
     //---------------------------------- 实时修改值 ------------------------------------------
-    
+
     //更新值
     void UpdatePauseScreenValue()
     {
