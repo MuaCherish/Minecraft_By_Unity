@@ -145,6 +145,7 @@ public class World : MonoBehaviour
         //÷° ˝
         Application.targetFrameRate = 120;
 
+
         //…Ë÷√chunks
         Chunks = new GameObject();
         Chunks.name = "Chunks";
