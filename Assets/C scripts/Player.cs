@@ -450,14 +450,26 @@ public class Player : MonoBehaviour
         // 如果往下滚动
         if (scrollWheelInput < 0f)
         {
-            if (selectindex > 8)
-                selectindex++; 
+            if (selectindex >= 8)
+            {
+                selectindex = 0;
+            }
+            else
+            {
+                selectindex++;
+            }
         }
         // 如果往上滚动
         else if (scrollWheelInput > 0f)
         {
-            if (selectindex < 0)
-                selectindex--; 
+            if (selectindex <= 0)
+            {
+                selectindex = 8;
+            }
+            else
+            {
+                selectindex--;
+            }
         }
 
 

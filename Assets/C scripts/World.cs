@@ -36,10 +36,18 @@ public class World : MonoBehaviour
     [Tooltip("2就是接近2*16的时候开始刷新区块")]
     public float StartToRender = 1f;
 
-    [Header("噪声采样比例(越小拉的越长)")]
+    [Header("Biome-平原参数")]
+    //noise2d越小，噪声拉的越长，地形与地形之间过度更自然
+    //值越小，噪声缩小，地形越紧凑
+    //所以越大越好
     public float noise2d_scale_smooth = 0.01f;
     public float noise2d_scale_steep = 0.04f;
+
+    [Header("Cave-洞穴系统")]
+    //noise3d_scale越大洞穴破损越严重，越大越好
+    //cave_width越小洞穴平均宽度变小，不能太大，不然全是洞
     public float noise3d_scale = 0.085f;
+    public float cave_width = 0.45f;
 
 
     [Header("Chunk-分层结构")]
@@ -54,6 +62,7 @@ public class World : MonoBehaviour
     public int TreeCount = 5;
     public int TreeHigh_min = 5;
     public int TreeHigh_max = 7;
+    
 
 
     [Header("生成概率(n分之一)")]

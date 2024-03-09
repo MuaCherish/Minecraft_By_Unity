@@ -1,4 +1,4 @@
-using System;
+//using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,6 +41,11 @@ public class Chunk : MonoBehaviour
     Queue<Vector3> Coals = new Queue<Vector3>();
     Queue<Vector3> Bamboos = new Queue<Vector3>();
 
+    //矿洞
+    float caveWidth;
+    public float mean = 16f; // 均值
+    public float stdDev = 5f; // 标准差
+
     //---------------------------------- 周期函数 ---------------------------------------
 
     //Start()
@@ -58,7 +63,7 @@ public class Chunk : MonoBehaviour
         noise3d_scale = world.noise3d_scale;
         treecount = world.TreeCount;
 
-
+        caveWidth = world.cave_width;
         //坐标
         //x = 0;
         //y = 0;
@@ -127,13 +132,21 @@ public class Chunk : MonoBehaviour
                     int randomInt = UnityEngine.Random.Range(0, 2);
 
                     //判断基岩
-                    if (y == 0)
+                    //0~3层不准生成矿洞
+                    if (y >= 0 && y <= 3)
                     {
-                        voxelMap[x, y, z] = VoxelData.BedRock;
-                    }
-                    else if (y > 0 && y < 3 && randomInt == 1)
-                    {
-                        voxelMap[x, y, z] = VoxelData.BedRock;
+                        if (y == 0)
+                        {
+                            voxelMap[x, y, z] = VoxelData.BedRock;
+                        }
+                        else if (y > 0 && y < 3 && randomInt == 1)
+                        {
+                            voxelMap[x, y, z] = VoxelData.BedRock;
+                        }
+                        else
+                        {
+                            voxelMap[x, y, z] = VoxelData.Stone;
+                        }
                     }
                     else
                     {
@@ -236,11 +249,22 @@ public class Chunk : MonoBehaviour
 
                             //判断空气
                             float noise3d = Perlin3D((float)x * noise3d_scale + chunkObject.transform.position.x * noise3d_scale, (float)y * noise3d_scale + y * noise3d_scale, (float)z * noise3d_scale + chunkObject.transform.position.z * noise3d_scale); // 将100改为0.1
+                            
+                            //洞穴深度概率
+                            //float randomCave = Probability(y);
 
                             //空气
-                            if (noise3d < 0.4f)
+                            if (noise3d < caveWidth)
                             {
                                 voxelMap[x, y, z] = VoxelData.Air;
+
+                                if (y >= 4 && y <= 6)
+                                {
+                                    if (randomInt == 1)
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Stone;
+                                    }
+                                }
                             }
                             else
                             {
@@ -991,6 +1015,20 @@ public class Chunk : MonoBehaviour
             return false;
         }
     }
+
+    //洞穴生成概率
+    float Probability(float y)
+    {
+        float possible = 0;
+        float mid = world.soil_max / 2;
+
+        // 如果y越接近0，则possible越接近0，反之越接近1
+        float ratio = y / mid;
+        possible = 1 - ratio;
+
+        return Mathf.Clamp01(possible); // 返回归一化到 [0, 1] 区间的概率值
+    }
+
 
     //----------------------------------------------------------------------------------
 
