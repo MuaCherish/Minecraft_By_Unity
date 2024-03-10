@@ -271,7 +271,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &22826876
 Transform:
   m_ObjectHideFlags: 0
@@ -303,8 +303,8 @@ MonoBehaviour:
   canvasManager: {fileID: 1026571032}
   directionalLight_1: {fileID: 593827499}
   directionalLight_2: {fileID: 1151379208}
-  DayTime: 120
-  NightTime: 120
+  DayTime: 10
+  NightTime: 100
   switchTime: 15
   DelayTime: 0.1
 --- !u!1 &71592121

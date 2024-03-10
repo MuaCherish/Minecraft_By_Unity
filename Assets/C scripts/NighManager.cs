@@ -57,6 +57,8 @@ public class NighManager : MonoBehaviour
         }
     }
 
+    
+
     //ÉèÖÃÌì¿ÕºĞÑÕÉ«
     IEnumerator SetSkybox()
     {

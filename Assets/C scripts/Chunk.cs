@@ -22,6 +22,7 @@ public class Chunk : MonoBehaviour
 
     //Block的种类数组
     public byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+    //public byte[,] voxelMap_2d = new byte[VoxelData.ChunkWidth, VoxelData.ChunkWidth];
 
     //World脚本
     World world;
@@ -45,6 +46,8 @@ public class Chunk : MonoBehaviour
     float caveWidth;
     public float mean = 16f; // 均值
     public float stdDev = 5f; // 标准差
+
+    //public Material instancedMaterial; // 在Inspector面板中拖拽材质到这个字段
 
     //---------------------------------- 周期函数 ---------------------------------------
 
@@ -326,6 +329,50 @@ public class Chunk : MonoBehaviour
         }
 
     }
+
+    //void CreateData_2d()
+    //{
+    //    for (int x = 0; x < VoxelData.ChunkWidth; x++)
+    //    {
+    //        for (int z = 0; z < VoxelData.ChunkWidth; z++)
+    //        {
+    //            //三个2d噪声
+    //            float noise2d_1 = Mathf.Lerp((float)world.soil_min, (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
+    //            float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
+    //            float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + chunkObject.transform.position.x * 0.1f, (float)z * 0.15f + chunkObject.transform.position.z * 0.15f));
+
+    //            //噪声叠加
+    //            float noiseHigh = noise2d_1 * 0.6f + noise2d_2 * 0.4f + noise2d_3 * 0.05f;
+
+    //            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+    //            cube.transform.position = new Vector3(chunkObject.transform.position.x + x + 0.5f, noiseHigh + 0.5f, chunkObject.transform.position.z + z + 0.5f);
+    //            Renderer renderer = cube.GetComponent<Renderer>();
+    //            renderer.material = instancedMaterial;
+    //        }
+    //    }
+    //}
+
+    //void DataToChunk_2d()
+    //{
+    //    ClearMeshData();
+
+    //    for (int x = 0; x < VoxelData.ChunkWidth; x++)
+    //    {
+    //        for (int z = 0; z < VoxelData.ChunkWidth; z++)
+    //        {
+    //            //三个2d噪声
+    //            float noise2d_1 = Mathf.Lerp((float)world.soil_min, (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + chunkObject.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + chunkObject.transform.position.z * noise2d_scale_smooth));
+    //            float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + chunkObject.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + chunkObject.transform.position.z * noise2d_scale_steep));
+    //            float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + chunkObject.transform.position.x * 0.1f, (float)z * 0.15f + chunkObject.transform.position.z * 0.15f));
+
+    //            //噪声叠加
+    //            float noiseHigh = noise2d_1 * 0.6f + noise2d_2 * 0.4f + noise2d_3 * 0.05f;
+
+    //            UpdateMeshData(new Vector3(x, noiseHigh, z));
+    //        }
+    //    }
+    //    CreateMesh();
+    //}
 
     //---------------------------------- Tree ----------------------------------------
 
@@ -631,17 +678,17 @@ public class Chunk : MonoBehaviour
 
 
                     //如果自己是竹子 && 自己下面是空气 则自己变为空气
-                    if (voxelMap[x,y,z] == VoxelData.Bamboo && voxelMap[x, y - 1, z] == VoxelData.Air)
-                    {
-                        voxelMap[x, y, z] = VoxelData.Air;
-                    }
+                    //if (voxelMap[x,y,z] == VoxelData.Bamboo && voxelMap[x, y - 1, z] == VoxelData.Air)
+                    //{
+                    //    voxelMap[x, y, z] = VoxelData.Air;
+                    //}
 
 
 
-                    //(是固体 || 是水 || 是水面上一层 || 是竹子)才生成
-                    if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water || voxelMap[x, y, z] == VoxelData.Bamboo)
-                        UpdateMeshData(new Vector3(x, y, z));
-                    
+                    ////(是固体 || 是水 || 是水面上一层 || 是竹子)才生成
+                    //if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water || voxelMap[x, y, z] == VoxelData.Bamboo)
+                    //    UpdateMeshData(new Vector3(x, y, z));
+                    UpdateMeshData(new Vector3(x, y, z));
 
 
                 }
