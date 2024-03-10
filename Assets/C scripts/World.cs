@@ -28,6 +28,7 @@ public class World : MonoBehaviour
 
     [Header("Material-方块类型")]
     public Material material;
+    //public Material instancedMaterial; // 在Inspector面板中拖拽材质到这个字段
     public BlockType[] blocktypes;
 
     [Header("World-渲染设置")]
@@ -232,6 +233,11 @@ public class World : MonoBehaviour
 
     }
 
+    void OnApplicationQuit()
+    {
+        //print("Quit");
+        RenderSettings.skybox.SetFloat("_Exposure", 0.69f);
+    }
 
     //---------------------------------------------------------------------------------------
 
