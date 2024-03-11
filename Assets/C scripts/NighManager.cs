@@ -118,7 +118,7 @@ public class NighManager : MonoBehaviour
             //light2
             while (elapsedTime < switchTime * 0.4f)
             {
-                float t = elapsedTime / switchTime;
+                float t = elapsedTime / (switchTime * 0.4f);
 
                 float currentExposure = Mathf.Lerp(light2Max, light2Min, t);
                 directionalLight_2.intensity = currentExposure;
@@ -131,7 +131,7 @@ public class NighManager : MonoBehaviour
             elapsedTime = 0;
             while (elapsedTime < switchTime * 0.6f)
             {
-                float t = elapsedTime / switchTime;
+                float t = elapsedTime / (switchTime * 0.6f);
 
                 float currentExposure = Mathf.Lerp(light1Max, light1Min, t);
                 directionalLight_1.intensity = currentExposure;
