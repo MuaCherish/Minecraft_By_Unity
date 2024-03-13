@@ -44,7 +44,7 @@ public class NighManager : MonoBehaviour
         RenderSettings.skybox.SetFloat("_Exposure", skyboxMax);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (world.game_state == Game_State.Playing && skybox == null)
         {

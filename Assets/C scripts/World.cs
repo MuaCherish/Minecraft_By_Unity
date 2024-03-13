@@ -168,7 +168,7 @@ public class World : MonoBehaviour
 
 
 
-    private void Update()
+    private void FixedUpdate()
     {
         //≥ı ºªØµÿÕº
         if (game_state == Game_State.Loading)

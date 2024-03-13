@@ -146,7 +146,9 @@ public class Player : MonoBehaviour
     Vector3 right_左下 = new Vector3();
     Vector3 right_右下 = new Vector3();
 
-    //调试专用
+    //玩家脚下坐标
+    public byte foot_BlockType = VoxelData.Air;
+    public byte foot_BlockType_temp = VoxelData.Air;
 
 
     //--------------------------------- 周期函数 --------------------------------------
@@ -177,6 +179,8 @@ public class Player : MonoBehaviour
             //    print("");
             //}
 
+            //更新玩家脚下坐标
+            Update_FootBlockType();
 
             //计算碰撞点
             update_block();
@@ -338,13 +342,13 @@ public class Player : MonoBehaviour
         if (Input.GetButtonDown("Sprint"))
         {
             isSprinting = true;
-            musicmanager.Audio_player_moving.pitch = 1.5f;
+            musicmanager.footstepInterval = VoxelData.sprintSpeed;
         }
             
         if (Input.GetButtonUp("Sprint"))
         {
             isSprinting = false;
-        musicmanager.Audio_player_moving.pitch = 1f;
+            musicmanager.footstepInterval = VoxelData.walkSpeed;
         }
             
 
@@ -367,12 +371,14 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             isSquating = true;
+            musicmanager.footstepInterval = VoxelData.squatSpeed;
         }
 
         //松开Ctrl键，摄像机还原
         if (Input.GetKeyUp(KeyCode.LeftControl))
         {
             isSquating = false;
+            musicmanager.footstepInterval = VoxelData.walkSpeed;
         }
 
 
@@ -1031,6 +1037,21 @@ public class Player : MonoBehaviour
             
         }
 
+    }
+
+    //更新脚下方块类型
+    void Update_FootBlockType()
+    {
+        foot_BlockType_temp = world.GetBlockType(foot.position);
+
+        //如果发生变动
+        if (foot_BlockType_temp != foot_BlockType)
+        {
+
+
+            //update
+            foot_BlockType = foot_BlockType_temp;
+        }
     }
 
     //-------------------------------------------------------------------------------------

@@ -16,7 +16,7 @@ public class FlashLightMoving : MonoBehaviour
         transform.localRotation = Quaternion.Euler(eyes.localRotation.eulerAngles + player.localRotation.eulerAngles);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         // 获取目标旋转
         targetRotation = Quaternion.LookRotation(eyes.forward, eyes.up);

@@ -83,7 +83,7 @@ public class CanvasManager : MonoBehaviour
 
     //----------------------------------- 生命周期 ---------------------------------------
 
-    private void Update()
+    private void FixedUpdate()
     {
         
         //加载中
@@ -148,14 +148,12 @@ public class CanvasManager : MonoBehaviour
             }
             
         }
-    }
 
-    private void FixedUpdate()
-    {
         UpdatePauseScreenValue();
 
         Prompt_FlashLight();
     }
+
 
     //----------------------------------------------------------------------------------------
 

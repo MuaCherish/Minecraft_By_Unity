@@ -35,6 +35,8 @@ public class MusicManager : MonoBehaviour
     public AudioSource Audio_player_diving;
     [HideInInspector]
     public AudioSource Audio_Click;
+    [HideInInspector]
+    public AudioSource Audio_Player_moving_swiming;
 
     //协程
     private Coroutine fadetoStopenvironment;
@@ -54,11 +56,12 @@ public class MusicManager : MonoBehaviour
     public byte leg_blocktype;
     [HideInInspector]
     public byte previous_leg_blocktype = VoxelData.Air;
-    public byte foot_blocktype;
+    //public byte foot_blocktype;
     //public byte previous_foot_blocktype = VoxelData.Air;
 
     //一次性代码
-
+    public float footstepInterval; // 走路音效播放间隔
+    private float nextFootstepTime; 
 
 
     //---------------------------------- 周期函数 ----------------------------------------
@@ -99,22 +102,39 @@ public class MusicManager : MonoBehaviour
         Audio_Click = gameObject.AddComponent<AudioSource>();
         Audio_Click.volume = 0.5f;
         Audio_Click.loop = false;
+
+        //swimming
+        Audio_Player_moving_swiming = gameObject.AddComponent<AudioSource>();
+        Audio_Player_moving_swiming.clip = audioclips[VoxelData.moving_water];
+        Audio_Player_moving_swiming.loop = true;
+
+        //walking
+        footstepInterval = VoxelData.walkSpeed;
     }
 
-    private void Update()
+
+    private void FixedUpdate()
     {
         Fun_environment();
 
         FUN_PlaceandBroke();
 
         FUN_Moving();
+
+
+        Fade_FallInto_Water();
+
+        //换碟
+        UpdateMovingClip();
+
+       
     }
 
 
     //---------------------------------------------------------------------------------------
 
 
-    
+
 
 
 
@@ -134,24 +154,24 @@ public class MusicManager : MonoBehaviour
             }
 
 
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                isPausing = !isPausing;
+            //if (Input.GetKeyDown(KeyCode.Escape))
+            //{
+            //    isPausing = !isPausing;
 
-                if (isPausing)
-                {
-                    Audio_player_diving.volume = 0f;
-                    Audio_player_moving.volume = 0f;
-                    Audio_envitonment.Pause();
-                }
-                else
-                {
-                    Audio_player_diving.volume = 0.5f;
-                    Audio_player_moving.volume = 0.7f;
-                    Audio_envitonment.UnPause();
-                }
+            //    if (isPausing)
+            //    {
+            //        Audio_player_diving.volume = 0f;
+            //        Audio_player_moving.volume = 0f;
+            //        Audio_envitonment.Pause();
+            //    }
+            //    else
+            //    {
+            //        Audio_player_diving.volume = 0.5f;
+            //        Audio_player_moving.volume = 0.7f;
+            //        Audio_envitonment.UnPause();
+            //    }
 
-            }
+            //}
 
 
 
@@ -262,10 +282,6 @@ public class MusicManager : MonoBehaviour
                         update_Clips();
                         Audio_player_broke.Play();
                     }
-                    else
-                    {
-                        Audio_player_broke.Stop();
-                    }
                 }
             }
 
@@ -286,8 +302,6 @@ public class MusicManager : MonoBehaviour
     {
         Audio_player_place.PlayOneShot(audioclips[VoxelData.place_normal]);
     }
-
-
 
     //type映射到clips
     private void update_Clips()
@@ -320,7 +334,7 @@ public class MusicManager : MonoBehaviour
 
     }
     //---------------------------------------------------------------------------------------
-
+    
 
 
 
@@ -331,26 +345,41 @@ public class MusicManager : MonoBehaviour
     {
         if (world.game_state == Game_State.Playing)
         {
-            //换碟
-            UpdateMovingClip();
+            //换碟在FixedUpdate()
+
+            // 如果玩家移动并且音频未播放，并且玩家在地面上,则播放音频
+            if (player.isMoving && !Audio_player_moving.isPlaying && player.isGrounded)
+            {
+                if (Time.time >= nextFootstepTime)
+                {
+                    Audio_player_moving.PlayOneShot(Audio_player_moving.clip);
+                    nextFootstepTime = Time.time + footstepInterval;
+                }
+               
+            }
 
 
-            // 如果玩家移动并且音频未播放，并且玩家在地面上或者游泳中，则播放音频
-            if (player.isMoving && !Audio_player_moving.isPlaying && (player.isGrounded || player.isSwiming))
-            {
-                Audio_player_moving.Play();
-            }
-            // 如果玩家未移动并且正在播放音频，并且玩家在地面上，则暂停音频
-            else if (!player.isMoving && Audio_player_moving.isPlaying && player.isGrounded)
-            {
-                Audio_player_moving.Pause();
-            }
             // 如果音频正在播放，并且玩家不在地面上且不在游泳中，则暂停音频
             //else if (Audio_player_moving.isPlaying && !player.isGrounded && !player.isSwiming)
             //{
             //    Audio_player_moving.Pause();
             //}
+            if (player.isSwiming && player.isMoving)
+            {
+                if (!Audio_Player_moving_swiming.isPlaying)
+                {
+                    Audio_Player_moving_swiming.Play();
+                }
 
+            }
+            else
+            {
+                if (Audio_Player_moving_swiming.isPlaying)
+                {
+                    Audio_Player_moving_swiming.Pause();
+                }
+
+            }
 
 
             //flop to Water
@@ -362,9 +391,52 @@ public class MusicManager : MonoBehaviour
             playsound_diving();
         }
     }
-    
+
+
     //换碟
     void UpdateMovingClip()
+    {
+
+        //如果脚下方块发生变化，则更改播放列表
+        //草地
+        if (player.foot_BlockType == VoxelData.Grass)
+        {
+            Audio_player_moving.clip = audioclips[VoxelData.moving_grass];
+        }
+        //沙子
+        else if (player.foot_BlockType == VoxelData.Sand)
+        {
+            Audio_player_moving.clip = audioclips[VoxelData.moving_sand];
+        }
+        //石头
+        else if (player.foot_BlockType == VoxelData.Stone)
+        {
+            Audio_player_moving.clip = audioclips[VoxelData.moving_stone];
+        }
+        //水
+        else if (player.foot_BlockType == VoxelData.Water)
+        {
+            Audio_player_moving.clip = audioclips[VoxelData.moving_sand];
+        }
+        //空气
+        else if (player.foot_BlockType == VoxelData.Air)
+        {
+            Audio_player_moving.clip = null;
+        }
+        //其他
+        else
+        {
+            Audio_player_moving.clip = audioclips[VoxelData.moving_else];
+        }
+
+        
+
+
+    }
+
+
+    //玩家站在水边走向水里可以缓慢入水而不是-20入水
+    void Fade_FallInto_Water()
     {
         //如果isground和isswimming同时亮，那么只能执行swimming
         if (player.isGrounded && player.isSwiming)
@@ -374,16 +446,14 @@ public class MusicManager : MonoBehaviour
             {
                 if (hasExec_isGround)
                 {
-                    //Debug.Log("切换到水中");
-
                     //如果玩家离地高度为0，那么就变0 
                     if (player.new_foot_high - player.transform.position.y <= 0f)
                     {
                         player.verticalMomentum = 0f;
                     }
-
+                    //Debug.Log("切换到水中");
                     hasExec_isSwiming = true;
-                    Audio_player_moving.clip = audioclips[VoxelData.moving_water];
+                    //Audio_player_moving.clip = audioclips[VoxelData.moving_water];
                     hasExec_isGround = false;
                 }
 
@@ -399,7 +469,7 @@ public class MusicManager : MonoBehaviour
                 {
                     //Debug.Log("切换到地面");
                     hasExec_isGround = true;
-                    Audio_player_moving.clip = audioclips[VoxelData.moving_normal];
+                    //Audio_player_moving.clip = audioclips[VoxelData.moving_normal];
                     hasExec_isSwiming = false;
                 }
             }
@@ -409,24 +479,20 @@ public class MusicManager : MonoBehaviour
             {
                 if (hasExec_isGround)
                 {
-                    //Debug.Log("切换到水中");
-
                     //如果玩家离地高度为0，那么就变0 
                     if (player.new_foot_high - player.transform.position.y <= 0f)
                     {
                         player.verticalMomentum = 0f;
                     }
-
+                    //Debug.Log("切换到水中");
                     hasExec_isSwiming = true;
-                    Audio_player_moving.clip = audioclips[VoxelData.moving_water];
+                    //Audio_player_moving.clip = audioclips[VoxelData.moving_water];
                     hasExec_isGround = false;
                 }
 
             }
 
         }
-
-        
     }
 
     //将给定type分类为Air和water
