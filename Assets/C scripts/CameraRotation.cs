@@ -17,7 +17,7 @@ public class CameraRotation : MonoBehaviour
         offset = transform.position - Center;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         // Calculate the desired position based on current angle and radius
         float angle = Time.time * rotationSpeed;

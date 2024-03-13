@@ -13,7 +13,7 @@ public class HandShake : MonoBehaviour
         animationComponent = GetComponent<Animation>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (world.game_state == Game_State.Playing)
         {
