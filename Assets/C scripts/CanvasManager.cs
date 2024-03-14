@@ -27,6 +27,7 @@ public class CanvasManager : MonoBehaviour
     public GameObject handle;
 
     //Playing屏幕内容
+    public GameObject OpenYourEyes;
     public GameObject Debug_Screen;
     public GameObject ToolBar;
     public GameObject CursorCross_Screen;
@@ -73,7 +74,10 @@ public class CanvasManager : MonoBehaviour
     private bool previous_SuperMining_isOn = false;
 
     //pormpt
-    public float promptShowspeed = 400f; 
+    public float promptShowspeed = 400f;
+
+    //eyestime
+    public float eyesOpenTime = 5f;
 
     //一次性代码
     bool hasExec_Playing = true;
@@ -122,6 +126,8 @@ public class CanvasManager : MonoBehaviour
                 Prompt_Screen.SetActive(true);
 
                 hasExec_Playing = false;
+
+                openyoureyes();
             }
 
 
@@ -228,6 +234,35 @@ public class CanvasManager : MonoBehaviour
 
     //--------------------------------- Loading_Screen -------------------------------------
 
+    //Loading结束的时候加一个睁眼的动画
+    void openyoureyes()
+    {
+        OpenYourEyes.SetActive(true);
+        StartCoroutine(Animation_Openyoureyes());
+    }
+
+    IEnumerator Animation_Openyoureyes()
+    {
+        Image image = OpenYourEyes.GetComponent<Image>();
+
+        // 记录渐变开始的时间
+        float startTime = Time.time;
+
+        while (Time.time - startTime < eyesOpenTime)
+        {
+            // 计算当前的透明度
+            float alpha = Mathf.Lerp(1f, 0f, (Time.time - startTime) / eyesOpenTime);
+
+            // 更新Image组件的透明度
+            image.color = new Color(image.color.r, image.color.g, image.color.b, alpha);
+
+            // 等待一帧
+            yield return null;
+        }
+
+        // 渐变结束后，将透明度设置为完全透明
+        image.color = new Color(image.color.r, image.color.g, image.color.b, 0f);
+    }
 
     //--------------------------------------------------------------------------------------
 
