@@ -1,20 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Xml;
 using TMPro;
-using Unity.VisualScripting;
-//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UI;
-//using static UnityEditor.PlayerSettings;
-//using static UnityEditor.Progress;
 
+//全局游戏状态
 public enum Game_State
 {
-    Start, Loading, Playing,Pause,
+    Start, Loading, Playing, Pause,
 }
-
 
 
 public class World : MonoBehaviour
@@ -28,14 +21,14 @@ public class World : MonoBehaviour
 
     [Header("Material-方块类型")]
     public Material material;
-    //public Material instancedMaterial; // 在Inspector面板中拖拽材质到这个字段
-    public BlockType[] blocktypes;
+    public BlockType[] blocktypes; 
 
     [Header("World-渲染设置")]
     [Tooltip("4就是边长为4*16的正方形")]
     public int renderSize = 5; //渲染区块半径,即renderSize*16f
     [Tooltip("2就是接近2*16的时候开始刷新区块")]
     public float StartToRender = 1f;
+    public float DestroySize = 7f;
 
     [Header("Biome-平原参数")]
     //noise2d越小，噪声拉的越长，地形与地形之间过度更自然
@@ -63,7 +56,7 @@ public class World : MonoBehaviour
     public int TreeCount = 5;
     public int TreeHigh_min = 5;
     public int TreeHigh_max = 7;
-    
+
 
 
     [Header("生成概率(n分之一)")]
@@ -83,20 +76,6 @@ public class World : MonoBehaviour
     public byte ERROR_CODE_OUTOFVOXELMAP = 255;
     [HideInInspector]
     public Vector3 Start_Position = new Vector3(1600f, 63f, 1600f);
-    //[HideInInspector]
-    //public byte foot_BlockType = VoxelData.Air;
-
-
-
-    //isBlock
-    //Chunk chunktemp;
-    //[HideInInspector]
-    //public bool isBlock = false;
-    //[HideInInspector]
-    //public bool isSwiming = false;
-    //[HideInInspector]
-    //public bool isnearblock = false;
-    //public bool[,] BlockDirection = new bool[1, 10];
 
 
     //全部Chunk位置
@@ -104,13 +83,10 @@ public class World : MonoBehaviour
     public Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
 
     //等待添加队列
-    private bool CreateCoroutineState = false;
-    //private bool hasExecuted1 = false;
+    //private List<chunkWithsequence> WatingToCreateChunks = new List<chunkWithsequence>();
     private List<Vector3> WatingToCreate_Chunks = new List<Vector3>();
 
     //等待删除队列
-    private bool RemoveCoroutineState = false;
-    //private bool hasExecuted2 = false;
     private List<Vector3> WatingToRemove_Chunks = new List<Vector3>();
     private Chunk obj;
 
@@ -119,6 +95,7 @@ public class World : MonoBehaviour
     public float InitCorountineDelay = 1f;
     public float CreateCoroutineDelay = 0.5f;
     public float RemoveCoroutineDelay = 0.5f;
+    public float RenderDelay = 0.1f;
 
     //生成方向
     private Vector3 Center_Now;
@@ -134,42 +111,44 @@ public class World : MonoBehaviour
     public GameObject Chunks;
 
 
-    //其他变量
+    //一次性代码
     bool hasExec = true;
     bool hasExec_SetSeed = true;
 
+    //Create && Remove 协程
+    Coroutine CreateCoroutine;
+    Coroutine RemoveCoroutine;
+
+    //Render_0 && Render_1 协程
+    public Queue<Chunk> WaitToRender = new Queue<Chunk>();
+    Coroutine Render_Coroutine;
 
     //----------------------------------周期函数---------------------------------------
 
     private void Start()
     {
         //帧数
-        Application.targetFrameRate = 120;
+        Application.targetFrameRate = 90;
 
-
-        //设置chunks
+        //Self
         Chunks = new GameObject();
         Chunks.name = "Chunks";
         Chunks.transform.SetParent(GameObject.Find("Environment").transform);
 
-        // 允许设置随机值
-        if (isRandomSeed)
-        {
-            //设置种子
-            Seed = Random.Range(0, 100);
-
-            //设置水平面
-            sea_level = Random.Range(20, 42);
-        }
+        //设置种子
+        Seed = Random.Range(0, 100);
+        sea_level = Random.Range(20, 39);
 
         //初始化一个小岛
         Start_Screen_Init();
     }
 
-
-
     private void FixedUpdate()
     {
+
+        //渲染线程常驻
+        RenderCoroutineManager();
+
         //初始化地图
         if (game_state == Game_State.Loading)
         {
@@ -187,9 +166,9 @@ public class World : MonoBehaviour
                 hasExec_SetSeed = false;
             }
 
-            
+
         }
-        
+
 
         //游戏开始
         if (game_state == Game_State.Playing)
@@ -201,11 +180,10 @@ public class World : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
                 //鼠标不可视
                 Cursor.visible = false;
-
             }
 
 
-
+            //玩家移动刷新
             //如果大于16f
             if (GetVector3Length(PlayerFoot.transform.position - Center_Now) > (StartToRender * 16f))
             {
@@ -213,22 +191,12 @@ public class World : MonoBehaviour
                 Center_direction = VtoNormal(PlayerFoot.transform.position - Center_Now);
                 Center_Now += Center_direction * VoxelData.ChunkWidth;
 
-                //调试
-                //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                //sphere.transform.position = Center_Old;
-                //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
-
                 //添加Chunk
                 AddtoCreateChunks(Center_direction);
                 AddtoRemoveChunks(Center_direction);
             }
 
-            //碰撞判断
-            //isHitWall();
 
-            
-
-            //Debug.DrawLine(Center_Now, player.transform.position, Color.red, Time.deltaTime);
         }
 
     }
@@ -254,8 +222,7 @@ public class World : MonoBehaviour
     //主菜单地图
     public void Start_Screen_Init()
     {
-        CreateChunk(new Vector3(0, 0, 0));
-
+        Chunk chunk_temp = new Chunk(new Vector3(0, 0, 0), this);
     }
 
     //检查种子
@@ -317,8 +284,6 @@ public class World : MonoBehaviour
         }
     }
 
-
-
     //初始化地图
     IEnumerator Init_Map_Thread()
     {
@@ -372,7 +337,9 @@ public class World : MonoBehaviour
             for (int i = -renderSize; i < renderSize; i++)
             {
                 //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
+
                 WatingToCreate_Chunks.Add(add_vec + new Vector3((float)i, 0, 0));
+
 
             }
         }
@@ -384,7 +351,6 @@ public class World : MonoBehaviour
 
             for (int i = -renderSize; i < renderSize; i++)
             {
-                //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
                 WatingToCreate_Chunks.Add(add_vec + new Vector3((float)i, 0, 0));
             }
         }
@@ -418,12 +384,9 @@ public class World : MonoBehaviour
 
         //判断是否启动协程
         //先两次添加再启动协程，后面数据多了一次启动协程
-        if (WatingToCreate_Chunks.Count > 0 && CreateCoroutineState == false)
+        if (WatingToCreate_Chunks.Count > 0 && CreateCoroutine == null)
         {
-            StartCoroutine(CreateChunksQueue());
-            //Debug.Log("Create 协程启动");
-            CreateCoroutineState = true;
-            //hasExecuted1 = false;
+            CreateCoroutine = StartCoroutine(CreateChunksQueue());
         }
 
 
@@ -442,9 +405,13 @@ public class World : MonoBehaviour
             {
                 //如果查到的chunk已经存在，则唤醒
                 //不存在则生成
-                if (Allchunks.TryGetValue(WatingToCreate_Chunks[0], out obj))
+                if (Allchunks.TryGetValue(WatingToCreate_Chunks[0], out obj)) 
                 {
-                    obj.ShowChunk();
+                    if (obj != null)
+                    {
+                        obj.ShowChunk();
+                    }
+                    
                 }
                 else
                 {
@@ -456,14 +423,9 @@ public class World : MonoBehaviour
             }
             else
             {
-                //if (!hasExecuted1)
-                //{ // 在此处执行一次性的逻辑 
-                //    Debug.Log("Create 协程已关闭");
-                //    hasExecuted1 = true;
-                //}
 
-                CreateCoroutineState = false;
-                StopCoroutine(CreateChunksQueue());
+                CreateCoroutine = null;
+                break;
             }
 
 
@@ -480,25 +442,10 @@ public class World : MonoBehaviour
             return;
         }
 
-        //if (pos.x >= 98 && pos.z >= 102)
-        //{
-        //    print("");
-        //}
-        //Debug.Log($"{Allchunks.Count}");
-        //GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        //cube.transform.position = new Vector3(x + chunkwidth / 2, 0, z + chunkwidth / 2);
-        //cube.transform.localScale = new Vector3(chunkwidth, 1, chunkwidth);
-
+        //调用Chunk
         Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this);
 
-
-        //判断一下是否在可视范围内，设置它的可见性
-        //if ((GetChunkLocation(Center_Now) - pos).magnitude > LookToRender)
-        //{
-        //    chunk_temp.HideChunk();
-        //}
-
-
+        //添加到字典
         Allchunks.Add(pos, chunk_temp);
     }
     //--------------------------------------------------------------------------------------
@@ -569,12 +516,9 @@ public class World : MonoBehaviour
 
         //判断是否启动协程
         //先两次添加再启动协程，后面数据多了一次启动协程
-        if (WatingToRemove_Chunks.Count > 0 && RemoveCoroutineState == false)
+        if (WatingToRemove_Chunks.Count > 0 && RemoveCoroutine == null)
         {
-            StartCoroutine(RemoveChunksQueue());
-            //Debug.Log("Remove 协程启动");
-            RemoveCoroutineState = true;
-            //hasExecuted2 = false;
+            RemoveCoroutine = StartCoroutine(RemoveChunksQueue());
         }
 
     }
@@ -593,10 +537,9 @@ public class World : MonoBehaviour
             {
                 if (Allchunks.TryGetValue(WatingToRemove_Chunks[0], out obj))
                 {
-                    //obj.DestroyChunk();
-                    obj.HideChunk();
 
-                    //Allchunks.Remove(WatingToRemove_Chunks[0]);
+                    Chunk_HideOrRemove(WatingToRemove_Chunks[0]);
+                    
                     WatingToRemove_Chunks.RemoveAt(0);
                 }
                 else
@@ -609,14 +552,9 @@ public class World : MonoBehaviour
             }
             else
             {
-                //if (!hasExecuted2)
-                //{ // 在此处执行一次性的逻辑 
-                //    Debug.Log("Remove 协程已关闭");
-                //    hasExecuted2 = true;
-                //}
 
-                RemoveCoroutineState = false;
-                StopCoroutine(RemoveChunksQueue());
+                RemoveCoroutine = null;
+                break;
             }
 
 
@@ -624,7 +562,67 @@ public class World : MonoBehaviour
         }
 
     }
+
+
+    void Chunk_HideOrRemove(Vector3 chunklocation)
+    {
+        //如果超出范围就卸载,否则就隐藏
+        if (GetVector3Length(PlayerFoot.transform.position - chunklocation) > (DestroySize * 16f))
+        {
+            Allchunks.Remove(chunklocation);
+            obj.DestroyChunk();
+        }
+        else
+        {
+            obj.HideChunk();
+        }
+
+
+    }
     //---------------------------------------------------------------------------------------
+
+
+
+
+
+    //-----------------------------------Render 协程-----------------------------------------
+    //渲染协程池
+    void RenderCoroutineManager()
+    {
+        if (WaitToRender.Count != 0 && Render_Coroutine == null)
+        {
+            Render_Coroutine = StartCoroutine(Render_0());
+        }
+
+
+    }
+
+    IEnumerator Render_0()
+    {
+        while (true)
+        {
+            WaitToRender.TryDequeue(out Chunk chunktemp);
+
+            if (chunktemp.isReadyToRender)
+            {
+                chunktemp.CreateMesh();
+            }
+
+            if (WaitToRender.Count == 0)
+            {
+                Render_Coroutine = null;
+                break;
+            }
+
+            //yield return new WaitForSeconds(RenderDelay);
+            yield return null;
+        }
+
+    }
+
+
+    //---------------------------------------------------------------------------------------
+
 
 
 
@@ -646,26 +644,6 @@ public class World : MonoBehaviour
 
     }
 
-    //获取脚下方块
-    //void updateFoodBlockType()
-    //{
-        
-
-    //    switch (GetBlockType(PlayerFoot.transform.position))
-    //    {
-    //        case 0: foot_BlockType = "BedRock"; break;
-    //        case 1: foot_BlockType = "Stone"; break;
-    //        case 2: foot_BlockType = "Grass"; break;
-    //        case 3: foot_BlockType = "Soil"; break;
-    //        case 4: foot_BlockType = "Air"; break;
-    //        case 5: foot_BlockType = "Sand"; break;
-    //        case 6: foot_BlockType = "Wood"; break;
-    //        case 7: foot_BlockType = "Leaves"; break;
-    //        case 8: foot_BlockType = "Water"; break;
-    //        case 9: foot_BlockType = "Coal"; break;
-    //        default: foot_BlockType = "None"; break;
-    //    }
-    //}
 
     //Vector3 --> 大区块坐标
     public Vector3 GetChunkLocation(Vector3 vec)
@@ -690,62 +668,6 @@ public class World : MonoBehaviour
 
     }
 
-    //判断是否撞墙
-    //public void isHitWall()
-    //{
-    //    isnearblock = false; // 将初始值设为false
-    //    isBlock = true;
-
-    //    //遍历碰撞盒
-    //    for (int i = 0; i <= 9; i++)
-    //    {
-
-    //        //if (GetBlockType(Block_transforms[i].position) == ERROR_CODE)
-    //        //{
-    //        //    // 处理跳跃数据
-    //        //    playercontroller.velocity.y -= playercontroller.gravity * Time.deltaTime;  // 在空中时应用重力
-    //        //}
-
-
-    //        if (GetBlockType(PlayerFoot.position) != 4 && GetBlockType(PlayerFoot.position) != ERROR_CODE_OUTOFVOXELMAP)
-    //        {
-    //            isnearblock = true;
-    //            BlockDirection[0, i] = true;
-    //        }
-    //        //else if(GetBlockType(Block_transforms[i].position) == 8 && i == 5）
-    //        //{
-
-    //        //    isSwiming = true;
-
-
-
-    //        //}
-    //        //如果5是空气，则判定为离地
-    //        else if (GetBlockType(Block_transforms[i].position) == 4 && i == 5)
-    //        {
-    //            isBlock = false;
-    //            isSwiming = false;
-
-
-    //        }
-    //        else
-    //        {
-    //            BlockDirection[0, i] = false;
-
-    //        }
-
-    //        //swiming
-    //        if (GetBlockType(Block_transforms[i].position) == 8 && i == 5)
-    //        {
-    //            isSwiming = true;
-    //        }
-
-
-
-
-    //    }
-
-    //}
 
     //返回方块类型
     public byte GetBlockType(Vector3 pos)
@@ -774,15 +696,7 @@ public class World : MonoBehaviour
         return block_type;
     }
 
-
-
-
     //---------------------------------------------------------------------------------------
-
-
-
-
-
 
 
 
@@ -907,6 +821,7 @@ public class World : MonoBehaviour
 
 
 }
+
 
 //结构体BlockType
 //存储方块种类+面对应的UV

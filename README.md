@@ -18,13 +18,16 @@ A long-term project from beginner
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/map2.png" width="600px">
 
 ## 🗒️My Plans
-- [X] ~~Learn how to generate a face~~
-- [X] ~~Learn how to generate a Block~~
-- [X] ~~Elimination of redundant surfaces~~
-- [X] ~~The PerlinNoise 2d and 3d To Generate Terrain~~
-- [X] ~~Try to use Coroutine~~
-- [X] ~~Add Character Conotroller~~
-- [X] ~~May be Add some flowers or Tree?~~
+- [X] Learn how to generate a face
+- [X] Learn how to generate a Block
+- [X] Elimination of redundant surfaces
+- [X] The PerlinNoise 2d and 3d To Generate Terrain
+- [X] Try to use Coroutine
+- [X] Add Character Conotroller
+- [X] May be Add some flowers or Tree?
+- [X] Add a day-night alternation system.
+- [X] Add some sound effects.
+- [X] And More Blocks.
 - [ ] Biological system
 - [ ] Better picture quality..
 - [ ] More stuff? maybe
