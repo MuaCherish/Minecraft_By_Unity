@@ -73,14 +73,14 @@ public class NighManager : MonoBehaviour
             {
                 float t = elapsedTime / switchTime;
                 float currentExposure = Mathf.Lerp(skyboxMax, skyboxMin, t);
-                RenderSettings.skybox.SetFloat("_Exposure", currentExposure);
+                RenderSettings.skybox.SetFloat("_Exposure", currentExposure); 
                 yield return new WaitForSeconds(DelayTime + 0.001f);
                 elapsedTime += DelayTime; // √ø√Î‘ˆº”1√Î
             }
             RenderSettings.skybox.SetFloat("_Exposure", skyboxMin);
 
             //call
-            if (hasExec_calltoPrompt)
+            if (!canvasManager.hasExec_PromptScreen_isShow)
             {
                 canvasManager.First_Prompt_PlayerThe_Flashlight();
                 hasExec_calltoPrompt = false;

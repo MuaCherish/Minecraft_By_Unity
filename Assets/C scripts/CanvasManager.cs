@@ -81,7 +81,7 @@ public class CanvasManager : MonoBehaviour
 
     //一次性代码
     bool hasExec_Playing = true;
-    bool hasExec_PromptScreen_isShow = false;
+    public bool hasExec_PromptScreen_isShow = false;
     bool hasExec_PromptScreen_isHide = true;
 
 
