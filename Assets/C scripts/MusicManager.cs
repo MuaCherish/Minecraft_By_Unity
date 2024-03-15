@@ -15,6 +15,7 @@ public class MusicManager : MonoBehaviour
     public Transform eyes;
     public Transform leg;
     public Transform foot;
+    public BackPackManager backPackManager;
 
     //∆¨∂Œ
     [Header("“Ù¿÷∆¨∂Œ")]
@@ -276,7 +277,7 @@ public class MusicManager : MonoBehaviour
                 if (Input.GetMouseButton(0))
                 {
                     //»Áπ˚¥Ú÷–
-                    if (player.broke_Block_type != VoxelData.notHit)
+                    if (player.point_Block_type != VoxelData.notHit)
                     {
                         isbroking = true;
                         update_Clips();
@@ -303,30 +304,34 @@ public class MusicManager : MonoBehaviour
 
     public void PlaySoung_Place()
     {
-        Audio_player_place.PlayOneShot(audioclips[VoxelData.place_normal]);
+        if (backPackManager.istheindexHaveBlock(player.selectindex))
+        {
+            Audio_player_place.PlayOneShot(audioclips[VoxelData.place_normal]);
+        }
+        
     }
 
     //type”≥…‰µΩclips
     private void update_Clips()
     {
         //Leaves
-        if (player.broke_Block_type == VoxelData.Leaves)
+        if (player.point_Block_type == VoxelData.Leaves)
         {
             Audio_player_broke.clip = audioclips[VoxelData.broke_leaves];
         }//Sand
-        else if (player.broke_Block_type == VoxelData.Sand)
+        else if (player.point_Block_type == VoxelData.Sand)
         {
             Audio_player_broke.clip = audioclips[VoxelData.broke_sand];
         }//Grass_Soil
-        else if (player.broke_Block_type == VoxelData.Grass)
+        else if (player.point_Block_type == VoxelData.Grass)
         {
             Audio_player_broke.clip = audioclips[VoxelData.broke_soil];
         }//Soil
-        else if (player.broke_Block_type == VoxelData.Soil)
+        else if (player.point_Block_type == VoxelData.Soil)
         {
             Audio_player_broke.clip = audioclips[VoxelData.broke_soil];
         }//Wood
-        else if (player.broke_Block_type == VoxelData.Wood)
+        else if (player.point_Block_type == VoxelData.Wood)
         {
             Audio_player_broke.clip = audioclips[VoxelData.broke_wood];
         }//else all Stone

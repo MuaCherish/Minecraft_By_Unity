@@ -132,13 +132,13 @@ public class World : MonoBehaviour
         Application.targetFrameRate = 90;
 
         //Self
-        Chunks = new GameObject();
+        Chunks = new GameObject(); 
         Chunks.name = "Chunks";
         Chunks.transform.SetParent(GameObject.Find("Environment").transform);
 
         //设置种子
         Seed = Random.Range(0, 100);
-        sea_level = Random.Range(20, 39);
+        //sea_level = Random.Range(20, 39);
 
         //初始化一个小岛
         Start_Screen_Init();
@@ -246,7 +246,7 @@ public class World : MonoBehaviour
                 Seed = number;
 
                 //设置水平面
-                sea_level = Random.Range(20, 42);
+                //sea_level = Random.Range(20, 42); 
             }
             else
             {
@@ -864,7 +864,7 @@ public class BlockType
     public float DestroyTime;
     public bool isSolid;
     public bool isTransparent;
-    public Sprite slogsprite ;
+    public Sprite icon;
 
     [Header("Texture Values")]
     public int backFaceTexture;
