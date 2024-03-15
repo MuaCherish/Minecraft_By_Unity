@@ -100,7 +100,7 @@ public class Player : MonoBehaviour
     public float speed = 200f; // 控制时间的增长速度 
 
     //music
-    public byte broke_Block_type = 255;
+    public byte point_Block_type = 255;
 
     //特殊模式
     public bool isSpaceMode = false;
@@ -328,10 +328,10 @@ public class Player : MonoBehaviour
 
 
         //玩家按一下R，随机切换一下手中的物品
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            placeBlock_Index = (byte)Random.Range(0,25);
-        }
+        //if (Input.GetKeyDown(KeyCode.R))
+        //{
+        //    placeBlock_Index = (byte)Random.Range(0,25);
+        //}
 
         //玩家按一下F可以切换手电
         if (Input.GetKeyDown(KeyCode.F))
@@ -444,8 +444,13 @@ public class Player : MonoBehaviour
             {
 
                 musicmanager.PlaySoung_Place();
-
-                world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()), placeBlock_Index);
+                if (backpackmanager.istheindexHaveBlock(selectindex))
+                {
+                    
+                    world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()), backpackmanager.slots[selectindex].blockId);
+                    backpackmanager.update_slots(1, point_Block_type);
+                }
+                
                 //print($"绝对坐标为：{RayCast_last()}");
                 //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
                 //print($"方块类型为：{world.GetBlockType(RayCast())}");
@@ -536,7 +541,7 @@ public class Player : MonoBehaviour
         elapsedTime = 0.0f;
         material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
         musicmanager.isbroking = false;
-        backpackmanager.update_slots(0, broke_Block_type);
+        backpackmanager.update_slots(0, point_Block_type);
         world.GetChunkObject(position).EditData(world.GetRelalocation(position), VoxelData.Air);
 
         //print($"绝对坐标为：{position}");
@@ -602,7 +607,7 @@ public class Player : MonoBehaviour
 
             if (world.eyesCheckForVoxel(pos))
             {
-                broke_Block_type = world.GetBlockType(pos);
+                point_Block_type = world.GetBlockType(pos);
 
                 HighlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x) + 0.5f, Mathf.FloorToInt(pos.y) + 0.5f, Mathf.FloorToInt(pos.z) + 0.5f);
                 HighlightBlock.gameObject.SetActive(true);
@@ -613,7 +618,7 @@ public class Player : MonoBehaviour
             }
 
 
-            broke_Block_type = VoxelData.notHit;
+            point_Block_type = VoxelData.notHit;
             lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
 
             step += checkIncrement;
@@ -1105,7 +1110,7 @@ public class Player : MonoBehaviour
 
         }
 
-        broke_Block_type = 255;
+        point_Block_type = 255;
         return new Vector3(0f, 0f, 0f);
     }
 

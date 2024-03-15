@@ -1,15 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class BackPackManager : MonoBehaviour
 {
+    //Transforms
     public Player player;
+    public World world;
+    public GameObject[] icons = new GameObject[9];
+    public TextMeshProUGUI[] numbers = new TextMeshProUGUI[9];
 
-    //物品栏
+    //数据部分
     public Slot[] slots = new Slot[9];
 
-    int empty_index = 0;
 
     //物品栏的变化
     //返回值:一般都是true，返回false则是不能破坏或者放置
@@ -20,30 +26,64 @@ public class BackPackManager : MonoBehaviour
         //broke
         if (brokeOrplace == 0)
         {
+            bool isfind = false;
+            int i = 0;
+
             foreach (Slot item in slots)
             {
+                
                 //如果找到
                 if (item.blockId == blocktype)
                 {
                     item.number++;
+                    isfind = true;
+                    numbers[i].text = $"{item.number}";
                 }
+                i ++;
             }
 
-            //如果没找到
-            int _index = find_empty_index();
-            if (_index != -1)
+            if (!isfind)
             {
-                slots[_index].ishave = true;
-                slots[_index].blockId = blocktype;
-                slots[_index].number++;
+                //如果没找到
+                int _index = find_empty_index();
+                if (_index != -1)
+                {
+                    slots[_index].ishave = true;
+                    slots[_index].blockId = blocktype;
+                    slots[_index].number++;
+
+                    numbers[_index].text = $"{slots[_index].number}"; 
+
+                    //添加图片
+                    icons[_index].GetComponent<Image>().sprite = world.blocktypes[blocktype].icon;
+                    // 将图像的透明度调整为 255
+                    icons[_index].GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                }
             }
+            
         }
 
 
         //place
         else if (brokeOrplace == 1)
-        {
-            slots[player.selectindex].number--;
+        { 
+            if (slots[player.selectindex].number - 1 == 0)
+            {
+                slots[player.selectindex].ishave = false;
+                slots[player.selectindex].blockId = 255;
+                slots[player.selectindex].number = 0;
+
+                numbers[player.selectindex].text = "";
+                icons[player.selectindex].GetComponent<Image>().sprite = null;
+                icons[player.selectindex].GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+            }
+            else
+            {
+                slots[player.selectindex].number--;
+                numbers[player.selectindex].text = $"{slots[player.selectindex].number}";
+            }
+
+            
         }
     }
 

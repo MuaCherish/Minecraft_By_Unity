@@ -5,6 +5,12 @@ using UnityEngine;
 
 public static class VoxelData
 {
+    //地形参数
+    /*
+     * 平原：soil[10,30],sealevel[17],tree[1]
+     * 丘陵：soil[20,50],sealevel[30],tree[5]
+    */
+
     //特殊参数
     /*
      * 253：未找到Chunk
