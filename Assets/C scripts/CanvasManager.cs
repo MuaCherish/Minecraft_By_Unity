@@ -79,6 +79,12 @@ public class CanvasManager : MonoBehaviour
     //eyestime
     public float eyesOpenTime = 5f;
 
+    //Jump_MuaCherish
+    public GameObject muacherish;
+    public float speed = 1.0f; // 控制浮动速度的参数
+    public float magnitude = 0.04f; // 控制浮动幅度的参数
+    Coroutine muacherishCoroutine;
+
     //一次性代码
     bool hasExec_Playing = true;
     public bool hasExec_PromptScreen_isShow = false;
@@ -86,6 +92,14 @@ public class CanvasManager : MonoBehaviour
 
 
     //----------------------------------- 生命周期 ---------------------------------------
+
+    private void Start()
+    {
+        if (muacherishCoroutine == null)
+        {
+            muacherishCoroutine = StartCoroutine(jumpMuaCherish());
+        }
+    }
 
     private void FixedUpdate()
     {
@@ -128,6 +142,8 @@ public class CanvasManager : MonoBehaviour
                 hasExec_Playing = false;
 
                 openyoureyes();
+
+                StopCoroutine(muacherishCoroutine);
             }
 
 
@@ -180,6 +196,23 @@ public class CanvasManager : MonoBehaviour
 
         //music
         musicmanager.PlaySound_Click();
+    }
+
+    IEnumerator jumpMuaCherish()
+    {
+        float offset = 0.0f;
+
+        while (true)
+        {
+            float scaleX = 1.0f + Mathf.PingPong(offset * speed, magnitude) * 0.5f; // 控制x轴的缩放
+            float scaleY = 1.0f + Mathf.PingPong(offset * speed, magnitude) * 0.5f; // 控制y轴的缩放
+
+            muacherish.transform.localScale = new Vector3(scaleX, scaleY, muacherish.transform.localScale.z);
+
+            offset += Time.deltaTime;
+
+            yield return null;
+        }
     }
 
     //----------------------------------------------------------------------------------------
