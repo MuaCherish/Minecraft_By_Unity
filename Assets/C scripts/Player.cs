@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     public Transform leg;
     public GameObject selectblock;
     public GameObject Eye_Light;
+    public BackPackManager backpackmanager;
     //public Transform myfoot;
 
     [Header("角色参数")]
@@ -106,7 +107,7 @@ public class Player : MonoBehaviour
     public bool isSuperMining = false;
 
     //select
-    int selectindex = 0;
+    public int selectindex = 0;
 
 
     //碰撞检测的坐标
@@ -388,6 +389,12 @@ public class Player : MonoBehaviour
             OldPointLocation = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
         }
 
+        //如果松开鼠标左键，isChanger还原
+        if (Input.GetMouseButtonUp(0))
+        {
+            isChangeBlock = false;
+        }
+
         //左键销毁泥土
         if (Input.GetKey(KeyCode.Mouse0))
         {
@@ -396,7 +403,7 @@ public class Player : MonoBehaviour
             //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
             Vector3 pointvector = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
 
-            if (pointvector != OldPointLocation)
+            if (pointvector != OldPointLocation || pointvector == Vector3.zero)
             {
                 isChangeBlock = true;
                 musicmanager.isbroking = false;
@@ -529,6 +536,7 @@ public class Player : MonoBehaviour
         elapsedTime = 0.0f;
         material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
         musicmanager.isbroking = false;
+        backpackmanager.update_slots(0, broke_Block_type);
         world.GetChunkObject(position).EditData(world.GetRelalocation(position), VoxelData.Air);
 
         //print($"绝对坐标为：{position}");

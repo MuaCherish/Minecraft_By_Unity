@@ -11,7 +11,7 @@ public class Chunk : MonoBehaviour
 
     //Transform
     World world;
-    GameObject chunkObject;
+    public GameObject chunkObject;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
 

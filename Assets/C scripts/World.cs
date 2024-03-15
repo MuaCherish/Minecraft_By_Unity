@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+//using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 
@@ -567,15 +568,19 @@ public class World : MonoBehaviour
     void Chunk_HideOrRemove(Vector3 chunklocation)
     {
         //如果超出范围就卸载,否则就隐藏
-        if (GetVector3Length(PlayerFoot.transform.position - chunklocation) > (DestroySize * 16f))
-        {
-            Allchunks.Remove(chunklocation);
-            obj.DestroyChunk();
-        }
-        else
-        {
-            obj.HideChunk();
-        }
+        //if (GetVector3Length(PlayerFoot.transform.position - chunklocation) > (DestroySize * 16f))
+        //{
+        //    Allchunks.Remove(chunklocation);
+        //    obj.DestroyChunk();
+
+
+        //}
+        //else
+        //{
+        //    obj.HideChunk();
+        //}
+
+        obj.HideChunk();
 
 
     }
@@ -597,11 +602,26 @@ public class World : MonoBehaviour
 
     }
 
+    //一条渲染协程
     IEnumerator Render_0()
     {
         while (true)
         {
             WaitToRender.TryDequeue(out Chunk chunktemp);
+
+            //if (chunktemp.isReadyToRender)
+            //{
+            //    float startTime = Time.realtimeSinceStartup;
+
+            //    chunktemp.CreateMesh();
+
+            //    float executionTime = Time.realtimeSinceStartup - startTime;
+
+            //    // 输出执行时间（毫秒）
+            //    //Debug.Log($"{chunktemp.chunkObject.name}:Execution time: " + executionTime * 1000 + " ms");
+            //    dynamicRandertime(executionTime);
+
+            //}
 
             if (chunktemp.isReadyToRender)
             {
@@ -615,9 +635,18 @@ public class World : MonoBehaviour
             }
 
             //yield return new WaitForSeconds(RenderDelay);
-            yield return null;
+            yield return new WaitForSeconds(RenderDelay);
         }
 
+    }
+
+    //单位为ms，根据每次渲染，动态改变渲染时间
+    void dynamicRandertime(float nowtime)
+    {
+        if (nowtime > RenderDelay)
+        {
+            RenderDelay = nowtime;
+        }
     }
 
 
@@ -800,6 +829,8 @@ public class World : MonoBehaviour
     //放置高亮方块的
     public bool eyesCheckForVoxel(Vector3 pos)
     {
+        if (!Allchunks.ContainsKey(GetChunkLocation(pos))) { return false; }
+
         //计算相对坐标
         Vector3 vec = GetRelalocation(new Vector3(pos.x, pos.y, pos.z));
 
@@ -833,6 +864,7 @@ public class BlockType
     public float DestroyTime;
     public bool isSolid;
     public bool isTransparent;
+    public Sprite slogsprite ;
 
     [Header("Texture Values")]
     public int backFaceTexture;
@@ -840,7 +872,7 @@ public class BlockType
     public int topFaceTexture;
     public int bottomFaceTexture;
     public int leftFaceTexture;
-    public int rightFaceTexture;
+    public int rightFaceTexture; 
 
     //贴图中的面的坐标
     public int GetTextureID(int faceIndex)

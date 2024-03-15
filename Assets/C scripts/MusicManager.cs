@@ -283,12 +283,15 @@ public class MusicManager : MonoBehaviour
                         Audio_player_broke.Play();
                     }
                 }
+
+
+
             }
 
 
 
             //ËÉ¿ª×ó¼ü
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0) || player.isChangeBlock)
             {
                 isbroking = false;
                 Audio_player_broke.Stop();

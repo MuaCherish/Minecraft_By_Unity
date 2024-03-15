@@ -53,6 +53,7 @@ public static class VoxelData
     23:铁矿Iron
     24:金矿Gold
     25:竹子Bamboo
+    26:萤石Fluor
 	*/
     public static readonly Byte BedRock = 0;
     public static readonly Byte Stone = 1;
@@ -80,6 +81,7 @@ public static class VoxelData
     public static readonly Byte Iron = 23;
     public static readonly Byte Gold = 24;
     public static readonly Byte Bamboo = 25;
+    public static readonly Byte Fluor = 26;
 
 
     //音乐宏定义
@@ -138,7 +140,7 @@ public static class VoxelData
     //Select
     public static readonly float[] SelectLocation_x = new float[9]
     {
-        45f,126f,206f,286f,366f,445f,526f,606f,686f,
+        46f,126f,206f,286f,366f,445f,526f,606f,686f,
     };
 
 
