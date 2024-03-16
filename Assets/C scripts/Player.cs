@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.XR;
 
 public class Player : MonoBehaviour
 {
@@ -18,7 +20,6 @@ public class Player : MonoBehaviour
 
     [Header("Transforms")]
     public Transform cam;
-    //public GameObject camera;
     public Animation camaraAnimation;
     public Transform HighlightBlock;
     public GameObject HighlightBlockObject;
@@ -29,7 +30,7 @@ public class Player : MonoBehaviour
     public GameObject selectblock;
     public GameObject Eye_Light;
     public BackPackManager backpackmanager;
-    //public Transform myfoot;
+    public LifeManager lifemanager;
 
     [Header("角色参数")]
     public Transform foot;
@@ -59,9 +60,6 @@ public class Player : MonoBehaviour
     private bool isDestroying;
     public bool isChangeBlock = false;
     private Vector3 OldPointLocation;
-
-    //place
-    private byte placeBlock_Index = VoxelData.WorkTable;
 
     //输入
     [HideInInspector]
@@ -94,21 +92,34 @@ public class Player : MonoBehaviour
     public float mult = 2f;
 
     //摔落伤害
+    [Header("摔落参数")]
+    Coroutine falldownCoroutine;
+    public float hurtCooldownTime = 0.5f;  //摔落冷却时间
     public float new_foot_high = -100f;
     public float angle = 50f;
     public float cycleLength = 16f; // 动画周期长度
     public float speed = 200f; // 控制时间的增长速度 
 
     //music
+    [Header("玩家指向的方块")]
     public byte point_Block_type = 255;
 
     //特殊模式
+    [Header("特殊mode")]
     public bool isSpaceMode = false;
     public bool isSuperMining = false;
 
     //select
+    [Header("玩家选择下标")]
     public int selectindex = 0;
 
+    //奔跑时改变视距
+    [Header("视距参数")]
+    public Camera eyes;
+    public float viewduration = 1f; // 过渡时间
+    public float minFOV = 70;
+    public float maxFOV = 90;
+    bool expandview = false;
 
     //碰撞检测的坐标
     // 上面的四个点
@@ -182,6 +193,9 @@ public class Player : MonoBehaviour
 
             //更新玩家脚下坐标
             Update_FootBlockType();
+
+            //改变视距(如果奔跑的话)
+            change_eyesview();
 
             //计算碰撞点
             update_block();
@@ -316,6 +330,44 @@ public class Player : MonoBehaviour
     }
 
 
+    //改变视距
+    void change_eyesview()
+    {
+        if (isSprinting && isMoving && !expandview)
+        {
+            //启动协程扩大视野
+            StartCoroutine(expandchangeview(true));
+
+            //update
+            expandview = true;
+        }
+        else if((!isSprinting || !isMoving) && expandview)
+        {
+            //缩小视野
+            StartCoroutine(expandchangeview(false));
+
+            //update
+            expandview = false;
+        }
+    }
+
+    IEnumerator expandchangeview(bool needexpand)
+    {
+        float startFOV = eyes.fieldOfView;
+        float targetFOV = needexpand ? maxFOV : minFOV;
+        float startTime = Time.time;
+
+        while (Time.time - startTime < viewduration)
+        {
+            float t = (Time.time - startTime) / viewduration;
+            eyes.fieldOfView = Mathf.Lerp(startFOV, targetFOV, t); 
+            yield return null;
+        }
+
+        eyes.fieldOfView = targetFOV; // 确保最终视野值准确
+    }
+
+
     //接收操作
     private void GetPlayerInputs()
     {
@@ -393,6 +445,8 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             isChangeBlock = false;
+            musicmanager.isbroking = false;
+            musicmanager.Audio_player_broke.Stop();
         }
 
         //左键销毁泥土
@@ -476,6 +530,8 @@ public class Player : MonoBehaviour
             {
                 selectindex++;
             }
+
+            canvasManager.Change_text_selectBlockname(255);
         }
         // 如果往上滚动
         else if (scrollWheelInput > 0f)
@@ -488,6 +544,8 @@ public class Player : MonoBehaviour
             {
                 selectindex--;
             }
+
+            canvasManager.Change_text_selectBlockname(255);
         }
 
 
@@ -542,6 +600,7 @@ public class Player : MonoBehaviour
         material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
         musicmanager.isbroking = false;
         backpackmanager.update_slots(0, point_Block_type);
+        canvasManager.Change_text_selectBlockname(point_Block_type);
         world.GetChunkObject(position).EditData(world.GetRelalocation(position), VoxelData.Air);
 
         //print($"绝对坐标为：{position}");
@@ -557,39 +616,50 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             selectindex = 0;
+            canvasManager.Change_text_selectBlockname(255);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             selectindex = 1;
+            canvasManager.Change_text_selectBlockname(255);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             selectindex = 2;
+            canvasManager.Change_text_selectBlockname(255);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             selectindex = 3;
+            canvasManager.Change_text_selectBlockname(255);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             selectindex = 4;
+            canvasManager.Change_text_selectBlockname(255);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha6))
         {
             selectindex = 5;
+            canvasManager.Change_text_selectBlockname(255);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             selectindex = 6;
+            canvasManager.Change_text_selectBlockname(255);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             selectindex = 7;
+            canvasManager.Change_text_selectBlockname(255);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             selectindex = 8;
+            canvasManager.Change_text_selectBlockname(255);
         }
+
+        
     }
 
 
@@ -695,7 +765,7 @@ public class Player : MonoBehaviour
     }
 
 
-    private void InitPlayerLocation()
+    public void InitPlayerLocation()
     {
         transform.position = world.Start_Position;
     }
@@ -1280,14 +1350,13 @@ public class Player : MonoBehaviour
             //判断玩家是否受伤
             if (isGrounded)
             {
-                if ((new_foot_high - foot.transform.position.y) > MaxHurtHigh)
+                if (((new_foot_high - foot.transform.position.y) > MaxHurtHigh) && falldownCoroutine == null)
                 {
-                    musicmanager.PlaySound_fallGround();
-                    //camaraAnimation.Play();
-                    StartCoroutine(Animation_Behurt());
+                    falldownCoroutine = StartCoroutine(HandleHurt());
                 }
 
-                new_foot_high = foot.transform.position.y;
+                new_foot_high = transform.position.y;
+
             }
         }
 
@@ -1295,7 +1364,20 @@ public class Player : MonoBehaviour
 
     }
 
+    //执行受伤协程
+    IEnumerator HandleHurt()
+    {
+        musicmanager.PlaySound_fallGround();
+        StartCoroutine(Animation_Behurt()); 
+        lifemanager.UpdatePlayerBlood((int)(new_foot_high - foot.transform.position.y), true);
 
+        yield return new WaitForSeconds(hurtCooldownTime); // 等待受伤冷却时间结束
+
+        falldownCoroutine = null;
+    }
+
+
+    //受伤歪头动画
     IEnumerator Animation_Behurt()
     {
         Vector3 startRotation = transform.localRotation.eulerAngles;

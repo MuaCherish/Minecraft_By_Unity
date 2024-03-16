@@ -81,16 +81,17 @@ public class MusicManager : MonoBehaviour
 
         //broke
         Audio_player_broke = gameObject.AddComponent<AudioSource>();
+        Audio_player_broke.volume = 0.3f;
         Audio_player_broke.loop = false;
 
         //moving
         Audio_player_moving = gameObject.AddComponent<AudioSource>();
-        Audio_player_moving.volume = 0.7f;
+        Audio_player_moving.volume = 0.2f;
         Audio_player_moving.loop = false;
 
         //falling
         Audio_player_falling = gameObject.AddComponent<AudioSource>();
-        Audio_player_falling.volume = 0.5f;
+        Audio_player_falling.volume = 0.3f;
         Audio_player_falling.loop = false;
 
         //diving
@@ -107,6 +108,7 @@ public class MusicManager : MonoBehaviour
         //swimming
         Audio_Player_moving_swiming = gameObject.AddComponent<AudioSource>();
         Audio_Player_moving_swiming.clip = audioclips[VoxelData.moving_water];
+        Audio_Player_moving_swiming.volume = 0.9f;
         Audio_Player_moving_swiming.loop = true;
 
         //walking
@@ -285,19 +287,11 @@ public class MusicManager : MonoBehaviour
                     }
                 }
 
-
-
             }
 
 
 
-            //ËÉ¿ª×ó¼ü
-            if (Input.GetMouseButtonUp(0) || player.isChangeBlock)
-            {
-                isbroking = false;
-                Audio_player_broke.Stop();
-
-            }
+            
 
         }
     }

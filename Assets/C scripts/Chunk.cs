@@ -142,26 +142,29 @@ public class Chunk : MonoBehaviour
                             else
                             {
 
-                                //地表2层
-                                if (y - 1 < noiseHigh)
-                                {
-                                    //竹子
-                                    if (rand.Next(0, world.Random_Bamboo) < 1)
-                                    {
-                                        voxelMap[x, y, z] = VoxelData.Air;
-                                        Bamboos.Enqueue(new Vector3(x, y, z));
-                                    }
-                                    else
-                                    {
-                                        voxelMap[x, y, z] = VoxelData.Air;
-                                    }
+                                ////地表2层
+                                //if (y - 1 < noiseHigh)
+                                //{
+                                //    //竹子
+                                //    //if (rand.Next(0, world.Random_Bamboo) < 1)
+                                //    //{
+                                //    //    voxelMap[x, y, z] = VoxelData.Air;
+                                //    //    Bamboos.Enqueue(new Vector3(x, y, z));
+                                //    //}
+                                //    //else
+                                //    //{
+                                //    //    voxelMap[x, y, z] = VoxelData.Air;
+                                //    //}
 
-                                }
-                                else
-                                {
-                                    voxelMap[x, y, z] = VoxelData.Air;
-                                }
+                                //    voxelMap[x, y, z] = VoxelData.Air;
 
+                                //}
+                                //else
+                                //{
+                                //    voxelMap[x, y, z] = VoxelData.Air;
+                                //}
+
+                                voxelMap[x, y, z] = VoxelData.Air;
 
                             }
 
@@ -268,10 +271,10 @@ public class Chunk : MonoBehaviour
         }
 
         //补充竹子
-        foreach (var item in Bamboos)
-        {
-            CreateBamboo((int)item.x, (int)item.y, (int)item.z);
-        }
+        //foreach (var item in Bamboos)
+        //{
+        //    CreateBamboo((int)item.x, (int)item.y, (int)item.z);
+        //}
 
 
         //Mesh线程
