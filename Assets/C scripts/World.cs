@@ -3,6 +3,7 @@ using System.Collections.Generic;
 //using System.Diagnostics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 //全局游戏状态
 public enum Game_State
@@ -22,7 +23,7 @@ public class World : MonoBehaviour
 
     [Header("Material-方块类型")]
     public Material material;
-    public BlockType[] blocktypes; 
+    public BlockType[] blocktypes;
 
     [Header("World-渲染设置")]
     [Tooltip("4就是边长为4*16的正方形")]
@@ -125,14 +126,13 @@ public class World : MonoBehaviour
     Coroutine Render_Coroutine;
 
     //----------------------------------周期函数---------------------------------------
-
     private void Start()
     {
         //帧数
         Application.targetFrameRate = 90;
 
         //Self
-        Chunks = new GameObject(); 
+        Chunks = new GameObject();
         Chunks.name = "Chunks";
         Chunks.transform.SetParent(GameObject.Find("Environment").transform);
 
@@ -300,7 +300,7 @@ public class World : MonoBehaviour
             for (int z = -renderSize + (int)(PlayerFoot.transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(PlayerFoot.transform.position.x / VoxelData.ChunkWidth); z++)
             {
 
-
+                 
                 //Create
                 CreateChunk(new Vector3(x, 0, z));
 
@@ -320,6 +320,14 @@ public class World : MonoBehaviour
 
         yield return null;
     }
+
+
+    //更新中心区块
+    public void Update_CenterChunks()
+    {
+        StartCoroutine(Init_Map_Thread());
+    }
+
     //--------------------------------------------------------------------------------------
 
 
@@ -440,6 +448,7 @@ public class World : MonoBehaviour
         //先判断一下有没有
         if (Allchunks.ContainsKey(pos))
         {
+            Allchunks[pos].ShowChunk();
             return;
         }
 

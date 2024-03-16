@@ -86,11 +86,6 @@ public class BackPackManager : MonoBehaviour
         }
     }
 
-    //更新UI
-    void refresh_slotUI ()
-    {
-        
-    }
 
     //用来找第一个空下标的
     //找不到返回-1

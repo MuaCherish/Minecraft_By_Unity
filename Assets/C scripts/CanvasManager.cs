@@ -15,6 +15,9 @@ public class CanvasManager : MonoBehaviour
     public GameObject MainCamera;
     public GameObject PlayerObject;
     public Player player;
+    public TextMeshProUGUI selectblockname;
+    public BackPackManager BackPackManager;
+    public LifeManager LifeManager;
 
     //主要屏幕
     public GameObject Start_Screen;
@@ -37,6 +40,7 @@ public class CanvasManager : MonoBehaviour
     public GameObject Prompt_Screen;
     public GameObject prompt;
     public TextMeshProUGUI prompt_Text;
+    public GameObject DeadScreen;
 
     //修改值参数
     public Slider slider_bgm;
@@ -84,6 +88,9 @@ public class CanvasManager : MonoBehaviour
     public float speed = 1.0f; // 控制浮动速度的参数
     public float magnitude = 0.04f; // 控制浮动幅度的参数
     Coroutine muacherishCoroutine;
+
+    //ShowBlockName
+    Coroutine showblocknameCoroutine;
 
     //一次性代码
     bool hasExec_Playing = true;
@@ -295,6 +302,10 @@ public class CanvasManager : MonoBehaviour
 
         // 渐变结束后，将透明度设置为完全透明
         image.color = new Color(image.color.r, image.color.g, image.color.b, 0f);
+
+        //直接给隐藏
+        OpenYourEyes.SetActive(false);
+        image.color = new Color(image.color.r, image.color.g, image.color.b, 1f);
     }
 
     //--------------------------------------------------------------------------------------
@@ -573,14 +584,54 @@ public class CanvasManager : MonoBehaviour
 
 
 
+    //---------------------------------- 死亡与重生 -----------------------------------------
+    public void PlayerDead()
+    {
+        DeadScreen.SetActive(true);
+
+        //解除鼠标
+        Cursor.lockState = CursorLockMode.None;
+        //鼠标可视
+        Cursor.visible = true;
+
+        world.game_state = Game_State.Pause;
+    }
+
+    public void PlayerClickToRestart()
+    {
+        DeadScreen.SetActive(false);
+
+        // 将鼠标锁定在屏幕中心
+        Cursor.lockState = CursorLockMode.Locked;
+        //鼠标不可视
+        Cursor.visible = false;
+
+        world.game_state = Game_State.Playing;
+
+        LifeManager.blood = 20;
+        LifeManager.UpdatePlayerBlood(0, false);
+
+        player.InitPlayerLocation();
+        player.transform.rotation = Quaternion.identity;
+
+        world.Update_CenterChunks();
+
+        openyoureyes();
+    }
+    //--------------------------------------------------------------------------------------
+
+
+
+
+
 
     //------------------------------------ 工具类 -------------------------------------------
     void HideCursor()
     {
         // 将鼠标锁定在屏幕中心
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked;
         //鼠标不可视
-        UnityEngine.Cursor.visible = false;
+        Cursor.visible = false;
     }
 
     public void QuitGame()
@@ -589,6 +640,66 @@ public class CanvasManager : MonoBehaviour
         musicmanager.PlaySound_Click();
 
         Application.Quit();
+    }
+
+    public void Change_text_selectBlockname(byte prokeblocktype)
+    {
+        //255代表是切换方块
+        //非255代表是破坏方块，直接播放破坏方块的名字就行
+        if (prokeblocktype == 255)
+        {
+            //如果有方块的话
+            if (BackPackManager.istheindexHaveBlock(player.selectindex))
+            {
+                //如果有协程在执行，则立即终止
+                if (showblocknameCoroutine != null)
+                {
+                    StopCoroutine(showblocknameCoroutine);
+                }
+
+                showblocknameCoroutine = StartCoroutine(showblockname(prokeblocktype));
+            }
+        }
+        else
+        {
+            //如果有协程在执行，则立即终止
+            if (showblocknameCoroutine != null)
+            {
+                StopCoroutine(showblocknameCoroutine);
+            }
+
+            showblocknameCoroutine = StartCoroutine(showblockname(prokeblocktype));
+        }
+
+        
+    }
+
+    IEnumerator showblockname(byte _blocktype)
+    {
+
+        if (_blocktype == 255)
+        {
+            //显示这个方块的名字2s
+            selectblockname.text = world.blocktypes[BackPackManager.slots[player.selectindex].blockId].blockName;
+
+            yield return new WaitForSeconds(2f);
+
+            selectblockname.text = "";
+
+            showblocknameCoroutine = null;
+        }
+        else
+        {
+            //显示这个方块的名字2s
+            selectblockname.text = world.blocktypes[_blocktype].blockName;
+
+            yield return new WaitForSeconds(2f);
+
+            selectblockname.text = "";
+
+            showblocknameCoroutine = null;
+        }
+        
     }
 
     //--------------------------------------------------------------------------------------

@@ -26,6 +26,7 @@ public class HandShake : MonoBehaviour
                     //Debug.Log("HandShake Mouse0");
                     PlayFirstAnimation();
                 }
+                //右键
                 else if (Input.GetMouseButtonDown(1))
                 {
                     timer = 0f;
@@ -41,18 +42,7 @@ public class HandShake : MonoBehaviour
                     timer += Time.deltaTime;
                 }
             }
-
-            
-
-            
-
-
-            
         }
-
-       
-
-
     }
 
     //第一个动画
