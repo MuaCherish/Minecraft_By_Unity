@@ -100,6 +100,9 @@ public class CanvasManager : MonoBehaviour
     bool hasExec_Playing = true;
     public bool hasExec_PromptScreen_isShow = false;
     bool hasExec_PromptScreen_isHide = true;
+    bool hasExec_InWater = false;
+
+    //debug
 
 
     //----------------------------------- 生命周期 ---------------------------------------
@@ -178,11 +181,38 @@ public class CanvasManager : MonoBehaviour
             //SwimmingScreen
             if (world.GetBlockType(Camera.transform.position) == VoxelData.Water && !isPausing)
             {
-                Swimming_Screen.SetActive(true);
+                //入水
+                if (hasExec_InWater == false)
+                {
+                    //data
+                    //Debug.Log("IntoWater");
+                    Swimming_Screen.SetActive(true);
+                    LifeManager.Oxy_IntoWater();
+
+                    //update
+                    hasExec_InWater = true;
+                }
+                
             }
             else
             {
                 Swimming_Screen.SetActive(false);
+
+                
+
+                //出水
+                if (hasExec_InWater == true)
+                {
+
+                    //data
+                    //Debug.Log("OutWater");
+                    LifeManager.Oxy_OutWater();
+
+
+                    //update
+                    hasExec_InWater = false;
+                }
+                
             }
             
         }
@@ -607,7 +637,7 @@ public class CanvasManager : MonoBehaviour
         //鼠标可视
         Cursor.visible = true;
 
-        world.game_state = Game_State.Pause;
+        world.game_state = Game_State.Dead;
     }
 
     public void PlayerClickToRestart()
@@ -622,6 +652,7 @@ public class CanvasManager : MonoBehaviour
         world.game_state = Game_State.Playing;
 
         LifeManager.blood = 20;
+        LifeManager.oxygen = 10;
         LifeManager.UpdatePlayerBlood(0, false);
         startTime = Time.time;
 
