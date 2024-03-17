@@ -110,6 +110,65 @@ public class BackPackManager : MonoBehaviour
     }
 
 
+    //创造模式物品栏
+    public void CreativeMode()
+    {
+        //0. Grass
+        slots[0].ishave = true;
+        slots[0].blockId = VoxelData.Grass;
+        icons[0].GetComponent<Image>().sprite = world.blocktypes[VoxelData.Grass].icon;
+        icons[0].GetComponent<Image>().color = Color.white;
+
+        //1. Soil
+        slots[1].ishave = true;
+        slots[1].blockId = VoxelData.Soil;
+        icons[1].GetComponent<Image>().sprite = world.blocktypes[VoxelData.Soil].icon;
+        icons[1].GetComponent<Image>().color = Color.white;
+
+        //2. Wood
+        slots[2].ishave = true;
+        slots[2].blockId = VoxelData.Wood;
+        icons[2].GetComponent<Image>().sprite = world.blocktypes[VoxelData.Wood].icon;
+        icons[2].GetComponent<Image>().color = Color.white;
+
+        //3. WoodenPlanks
+        slots[3].ishave = true;
+        slots[3].blockId = VoxelData.WoodenPlanks;
+        icons[3].GetComponent<Image>().sprite = world.blocktypes[VoxelData.WoodenPlanks].icon;
+        icons[3].GetComponent<Image>().color = Color.white;
+
+        //4. Leaves
+        slots[4].ishave = true;
+        slots[4].blockId = VoxelData.Leaves;
+        icons[4].GetComponent<Image>().sprite = world.blocktypes[VoxelData.Leaves].icon;
+        icons[4].GetComponent<Image>().color = Color.white;
+
+        //5. Stone
+        slots[5].ishave = true;
+        slots[5].blockId = VoxelData.Stone;
+        icons[5].GetComponent<Image>().sprite = world.blocktypes[VoxelData.Stone].icon;
+        icons[5].GetComponent<Image>().color = Color.white;
+
+        //6. Glass
+        slots[6].ishave = true;
+        slots[6].blockId = VoxelData.Glass;
+        icons[6].GetComponent<Image>().sprite = world.blocktypes[VoxelData.Glass].icon;
+        icons[6].GetComponent<Image>().color = Color.white;
+
+        //7. Water
+        slots[7].ishave = true;
+        slots[7].blockId = VoxelData.Water;
+        icons[7].GetComponent<Image>().sprite = world.blocktypes[VoxelData.Water].icon;
+        icons[7].GetComponent<Image>().color = new Color(61 / 255f,175 / 255f,1,1f);
+
+        //8. Fluor
+        slots[8].ishave = true;
+        slots[8].blockId = VoxelData.Fluor;
+        icons[8].GetComponent<Image>().sprite = world.blocktypes[VoxelData.Fluor].icon;
+        icons[8].GetComponent<Image>().color = Color.white;
+    }
+
+
 }
 
 //物品栏数据结构
