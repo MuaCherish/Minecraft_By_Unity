@@ -57,12 +57,16 @@ public class MusicManager : MonoBehaviour
     public byte leg_blocktype;
     [HideInInspector]
     public byte previous_leg_blocktype = VoxelData.Air;
-    //public byte foot_blocktype;
-    //public byte previous_foot_blocktype = VoxelData.Air;
 
-    //一次性代码
+
+    //walk
+    int item = 0;   //用来区分左右脚的
+    public byte footBlocktype = VoxelData.Grass;
+    [HideInInspector]
+    public byte previous_foot_blocktype = VoxelData.Grass;
+    [HideInInspector]
     public float footstepInterval; // 走路音效播放间隔
-    private float nextFootstepTime; 
+    private float nextFoot; 
 
 
     //---------------------------------- 周期函数 ----------------------------------------
@@ -77,16 +81,17 @@ public class MusicManager : MonoBehaviour
 
         //place
         Audio_player_place = gameObject.AddComponent<AudioSource>();
+        Audio_player_place.volume = 0.3f;
         Audio_player_place.loop = false;
 
         //broke
         Audio_player_broke = gameObject.AddComponent<AudioSource>();
         Audio_player_broke.volume = 0.3f;
-        Audio_player_broke.loop = false;
+        Audio_player_broke.loop = true;
 
         //moving
         Audio_player_moving = gameObject.AddComponent<AudioSource>();
-        Audio_player_moving.volume = 0.2f;
+        Audio_player_moving.volume = 1f;
         Audio_player_moving.loop = false;
 
         //falling
@@ -115,6 +120,14 @@ public class MusicManager : MonoBehaviour
         footstepInterval = VoxelData.walkSpeed;
     }
 
+    private void Update()
+    {
+        if (world.game_state == Game_State.Playing)
+        {
+            //脚步音效
+            PlaySound_Foot();
+        }
+    }
 
     private void FixedUpdate()
     {
@@ -127,10 +140,12 @@ public class MusicManager : MonoBehaviour
 
         Fade_FallInto_Water();
 
-        //换碟
-        UpdateMovingClip();
+        if (world.game_state == Game_State.Playing)
+        {
+            UpdateFootBlockType();
+        }
 
-       
+        
     }
 
 
@@ -257,7 +272,6 @@ public class MusicManager : MonoBehaviour
         }
     }
 
-
     //---------------------------------------------------------------------------------------
 
 
@@ -282,7 +296,17 @@ public class MusicManager : MonoBehaviour
                     if (player.point_Block_type != VoxelData.notHit)
                     {
                         isbroking = true;
-                        update_Clips();
+
+                        if (world.blocktypes[player.point_Block_type].broking_clip != null)
+                        {
+                            Audio_player_broke.clip = world.blocktypes[player.point_Block_type].broking_clip;
+                        }
+                        else
+                        {
+                            Audio_player_broke.clip = world.blocktypes[VoxelData.Stone].broking_clip;
+                        }
+                        
+
                         Audio_player_broke.Play();
                     }
                 }
@@ -290,9 +314,18 @@ public class MusicManager : MonoBehaviour
             }
 
 
+        }
+    }
 
-            
-
+    public void PlaySound_Broken(byte pointblock)
+    {
+        if (world.blocktypes[pointblock].broken_clip != null)
+        {
+            Audio_player_place.PlayOneShot(world.blocktypes[pointblock].broken_clip);
+        }
+        else
+        {
+            Audio_player_place.PlayOneShot(world.blocktypes[VoxelData.Stone].broken_clip);
         }
     }
 
@@ -300,41 +333,11 @@ public class MusicManager : MonoBehaviour
     {
         if (backPackManager.istheindexHaveBlock(player.selectindex))
         {
-            Audio_player_place.PlayOneShot(audioclips[VoxelData.place_normal]);
+            Audio_player_place.PlayOneShot(world.blocktypes[backPackManager.slots[player.selectindex].blockId].broken_clip);
         }
         
     }
 
-    //type映射到clips
-    private void update_Clips()
-    {
-        //Leaves
-        if (player.point_Block_type == VoxelData.Leaves)
-        {
-            Audio_player_broke.clip = audioclips[VoxelData.broke_leaves];
-        }//Sand
-        else if (player.point_Block_type == VoxelData.Sand)
-        {
-            Audio_player_broke.clip = audioclips[VoxelData.broke_sand];
-        }//Grass_Soil
-        else if (player.point_Block_type == VoxelData.Grass)
-        {
-            Audio_player_broke.clip = audioclips[VoxelData.broke_soil];
-        }//Soil
-        else if (player.point_Block_type == VoxelData.Soil)
-        {
-            Audio_player_broke.clip = audioclips[VoxelData.broke_soil];
-        }//Wood
-        else if (player.point_Block_type == VoxelData.Wood)
-        {
-            Audio_player_broke.clip = audioclips[VoxelData.broke_wood];
-        }//else all Stone
-        else
-        {
-            Audio_player_broke.clip = audioclips[VoxelData.broke_stone];
-        }
-
-    }
     //---------------------------------------------------------------------------------------
     
 
@@ -347,95 +350,90 @@ public class MusicManager : MonoBehaviour
     {
         if (world.game_state == Game_State.Playing)
         {
-            //换碟在FixedUpdate()
+            //游泳音效
+            PlaySound_Swiming();
 
-            // 如果玩家移动并且音频未播放，并且玩家在地面上,则播放音频
-            if (player.isMoving && !Audio_player_moving.isPlaying && player.isGrounded)
-            {
-                if (Time.time >= nextFootstepTime)
-                {
-                    Audio_player_moving.PlayOneShot(Audio_player_moving.clip);
-                    nextFootstepTime = Time.time + footstepInterval;
-                }
-               
-            }
-
-
-            // 如果音频正在播放，并且玩家不在地面上且不在游泳中，则暂停音频
-            //else if (Audio_player_moving.isPlaying && !player.isGrounded && !player.isSwiming)
-            //{
-            //    Audio_player_moving.Pause();
-            //}
-            if (player.isSwiming && player.isMoving)
-            {
-                if (!Audio_Player_moving_swiming.isPlaying)
-                {
-                    Audio_Player_moving_swiming.Play();
-                }
-
-            }
-            else
-            {
-                if (Audio_Player_moving_swiming.isPlaying)
-                {
-                    Audio_Player_moving_swiming.Pause();
-                }
-
-            }
-
-
-            //flop to Water
+            //出入水音效
             ifmovingStateSwitch();
 
             //flop to ground在player中被调用
 
-            //diving
+            //潜水音效
             playsound_diving();
         }
     }
 
+    
 
-    //换碟
-    void UpdateMovingClip()
+    //脚步声
+    void PlaySound_Foot()
     {
+        // 如果玩家移动并且音频未播放，并且玩家在地面上，则播放音频
+        if (player.isMoving && player.isGrounded && !player.isSquating)
+        {
+            if (Time.time >= nextFoot)
+            {
+                //如果不是空气则播放
+                if (footBlocktype != VoxelData.Air)
+                {
+                    //如果有专属音效
+                    if (world.blocktypes[footBlocktype].walk_clips[item] != null)
+                    {
+                        if (item == 0)
+                        {
+                            Audio_player_moving.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
+                            item = 1;
+                        }
+                        else
+                        {
+                            Audio_player_moving.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
+                            item = 0;
+                        }
+                    }
+                    //如果没有专属走路音效，则默认播放石头音效
+                    else
+                    {
+                        if (item == 0)
+                        {
+                            Audio_player_moving.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
+                            item = 1;
+                        }
+                        else
+                        {
+                            Audio_player_moving.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
+                            item = 0;
+                        }
+                    }
+                }
+                
+                
 
-        //如果脚下方块发生变化，则更改播放列表
-        //草地
-        if (player.foot_BlockType == VoxelData.Grass)
-        {
-            Audio_player_moving.clip = audioclips[VoxelData.moving_grass];
+                nextFoot = Time.time + footstepInterval;
+            }
         }
-        //沙子
-        else if (player.foot_BlockType == VoxelData.Sand)
-        {
-            Audio_player_moving.clip = audioclips[VoxelData.moving_sand];
-        }
-        //石头
-        else if (player.foot_BlockType == VoxelData.Stone)
-        {
-            Audio_player_moving.clip = audioclips[VoxelData.moving_stone];
-        }
-        //水
-        else if (player.foot_BlockType == VoxelData.Water)
-        {
-            Audio_player_moving.clip = audioclips[VoxelData.moving_sand];
-        }
-        //空气
-        else if (player.foot_BlockType == VoxelData.Air)
-        {
-            Audio_player_moving.clip = null;
-        }
-        //其他
-        else
-        {
-            Audio_player_moving.clip = audioclips[VoxelData.moving_else];
-        }
-
-        
-
 
     }
 
+    //游泳音效
+    void PlaySound_Swiming()
+    {
+        if (player.isSwiming && player.isMoving)
+        {
+            if (!Audio_Player_moving_swiming.isPlaying)
+            {
+                Audio_Player_moving_swiming.Play();
+            }
+
+        }
+        else
+        {
+            if (Audio_Player_moving_swiming.isPlaying)
+            {
+                Audio_Player_moving_swiming.Pause();
+            }
+
+        }
+    }
 
     //玩家站在水边走向水里可以缓慢入水而不是-20入水
     void Fade_FallInto_Water()
@@ -555,7 +553,16 @@ public class MusicManager : MonoBehaviour
 
     //------------------------------------ 工具类 -------------------------------------------
 
-
+    //当脚下方块切换的时候触发
+    void UpdateFootBlockType()
+    {
+        footBlocktype = world.GetBlockType(foot.position); 
+         
+        if (footBlocktype != previous_foot_blocktype)
+        {
+            previous_foot_blocktype = footBlocktype;
+        }
+    }
 
     //---------------------------------------------------------------------------------------
 

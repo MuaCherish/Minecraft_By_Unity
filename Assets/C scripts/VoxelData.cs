@@ -24,12 +24,10 @@ public static class VoxelData
     //走路参数
     /*
      * walkSpeed：走路播放延迟
-     * squatSpeed：蹲伏播放延迟
      * sprintSpeed：冲刺播放延迟
     */
-    public static readonly float walkSpeed = 0.7f;
-    public static readonly float squatSpeed = 1.2f;
-    public static readonly float sprintSpeed = 0.4f;
+    public static readonly float walkSpeed = 0.5f;
+    public static readonly float sprintSpeed = 0.3f;
 
     //方块宏定义
     /*
@@ -114,11 +112,6 @@ public static class VoxelData
      * 13. broke_soil
      * 14. broke_wood
      * 15. broke_stone
-     * 
-     * 17. moving_grass
-     * 18. moving_sand
-     * 19. moving_stone
-     * 20. moving_else
     */
     public static readonly int click = 0;
     public static readonly int bgm_menu = 1;
@@ -137,10 +130,6 @@ public static class VoxelData
     public static readonly int broke_wood = 14;
     public static readonly int broke_stone = 15;
     public static readonly int bgm_3 = 16;
-    public static readonly int moving_grass = 17;
-    public static readonly int moving_sand = 18;
-    public static readonly int moving_stone = 19;
-    public static readonly int moving_else = 20;
 
 
     //Select

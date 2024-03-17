@@ -51,7 +51,6 @@ public class CanvasManager : MonoBehaviour
 
 
     //游戏状态判断
-    [HideInInspector]
     public bool isPausing = false;
 
 
@@ -92,6 +91,11 @@ public class CanvasManager : MonoBehaviour
     //ShowBlockName
     Coroutine showblocknameCoroutine;
 
+    //Score
+    public TextMeshProUGUI scoreText;
+    float startTime;
+    float endTime;
+
     //一次性代码
     bool hasExec_Playing = true;
     public bool hasExec_PromptScreen_isShow = false;
@@ -106,6 +110,8 @@ public class CanvasManager : MonoBehaviour
         {
             muacherishCoroutine = StartCoroutine(jumpMuaCherish());
         }
+
+        
     }
 
     private void FixedUpdate()
@@ -146,11 +152,14 @@ public class CanvasManager : MonoBehaviour
                 CursorCross_Screen.SetActive(true);
                 Prompt_Screen.SetActive(true);
 
-                hasExec_Playing = false;
-
                 openyoureyes();
 
                 StopCoroutine(muacherishCoroutine);
+
+                //记录开始时间
+                startTime = Time.time;
+
+                hasExec_Playing = false;
             }
 
 
@@ -589,6 +598,10 @@ public class CanvasManager : MonoBehaviour
     {
         DeadScreen.SetActive(true);
 
+        //Score
+        endTime = Time.time;
+        scoreText.text = $"分数：{(int)(endTime - startTime)}";
+
         //解除鼠标
         Cursor.lockState = CursorLockMode.None;
         //鼠标可视
@@ -610,6 +623,7 @@ public class CanvasManager : MonoBehaviour
 
         LifeManager.blood = 20;
         LifeManager.UpdatePlayerBlood(0, false);
+        startTime = Time.time;
 
         player.InitPlayerLocation();
         player.transform.rotation = Quaternion.identity;

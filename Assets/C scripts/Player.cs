@@ -424,14 +424,12 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             isSquating = true;
-            musicmanager.footstepInterval = VoxelData.squatSpeed;
         }
 
         //松开Ctrl键，摄像机还原
         if (Input.GetKeyUp(KeyCode.LeftControl))
         {
             isSquating = false;
-            musicmanager.footstepInterval = VoxelData.walkSpeed;
         }
 
 
@@ -496,18 +494,22 @@ public class Player : MonoBehaviour
             //如果打到 && 距离大于2f && 且不是脚底下
             if (RayCast_last() != Vector3.zero && (RayCast_last() - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(RayCast_last().x, RayCast_last().y - 1f, RayCast_last().z)))
             {
-
+                //music
                 musicmanager.PlaySoung_Place();
+
                 if (backpackmanager.istheindexHaveBlock(selectindex))
                 {
                     
                     world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()), backpackmanager.slots[selectindex].blockId);
                     backpackmanager.update_slots(1, point_Block_type);
                 }
-                
+
                 //print($"绝对坐标为：{RayCast_last()}");
                 //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
                 //print($"方块类型为：{world.GetBlockType(RayCast())}");
+
+                
+                
             }
 
         
@@ -596,16 +598,22 @@ public class Player : MonoBehaviour
         //如果成功过了两秒
         // 执行销毁泥土的逻辑
         isDestroying = false;
+
+        musicmanager.PlaySound_Broken(point_Block_type);
+
         elapsedTime = 0.0f;
         material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
         musicmanager.isbroking = false;
         backpackmanager.update_slots(0, point_Block_type);
         canvasManager.Change_text_selectBlockname(point_Block_type);
+
+        
+
         world.GetChunkObject(position).EditData(world.GetRelalocation(position), VoxelData.Air);
 
         //print($"绝对坐标为：{position}");
         //print($"相对坐标为：{world.GetRelalocation(position)}");
-        //print($"方块类型为：{world.GetBlockType(position)}");
+        //print($"方块类型为：{world.GetBlockType(position)}"); 
     }
 
 
