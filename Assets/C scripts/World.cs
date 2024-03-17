@@ -290,6 +290,9 @@ public class World : MonoBehaviour
     {
         Center_Now = new Vector3(PlayerFoot.transform.position.x, 0, PlayerFoot.transform.position.z);
 
+       //写一个协程，清除或者隐藏过远的区块
+
+
         //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //sphere.transform.position = Center_Now;
         //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
@@ -325,7 +328,16 @@ public class World : MonoBehaviour
     //更新中心区块
     public void Update_CenterChunks()
     {
+        //update加载中心区块
         StartCoroutine(Init_Map_Thread());
+    }
+
+    //清除过远区块
+    IEnumerator Update_FarChunks()
+    {
+        //如果过远就隐藏
+
+        yield return null;
     }
 
     //--------------------------------------------------------------------------------------
@@ -874,6 +886,11 @@ public class BlockType
     public bool isSolid;
     public bool isTransparent;
     public Sprite icon;
+
+    [Header("Clips")]
+    public AudioClip[] walk_clips = new AudioClip[2]; 
+    public AudioClip broking_clip;
+    public AudioClip broken_clip;
 
     [Header("Texture Values")]
     public int backFaceTexture;

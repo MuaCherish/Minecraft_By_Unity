@@ -271,7 +271,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &22826876
 Transform:
   m_ObjectHideFlags: 0
@@ -2882,10 +2882,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 9212733cedec09f409d1a79261456847, type: 3}
   - {fileID: 8300000, guid: f24ee401997043549a40acf2e3da30ed, type: 3}
   - {fileID: 8300000, guid: 7f120468f9c73a443a0018abdc68106f, type: 3}
-  - {fileID: 8300000, guid: be556f40d92ecaf40bcbb63436af05ab, type: 3}
-  - {fileID: 8300000, guid: 7b0eaf90a0123a348a0576aa3a6891fa, type: 3}
-  - {fileID: 8300000, guid: a016fd9ae537ec54e9be7de7e34575d5, type: 3}
-  - {fileID: 8300000, guid: 91552482b78d91f49998acbb6a761e1d, type: 3}
   Audio_envitonment: {fileID: 0}
   Audio_player_place: {fileID: 0}
   Audio_player_broke: {fileID: 0}
@@ -2899,7 +2895,9 @@ MonoBehaviour:
   hasExec_isSwiming: 1
   leg_blocktype: 0
   previous_leg_blocktype: 4
-  footstepInterval: 0.5
+  footBlocktype: 2
+  previous_foot_blocktype: 4
+  footstepInterval: 0.7
 --- !u!1 &349577829
 GameObject:
   m_ObjectHideFlags: 0
@@ -7092,6 +7090,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -821054697, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 17
     frontFaceTexture: 17
     topFaceTexture: 17
@@ -7103,6 +7106,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 1619130530, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: e963f3daaa4495345b08255f3d6d3eed, type: 3}
+    - {fileID: 8300000, guid: 0902d3ef50b317f42a877d8372019f63, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5259dcf455c5d3e40b696e00ddcee55b, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
     backFaceTexture: 0
     frontFaceTexture: 0
     topFaceTexture: 0
@@ -7114,6 +7122,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 1887270547, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
     backFaceTexture: 2
     frontFaceTexture: 2
     topFaceTexture: 11
@@ -7125,6 +7138,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -1513934428, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 76a8b350f474d524d9716cceed894035, type: 3}
+    broken_clip: {fileID: 8300000, guid: 5080f508bd8293a42ad2bd55adfd0cb5, type: 3}
     backFaceTexture: 1
     frontFaceTexture: 1
     topFaceTexture: 1
@@ -7136,6 +7154,11 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 0
     icon: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 255
     frontFaceTexture: 255
     topFaceTexture: 255
@@ -7147,6 +7170,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -166098416, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: b0697e5631dae5a408849ff947463fd5, type: 3}
+    - {fileID: 8300000, guid: 4f4be7ba4daf2af4081b9bbc8c69af4a, type: 3}
+    broking_clip: {fileID: 8300000, guid: d6481a9f22fc0f749a18acdc4a33a6f2, type: 3}
+    broken_clip: {fileID: 8300000, guid: 7b57a43064dacd844b14e74b13585053, type: 3}
     backFaceTexture: 18
     frontFaceTexture: 18
     topFaceTexture: 18
@@ -7158,6 +7186,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 19805498, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
+    broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
     backFaceTexture: 9
     frontFaceTexture: 9
     topFaceTexture: 10
@@ -7169,6 +7202,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -478759792, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: 55338325c6ae6ff47887ffaf54a2fcad, type: 3}
     backFaceTexture: 12
     frontFaceTexture: 12
     topFaceTexture: 12
@@ -7180,6 +7218,11 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 0
     icon: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 4
     frontFaceTexture: 4
     topFaceTexture: 4
@@ -7191,6 +7234,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 737408895, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 3
     frontFaceTexture: 3
     topFaceTexture: 3
@@ -7202,6 +7250,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 7
     frontFaceTexture: 7
     topFaceTexture: 6
@@ -7213,6 +7266,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -480959984, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 17
     frontFaceTexture: 17
     topFaceTexture: 14
@@ -7224,6 +7282,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: 1645535455, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 17
     frontFaceTexture: 17
     topFaceTexture: 15
@@ -7235,6 +7298,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -734642697, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 17
     frontFaceTexture: 17
     topFaceTexture: 22
@@ -7246,6 +7314,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -85298334, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 17
     frontFaceTexture: 17
     topFaceTexture: 20
@@ -7257,6 +7330,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -796056083, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 17
     frontFaceTexture: 17
     topFaceTexture: 21
@@ -7268,6 +7346,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -328740914, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 30
     frontFaceTexture: 30
     topFaceTexture: 29
@@ -7279,6 +7362,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -723382273, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 33
     frontFaceTexture: 33
     topFaceTexture: 32
@@ -7290,6 +7378,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 2036708510, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 41
     frontFaceTexture: 41
     topFaceTexture: 40
@@ -7301,6 +7394,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -1809891165, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 50
     frontFaceTexture: 49
     topFaceTexture: 48
@@ -7312,6 +7410,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -920575563, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 60
     frontFaceTexture: 60
     topFaceTexture: 60
@@ -7323,6 +7426,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 769592071, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 56
     frontFaceTexture: 56
     topFaceTexture: 56
@@ -7334,6 +7442,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 921364288, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 57
     frontFaceTexture: 57
     topFaceTexture: 57
@@ -7345,6 +7458,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 980529096, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 58
     frontFaceTexture: 58
     topFaceTexture: 58
@@ -7356,6 +7474,11 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 1678008232, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 59
     frontFaceTexture: 59
     topFaceTexture: 59
@@ -7367,6 +7490,11 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 1
     icon: {fileID: -2062449787, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
     backFaceTexture: 13
     frontFaceTexture: 13
     topFaceTexture: 255
@@ -10721,6 +10849,7 @@ MonoBehaviour:
   muacherish: {fileID: 1662632126}
   speed: 0.15
   magnitude: 0.1
+  scoreText: {fileID: 135187533}
   hasExec_PromptScreen_isShow: 0
 --- !u!1 &1036927491
 GameObject:
@@ -11082,9 +11211,9 @@ MonoBehaviour:
   - {fileID: 1159408227}
   heart_full: {fileID: 21300000, guid: 1877970124d2029499547e291c67c588, type: 3}
   heart_half: {fileID: 21300000, guid: b97ede6026df8cf49ade91e5a4f6d380, type: 3}
-  blink_numbet: 3
-  blink_time: 0.2
-  duretime: 0.3
+  blink_numbet: 2
+  blink_time: 0.1
+  duretime: 0.2
 --- !u!1 &1074395403
 GameObject:
   m_ObjectHideFlags: 0
@@ -11425,7 +11554,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5.6708984, y: -4.333191}
+  m_AnchoredPosition: {x: -5.6708984, y: -4.33313}
   m_SizeDelta: {x: 71.098, y: 62.578}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1103709366
@@ -14589,7 +14718,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.5549316, y: -3.3999634}
+  m_AnchoredPosition: {x: -1.5549316, y: -3.4000244}
   m_SizeDelta: {x: 3.309982, y: 0.4000535}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1362257024
@@ -15597,6 +15726,7 @@ MonoBehaviour:
   water_jumpforce: 2
   watergravity: -2
   mult: 3
+  hurtCooldownTime: 0
   new_foot_high: 0
   angle: 50
   cycleLength: 16
