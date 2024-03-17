@@ -8,7 +8,7 @@ using UnityEngine.UI;
 //È«¾ÖÓÎÏ·×´Ì¬
 public enum Game_State
 {
-    Start, Loading, Playing, Pause,
+    Start, Loading, Playing, Pause, Dead,
 }
 
 

@@ -1375,8 +1375,6 @@ public class Player : MonoBehaviour
     //执行受伤协程
     IEnumerator HandleHurt()
     {
-        musicmanager.PlaySound_fallGround();
-        StartCoroutine(Animation_Behurt()); 
         lifemanager.UpdatePlayerBlood((int)(new_foot_high - foot.transform.position.y), true);
 
         yield return new WaitForSeconds(hurtCooldownTime); // 等待受伤冷却时间结束
@@ -1386,7 +1384,7 @@ public class Player : MonoBehaviour
 
 
     //受伤歪头动画
-    IEnumerator Animation_Behurt()
+    public IEnumerator Animation_Behurt()
     {
         Vector3 startRotation = transform.localRotation.eulerAngles;
         Vector3 targetRotation = startRotation + new Vector3(0f, 0f, angle);
