@@ -57,7 +57,8 @@ public static class VoxelData
     23:铁矿Iron
     24:金矿Gold
     25:竹子Bamboo
-    26:萤石Fluor
+    26:木板WoodenPlanks
+    27:萤石Fluor
 	*/
     public static readonly Byte BedRock = 0;
     public static readonly Byte Stone = 1;
@@ -85,7 +86,8 @@ public static class VoxelData
     public static readonly Byte Iron = 23;
     public static readonly Byte Gold = 24;
     public static readonly Byte Bamboo = 25;
-    public static readonly Byte Fluor = 26;
+    public static readonly Byte WoodenPlanks = 26;
+    public static readonly Byte Fluor = 27;
 
 
     //音乐宏定义

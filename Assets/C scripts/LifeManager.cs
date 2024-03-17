@@ -27,25 +27,45 @@ public class LifeManager : MonoBehaviour
     public float blink_time = 0.2f;
     public float duretime = 0.3f;
 
+    //血量恢复
+    [Header("Recover")]
+    public float recoverTime = 5f;
+    public int recoverBlood = 1;
+    Coroutine RecoveryCoroutine;
 
+    //一次性代码
+    bool hasExec_PlaySound = true;
+    
 
     //------------------------------------ 血条 ------------------------------------------
 
     //初始化血条
     private void Start()
     {
-        UpdatePlayerBlood(0, false);
+        //初始化血条
+        UpdatePlayerBlood(0, false, false);
+
+        //常驻恢复协程
+        if (RecoveryCoroutine == null)
+        {
+            RecoveryCoroutine = StartCoroutine(RecoveryBlood());
+        }
     }
 
     //更新血条
-    public void UpdatePlayerBlood(int hurt, bool isBlind)
+    public void UpdatePlayerBlood(int hurt, bool isBlind, bool isShakeHead)
     {
         //减去伤害
         blood -= hurt;
 
         //受伤效果
-        musicmanager.PlaySound_fallGround();
-        StartCoroutine(player.Animation_Behurt());
+        if (isShakeHead)   //解决初始化尖叫的问题
+        {
+            musicmanager.PlaySound_fallGround();
+            StartCoroutine(player.Animation_Behurt());
+        }
+
+        
 
         //如果死亡
         if (blood <= 0)
@@ -131,6 +151,23 @@ public class LifeManager : MonoBehaviour
             yield return new WaitForSeconds(duretime);
         }
     }
+    
+    //自动恢复血量
+    IEnumerator RecoveryBlood() 
+    {
+
+        while (true)
+        {
+            if (blood != maxblood && world.game_state == Game_State.Playing)
+            {
+                UpdatePlayerBlood(-recoverBlood, true, false);
+
+            }
+            yield return new WaitForSeconds(recoverTime);
+        }
+        
+
+    }
 
     //-------------------------------------------------------------------------------------
 
@@ -201,7 +238,7 @@ public class LifeManager : MonoBehaviour
                 break;
             }
 
-            UpdatePlayerBlood(2, true);
+            UpdatePlayerBlood(2, true, true);
             yield return new WaitForSeconds(minusTime);
         }
 

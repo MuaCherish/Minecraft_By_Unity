@@ -11,6 +11,10 @@ public enum Game_State
     Start, Loading, Playing, Pause, Dead,
 }
 
+public enum GameMode
+{
+    Creative, Survival,
+}
 
 public class World : MonoBehaviour
 {
@@ -20,6 +24,7 @@ public class World : MonoBehaviour
 
     [Header("游戏状态")]
     public Game_State game_state = Game_State.Start;
+    public GameMode game_mode = GameMode.Survival; 
 
     [Header("Material-方块类型")]
     public Material material;

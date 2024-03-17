@@ -18,6 +18,10 @@ public class CanvasManager : MonoBehaviour
     public TextMeshProUGUI selectblockname;
     public BackPackManager BackPackManager;
     public LifeManager LifeManager;
+    public TextMeshProUGUI gamemodeTEXT;
+    public GameObject CreativeButtom;
+    public GameObject SurvivalButtom;
+    public GameObject Survival_Screen;
 
     //主要屏幕
     public GameObject Start_Screen;
@@ -86,6 +90,7 @@ public class CanvasManager : MonoBehaviour
     public GameObject muacherish;
     public float speed = 1.0f; // 控制浮动速度的参数
     public float magnitude = 0.04f; // 控制浮动幅度的参数
+    public float colorSpeed = 1f; //渐变颜色速度
     Coroutine muacherishCoroutine;
 
     //ShowBlockName
@@ -147,73 +152,18 @@ public class CanvasManager : MonoBehaviour
         //加载完成
         if (world.game_state == Game_State.Playing)
         {
-
-            if (hasExec_Playing)
+            //Survival
+            if (world.game_mode == GameMode.Survival)
             {
-                Loading_Screen.SetActive(false);
-                ToolBar.SetActive(true);
-                CursorCross_Screen.SetActive(true);
-                Prompt_Screen.SetActive(true);
-
-                openyoureyes();
-
-                StopCoroutine(muacherishCoroutine);
-
-                //记录开始时间
-                startTime = Time.time;
-
-                hasExec_Playing = false;
+                GameMode_Survival();
+            }
+            //Creative
+            else if (world.game_mode == GameMode.Creative)
+            {
+                GameMode_Creative();
             }
 
-
-            //EscScreen
-            Show_Esc_Screen();
-
-
-
-            //Debug面板
-            if (Input.GetKeyDown(KeyCode.F3))
-            {
-                Debug_Screen.SetActive(!Debug_Screen.activeSelf);
-            }
-
-
-            //SwimmingScreen
-            if (world.GetBlockType(Camera.transform.position) == VoxelData.Water && !isPausing)
-            {
-                //入水
-                if (hasExec_InWater == false)
-                {
-                    //data
-                    //Debug.Log("IntoWater");
-                    Swimming_Screen.SetActive(true);
-                    LifeManager.Oxy_IntoWater();
-
-                    //update
-                    hasExec_InWater = true;
-                }
-                
-            }
-            else
-            {
-                Swimming_Screen.SetActive(false);
-
-                
-
-                //出水
-                if (hasExec_InWater == true)
-                {
-
-                    //data
-                    //Debug.Log("OutWater");
-                    LifeManager.Oxy_OutWater();
-
-
-                    //update
-                    hasExec_InWater = false;
-                }
-                
-            }
+            
             
         }
 
@@ -224,6 +174,137 @@ public class CanvasManager : MonoBehaviour
 
 
     //----------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+    //------------------------------------- GameMode -----------------------------------------
+    //Survival
+    void GameMode_Survival()
+    {
+        if (hasExec_Playing)
+        {
+            Loading_Screen.SetActive(false);
+            ToolBar.SetActive(true);
+            CursorCross_Screen.SetActive(true);
+            Prompt_Screen.SetActive(true);
+
+            openyoureyes();
+
+            StopCoroutine(muacherishCoroutine);
+
+            //记录开始时间
+            startTime = Time.time;
+
+            hasExec_Playing = false;
+        }
+
+
+        //EscScreen
+        Show_Esc_Screen();
+
+
+
+        //Debug面板
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            Debug_Screen.SetActive(!Debug_Screen.activeSelf);
+        }
+
+
+        //SwimmingScreen
+        if (world.GetBlockType(Camera.transform.position) == VoxelData.Water && !isPausing)
+        {
+            //入水
+            if (hasExec_InWater == false)
+            {
+                //data
+                //Debug.Log("IntoWater");
+                Swimming_Screen.SetActive(true);
+                LifeManager.Oxy_IntoWater();
+
+                //update
+                hasExec_InWater = true;
+            }
+
+        }
+        else
+        {
+            Swimming_Screen.SetActive(false);
+
+
+
+            //出水
+            if (hasExec_InWater == true)
+            {
+
+                //data
+                //Debug.Log("OutWater");
+                LifeManager.Oxy_OutWater();
+
+
+                //update
+                hasExec_InWater = false;
+            }
+
+        }
+    }
+
+    //Creative
+    void GameMode_Creative()
+    {
+        if (hasExec_Playing)
+        {
+            Loading_Screen.SetActive(false);
+            ToolBar.SetActive(true);
+            Survival_Screen.SetActive(false);
+            CursorCross_Screen.SetActive(true);
+            Prompt_Screen.SetActive(true);
+
+            toggle_SuperMing.isOn = true;
+
+            openyoureyes();
+
+            BackPackManager.CreativeMode();
+
+            StopCoroutine(muacherishCoroutine);
+
+            hasExec_Playing = false;
+        }
+
+
+        //EscScreen
+        Show_Esc_Screen();
+
+
+
+        //Debug面板
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            Debug_Screen.SetActive(!Debug_Screen.activeSelf);
+        }
+
+
+        //SwimmingScreen
+        if (world.GetBlockType(Camera.transform.position) == VoxelData.Water && !isPausing)
+        {
+            //入水
+            Swimming_Screen.SetActive(true);
+
+        }
+        else
+        {
+            Swimming_Screen.SetActive(false);
+
+
+        }
+    }
+
+    //----------------------------------------------------------------------------------------
+
 
 
 
@@ -250,16 +331,26 @@ public class CanvasManager : MonoBehaviour
 
         while (true)
         {
+            // 控制缩放
             float scaleX = 1.0f + Mathf.PingPong(offset * speed, magnitude) * 0.5f; // 控制x轴的缩放
             float scaleY = 1.0f + Mathf.PingPong(offset * speed, magnitude) * 0.5f; // 控制y轴的缩放
-
             muacherish.transform.localScale = new Vector3(scaleX, scaleY, muacherish.transform.localScale.z);
+
+            // 控制颜色渐变
+            Color color = new Color(
+                Mathf.Sin(offset * colorSpeed) * 0.5f + 0.5f, // 红
+                Mathf.Sin(offset * colorSpeed + Mathf.PI * 2 / 3) * 0.5f + 0.5f, // 绿
+                Mathf.Sin(offset * colorSpeed + Mathf.PI * 4 / 3) * 0.5f + 0.5f, // 蓝
+                1f // 不透明度
+            );
+            muacherish.GetComponent<TextMeshProUGUI>().color = color;
 
             offset += Time.deltaTime;
 
             yield return null;
         }
     }
+
 
     //----------------------------------------------------------------------------------------
 
@@ -304,6 +395,30 @@ public class CanvasManager : MonoBehaviour
         //music
         musicmanager.PlaySound_Click();
     }
+
+    //选择生存模式
+    public void GamemodeToSurvival()
+    {
+        world.game_mode = GameMode.Survival;
+        gamemodeTEXT.text = "当前游戏模式：生存模式";
+
+        //改变按钮颜色
+        SurvivalButtom.GetComponent<Image>().color = new Color(106 / 255f, 115 / 255f, 200 / 255f, 1f);
+        CreativeButtom.GetComponent<Image>().color = new Color(149 / 255f, 134 / 255f, 119 / 255f, 1f);
+    }
+
+    //选择创造模式
+    public void GamemodeToCreative()
+    {
+        world.game_mode = GameMode.Creative;
+        gamemodeTEXT.text = "当前游戏模式：创造模式";
+
+        //改变按钮颜色
+        SurvivalButtom.GetComponent<Image>().color = new Color(149 / 255f, 134 / 255f, 119 / 255f, 1f);
+        CreativeButtom.GetComponent<Image>().color = new Color(106 / 255f, 115 / 255f, 200 / 255f, 1f);
+    }
+
+
     //---------------------------------------------------------------------------------------
 
 
@@ -651,9 +766,9 @@ public class CanvasManager : MonoBehaviour
 
         world.game_state = Game_State.Playing;
 
-        LifeManager.blood = 20;
+        LifeManager.blood = 20; 
         LifeManager.oxygen = 10;
-        LifeManager.UpdatePlayerBlood(0, false);
+        LifeManager.UpdatePlayerBlood(0, false, false);
         startTime = Time.time;
 
         player.InitPlayerLocation();

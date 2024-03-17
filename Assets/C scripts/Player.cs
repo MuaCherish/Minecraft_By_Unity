@@ -17,12 +17,15 @@ public class Player : MonoBehaviour
     public bool isSwiming;
     public bool isMoving;
     public bool isSquating;
+    public bool isFlying;
 
     [Header("Transforms")]
+    public Material HighLightMaterial;
+    public Texture[] DestroyTextures = new Texture[10];
     public Transform cam;
     public Animation camaraAnimation;
     public Transform HighlightBlock;
-    public GameObject HighlightBlockObject;
+    //public GameObject HighlightBlockObject;
     public World world;
     public CanvasManager canvasManager;
     public MusicManager musicmanager;
@@ -121,6 +124,13 @@ public class Player : MonoBehaviour
     public float maxFOV = 90;
     bool expandview = false;
 
+
+    [Header("飞行模式")]
+    private float lastJumpTime;
+    private float doubleTapInterval = 0.5f; // Adjust as needed
+    public int jump_press = 0;
+
+
     //碰撞检测的坐标
     // 上面的四个点
     Vector3 up_左上 = new Vector3();
@@ -167,12 +177,8 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        // 获取物体上的材质
-        Renderer renderer = HighlightBlockObject.GetComponent<Renderer>();
-        material = renderer.material;
-
-        // 保存初始颜色
-        initialColor = material.color;
+        HighLightMaterial.color = new Color(0, 0, 0, 0);
+        HighLightMaterial.mainTexture = DestroyTextures[0];
     }
 
     private void FixedUpdate()
@@ -185,7 +191,7 @@ public class Player : MonoBehaviour
                 InitPlayerLocation();
                 hasExec = false;
             }
-
+            
             //if (world.GetBlockType(foot.position) == VoxelData.Water)
             //{
             //    print("");
@@ -247,7 +253,7 @@ public class Player : MonoBehaviour
     //---------------------------------------------------------------------------------
 
 
-
+    
 
 
 
@@ -408,6 +414,32 @@ public class Player : MonoBehaviour
         if (isGrounded && Input.GetKey(KeyCode.Space))
             jumpRequest = true;
 
+
+        //飞行模式
+        if (world.game_mode == GameMode.Creative)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                jump_press++;
+
+                if (((Time.time - lastJumpTime) < doubleTapInterval) && jump_press == 1)
+                {
+                    isFlying = !isFlying;
+                    jump_press = 0;
+                }
+                else if ((Time.time - lastJumpTime) >= doubleTapInterval)
+                {
+                    jump_press = 0;
+                }
+
+                lastJumpTime = Time.time;
+            }
+        }
+        
+
+
+
+
         // 如果在水中按下跳跃键 && leg低于水面，触发跳跃请求 
         if (isSwiming && Input.GetKey(KeyCode.Space) && (leg.position.y - 0.1f < world.sea_level))
         {
@@ -416,8 +448,6 @@ public class Player : MonoBehaviour
         {
             jumpRequest = true;
         }
-
-
 
 
         //按住Ctrl键，摄像机将下降一定高度
@@ -501,7 +531,12 @@ public class Player : MonoBehaviour
                 {
                     
                     world.GetChunkObject(RayCast_last()).EditData(world.GetRelalocation(RayCast_last()), backpackmanager.slots[selectindex].blockId);
-                    backpackmanager.update_slots(1, point_Block_type);
+
+                    if (world.game_mode == GameMode.Survival)
+                    {
+                        backpackmanager.update_slots(1, point_Block_type);
+                    }
+                    
                 }
 
                 //print($"绝对坐标为：{RayCast_last()}");
@@ -572,14 +607,16 @@ public class Player : MonoBehaviour
         // 等待
         while (Time.time - startTime < destroy_time)
         {
-            // 计算透明度插值
+            // 计算材质插值
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / destroy_time);
-            float targetAlpha = Mathf.Lerp(initialColor.a, 1f, t);
 
-            // 更新材质的颜色和透明度
-            material.color = new Color(initialColor.r, initialColor.g, initialColor.b, targetAlpha);
-
+            // 更新材质
+            if (t != 1 && point_Block_type != VoxelData.BedRock && !isSuperMining)
+            {
+                HighLightMaterial.color = new Color(0, 0, 0, 1);
+                HighLightMaterial.mainTexture = DestroyTextures[Mathf.FloorToInt(t * 10)];
+            }
 
             // 如果玩家在等待期间松开了左键 || 转移了目标，则取消销毁泥土的逻辑
             if (!Input.GetMouseButton(0) || isChangeBlock)
@@ -588,7 +625,11 @@ public class Player : MonoBehaviour
                 isDestroying = false;
                 isChangeBlock = false;
                 musicmanager.isbroking = false;
-                material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
+
+                //材质还原
+                HighLightMaterial.color = new Color(0, 0, 0, 0);
+                HighLightMaterial.mainTexture = DestroyTextures[0];
+
                 yield break;
             }
 
@@ -602,9 +643,14 @@ public class Player : MonoBehaviour
         musicmanager.PlaySound_Broken(point_Block_type);
 
         elapsedTime = 0.0f;
-        material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
+        //material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
         musicmanager.isbroking = false;
-        backpackmanager.update_slots(0, point_Block_type);
+
+        if (world.game_mode == GameMode.Survival && point_Block_type != VoxelData.BedRock)
+        {
+            backpackmanager.update_slots(0, point_Block_type);
+        }
+            
         canvasManager.Change_text_selectBlockname(point_Block_type);
 
         
@@ -769,6 +815,32 @@ public class Player : MonoBehaviour
         transform.Rotate(Vector3.up * mouseHorizontal);
         //cam.Rotate(Vector3.right * -mouseVertical);
         cam.localRotation = Quaternion.Euler(Camera_verticalInput, 0, 0);
+
+        if (isFlying)
+        {
+
+            //上升
+            if (Input.GetKey(KeyCode.Space) && checkUpSpeed(1) != 0)
+            {
+                velocity.y = 0.1f;
+            }
+
+            //下降
+            else if (Input.GetKey(KeyCode.LeftControl) && checkDownSpeed(1) != 0)
+            {
+                velocity.y = -0.1f;
+            }
+
+
+            //松开
+            else
+            {
+                velocity.y = 0;
+            }
+
+            
+        }
+
         transform.Translate(velocity, Space.World);
     }
 
@@ -1356,16 +1428,20 @@ public class Player : MonoBehaviour
 
 
             //判断玩家是否受伤
-            if (isGrounded)
+            if (world.game_mode == GameMode.Survival)
             {
-                if (((new_foot_high - foot.transform.position.y) > MaxHurtHigh) && falldownCoroutine == null)
+                if (isGrounded)
                 {
-                    falldownCoroutine = StartCoroutine(HandleHurt());
+                    if (((new_foot_high - foot.transform.position.y) > MaxHurtHigh) && falldownCoroutine == null)
+                    {
+                        falldownCoroutine = StartCoroutine(HandleHurt());
+                    }
+
+                    new_foot_high = transform.position.y;
+
                 }
-
-                new_foot_high = transform.position.y;
-
             }
+            
         }
 
         
@@ -1375,7 +1451,7 @@ public class Player : MonoBehaviour
     //执行受伤协程
     IEnumerator HandleHurt()
     {
-        lifemanager.UpdatePlayerBlood((int)(new_foot_high - foot.transform.position.y), true);
+        lifemanager.UpdatePlayerBlood((int)(new_foot_high - foot.transform.position.y), true, true);
 
         yield return new WaitForSeconds(hurtCooldownTime); // 等待受伤冷却时间结束
 
