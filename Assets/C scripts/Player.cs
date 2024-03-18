@@ -639,18 +639,19 @@ public class Player : MonoBehaviour
         //如果成功过了两秒
         // 执行销毁泥土的逻辑
         isDestroying = false;
-
         musicmanager.PlaySound_Broken(point_Block_type);
-
         elapsedTime = 0.0f;
-        //material.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0f);
         musicmanager.isbroking = false;
 
-        if (world.game_mode == GameMode.Survival && point_Block_type != VoxelData.BedRock)
+        //只有生存模式才会掉掉落物
+        if (world.game_mode == GameMode.Survival)
         {
-            backpackmanager.update_slots(0, point_Block_type);
+            backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type);
+
         }
-            
+
+        //放进背包由掉落物执行
+
         canvasManager.Change_text_selectBlockname(point_Block_type);
 
         

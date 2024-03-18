@@ -114,6 +114,9 @@ public static class VoxelData
      * 13. broke_soil
      * 14. broke_wood
      * 15. broke_stone
+     * 
+     * 17. absorb_1
+     * 18. absorb_2
     */
     public static readonly int click = 0;
     public static readonly int bgm_menu = 1;
@@ -132,6 +135,8 @@ public static class VoxelData
     public static readonly int broke_wood = 14;
     public static readonly int broke_stone = 15;
     public static readonly int bgm_3 = 16;
+    public static readonly int absorb_1 = 17;
+    public static readonly int absorb_2 = 18;
 
 
     //Select

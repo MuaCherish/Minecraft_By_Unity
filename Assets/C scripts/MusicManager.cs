@@ -564,6 +564,21 @@ public class MusicManager : MonoBehaviour
         }
     }
 
+    //≤•∑≈Œ¸ ’“Ù–ß
+    public void PlaySound_Absorb()
+    {
+        int i = UnityEngine.Random.Range(0, 2);
+
+        if (i == 0)
+        {
+            Audio_Click.PlayOneShot(audioclips[VoxelData.absorb_1]);
+        }
+        else
+        {
+            Audio_Click.PlayOneShot(audioclips[VoxelData.absorb_2]);
+        }
+    }
+
     //---------------------------------------------------------------------------------------
 
 
