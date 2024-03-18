@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,14 +8,22 @@ using UnityEngine.UI;
 public class BackPackManager : MonoBehaviour
 {
     //Transforms
+    [Header("Transforms")]
     public Player player;
     public World world;
+    public MusicManager musicmanager;
     public GameObject[] icons = new GameObject[9];
     public TextMeshProUGUI[] numbers = new TextMeshProUGUI[9];
 
     //数据部分
+    [Header("Slots")]
     public Slot[] slots = new Slot[9];
 
+    [Header("DropBlock")]
+    public float dropblock_destroyTime = 10f;
+    public float absorb_Distance = 2f;
+    public float drop_gravity = 1f;
+    public float moveToplayer_duation = 1f;
 
     //物品栏的变化
     //返回值:一般都是true，返回false则是不能破坏或者放置
@@ -168,6 +177,115 @@ public class BackPackManager : MonoBehaviour
         icons[8].GetComponent<Image>().color = Color.white;
     }
 
+
+    //创造掉落物(坐标,类型)
+    public void CreateDropBox(Vector3 _pos, byte _blocktype)
+    {
+        //刷新偏移
+        float x_offset = UnityEngine.Random.Range(2, 8) / 10f;
+        float y_offset = UnityEngine.Random.Range(5, 8) / 10f;
+        float z_offset = UnityEngine.Random.Range(2, 8) / 10f;
+
+        //创建父类
+        GameObject DropBlock = new GameObject(world.blocktypes[_blocktype].blockName);
+        DropBlock.AddComponent<FloatingCube>().InitWorld(world, dropblock_destroyTime, absorb_Distance, drop_gravity, moveToplayer_duation, _blocktype, this, musicmanager);
+        DropBlock.transform.SetParent(GameObject.Find("Environment/DropBlocks").transform);
+        DropBlock.transform.position = new Vector3(_pos.x + x_offset, _pos.y + y_offset, _pos.z + z_offset);
+
+        //有贴图用贴图，没贴图用icon
+        if (world.blocktypes[_blocktype].dropsprite != null)
+        {
+            //Top
+            GameObject _Top = new GameObject("Top");
+            _Top.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].top_dropsprite;
+            _Top.transform.SetParent(DropBlock.transform);
+            _Top.transform.localPosition = new Vector3(0, 0.16f, 0);
+            _Top.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+
+            //Buttom
+            GameObject _Buttom = new GameObject("Buttom");
+            _Buttom.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].top_dropsprite;
+            _Buttom.transform.SetParent(DropBlock.transform);
+            _Buttom.transform.localPosition = new Vector3(0, 0, 0);
+            _Buttom.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+
+            //Left
+            GameObject _Left = new GameObject("Left");
+            _Left.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].dropsprite;
+            _Left.transform.SetParent(DropBlock.transform);
+            _Left.transform.localPosition = new Vector3(-0.08f, 0.08f, 0);
+            _Left.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
+
+            //Right
+            GameObject _Right = new GameObject("Right");
+            _Right.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].dropsprite;
+            _Right.transform.SetParent(DropBlock.transform);
+            _Right.transform.localPosition = new Vector3(0.08f, 0.08f, 0);
+            _Right.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
+
+            //Forward
+            GameObject _Forward = new GameObject("Forward");
+            _Forward.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].dropsprite;
+            _Forward.transform.SetParent(DropBlock.transform);
+            _Forward.transform.localPosition = new Vector3(0, 0.08f, 0.08f);
+            _Forward.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+
+            //Back
+            GameObject _Back = new GameObject("Back");
+            _Back.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].dropsprite;
+            _Back.transform.SetParent(DropBlock.transform);
+            _Back.transform.localPosition = new Vector3(0, 0.08f, -0.08f);
+            _Back.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+        }
+        else
+        {
+            //Top
+            GameObject _Top = new GameObject("Top");
+            _Top.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].icon;
+            _Top.transform.SetParent(DropBlock.transform);
+            _Top.transform.localPosition = new Vector3(0, 0.16f, 0);
+            _Top.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+
+            //Buttom
+            GameObject _Buttom = new GameObject("Buttom");
+            _Buttom.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].icon;
+            _Buttom.transform.SetParent(DropBlock.transform);
+            _Buttom.transform.localPosition = new Vector3(0, 0, 0);
+            _Buttom.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+
+            //Left
+            GameObject _Left = new GameObject("Left");
+            _Left.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].icon;
+            _Left.transform.SetParent(DropBlock.transform);
+            _Left.transform.localPosition = new Vector3(-0.08f, 0.08f, 0);
+            _Left.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
+
+            //Right
+            GameObject _Right = new GameObject("Right");
+            _Right.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].icon;
+            _Right.transform.SetParent(DropBlock.transform);
+            _Right.transform.localPosition = new Vector3(0.08f, 0.08f, 0);
+            _Right.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
+
+            //Forward
+            GameObject _Forward = new GameObject("Forward");
+            _Forward.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].icon;
+            _Forward.transform.SetParent(DropBlock.transform);
+            _Forward.transform.localPosition = new Vector3(0, 0.08f, 0.08f);
+            _Forward.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+
+            //Back
+            GameObject _Back = new GameObject("Back");
+            _Back.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].icon;
+            _Back.transform.SetParent(DropBlock.transform);
+            _Back.transform.localPosition = new Vector3(0, 0.08f, -0.08f);
+            _Back.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+        }
+
+
+        //最后放大本体
+        DropBlock.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+    }
 
 }
 

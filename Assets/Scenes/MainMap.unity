@@ -3511,6 +3511,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 9212733cedec09f409d1a79261456847, type: 3}
   - {fileID: 8300000, guid: f24ee401997043549a40acf2e3da30ed, type: 3}
   - {fileID: 8300000, guid: 7f120468f9c73a443a0018abdc68106f, type: 3}
+  - {fileID: 8300000, guid: a10bc6775f79bbb4389e36d81a427043, type: 3}
+  - {fileID: 8300000, guid: 8456cd3a3f736d84fae8191c7b0bd4b7, type: 3}
   Audio_envitonment: {fileID: 0}
   Audio_player_place: {fileID: 0}
   Audio_player_broke: {fileID: 0}
@@ -8052,6 +8054,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -821054697, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    dropsprite: {fileID: 21300000, guid: d8c86c9152fd8ed4391420c36c803f58, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: d8c86c9152fd8ed4391420c36c803f58, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8068,6 +8072,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 1619130530, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    dropsprite: {fileID: 21300000, guid: d8c86c9152fd8ed4391420c36c803f58, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: d8c86c9152fd8ed4391420c36c803f58, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: e963f3daaa4495345b08255f3d6d3eed, type: 3}
     - {fileID: 8300000, guid: 0902d3ef50b317f42a877d8372019f63, type: 3}
@@ -8084,6 +8090,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 1887270547, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    dropsprite: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -8100,6 +8108,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -1513934428, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    dropsprite: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -8116,6 +8126,8 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 0
     icon: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8132,6 +8144,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -166098416, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    dropsprite: {fileID: 21300000, guid: 5791c41ebf6291840afca1148a5e7d83, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 5791c41ebf6291840afca1148a5e7d83, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: b0697e5631dae5a408849ff947463fd5, type: 3}
     - {fileID: 8300000, guid: 4f4be7ba4daf2af4081b9bbc8c69af4a, type: 3}
@@ -8148,6 +8162,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 19805498, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    dropsprite: {fileID: 21300000, guid: a7a1a86e3cd686841949e0da5b9a7482, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 73029842837fcb5459c56cf9288b5e50, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8164,6 +8180,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -478759792, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 21300000, guid: 234236cff880d2e4fa730a16989e9c73, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 234236cff880d2e4fa730a16989e9c73, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -8180,6 +8198,8 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 0
     icon: {fileID: -1121316251, guid: 65dd7ce3fe9afcc449601c2a5ee0e173, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8196,6 +8216,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 737408895, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8212,6 +8234,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 0}
+    dropsprite: {fileID: 21300000, guid: a7a1a86e3cd686841949e0da5b9a7482, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 73029842837fcb5459c56cf9288b5e50, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8228,6 +8252,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -480959984, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8244,6 +8270,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: 1645535455, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8260,6 +8288,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -734642697, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8276,6 +8306,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -85298334, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8292,6 +8324,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -796056083, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8308,6 +8342,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -328740914, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8324,6 +8360,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -723382273, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8340,6 +8378,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 2036708510, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8356,6 +8396,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -1809891165, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8372,6 +8414,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     icon: {fileID: -920575563, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8388,6 +8432,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 769592071, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8404,6 +8450,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 921364288, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8420,6 +8468,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 980529096, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8436,6 +8486,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 1678008232, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8452,6 +8504,8 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 1
     icon: {fileID: -2062449787, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8468,6 +8522,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 1945075179, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -8484,6 +8540,8 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     icon: {fileID: 21300000, guid: 41db7c2d54743bc42906f884e0c310b6, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -10176,6 +10234,7 @@ Transform:
   - {fileID: 1443460313}
   - {fileID: 1325896184}
   - {fileID: 508673660}
+  - {fileID: 2066847385}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &849139296
@@ -13380,7 +13439,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5.6708984, y: -4.333191}
+  m_AnchoredPosition: {x: -5.6708984, y: -4.333252}
   m_SizeDelta: {x: 71.098, y: 62.578}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1103709366
@@ -16908,7 +16967,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.5549316, y: -3.4000854}
+  m_AnchoredPosition: {x: -1.5549316, y: -3.4001465}
   m_SizeDelta: {x: 3.309982, y: 0.4000535}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1362257024
@@ -18007,6 +18066,7 @@ MonoBehaviour:
   viewduration: 0.2
   minFOV: 70
   maxFOV: 90
+  jump_press: 0
   foot_BlockType: 4
   foot_BlockType_temp: 4
 --- !u!4 &1504082081
@@ -23553,6 +23613,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2061621896}
   m_CullTransparentMesh: 1
+--- !u!1 &2066847384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2066847385}
+  m_Layer: 0
+  m_Name: DropBlocks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2066847385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066847384}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 849052400}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2076927748
 GameObject:
   m_ObjectHideFlags: 0
@@ -24438,6 +24529,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1504082080}
   world: {fileID: 699955241}
+  musicmanager: {fileID: 325552237}
   icons:
   - {fileID: 436530508}
   - {fileID: 1517439827}
@@ -24486,6 +24578,10 @@ MonoBehaviour:
   - ishave: 0
     blockId: 255
     number: 0
+  dropblock_destroyTime: 100
+  absorb_Distance: 2.3
+  drop_gravity: 4
+  moveToplayer_duation: 0.2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

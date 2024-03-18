@@ -890,7 +890,11 @@ public class BlockType
     public float DestroyTime;
     public bool isSolid;
     public bool isTransparent;
+
+    [Header("Sprite")]
     public Sprite icon;
+    public Sprite dropsprite;
+    public Sprite top_dropsprite;
 
     [Header("Clips")]
     public AudioClip[] walk_clips = new AudioClip[2]; 
