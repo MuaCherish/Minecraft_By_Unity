@@ -569,6 +569,7 @@ public class Player : MonoBehaviour
             }
 
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
         // 如果往上滚动
         else if (scrollWheelInput > 0f)
@@ -583,6 +584,7 @@ public class Player : MonoBehaviour
             }
 
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
 
 
@@ -672,46 +674,55 @@ public class Player : MonoBehaviour
         {
             selectindex = 0;
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             selectindex = 1;
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             selectindex = 2;
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             selectindex = 3;
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             selectindex = 4;
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha6))
         {
             selectindex = 5;
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             selectindex = 6;
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             selectindex = 7;
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             selectindex = 8;
             canvasManager.Change_text_selectBlockname(255);
+            backpackmanager.ChangeBlockInHand();
         }
 
         

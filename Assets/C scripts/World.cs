@@ -905,6 +905,7 @@ public class BlockType
 
     [Header("Sprite")]
     public Sprite icon;
+    public Texture texture;
     public Sprite dropsprite;
     public Sprite top_dropsprite;
 
