@@ -167,7 +167,7 @@ public class World : MonoBehaviour
                 CheckRenderSize();
 
                 //开始初始化
-                StartCoroutine(Init_Map_Thread());
+                Update_CenterChunks();
 
                 hasExec_SetSeed = false;
             }
@@ -293,19 +293,22 @@ public class World : MonoBehaviour
     //初始化地图
     IEnumerator Init_Map_Thread()
     {
-        Center_Now = new Vector3(PlayerFoot.transform.position.x, 0, PlayerFoot.transform.position.z);
+        
+        Center_Now = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, 0, GetRealChunkLocation(PlayerFoot.transform.position).z);
 
-       //写一个协程，清除或者隐藏过远的区块
-
-
+        //写一个协程，清除或者隐藏过远的区块
+        
+        
+        //print($"Center:{Center_Now}");
+        //print($"Foot:{PlayerFoot.transform.position}, ChunkFoot:{GetChunkLocation(PlayerFoot.transform.position)}");
         //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //sphere.transform.position = Center_Now;
         //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
         float temp = 0f;
 
-        for (int x = -renderSize + (int)(PlayerFoot.transform.position.x / VoxelData.ChunkWidth); x < renderSize + (int)(PlayerFoot.transform.position.x / VoxelData.ChunkWidth); x++)
+        for (int x = -renderSize + (int)(Center_Now.x / VoxelData.ChunkWidth); x < renderSize + (int)(Center_Now.x / VoxelData.ChunkWidth); x++)
         {
-            for (int z = -renderSize + (int)(PlayerFoot.transform.position.z / VoxelData.ChunkWidth); z < renderSize + (int)(PlayerFoot.transform.position.x / VoxelData.ChunkWidth); z++)
+            for (int z = -renderSize + (int)(Center_Now.z / VoxelData.ChunkWidth); z < renderSize + (int)(Center_Now.z / VoxelData.ChunkWidth); z++)
             {
 
                  
@@ -325,8 +328,6 @@ public class World : MonoBehaviour
         yield return new WaitForSeconds(1f);
         initprogress = 1f;
 
-
-        yield return null;
     }
 
 
@@ -688,6 +689,10 @@ public class World : MonoBehaviour
     //初始化人物位置
     void Init_Player_Location()
     {
+
+        Start_Position = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, PlayerFoot.transform.position.y, GetRealChunkLocation(PlayerFoot.transform.position).z);
+        
+
         //从<1600,63,1600>向下遍历，直到坐标符合条件
         while (GetBlockType(Start_Position) == VoxelData.Air)
         {
@@ -704,6 +709,13 @@ public class World : MonoBehaviour
     public Vector3 GetChunkLocation(Vector3 vec)
     {
         return new Vector3((vec.x - vec.x % VoxelData.ChunkWidth) / VoxelData.ChunkWidth, 0, (vec.z - vec.z % VoxelData.ChunkWidth) / VoxelData.ChunkWidth);
+
+    }
+
+
+    public Vector3 GetRealChunkLocation(Vector3 vec)
+    {
+        return new Vector3(16f * ((vec.x - vec.x % VoxelData.ChunkWidth) / VoxelData.ChunkWidth), 0, 16f * ((vec.z - vec.z % VoxelData.ChunkWidth) / VoxelData.ChunkWidth));
 
     }
 
