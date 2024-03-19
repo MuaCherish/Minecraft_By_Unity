@@ -9,6 +9,7 @@ public class BackPackManager : MonoBehaviour
 {
     //Transforms
     [Header("Transforms")]
+    public Material MAT_HandinBlock;
     public Player player;
     public World world;
     public MusicManager musicmanager;
@@ -24,6 +25,10 @@ public class BackPackManager : MonoBehaviour
     public float absorb_Distance = 2f;
     public float drop_gravity = 1f;
     public float moveToplayer_duation = 1f;
+
+    [Header("BlockInHand")]
+    public GameObject HandInHand;
+    public GameObject BlockInHand;
 
     //物品栏的变化
     //返回值:一般都是true，返回false则是不能破坏或者放置
@@ -286,6 +291,108 @@ public class BackPackManager : MonoBehaviour
         //最后放大本体
         DropBlock.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
     }
+
+
+    //切换手中物品的
+    byte previous_HandBlock = 255;   //255代表手本身
+    public void _ChangeBlockInHand()
+    {
+        byte now_HandBlock = slots[player.selectindex].blockId;
+        
+        //如果不一样，就要切换方块
+        if (now_HandBlock != previous_HandBlock)
+        {
+            //切换手
+            if (now_HandBlock == 255)
+            {
+                //放下方块(-0.247 ~ -0.421)
+                //伸出手(-1.2 ~ -0.7)
+                StartCoroutine(Animation_HandBlock(false));
+
+            }
+            //切换方块
+            else
+            {
+                //更新方块材质
+                if (world.blocktypes[player.selectindex].texture != null)
+                {
+                    MAT_HandinBlock.mainTexture = world.blocktypes[player.selectindex].texture;
+                }
+                else
+                {
+                    MAT_HandinBlock.mainTexture = world.blocktypes[VoxelData.BedRock].texture;
+                }
+                
+
+                //放下手(-0.7 ~ -1.2)
+                //伸出方块(-0.421 ~ -0.247)
+                StartCoroutine(Animation_HandBlock(true));
+
+            }
+
+            //update
+            previous_HandBlock = now_HandBlock;
+        }
+    }
+
+    public void ChangeBlockInHand()
+    {
+
+    }
+
+    //切换方块
+    IEnumerator Animation_HandBlock(bool isHandToBlock)
+    {
+        //拿出方块
+        if (isHandToBlock)
+        {
+            //放下手(y-0.5)
+            Vector3 handTargetPosition = HandInHand.transform.position + Vector3.down * 0.5f;
+            yield return StartCoroutine(MoveObject(HandInHand.transform, handTargetPosition, 1.0f));
+
+            //延迟
+            yield return new WaitForSeconds(1.0f);
+
+            //拿出block(y+0.174)
+            Vector3 blockTargetPosition = BlockInHand.transform.position + Vector3.up * 0.174f;
+            yield return StartCoroutine(MoveObject(BlockInHand.transform, blockTargetPosition, 1.0f));
+        }
+        //拿出手
+        else
+        {
+            //放下block(y-0.174)
+            Vector3 blockTargetPosition = BlockInHand.transform.position + Vector3.down * 0.174f;
+            yield return StartCoroutine(MoveObject(BlockInHand.transform, blockTargetPosition, 1.0f));
+
+            //延迟
+            yield return new WaitForSeconds(1.0f);
+
+            //拿出手(y+0.5)
+            Vector3 handTargetPosition = HandInHand.transform.position + Vector3.up * 0.5f;
+            yield return StartCoroutine(MoveObject(HandInHand.transform, handTargetPosition, 1.0f));
+        }
+
+        yield return null;
+    }
+
+    // 移动物体到目标位置
+    IEnumerator MoveObject(Transform objTransform, Vector3 targetPosition, float duration)
+    {
+        float elapsedTime = 0.0f;
+        Vector3 startingPosition = objTransform.position;
+
+        while (elapsedTime < duration)
+        {
+            objTransform.position = Vector3.Lerp(startingPosition, targetPosition, (elapsedTime / duration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        objTransform.position = targetPosition; // 确保物体最终到达目标位置
+    }
+
+
+
 
 }
 
