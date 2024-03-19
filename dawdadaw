@@ -1,0 +1,606 @@
+[33mcommit 0f32b1a4d4d419e365229e4221e47a6268540399[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Mon Mar 18 23:45:59 2024 +0800
+
+    版本[2.4.4]——掉落物的实现，修复了一系列问题。
+    1. 修复了玩家打掉草块应该掉落泥土而不是草块的问题。
+    2. 完成掉落物的实现。
+    3. 修复了掉落物掉落高度过低的问题。
+    4. 修复了掉落物过于重叠的问题(掉落位置太绝对了)。
+    5.  修复了吸附的位置应该在眼睛而不是肚子的问题。
+    6. 修复了掉落物过小的问题。
+    7. 吸附音效丢失的问题。
+    8. 掉落物再次调整至 0.3m。
+    9. 调整掉落物的重力。
+    10. 方块的悬浮高度调整与原版一致。
+    11. 吸附点改为眼睛下0.3f而不是固定transform。
+
+[33mcommit 38e75274c4254ac5454aa7985e18d811f04c1a05[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Mon Mar 18 03:20:07 2024 +0800
+
+    版本[2.3.4]——玩家可以选择游戏模式，MuaCherish炫彩摇动，修复了一系列问题。
+    1. 把受伤的所有东西都放到扣血函数里。
+    2. 修复了首次打开游戏会有一声受伤声音的问题(更新了是否摇头的参数)。
+    3. 完成选择游戏模式按钮(通过开头点击的按钮来传递创造还是生存参数)。
+    4. 修复了死亡后依旧恢复血量的问题。
+    5. 给我的名字MuaCherish加入了炫彩动画。
+    6. 完成生存模式的封装。
+    7. 增加每过一定时间恢复血量的功能。
+    8. 添加木板(WoodenPlanks)。
+    9. 添加萤石(Fluor)。
+    10. 重新绘制了高亮方块，更接近原版。
+    11. 封装创造模式。
+    12. 重写了破碎效果，新增了破碎动画。
+    13. 修复了挖基岩或者快速挖掘开启时导致破碎动画卡在最后一帧的问题。
+    14. 修复了玩家挖不掉基岩但是可以存入物品栏的问题。
+    15. 修复了奔跑的时候放置不触发放置动画的问题。
+    16. 添加玩家在创造模式下双击空格可以飞起来的能力。
+
+[33mcommit 90db8f203ebe3eff5a998d37ef2c0eb6baa521e5[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Sun Mar 17 22:00:50 2024 +0800
+
+    版本[1.3.4]——氧气系统
+    1. 完成了氧气系统，至此生存模式的东西应该都齐了。
+
+[33mcommit 44c66f59b1e822fc3241c099d6476b55dcd4705d[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Sun Mar 17 18:39:21 2024 +0800
+
+    版本[1.2.4]——重做了大部分破坏音效,修复了一系列问题。
+    1. 添加了死亡分数。
+    2. 修复了重生后分数未重置的问题。
+    3. 重做了walk音效，并修改了间隔与原版一致。
+    4. 重做了broking音效和broken音效，并修改了其对应的代码。
+    5. 添加了各自的place音效
+
+[33mcommit 538a64eb7f45261822e332a7eb4c2e41b34ab77a[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Sat Mar 16 23:29:03 2024 +0800
+
+    版本[1.2.3]——添加了血条系统，修复了一系列问题。
+    1. 修复了muacherish未正确排版的问题。
+    2. 玩家碰撞盒更改(身高1.75，宽0.5)。
+    3. 修复了轻点方块一就播放破坏音频的问题(加到了Player里的松开左键函数里)。
+    4. 竹子是X形状的，所以暂时禁止竹子的生成。
+    5. 关闭设置里的渲染速度选项，已经不需要了。
+    6. 添加了按钮边缘显示的功能，鼠标放到按钮上会有描边。
+    7. 添加了物品名字显示(不仅在切换的时候显示，破坏的时候也会显示物品名字)。
+    8. 将主菜单的按钮变得扁长，现在看起来和正版更像了。
+    9. 玩家现在冲刺会改变视距了。
+    10. 完成了玩家的血条系统。
+
+[33mcommit 18aaf337c096ba4c5ef42e3b01f33d31ce22cfab[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Fri Mar 15 17:37:01 2024 +0800
+
+    版本[1.1.3]
+    1. 修复了InitScreen中打字框错位的问题。 2. 调整了树叶的破坏时间（0.5~0.4）。 3. 调整了物品栏数字的大小（64*32）。 4. 调整了一些按钮的颜色。 5. 把我的名字放在了主界面，并且写了一个跳动的脚本。
+
+[33mcommit 4735ecd6fe7eb0fc36ea9cf6a864e482ec0e9112[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Fri Mar 15 16:44:49 2024 +0800
+
+    版本[1.1.2]
+    1. 暂时取消随即切换手中方块的能力。 2. 添加背包系统。 3. 游戏模式暂时锁定在生存。 4. 顺带修复了玩家手中无方块的时候放置依旧会播放防止音效的问题。 5. 添加背包系统的UI. 6. 锁定了海平面高度，现在不会随机了。 7. 稍微修改了一下两个平行光的角度，提高的阴影处的亮度。 8. UI添加血条和饱食度，但是血条系统暂时不做。
+
+[33mcommit 998ba1e4ee42c45d27effb7f9a81c1a7e5a09a62[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Fri Mar 15 13:34:05 2024 +0800
+
+    [1.0.2]——1. 添加了我的世界的字体，并更新了全部界面的字体。 2. 修复了睁眼动画未覆盖整个屏幕的问题。 3. 游戏的默认渲染范围变为12X12。 4. 修复了玩家破坏方块的时候对着空气，依旧会播放破坏音效的问题。 5. 修复了玩家指针出界会报错的问题。 6. 添加了萤石Fluor。 7. 暂时静止了卸载区块的功能。
+
+[33mcommit 3408f45e7146b38fbf5e2bfd4985dc285f46420c[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Thu Mar 14 18:41:05 2024 +0800
+
+    [1.0.1]——1. 修复了弹窗弹出后不会回去的问题。2. 更新了README。
+
+[33mcommit 1fa4490fb656d292f4dbfaf11b1f2785e7e6989f[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Thu Mar 14 18:28:43 2024 +0800
+
+    0. 从这一版开始，我的世界版本为1.0.0。 1. 修复了点击按钮音频的延迟问题。 2. 移除原先的部分异步加载区块，改为多线程加载（一个Data线程，一个Mesh线程）。 3. 现在区块不会一直保存了，如果距离玩家超过7个区块的chunk将会被卸载。4. 修复了空气的贴图中有竹子的问题。 5. 暂时移除描边shader，因为头穿模进去会被闪瞎的。 6. 添加了玩家进入游戏的一个睁眼动画。
+
+[33mcommit 76e2b680d61d608c8ef5aae2ab3c97a2b31350a4[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Wed Mar 13 18:58:47 2024 +0800
+
+    1. 游戏音效重新设计。 2. 修复了在水中游泳不播放音效的问题。 3. 将大部分非及时响应类脚本的update都改为了Fixedupdate，帧数起码提高了20帧。 4. 修复了下半身入水的时候会播放else音效的问题 。 5. 修复了冲刺和蹲伏无法改变音频速度的问题。6. 修复了如果玩家急停的时候，依旧会播放一次脚步声的问题。
+
+[33mcommit 2259dc257f72cdbe679c9a635891a913a7ad0d27[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Mon Mar 11 09:15:39 2024 +0800
+
+    1. 修复了昼夜交替有时间段没进行渐变直接跳到0的问题（delaytime * 0.6的问题）。2. 手电筒增加一个动态延迟，更有沉浸感。
+
+[33mcommit 0ce0fd897b70d88953f24e85520351e5c29ff74a[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Sun Mar 10 12:27:33 2024 +0800
+
+    尝试添加一下实例化网格体渲染远景，但是失败了，但也留下了不错的思路（重写mesh，制作一个2d噪声的地形用来应用远处的场景，扩大可视距离）
+
+[33mcommit e8923adc9490e5fc6e38fa3868d86efb68f034eb[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Sun Mar 10 01:40:30 2024 +0800
+
+    1. 逐步完善了天黑的代码，现在白天2分钟，夜晚2分钟，过度15秒。 2. 添加了天黑提示玩家打开手电筒的选项。
+
+[33mcommit 37b4a22fc19c0d56a894dc717cf8be3d51f4354c[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Sat Mar 9 18:32:03 2024 +0800
+
+    1. 更新了矿洞系统（矿洞现在不会蔓延到基岩上了），稍微增大了矿洞的整体宽度。 2. 更新help面板（f开启手电+r切换方块)。 3. 新增提示面板，玩家到达某个条件的时候就会打印文字。 4. 增加了对冲光源，避免了暗处过暗。 5. 修复了手电筒index报错的问题。
+
+[33mcommit 5fdba96fcec305bf1df7faf1f82ceb95e14858cf[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Sat Mar 9 16:46:21 2024 +0800
+
+    1. 添加了方块描边shader。2. 玩家身上现在有一个固定的点光源。 3. 调整了玩家手电筒的一些参数。
+
+[33mcommit c156e9a03cfcf5730dfd3e9edd94a6d93e05da2a[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Sat Mar 9 02:47:15 2024 +0800
+
+    1. 游戏模式改为 16:9 . 2. 调整了光线渲染模式，现在矿洞更黑了。 3. 修复了切换菜单的时候会出现下标溢出的问题。 4. 编辑器升级至unity2023.2.11。5. 玩家现在可以按R随机切换一下手中的方块。 6. 调整了soil的高度范围。 7. 玩家按F可以切换手电。
+
+[33mcommit 5387e5272241d2525ac982f943ab10589c39f1f3[m
+Author: MuaCherish <317426168@qq.com>
+Date:   Tue Mar 5 10:45:09 2024 +0800
+
+    更新了selectBlock菜单栏,现在可以选择要放的方块了，但是还是不能自由选择
+
+[33mcommit 07e5acfacc1e0fd396c9badc10d968e524cf2536[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sun Mar 3 22:20:43 2024 +0800
+
+    添加了license
+
+[33mcommit 69afead19cdc3e8da90d283750954413e9cfcde1[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sat Mar 2 00:28:46 2024 +0800
+
+    1. 修复了准心过大的问题（新增一个不跟随屏幕缩放的Canvas）。 2. 修复了Esc依然可以在PauseScreen打开的情况下暂停音乐的问题。 3. 修复了help界面显示异常的问题。 4. 现在暂停主菜单并不会暂停音乐了。 5. 玩家跳起来还是不要中断走路声音了。 6. 把进度条关掉，只留正方形进度条。 7. 修复了玩家不能放置的时候却能播放放置音效的问题。 8. 玩家摔落动画重做。
+
+[33mcommit bf64dd6f4fa05a3e191c703a6b309523e8898852[m
+Author: CryMellory <317426168@qq.com>
+Date:   Thu Feb 29 04:15:11 2024 +0800
+
+    1. 修复了打包时候一些头文件的错误。 2. 修复了UI大小过于离谱的问题。 3. Help窗口添加了弹出动画（y从0~1）。
+
+[33mcommit b7d93647e364a1e5344913e56fbad7676bfa02c3[m
+Author: CryMellory <317426168@qq.com>
+Date:   Thu Feb 29 02:11:16 2024 +0800
+
+    1. <全面更新了UI界面>。 2. 修复了EscScreen会吞鼠标的问题。 3. 添加Init_Screen。 4. 调整了观光摄像机的旋转速率。 5. 玩家现在选择可以自主选择种子。 6. 修改了Click音效。 7. 玩家现在可以在pausescreen改变游戏音量。 8. Esc添加玩家操作指南。 9. 玩家可以在菜单调节渲染范围（推荐为6）。 10. 修复了InitScreen的rendersize加载错误的问题。 11. 将所有修改值的代码都放到了CanvasManager里面了。 12. 玩家可以在PauseScreen调整方块加载速度。 13. 重新整理了一下代码的Heading。 14. 修复了在水下的PauseScreen按下Esc依旧会导致暂停的问题。 15. 修复了所有使用game == playing或者loading的逻辑都存在多次加载的问题。 16. 修复了玩家在高空跳入水中会摔伤的问题。 17. 修复了玩家从高空落入水中的瞬间速度归零，导致没有直接冲入水中的问题。 18. 玩家可以在options改成太空重力（gravity改为-3，且关闭了摔伤检测）。 19. 玩家可以再options改为快速挖掘（destroytime被改为 0.1f）。
+
+[33mcommit 61c056fbf49d86904c337f9407710e79304f3f0a[m
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Feb 28 06:14:05 2024 +0800
+
+    1. 添加c418经典音乐“Mice on Venus”。 2. 重新录制了沙子，树叶音效。 3. 修复了撸方块的时候看向空气，会播放错误音频的问题。 4. 完成走路音效。 5. 完成水上走路的音效。 6. 完成摔落音效。 7. 完成潜水音效。 8. 修复了玩家在水底走路时播放陆地走路音效的问题。 9. 添加了玩家冲刺时改变走路音效速率的功能（修改pitch）. 10. 修复了播放走路音效的时候跳跃依然会播放的问题。 11. 修复了玩家看向空气墙时会报错的问题（放置placehighblock的时候访问越界）。 12. 修复了玩家在某个极端距离放置时会导致方块穿过头的问题。 13. 修复了玩家在水面上跳太高的问题（水面跳跃应该蹦不动才对，因为没有受力点）。 14. 修复了水面行走音效播放不正常的问题。 15. 修复了玩家靠近墙就会变蜘蛛开始爬墙的问题。 16. 修复了潜水的时候暂停依然播放潜水音效的问题（走路也是同理，改个音量就好了）。 17. 修复了水下挖掘声音全变成石头的问题。 18. 修复了玩家刚入水时重力没有切换成水中重力的问题（在musicmanager里实现）。
+
+[33mcommit 59cda1d5c8ec68d70c774984291922a3bf20c948[m
+Author: CryMellory <317426168@qq.com>
+Date:   Tue Feb 27 23:23:42 2024 +0800
+
+    1. 录制了音效(点击，背景音乐，收到伤害(自己，史莱姆)，走路音效(草地和其他)，破坏方块(树，树叶，草，沙子，其他)，放置方块(草方块，其他)，动物叫声(羊，猪)，) 2. 一直在修复音频的一些瑕疵。 3. 对初始摄像机高度进行了调整。 4. 修复了破坏方块时间的一些问题。 5. 修复了撸方块的第一下音频播放不正确的问题。 6. 修复了连续撸两个方块的时候音频只播放一次的问题。 7. 修复了撸方块时转移导致音频依然在播放的问题。 8. 游戏状态新增了暂停Pause。 9. 修复了按下pause后导致environment音频直接重置的问题。 10. 玩家现在在4格高落下就会播放摔落动画。
+
+[33mcommit 3409adf447a10f9e5b0b4538bfae4859271ee325[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sun Feb 25 03:43:35 2024 +0800
+
+    修复了startscreen和loadingscreen会反复弹出的问题
+
+[33mcommit 1e960da77ad63080e690d5696336178843d19c39[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sun Feb 25 03:36:50 2024 +0800
+
+    更新了startScreen，现在看起来像那么回事了
+
+[33mcommit 1525f3f2eef98735f7dd137f8b6e399cdb9a81e5[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sun Feb 25 01:42:52 2024 +0800
+
+    1. 添加了玩家物品栏。 2. 修复了一些UI问题（更改了UI的排列关系）。
+
+[33mcommit 0d0da59e036004781819bef82cefb9ad8d435f31[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sat Feb 24 01:19:10 2024 +0800
+
+    1. 修复了打掉顶层竹子的时候，HighLighBlock颜色不恢复的问题。 2. 修复了煤矿生成中心点是石头的问题。3. 玩家现在潜水屏幕会变成深蓝色。4. 修复了跑动的时候放置方块依旧播放跑步动画的问题。 5. 修复了玩家可以蹲着卡进地形的bug。 6. 添加了玩家落地受伤动画。 6. 修复了玩家潜水时笼罩的深蓝色显示不正确的问题。 7. 修复了水下时暂停游戏canvas显示错误的问题（潜水canvas未隐藏）。 8. 修复了 debug屏幕显示过小的问题。 9. 添加了Playing_Screen（同时修复了因此导致的canvas显示错误问题）。 10. PauseScrren现在可以暂停游戏了。 11. 更新了Chunk生成方式（区块卸载替换为区块隐藏）。 12. 修复了距离过远贴图会分层甚至失真的问题。
+
+[33mcommit 8963b37e403fd29ad457461244a5043890080e9e[m
+Author: CryMellory <317426168@qq.com>
+Date:   Thu Feb 22 21:51:09 2024 +0800
+
+     1. 更新PS贴图（添加花草，工作台，火把，透明树叶，玻璃，南瓜，TNT，萤石，工作台其他的矿石，加载界面等）。 2. 现在树叶看起来更有质感了（添加了透明方块的生成 isTransparent判断物体生成面的方式）。3. 每个物体将具有不同的销毁时间。 4. 更新煤炭生成算法（煤炭现在是一批一批出现的了）。5. 现在可以生成其他矿石了（铁矿，黄金，青晶，钻石等）。 6. 修复了左键无法点击竹子的问题。 7. 修复了竹子根部被打掉后上面竹子不掉落的问题。 8. 修复了竹子旁边会生成半边水的问题。
+
+[33mcommit 93074404e73087b7fe82a49d4c2e59ea0fe31775[m
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Feb 21 23:43:59 2024 +0800
+
+    1. 修复了玩家手臂会穿模的问题（添加了另一个摄像机单独渲染手臂）。2. 修复了打掉方块的时候突然移动到别的方块，导致计时器未成功计时且打掉了之前的方块的问题。3. 添加了玩家下蹲动作（速度减慢，重写碰撞）。
+
+[33mcommit b773e8ff36e007acba7cb1769ed35ba2d16f5f72[m
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Feb 21 18:18:03 2024 +0800
+
+    1. 添加了手臂动画。 2. 玩家现在打掉方块一些时间。3. 玩家对准物体的时候会出现一个描边方块，左键物体的时候描边方块会逐渐变黑，4. 修复了无法连续打掉方块的问题。5. 修复了玩家抬头跳跃，摄像机会穿模的问题。6. 修复了如果销毁的时候移动，会被迫执行移动动画的问题。
+
+[33mcommit b3c857233b420c8b1ebadcedf196dc89baf2e8ed[m
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Feb 21 00:08:35 2024 +0800
+
+    1. 删除老版本的player controller，删除预制体，顺带清一下其他无用文件。2. 修复了水面以下无法生成反向水面贴图的问题。3. 新增检测脚下四个点的判断的函数（为后续shift蹲下，游泳，放方块bug做铺垫）。 4. 删除了isBlock,isSwiming等检测手段。 5. 新增了方块类型的宏定义，不需要手动查4还是8了。 6. 游泳系统完成，玩家现在在水中会受到缓慢重力，且可以向上跳跃。 7. 修复了玩家垫在方块的边缘依旧可以放置方块，导致方块盖住腿的问题（问题在于foot坐标只有一个）。 8. 修复了玩家视角没有限制在90度的问题。 9. 修复了玩家可以徒手打掉水体的问题。 10. 修复了加载进度条可以被拖动的bug。
+
+[33mcommit 89d566b8d058178e28179f98b199e7fb99b02924[m
+Author: CryMellory <317426168@qq.com>
+Date:   Mon Feb 19 22:34:37 2024 +0800
+
+    1. 大幅度优化了玩家碰撞盒的算法。2. 修复了玩家头顶方块会被黏在上面的问题。3. 暂时静止了第三人称的显示，暂时禁止了手臂的显示。4. 新增游戏状态表示来控制全局的方法。5. chunk现在的父类是chunks而不是world，并且world改名为world manager。
+
+[33mcommit 7809b47fffe77fce48d8e35868c05b9320fd3e9d[m
+Author: CryMellory <317426168@qq.com>
+Date:   Tue Feb 13 23:21:04 2024 +0800
+
+    更新了一下github封面
+
+[33mcommit de9a7d1685905c185d0296a4843926eaf802d186[m
+Author: CryMellory <317426168@qq.com>
+Date:   Tue Feb 13 23:16:39 2024 +0800
+
+    1. 新增了煤炭 2. 优化了一下水面 3. 增加了随机种子 4. 新增了Esc退出按钮 5. 美化优化了一下代码
+
+[33mcommit 2e4d3c10c0a7e6d8f4d324d22c7fab5dd79d093a[m
+Author: CryMellory <317426168@qq.com>
+Date:   Tue Feb 13 02:59:02 2024 +0800
+
+    更新了github封面
+
+[33mcommit 81a4c4fced1a920c7ae2839235b2b8db0cc97d37[m
+Author: CryMellory <317426168@qq.com>
+Date:   Mon Feb 12 23:26:15 2024 +0800
+
+    添加了数树木和水(水面还是固体，太累了就先做到这儿)
+
+[33mcommit 3417350535711c26a5931e33dca2d838c85271db[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sun Feb 11 16:47:04 2024 +0800
+
+    添加了地图初始化进度条
+
+[33mcommit 8520f78f590f0ca8a4857726d90a91beedf99859[m
+Author: CryMellory <317426168@qq.com>
+Date:   Fri Feb 9 18:02:43 2024 +0800
+
+    维护了一下代码
+
+[33mcommit 65977adfeac333eb3f152f28941308404fbd52f6[m
+Author: CryMellory <317426168@qq.com>
+Date:   Fri Feb 9 17:50:15 2024 +0800
+
+    1. 修复了debugscreen里facedirection的错误。2. 修复了人物太高导致的无重力bug。 3. 人物放置算法进行了优化。4. 调试面板添加了fps参数
+
+[33mcommit fb9fa0802ec2c3700e5c7dee41eb8d96134ab6e3[m
+Author: CryMellory <317426168@qq.com>
+Date:   Fri Feb 9 17:46:34 2024 +0800
+
+    修复了人物出生点在天上的区块;
+
+[33mcommit f0869ad69acba93ec5e5c5d26caaa182b6cd774f[m
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Feb 7 02:38:01 2024 +0800
+
+    1. 修复了人物不能低头的bug\n 2. 修复了人物低头会降低速度的bug\n 3. 修复了放置方块会卡到自身的bug\n 4. 修复了玩家可以挖掉基岩的bug\n 5. 新增了人物移动时的手臂摇晃和放置物体后的手臂动画
+
+[33mcommit 7f7271c239f6cd2cc638b606588e6ab55db4ed37[m
+Author: CryMellory <317426168@qq.com>
+Date:   Tue Feb 6 13:50:58 2024 +0800
+
+    修复了场景中不显示准心的bug，修复了玩家左右键不生效的bug
+
+[33mcommit bb508a4356c33182fd34ae2aeb44c8f47c2f5de3[m
+Author: CryMellory <317426168@qq.com>
+Date:   Tue Feb 6 00:41:54 2024 +0800
+
+    大更新：赋予了玩家放置与销毁的功能，目前智能放泥土，还能挖掉基岩，但是未来可期
+
+[33mcommit a21a6aad29e11c6509d8f86d3bf0b34216494334[m
+Author: CryMellory <317426168@qq.com>
+Date:   Mon Feb 5 19:15:52 2024 +0800
+
+    未作任何更改，但是代码里多了一些很有用的注释(比如判断邻边chunk的代码[chunk类]，到时候可以用来update贴图的时候用上)
+
+[33mcommit 83ceb5cbbc545d81880563cc045aa381e2fea640[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Sat Feb 3 19:47:24 2024 +0800
+
+    Update README_CN.md
+
+[33mcommit c90c384f45dddd6817ebca96fef79d8902c99158[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Sat Feb 3 19:46:35 2024 +0800
+
+    Update README.md
+
+[33mcommit 079b77622dceef112d6da1a7b95251ae52737b01[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sat Feb 3 19:45:24 2024 +0800
+
+    对编辑器的数值进行了些许调整
+
+[33mcommit 5af2859376fe608e05f878bc07d7ef9255141c4d[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sat Feb 3 19:35:18 2024 +0800
+
+    Update README.md
+
+[33mcommit 8927cb30f8921572917b9953d38e1715e6a06af1[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sat Feb 3 19:25:46 2024 +0800
+
+    添加了中文文档
+
+[33mcommit fb5294cbab5671484b54e47a16df6ff26cda38c8[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Sat Feb 3 19:22:02 2024 +0800
+
+    添加了图片到首页
+
+[33mcommit c7d8bb0b5c34e7ff65767fedb8a9549e9f41e316[m
+Author: CryMellory <317426168@qq.com>
+Date:   Sat Feb 3 19:13:59 2024 +0800
+
+    增加了碰撞盒的采样点数(可能还需要加更多)使得碰撞更加的圆滑，修正了噪声拉伸比例，看起来更像正常地形了
+
+[33mcommit 9382facaac3aa0c40e10f119c13e7c07a70555c0[m
+Author: CryMellory <317426168@qq.com>
+Date:   Fri Dec 29 00:39:10 2023 +0800
+
+    添加了手臂，但是还没有实现手臂晃动，这个待定，期末周暂时没时间
+
+[33mcommit 205b78a4d341051e15ddb96364a3570dadc3f130[m
+Author: CryMellory <317426168@qq.com>
+Date:   Fri Dec 22 10:51:40 2023 +0800
+
+    做了一些简单的调整，暴露了渲染半径给编辑器
+
+[33mcommit c119d7f2e6f035c04e961783d6fc7cf91e6ccf48[m
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Dec 20 11:52:31 2023 +0800
+
+    添加了昼夜交替
+
+[33mcommit 573b5a09e66606c0f927ef7e1e82289c9d5847dc[m
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Dec 20 09:54:17 2023 +0800
+
+    添加了沙子
+
+[33mcommit 5f393baeb713951b270f483b659bb682af4606df[m
+Author: CryMellory <317426168@qq.com>
+Date:   Tue Dec 19 23:16:53 2023 +0800
+
+    update README.md
+
+[33mcommit b81069526d7e0cf31d5606b4c802711aa36f764a[m
+Author: CryMellory <317426168@qq.com>
+Date:   Tue Dec 19 23:12:58 2023 +0800
+
+    添加了角色控制器，这个实现起来怪麻烦的
+
+[33mcommit c905cd1ea64d8d2f8154ac06a10bee73f4bfbbda[m
+Merge: 94e2928 f4b63c6
+Author: CryMellory <317426168@qq.com>
+Date:   Mon Dec 18 20:26:54 2023 +0800
+
+    Merge branch 'master' of https://github.com/MuaCherish/Minecraft_By_Unity
+
+[33mcommit 94e29288a38df82767f1fb5a48bb809779a33a83[m
+Author: CryMellory <317426168@qq.com>
+Date:   Mon Dec 18 20:26:14 2023 +0800
+
+    终于实现了地形的动态生成！其中包含两条协程
+
+[33mcommit f4b63c6d2a0d9d49dd656bc9373c39903c69bd28[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Mon Dec 18 09:51:01 2023 +0800
+
+    Update README.md
+
+[33mcommit d65bc54755393dc3fc9c443161116bfa97746686[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Mon Dec 18 09:49:33 2023 +0800
+
+    Update README.md
+
+[33mcommit 20a689824fd05c4c4f555eb09a6851cc8bece362[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Mon Dec 18 09:45:29 2023 +0800
+
+    Update .vsconfig
+
+[33mcommit e67f55bc07639a11723dcbf5d14154757fc6f145[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Mon Dec 18 09:45:22 2023 +0800
+
+    Update .vsconfig
+
+[33mcommit d98d5663f4e38220eb20c17e2f345e01061b7975[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Mon Dec 18 09:45:02 2023 +0800
+
+    Update .gitignore
+
+[33mcommit 4bfcbb4d89c395cd9b17a5bd9347453776c83764[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Mon Dec 18 09:44:13 2023 +0800
+
+    Update manifest.json
+
+[33mcommit 7b98fc864cb7339d2d02a476d7a590d645afe9ad[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Mon Dec 18 09:44:02 2023 +0800
+
+    Update manifest.json
+
+[33mcommit 83a1a1c6b604479ca8b2f2611ea809f314580c40[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Mon Dec 18 09:43:21 2023 +0800
+
+    Update manifest.json
+
+[33mcommit a19c2a0b816d37e70dadee8f36400e93a28db059[m
+Author: CryMellory <317426168@qq.com>
+Date:   Mon Dec 18 09:41:34 2023 +0800
+
+    调整了一些参数
+
+[33mcommit 67e4b30513ea68bffeddcf474e89f4017a332362[m
+Author: CryMellory <317426168@qq.com>
+Date:   Fri Dec 15 15:07:57 2023 +0800
+
+    添加了player,地形初成型
+
+[33mcommit d6f7e1f066d9d8939ca004e8235ea6e6190a081a[m
+Author: CryMellory <317426168@qq.com>
+Date:   Thu Dec 14 22:09:49 2023 +0800
+
+    添加了Player Controller，但是目前还不能用
+
+[33mcommit 556ead67e7d8dcd8f0a05e53a3608664237d8a74[m
+Author: CryMellory <317426168@qq.com>
+Date:   Thu Dec 14 21:35:53 2023 +0800
+
+    update README.md
+
+[33mcommit 0ab0344a341d71fd9916f3ed5305689f3c7e60db[m
+Merge: 8f4d5bf e226659
+Author: CryMellory <317426168@qq.com>
+Date:   Thu Dec 14 21:33:00 2023 +0800
+
+    Merge branch 'master' of https://github.com/MuaCherish/Minecraft_By_Unity
+
+[33mcommit 8f4d5bf7576ce318eeeea405967440e5bd4c5bc3[m
+Author: CryMellory <317426168@qq.com>
+Date:   Thu Dec 14 21:32:27 2023 +0800
+
+    增加了柏林噪声2d和3d以生成更真实的地形，此外地形是叠加的2d噪声
+
+[33mcommit e226659ea7e2035aa254d4cd4a70a9c167c11909[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Wed Dec 13 21:57:48 2023 +0800
+
+    Update README.md
+
+[33mcommit a42645eb120dc12864bca614b0f6662f2a5e986e[m
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Dec 13 21:42:21 2023 +0800
+
+    贴图的添加，和基本的分层结构
+
+[33mcommit 941c7363b84b09792634a95043f9c8c219715e7c[m
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Dec 13 17:35:38 2023 +0800
+
+    文件整体更新
+
+[33mcommit 6c1048a80ed016a675a14503dc0149f80e8197b1[m
+Merge: c03f4ec 9c4b0d6
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Dec 13 16:46:23 2023 +0800
+
+    Merge branch 'master' of https://github.com/MuaCherish/Minecraft_By_Unity
+
+[33mcommit c03f4ec2a12eed4585b7b1d739ce712b20db18a7[m
+Author: CryMellory <317426168@qq.com>
+Date:   Wed Dec 13 16:43:18 2023 +0800
+
+    unity更新导致文件丢失，测试一下
+
+[33mcommit 9c4b0d689f641372c52b1d339fe6b0891e2c04a2[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Wed Dec 13 10:34:23 2023 +0800
+
+    Update VoxelData.cs
+
+[33mcommit 100e3a77a45905400fa103e9b30c7d2f2e122815[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Tue Dec 12 20:42:29 2023 +0800
+
+    Update README.md
+
+[33mcommit 05d71ae94b08880030e55fc749841b0c611552f9[m
+Author: unknown <317426168@qq.com>
+Date:   Tue Dec 12 20:41:59 2023 +0800
+
+    Update Mynote
+
+[33mcommit f38438c4582f0d76e31ac1f2ca29fde526b1a9cf[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Tue Dec 12 20:34:20 2023 +0800
+
+    Update README.md
+
+[33mcommit a73d720aaba46f830c728baec69f445561884bb8[m
+Author: unknown <317426168@qq.com>
+Date:   Tue Dec 12 20:32:49 2023 +0800
+
+    多余面的剔除，优化了一下性能
+
+[33mcommit 2831dae7a3e67abc79ecb06e4364be4dc275c1e9[m
+Merge: 6f181fe 580bf6a
+Author: unknown <317426168@qq.com>
+Date:   Tue Dec 12 20:27:18 2023 +0800
+
+    Merge branch 'master' of https://github.com/MuaCherish/Minecraft_By_Unity
+
+[33mcommit 6f181fe7835b763708f5c648b4d30a39bd46542b[m
+Author: unknown <317426168@qq.com>
+Date:   Tue Dec 12 20:25:20 2023 +0800
+
+    多余面的剔除，以优化性能
+
+[33mcommit 580bf6a46872eedb4fa4e27ff985eebe49002aba[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Tue Dec 12 15:28:45 2023 +0800
+
+    Complete some tasks.md
+
+[33mcommit 9279b1b7cdb8f0d0ef251c240c946fe16e0dddab[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Tue Dec 12 15:27:44 2023 +0800
+
+    Update My future Plans.md
+
+[33mcommit d1f1707d2245c59005885ac4c242e20fa2dbc8e5[m
+Author: unknown <317426168@qq.com>
+Date:   Tue Dec 12 13:40:54 2023 +0800
+
+    渲染出了第一个正方体
+
+[33mcommit 0291161012a3f60a112bc7af30c62c8b3a76a6ee[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Tue Dec 12 13:26:13 2023 +0800
+
+    Update README.md
+
+[33mcommit 24ffa4eec28a6a4f10ca199c40d62ad06fdba93e[m
+Author: MuaCherish <118589649+MuaCherish@users.noreply.github.com>
+Date:   Tue Dec 12 13:25:42 2023 +0800
+
+    Create README.md
+
+[33mcommit 6eaa399e851dc6d0b9cc5e31ff5e90ad64246e61[m
+Author: unknown <317426168@qq.com>
+Date:   Tue Dec 12 13:20:04 2023 +0800
+
+    git commit2
+
+[33mcommit 94f269d9abc972ee0aa21a085df00e1733ca2e9a[m
+Author: unknown <317426168@qq.com>
+Date:   Tue Dec 12 13:15:59 2023 +0800
+
+    git commit

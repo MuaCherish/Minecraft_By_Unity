@@ -433,7 +433,7 @@ public class World : MonoBehaviour
                 //不存在则生成
                 if (Allchunks.TryGetValue(WatingToCreate_Chunks[0], out obj)) 
                 {
-                    if (obj != null)
+                    if (obj.isShow == false)
                     {
                         obj.ShowChunk();
                     }
@@ -463,11 +463,11 @@ public class World : MonoBehaviour
     {
 
         //先判断一下有没有
-        if (Allchunks.ContainsKey(pos))
-        {
-            Allchunks[pos].ShowChunk();
-            return;
-        }
+        //if (Allchunks.ContainsKey(pos))
+        //{
+        //    Allchunks[pos].ShowChunk();
+        //    return;
+        //}
 
         //调用Chunk
         Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this);
