@@ -7,6 +7,7 @@ using System.Threading;
 public class Chunk : MonoBehaviour
 {
     //state
+    public bool isShow = true;
     public bool isReadyToRender = false;
 
     //Transform
@@ -815,12 +816,14 @@ public class Chunk : MonoBehaviour
     public void HideChunk()
     {
         chunkObject.SetActive(false);
+        isShow = false;
     }
 
     //œ‘ æ◊‘º∫
     public void ShowChunk()
     {
         chunkObject.SetActive(true);
+        isShow = true;
     }
 
     //3d‘Î…˘
