@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.VisualScripting;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class FloatingCube : MonoBehaviour
@@ -16,11 +17,12 @@ public class FloatingCube : MonoBehaviour
     public Coroutine MoveToPlayerCoroutine;
     public float moveDuration;
     public byte point_Block_type;
+    public float ColdTimeToAbsorb;
 
     //材质
     public bool isGround; // 是否在地面上
 
-    public void InitWorld(World _world, float _destroytime, float _absorbDistance, float _gravity, float _moveDuration, byte _point_Block_type, BackPackManager _backpackmanager, MusicManager _musicmanager)
+    public void InitWorld(World _world, float _destroytime, float _absorbDistance, float _gravity, float _moveDuration, byte _point_Block_type, BackPackManager _backpackmanager, MusicManager _musicmanager, float _ColdTimeToAbsorb)
     {
         world = _world;
         destroyTime = _destroytime;
@@ -30,7 +32,9 @@ public class FloatingCube : MonoBehaviour
         point_Block_type = _point_Block_type;
         backpackmanager = _backpackmanager;
         musicmanager = _musicmanager;
+        ColdTimeToAbsorb = _ColdTimeToAbsorb;
     }
+
 
     private void FixedUpdate()
     {
@@ -43,26 +47,19 @@ public class FloatingCube : MonoBehaviour
         // 应用重力
         AchieveGravity();
 
-        //是否可被吸收
-        if ((transform.position - Eyes.transform.position).magnitude < absorbDistance)
-        {
-            Absorbable();
-        }
+
+
+       
 
     }
 
     private void Start()
     {
-        StartCoroutine(WaitToDestroy());
+        Destroy(gameObject, destroyTime);
+        StartCoroutine(absorb());
         Eyes = GameObject.Find("Player/Eyes");
     }
 
-    IEnumerator WaitToDestroy()
-    {
-        yield return new WaitForSeconds(destroyTime);
-
-        Destroy(gameObject);
-    }
 
 
     void CheckIsGround()
@@ -86,6 +83,13 @@ public class FloatingCube : MonoBehaviour
 
             // 执行重力下坠
             transform.Translate(Vector3.down * gravityDelta, Space.World);
+        }
+        else
+        {
+            if (GetComponent<Rigidbody>())
+            {
+                Destroy(GetComponent<Rigidbody>());
+            }
         }
     }
 
@@ -139,6 +143,25 @@ public class FloatingCube : MonoBehaviour
 
         // 移动完成后销毁自身
         Destroy(gameObject);
+    }
+
+
+    //吸收检测
+    IEnumerator absorb()
+    {
+        yield return new WaitForSeconds(ColdTimeToAbsorb);
+
+        //是否可被吸收
+        while (true)
+        {
+            if ((transform.position - Eyes.transform.position).magnitude < absorbDistance)
+            {
+                Absorbable();
+            }
+
+            yield return new WaitForFixedUpdate();
+        }
+        
     }
 
 

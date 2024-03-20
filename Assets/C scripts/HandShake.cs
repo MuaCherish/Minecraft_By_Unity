@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class HandShake : MonoBehaviour
 {
+    public BackPackManager BackPackManager;
     private Animation animationComponent;
     public World world;
     public Player player;
@@ -32,9 +33,10 @@ public class HandShake : MonoBehaviour
                     timer = 0f;
                     PlayFirstAnimation();
                 }
+                //如果玩家移动 && 没有切换方块 就播放移动动画
                 else
                 {
-                    if (player.isMoving && (timer > 0.2f))
+                    if (player.isMoving && (timer > 0.2f) && !BackPackManager.isChanging)
                     {
                         PlaySecondAnimation();
                     }

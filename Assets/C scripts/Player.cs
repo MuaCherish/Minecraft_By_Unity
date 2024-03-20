@@ -412,8 +412,15 @@ public class Player : MonoBehaviour
             
 
         if (isGrounded && Input.GetKey(KeyCode.Space))
+        {
             jumpRequest = true;
+        }
+            
 
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            backpackmanager.ThrowDropBox();
+        }
 
         //飞行模式
         if (world.game_mode == GameMode.Creative)
@@ -648,7 +655,7 @@ public class Player : MonoBehaviour
         //只有生存模式才会掉掉落物
         if (world.game_mode == GameMode.Survival)
         {
-            backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type);
+            backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type, false, backpackmanager.ColdTime_Absorb);
 
         }
 

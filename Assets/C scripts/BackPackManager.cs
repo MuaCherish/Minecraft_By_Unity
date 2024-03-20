@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR;
 
 public class BackPackManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class BackPackManager : MonoBehaviour
     [Header("Transforms")]
     public Material MAT_HandinBlock;
     public Player player;
+    public GameObject Eyes;
     public World world;
     public MusicManager musicmanager;
     public GameObject[] icons = new GameObject[9];
@@ -26,9 +28,18 @@ public class BackPackManager : MonoBehaviour
     public float drop_gravity = 1f;
     public float moveToplayer_duation = 1f;
 
-    [Header("BlockInHand")]
-    public GameObject HandInHand;
-    public GameObject BlockInHand;
+    //切换手中物品的
+    [Header("ChangingBlock")]
+    byte previous_HandBlock = 255;   //255代表手本身
+    public GameObject Hand_Hold;
+    public GameObject Hand;
+    public GameObject HandBlock;
+    public bool isChanging = false;
+    public float ChangeColdTime = 1f;
+
+    public float throwForce = 3f;
+    public float ColdTime_Absorb = 1f;
+
 
     //物品栏的变化
     //返回值:一般都是true，返回false则是不能破坏或者放置
@@ -184,7 +195,7 @@ public class BackPackManager : MonoBehaviour
 
 
     //创造掉落物(坐标,类型)
-    public void CreateDropBox(Vector3 _pos, byte _blocktype)
+    public void CreateDropBox(Vector3 _pos, byte _blocktype, bool _needThrow, float _ColdTimeTiabsorb)
     {
         //刷新偏移
         float x_offset = UnityEngine.Random.Range(2, 8) / 10f;
@@ -193,9 +204,19 @@ public class BackPackManager : MonoBehaviour
 
         //创建父类
         GameObject DropBlock = new GameObject(world.blocktypes[_blocktype].blockName);
-        DropBlock.AddComponent<FloatingCube>().InitWorld(world, dropblock_destroyTime, absorb_Distance, drop_gravity, moveToplayer_duation, _blocktype, this, musicmanager);
+        DropBlock.AddComponent<FloatingCube>().InitWorld(world, dropblock_destroyTime, absorb_Distance, drop_gravity, moveToplayer_duation, _blocktype, this, musicmanager, _ColdTimeTiabsorb);
         DropBlock.transform.SetParent(GameObject.Find("Environment/DropBlocks").transform);
-        DropBlock.transform.position = new Vector3(_pos.x + x_offset, _pos.y + y_offset, _pos.z + z_offset);
+
+        if (_needThrow)
+        {
+            DropBlock.transform.position = new Vector3(_pos.x, _pos.y, _pos.z);
+
+        }
+        else
+        {
+            DropBlock.transform.position = new Vector3(_pos.x + x_offset, _pos.y + y_offset, _pos.z + z_offset);
+
+        }
 
         //有贴图用贴图，没贴图用icon
         if (world.blocktypes[_blocktype].dropsprite != null)
@@ -290,12 +311,38 @@ public class BackPackManager : MonoBehaviour
 
         //最后放大本体
         DropBlock.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+
+
+        //是否扔出去
+        if (_needThrow)
+        {
+            Rigidbody rd = DropBlock.AddComponent<Rigidbody>();
+            //rd.isKinematic = true;
+            rd.velocity = Eyes.transform.forward * throwForce;
+        }
+
     }
 
 
-    //切换手中物品的
-    byte previous_HandBlock = 255;   //255代表手本身
-    public void _ChangeBlockInHand()
+    //按Q扔物品
+    public void ThrowDropBox()
+    {
+        //判断是否能扔掉落物
+        if (slots[player.selectindex].blockId != 255 && slots[player.selectindex].number > 0)
+        {
+            //创造掉落物
+            CreateDropBox(new Vector3(Eyes.transform.position.x, Eyes.transform.position.y - 0.3f, Eyes.transform.position.z), slots[player.selectindex].blockId, true, ColdTime_Absorb);
+
+            //物品栏减一
+            update_slots(1, 0);
+        }
+
+
+    }
+
+
+    //切换物品
+    public void ChangeBlockInHand()
     {
         byte now_HandBlock = slots[player.selectindex].blockId;
         
@@ -305,28 +352,48 @@ public class BackPackManager : MonoBehaviour
             //切换手
             if (now_HandBlock == 255)
             {
-                //放下方块(-0.247 ~ -0.421)
-                //伸出手(-1.2 ~ -0.7)
-                StartCoroutine(Animation_HandBlock(false));
+                //开启冷却时间
+                StartCoroutine(ChangeBlockColdTime());
+
+                //放下Hand_Hold
+                Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Down");
+
+                //显示手，隐藏方块
+                Hand.SetActive(true);
+                HandBlock.SetActive(false);
+
+                //拿出Hand_Hold
+                Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Up");
 
             }
             //切换方块
             else
             {
-                //更新方块材质
+
+                //开启冷却时间
+                StartCoroutine(ChangeBlockColdTime());
+
+                //放下Hand_Hold
+                Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Down");
+
+                //显方块，隐藏手
+                HandBlock.SetActive(true);
+                Hand.SetActive(false);
+
+                //更新材质
                 if (world.blocktypes[player.selectindex].texture != null)
                 {
-                    MAT_HandinBlock.mainTexture = world.blocktypes[player.selectindex].texture;
+                    MAT_HandinBlock.mainTexture = world.blocktypes[slots[player.selectindex].blockId].texture;
                 }
                 else
                 {
                     MAT_HandinBlock.mainTexture = world.blocktypes[VoxelData.BedRock].texture;
                 }
-                
 
-                //放下手(-0.7 ~ -1.2)
-                //伸出方块(-0.421 ~ -0.247)
-                StartCoroutine(Animation_HandBlock(true));
+                //拿出Hand_Hold
+                Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Up");
+
+                
 
             }
 
@@ -335,63 +402,15 @@ public class BackPackManager : MonoBehaviour
         }
     }
 
-    public void ChangeBlockInHand()
+    //切换方块冷却时间
+    IEnumerator ChangeBlockColdTime()
     {
+        isChanging = true;
 
+        yield return new WaitForSeconds(ChangeColdTime);
+
+        isChanging = false;
     }
-
-    //切换方块
-    IEnumerator Animation_HandBlock(bool isHandToBlock)
-    {
-        //拿出方块
-        if (isHandToBlock)
-        {
-            //放下手(y-0.5)
-            Vector3 handTargetPosition = HandInHand.transform.position + Vector3.down * 0.5f;
-            yield return StartCoroutine(MoveObject(HandInHand.transform, handTargetPosition, 1.0f));
-
-            //延迟
-            yield return new WaitForSeconds(1.0f);
-
-            //拿出block(y+0.174)
-            Vector3 blockTargetPosition = BlockInHand.transform.position + Vector3.up * 0.174f;
-            yield return StartCoroutine(MoveObject(BlockInHand.transform, blockTargetPosition, 1.0f));
-        }
-        //拿出手
-        else
-        {
-            //放下block(y-0.174)
-            Vector3 blockTargetPosition = BlockInHand.transform.position + Vector3.down * 0.174f;
-            yield return StartCoroutine(MoveObject(BlockInHand.transform, blockTargetPosition, 1.0f));
-
-            //延迟
-            yield return new WaitForSeconds(1.0f);
-
-            //拿出手(y+0.5)
-            Vector3 handTargetPosition = HandInHand.transform.position + Vector3.up * 0.5f;
-            yield return StartCoroutine(MoveObject(HandInHand.transform, handTargetPosition, 1.0f));
-        }
-
-        yield return null;
-    }
-
-    // 移动物体到目标位置
-    IEnumerator MoveObject(Transform objTransform, Vector3 targetPosition, float duration)
-    {
-        float elapsedTime = 0.0f;
-        Vector3 startingPosition = objTransform.position;
-
-        while (elapsedTime < duration)
-        {
-            objTransform.position = Vector3.Lerp(startingPosition, targetPosition, (elapsedTime / duration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        objTransform.position = targetPosition; // 确保物体最终到达目标位置
-    }
-
-
 
 
 }
