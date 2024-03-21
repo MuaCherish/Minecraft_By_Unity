@@ -25338,8 +25338,8 @@ MonoBehaviour:
   HandBlock: {fileID: 352441213}
   isChanging: 0
   ChangeColdTime: 1
-  throwForce: 5
-  ColdTime_Absorb: 1.5
+  throwForce: 7
+  ColdTime_Absorb: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
