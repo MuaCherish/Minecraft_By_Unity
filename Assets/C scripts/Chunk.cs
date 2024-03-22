@@ -109,6 +109,18 @@ public class Chunk : MonoBehaviour
         return noiseHigh;
     }
 
+    //获取简单噪声
+    float GetSmoothNoise_Tree()
+    {
+        float randomoffset = rand.Next(0, 10);
+        float Offset_x = 100f * randomoffset;
+        float Offset_z = 100f * randomoffset;
+
+        float smoothNoise = Mathf.Lerp((float)0, (float)100, Mathf.PerlinNoise(  (myposition.x + Offset_x) * 0.005f,     (myposition.z + Offset_z) * 0.005f)   );
+        
+        return smoothNoise;
+    }
+
 
     //Data
     void CreateData()
@@ -311,41 +323,47 @@ public class Chunk : MonoBehaviour
     //tree
     void CreateTree()
     {
-        //[确定XZ]xoz上随便选择5个点
-        while (treecount-- != 0)
+
+        if (GetSmoothNoise_Tree() > 35f && GetSmoothNoise_Tree() < 60)
         {
-
-            int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
-            int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
-            int random_y = VoxelData.ChunkHeight;
-            int random_Tree_High = rand.Next(world.TreeHigh_min, world.TreeHigh_max + 1);
-
-            //如果可以生成树桩
-            //向上延伸树干
-            random_y = CanSetStump(random_x, random_y, random_z, random_Tree_High);
-            if (random_y != -1f)
+            //[确定XZ]xoz上随便选择5个点
+            while (treecount-- != 0)
             {
-                for (int i = 0; i <= random_Tree_High; i++)
+
+                int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
+                int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
+                int random_y = VoxelData.ChunkHeight;
+                int random_Tree_High = rand.Next(world.TreeHigh_min, world.TreeHigh_max + 1);
+
+                //如果可以生成树桩
+                //向上延伸树干
+                random_y = CanSetStump(random_x, random_y, random_z, random_Tree_High);
+                if (random_y != -1f)
                 {
-                    if (random_y + i >= VoxelData.ChunkHeight - 1)
+                    for (int i = 0; i <= random_Tree_High; i++)
                     {
-                        Debug.Log($"random_y:{random_y},i={i}");
+                        if (random_y + i >= VoxelData.ChunkHeight - 1)
+                        {
+                            Debug.Log($"random_y:{random_y},i={i}");
+                        }
+                        else
+                        {
+                            voxelMap[random_x, random_y + i, random_z] = VoxelData.Wood;
+                        }
+
                     }
-                    else
-                    {
-                        voxelMap[random_x, random_y + i, random_z] = VoxelData.Wood;
-                    }
-                    
+
+                    //生成树叶
+                    BuildLeaves(random_x, random_y + random_Tree_High, random_z);
+
                 }
 
-                //生成树叶
-                BuildLeaves(random_x, random_y + random_Tree_High, random_z);
 
+                //Debug.Log($"{random_x}, {random_y}, {random_z}");
             }
-
-
-            //Debug.Log($"{random_x}, {random_y}, {random_z}");
         }
+
+        
     }
 
     // 返回一个概率值，范围在0~100，根据输入值越接近100，概率接近100%，越接近0，概率接近0%
@@ -454,21 +472,29 @@ public class Chunk : MonoBehaviour
             while (_y > 0)
             {
                 //如果不是泥土或者草地则不生成
-                if (voxelMap[_x, _y - 1, _z] == VoxelData.Grass || voxelMap[_x, _y - 1, _z] == VoxelData.Soil)
+                if (voxelMap[_x, _y - 1, _z] != VoxelData.Air)
                 {
-
-                    //判断树干是否太高
-                    if (_y + treehigh + 3 > VoxelData.ChunkHeight - 1)
+                    if (voxelMap[_x, _y - 1, _z] == VoxelData.Grass || voxelMap[_x, _y - 1, _z] == VoxelData.Soil)
                     {
-                        return -1;
+
+                        //判断树干是否太高
+                        if (_y + treehigh + 3 > VoxelData.ChunkHeight - 1)
+                        {
+                            return -1;
+                        }
+                        else
+                        {
+                            return _y;
+                        }
+
+
                     }
                     else
                     {
-                        return _y;
+                        return -1;
                     }
-
-
                 }
+                
                 _y--;
 
                 //如果树顶超过最大高度，不生成

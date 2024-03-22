@@ -372,7 +372,7 @@ MonoBehaviour:
   Terrain_Width: 64
   soil_min: 50
   soil_max: 64
-  noise2d_scale_smooth: 0.00005
+  noise2d_scale_smooth: 0.005
   noise2d_scale_steep: 0.04
   scale_Smooth: 0.7
   scale_Steep: 0.3
