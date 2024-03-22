@@ -190,6 +190,16 @@ public class TerrainTest_Voxel : MonoBehaviour
         return noiseHigh;
     }
 
+    float GetSmoothNoise_Tree(int _x, int _z)
+    {
+        float Offset_x = 100f * 5;
+        float Offset_z = 100f * 5;
+
+        float smoothNoise = Mathf.Lerp((float)soil_min, (float)soil_max, Mathf.PerlinNoise(((float)_x + myposition.x + Offset_x) * noise2d_scale_smooth, ((float)_z + myposition.z + Offset_z) * noise2d_scale_smooth));
+
+        return smoothNoise;
+    }
+
 
     private void UpdateTerrain()
     {
@@ -206,7 +216,7 @@ public class TerrainTest_Voxel : MonoBehaviour
         {
             for (int x = 0; x <= Terrain_Width; x++)
             {
-                vertices[z * (Terrain_Width + 1) + x] = new Vector3(x, Mathf.FloorToInt(GetTotalNoiseHigh_3(x,z)), z);
+                vertices[z * (Terrain_Width + 1) + x] = new Vector3(x, Mathf.FloorToInt(GetSmoothNoise_Tree(x,z)), z);
                 uv[z * (Terrain_Width + 1) + x] = new Vector2((float)x / Terrain_Width, (float)z / Terrain_Width);
             }
         }
