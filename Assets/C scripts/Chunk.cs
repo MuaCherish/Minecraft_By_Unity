@@ -93,7 +93,7 @@ public class Chunk : MonoBehaviour
     float GetTotalNoiseHigh(int _x, int _z)
     {
         //(平原-山脉)过度噪声
-        float biome_moutainAndPlane = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((float)_x * 0.0006f + myposition.x * 0.0006f, (float)_z * 0.0006f + myposition.z * 0.0006f));
+        float biome_moutainAndPlane = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((float)_x * 5e-05f + myposition.x * 5e-05f, (float)_z * 5e-05f + myposition.z * 5e-05f));
         
         //小：平原噪声
         //大：山脉噪声
@@ -110,7 +110,7 @@ public class Chunk : MonoBehaviour
     }
 
 
-    //方块类型的初始化
+    //Data
     void CreateData()
     {
         //对一个chunk进行遍历
@@ -318,47 +318,28 @@ public class Chunk : MonoBehaviour
             int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
             int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
             int random_y = VoxelData.ChunkHeight;
-            bool needTree = true;
             int random_Tree_High = rand.Next(world.TreeHigh_min, world.TreeHigh_max + 1);
 
-            //[确定Y]向下遍历直到地表上一层
-            while (random_y-- != 0)
+            //如果可以生成树桩
+            //向上延伸树干
+            random_y = CanSetStump(random_x, random_y, random_z, random_Tree_High);
+            if (random_y != -1f)
             {
-                //如果是沙子或者树叶或者水面或者竹子，不生成树
-                if (voxelMap[random_x, random_y - 1, random_z] == VoxelData.Sand || voxelMap[random_x, random_y - 1, random_z] == VoxelData.Leaves || voxelMap[random_x, random_y - 1, random_z] == VoxelData.Water || voxelMap[random_x, random_y - 1, random_z] == VoxelData.Bamboo)
-                {
-                    needTree = false;
-                    break;
-                }
-
-
-                //如果树顶超过最大高度，不生成
-                //else if (random_y + random_Tree_High >= VoxelData.ChunkHeight)
-                //{
-                //    needTree = false;
-                //    break;
-                //}
-
-                //如果碰到固体则生成
-                else if (voxelMap[random_x, random_y - 1, random_z] != VoxelData.Air)
-                {
-                    needTree = true;
-                    break;
-                }
-            }
-
-
-            //定好树桩后，向上延伸5~7层树干
-            if (needTree)
-            {
-
                 for (int i = 0; i <= random_Tree_High; i++)
                 {
-                    voxelMap[random_x, random_y + i, random_z] = VoxelData.Wood;
+                    if (random_y + i >= VoxelData.ChunkHeight - 1)
+                    {
+                        Debug.Log($"random_y:{random_y},i={i}");
+                    }
+                    else
+                    {
+                        voxelMap[random_x, random_y + i, random_z] = VoxelData.Wood;
+                    }
+                    
                 }
 
                 //生成树叶
-                CreateLeaves(random_x, random_y + random_Tree_High, random_z);
+                BuildLeaves(random_x, random_y + random_Tree_High, random_z);
 
             }
 
@@ -367,8 +348,24 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    //leaves
-    void CreateLeaves(int _x, int _y, int _z)
+    // 返回一个概率值，范围在0~100，根据输入值越接近100，概率接近100%，越接近0，概率接近0%
+    bool GetProbability(float input)
+    {
+        if (input > 50f)
+        {
+            // 如果输入值大于45，总是返回true
+            return true;
+        }
+        else
+        {
+            // 如果输入值在0~45之间，根据概率返回true或者false
+            float probability = rand.Next(0, 200);
+            return probability <= input;
+        }
+    }
+
+    //构造树叶
+    void BuildLeaves(int _x, int _y, int _z)
     {
 
         int randomInt = rand.Next(0, 2);
@@ -377,79 +374,121 @@ public class Chunk : MonoBehaviour
         //第一层
         if (randomInt == 0)
         {
-            SetLeaves(_x, _y + 1, _z);
+            CreateLeaves(_x, _y + 1, _z);
         }
         else if (randomInt == 1)
         {
-            SetLeaves(_x, _y + 1, _z + 1);
-            SetLeaves(_x - 1, _y + 1, _z);
-            SetLeaves(_x, _y + 1, _z);
-            SetLeaves(_x + 1, _y + 1, _z);
-            SetLeaves(_x, _y + 1, _z - 1);
+            CreateLeaves(_x, _y + 1, _z + 1);
+            CreateLeaves(_x - 1, _y + 1, _z);
+            CreateLeaves(_x, _y + 1, _z);
+            CreateLeaves(_x + 1, _y + 1, _z);
+            CreateLeaves(_x, _y + 1, _z - 1);
         }
 
         //第二层
-        SetLeaves(_x - 1, _y, _z);
-        SetLeaves(_x + 1, _y, _z);
-        SetLeaves(_x, _y, _z - 1);
-        SetLeaves(_x, _y, _z + 1);
+        CreateLeaves(_x - 1, _y, _z);
+        CreateLeaves(_x + 1, _y, _z);
+        CreateLeaves(_x, _y, _z - 1);
+        CreateLeaves(_x, _y, _z + 1);
 
         //第三层
-        SetLeaves(_x - 1, _y - 1, _z + 2);
-        SetLeaves(_x, _y - 1, _z + 2);
-        SetLeaves(_x + 1, _y - 1, _z + 2);
+        CreateLeaves(_x - 1, _y - 1, _z + 2);
+        CreateLeaves(_x, _y - 1, _z + 2);
+        CreateLeaves(_x + 1, _y - 1, _z + 2);
 
-        SetLeaves(_x - 2, _y - 1, _z + 1);
-        SetLeaves(_x - 1, _y - 1, _z + 1);
-        SetLeaves(_x, _y - 1, _z + 1);
-        SetLeaves(_x + 1, _y - 1, _z + 1);
-        SetLeaves(_x + 2, _y - 1, _z + 1);
+        CreateLeaves(_x - 2, _y - 1, _z + 1);
+        CreateLeaves(_x - 1, _y - 1, _z + 1);
+        CreateLeaves(_x, _y - 1, _z + 1);
+        CreateLeaves(_x + 1, _y - 1, _z + 1);
+        CreateLeaves(_x + 2, _y - 1, _z + 1);
 
-        SetLeaves(_x - 2, _y - 1, _z);
-        SetLeaves(_x - 1, _y - 1, _z);
-        SetLeaves(_x + 1, _y - 1, _z);
-        SetLeaves(_x + 2, _y - 1, _z);
+        CreateLeaves(_x - 2, _y - 1, _z);
+        CreateLeaves(_x - 1, _y - 1, _z);
+        CreateLeaves(_x + 1, _y - 1, _z);
+        CreateLeaves(_x + 2, _y - 1, _z);
 
-        SetLeaves(_x - 2, _y - 1, _z - 1);
-        SetLeaves(_x - 1, _y - 1, _z - 1);
-        SetLeaves(_x, _y - 1, _z - 1);
-        SetLeaves(_x + 1, _y - 1, _z - 1);
-        SetLeaves(_x + 2, _y - 1, _z - 1);
+        CreateLeaves(_x - 2, _y - 1, _z - 1);
+        CreateLeaves(_x - 1, _y - 1, _z - 1);
+        CreateLeaves(_x, _y - 1, _z - 1);
+        CreateLeaves(_x + 1, _y - 1, _z - 1);
+        CreateLeaves(_x + 2, _y - 1, _z - 1);
 
-        SetLeaves(_x - 1, _y - 1, _z - 2);
-        SetLeaves(_x, _y - 1, _z - 2);
-        SetLeaves(_x + 1, _y - 1, _z - 2);
+        CreateLeaves(_x - 1, _y - 1, _z - 2);
+        CreateLeaves(_x, _y - 1, _z - 2);
+        CreateLeaves(_x + 1, _y - 1, _z - 2);
 
         //第四层
-        SetLeaves(_x - 1, _y - 2, _z + 2);
-        SetLeaves(_x, _y - 2, _z + 2);
-        SetLeaves(_x + 1, _y - 2, _z + 2);
+        CreateLeaves(_x - 1, _y - 2, _z + 2);
+        CreateLeaves(_x, _y - 2, _z + 2);
+        CreateLeaves(_x + 1, _y - 2, _z + 2);
 
-        SetLeaves(_x - 2, _y - 2, _z + 1);
-        SetLeaves(_x - 1, _y - 2, _z + 1);
-        SetLeaves(_x, _y - 2, _z + 1);
-        SetLeaves(_x + 1, _y - 2, _z + 1);
-        SetLeaves(_x + 2, _y - 2, _z + 1);
+        CreateLeaves(_x - 2, _y - 2, _z + 1);
+        CreateLeaves(_x - 1, _y - 2, _z + 1);
+        CreateLeaves(_x, _y - 2, _z + 1);
+        CreateLeaves(_x + 1, _y - 2, _z + 1);
+        CreateLeaves(_x + 2, _y - 2, _z + 1);
 
-        SetLeaves(_x - 2, _y - 2, _z);
-        SetLeaves(_x - 1, _y - 2, _z);
-        SetLeaves(_x + 1, _y - 2, _z);
-        SetLeaves(_x + 2, _y - 2, _z);
+        CreateLeaves(_x - 2, _y - 2, _z);
+        CreateLeaves(_x - 1, _y - 2, _z);
+        CreateLeaves(_x + 1, _y - 2, _z);
+        CreateLeaves(_x + 2, _y - 2, _z);
 
-        SetLeaves(_x - 2, _y - 2, _z - 1);
-        SetLeaves(_x - 1, _y - 2, _z - 1);
-        SetLeaves(_x, _y - 2, _z - 1);
-        SetLeaves(_x + 1, _y - 2, _z - 1);
-        SetLeaves(_x + 2, _y - 2, _z - 1);
+        CreateLeaves(_x - 2, _y - 2, _z - 1);
+        CreateLeaves(_x - 1, _y - 2, _z - 1);
+        CreateLeaves(_x, _y - 2, _z - 1);
+        CreateLeaves(_x + 1, _y - 2, _z - 1);
+        CreateLeaves(_x + 2, _y - 2, _z - 1);
 
-        SetLeaves(_x - 1, _y - 2, _z - 2);
-        SetLeaves(_x, _y - 2, _z - 2);
-        SetLeaves(_x + 1, _y - 2, _z - 2);
+        CreateLeaves(_x - 1, _y - 2, _z - 2);
+        CreateLeaves(_x, _y - 2, _z - 2);
+        CreateLeaves(_x + 1, _y - 2, _z - 2);
 
     }
 
+    //树桩生成判断
+    int CanSetStump(int _x,int _y,int _z, int treehigh)
+    {
+
+        if (GetProbability(_y))
+        {
+            while (_y > 0)
+            {
+                //如果不是泥土或者草地则不生成
+                if (voxelMap[_x, _y - 1, _z] == VoxelData.Grass || voxelMap[_x, _y - 1, _z] == VoxelData.Soil)
+                {
+
+                    //判断树干是否太高
+                    if (_y + treehigh + 3 > VoxelData.ChunkHeight - 1)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return _y;
+                    }
+
+
+                }
+                _y--;
+
+                //如果树顶超过最大高度，不生成
+                //else if (random_y + random_Tree_High >= VoxelData.ChunkHeight)
+                //{
+                //    needTree = false;
+                //    break;
+                //}
+            }
+        }
+
+        
+
+        return -1;
+
+    }
+
+    //树叶生成判断
     //leaves设定值，防止碰到树木
-    void SetLeaves(int x, int y, int z)
+    void CreateLeaves(int x, int y, int z)
     {
         //如果是固体，就不用生成树叶了
         if (voxelMap[x, y, z] != VoxelData.Air)
@@ -517,6 +556,7 @@ public class Chunk : MonoBehaviour
         }
     }
 
+    //煤炭生成判断
     //如果是空气 || 出界则不生成
     void SetCoal(int _x, int _y, int _z)
     {
