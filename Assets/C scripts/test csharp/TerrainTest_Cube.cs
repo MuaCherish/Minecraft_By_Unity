@@ -18,6 +18,8 @@ public class TerrainTest_Cube : MonoBehaviour
     public float noise2d_scale_smooth; private float _noise2d_scale_smooth;
     public float noise2d_scale_steep; private float _noise2d_scale_steep;
 
+    private Vector3 _position;
+
 
     private void Start()
     {
@@ -46,7 +48,8 @@ public class TerrainTest_Cube : MonoBehaviour
             _soil_min != soil_min ||
             _soil_max != soil_max ||
             _noise2d_scale_smooth != noise2d_scale_smooth ||
-            _noise2d_scale_steep != noise2d_scale_steep
+            _noise2d_scale_steep != noise2d_scale_steep ||
+            _position != transform.position
             )
         {
             return true;
@@ -65,6 +68,7 @@ public class TerrainTest_Cube : MonoBehaviour
         _soil_max = soil_max;
         _noise2d_scale_smooth = noise2d_scale_smooth;
         _noise2d_scale_steep = noise2d_scale_steep;
+        _position = transform.position;
     }
 
     //更新地形
@@ -81,13 +85,13 @@ public class TerrainTest_Cube : MonoBehaviour
                 cubeClone.transform.parent = Cubes.transform;
 
                 // 计算高度
-                float noise2d_1 = Mathf.Lerp((float)soil_min, (float)soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + z * noise2d_scale_smooth));
-                float noise2d_2 = Mathf.Lerp((float)(soil_min), (float)soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + x * noise2d_scale_steep, (float)z * noise2d_scale_steep + z * noise2d_scale_steep));
+                float noise2d_1 = Mathf.Lerp((float)soil_min, (float)soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + this.transform.position.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + this.transform.position.z * noise2d_scale_smooth));
+                float noise2d_2 = Mathf.Lerp((float)(soil_min), (float)soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + this.transform.position.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + this.transform.position.z * noise2d_scale_steep));
                 float noise2d_3 = Mathf.Lerp((float)(soil_min), (float)soil_max, Mathf.PerlinNoise((float)x * 0.1f + x * 0.1f, (float)z * 0.15f + z * 0.15f));
                 float noiseHigh = noise2d_1 * 0.6f + noise2d_2 * 0.4f + noise2d_3 * 0.05f;
 
                 // 设置 Cube 克隆的高度
-                cubeClone.transform.localPosition = new Vector3(x, Mathf.FloorToInt(noiseHigh), z);
+                cubeClone.transform.localPosition = new Vector3(x + this.transform.position.x, Mathf.FloorToInt(noiseHigh), z + this.transform.position.z);
 
                 // 根据当前高度设置材质颜色
                 Renderer renderer = cubeClone.GetComponent<Renderer>();

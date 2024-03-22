@@ -368,11 +368,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Mymaterial: {fileID: 2100000, guid: 4c37c08766a8a4345a4e8a2b6f47c3b2, type: 2}
-  Terrain_Width: 20
-  soil_min: 20
-  soil_max: 50
-  noise2d_scale_smooth: 0.01
+  clarrfy_biome: 5
+  Terrain_Width: 64
+  soil_min: 50
+  soil_max: 64
+  noise2d_scale_smooth: 0.006
   noise2d_scale_steep: 0.04
+  scale_Smooth: 0.7
+  scale_Steep: 0.3
+  "\u5E73\u539F\u6700\u9AD8": 50
+  "\u5E73\u539FSmooth": 0.002
+  "\u5E73\u539FSteep": 0.004
+  "\u5C71\u8109\u6700\u9AD8": 64
+  "\u5C71\u8109Smooth": 0.04
+  "\u5C71\u8109Steep": 0.05
 --- !u!4 &380867274
 Transform:
   m_ObjectHideFlags: 0
@@ -382,7 +391,7 @@ Transform:
   m_GameObject: {fileID: 380867272}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -24.3, y: 0, z: -28.9}
+  m_LocalPosition: {x: 1600, y: 0, z: 800}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
