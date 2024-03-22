@@ -88,6 +88,27 @@ public class Chunk : MonoBehaviour
 
 
     //---------------------------------- Data线程 ---------------------------------------
+    
+    //噪声生成器
+    float GetTotalNoiseHigh(int _x, int _z)
+    {
+        //(平原-山脉)过度噪声
+        float biome_moutainAndPlane = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((float)_x * 0.0006f + myposition.x * 0.0006f, (float)_z * 0.0006f + myposition.z * 0.0006f));
+        
+        //小：平原噪声
+        //大：山脉噪声
+        float soilmax = Mathf.Lerp(50, 64, biome_moutainAndPlane);
+        float smooth = Mathf.Lerp(0.002f, 0.04f, biome_moutainAndPlane);
+        float steep = Mathf.Lerp(0.004f, 0.05f, biome_moutainAndPlane);
+
+        //最终噪声
+        float noise2d_1 = Mathf.Lerp((float)20, (float)soilmax, Mathf.PerlinNoise((float)_x * smooth + myposition.x * smooth, (float)_z * smooth + myposition.z * smooth));
+        float noise2d_2 = Mathf.Lerp((float)20, (float)soilmax, Mathf.PerlinNoise((float)_x * steep + myposition.x * steep, (float)_z * steep + myposition.z * steep));
+        float noiseHigh = noise2d_1 * 0.7f + noise2d_2 * 0.3f;
+
+        return noiseHigh;
+    }
+
 
     //方块类型的初始化
     void CreateData()
@@ -123,13 +144,13 @@ public class Chunk : MonoBehaviour
                     {
 
                         //三个2d噪声
-                        float noise2d_1 = Mathf.Lerp((float)world.soil_min, (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + myposition.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + myposition.z * noise2d_scale_smooth));
-                        float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + myposition.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + myposition.z * noise2d_scale_steep));
-                        float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + myposition.x * 0.1f, (float)z * 0.15f + myposition.z * 0.15f));
+                        //float noise2d_1 = Mathf.Lerp((float)world.soil_min, (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + myposition.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + myposition.z * noise2d_scale_smooth));
+                        //float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + myposition.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + myposition.z * noise2d_scale_steep));
+                        //float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + myposition.x * 0.1f, (float)z * 0.15f + myposition.z * 0.15f));
 
                         //噪声叠加
-                        float noiseHigh = noise2d_1 * 0.6f + noise2d_2 * 0.4f + noise2d_3 * 0.05f;
-
+                        //float noiseHigh = noise2d_1 * 0.6f + noise2d_2 * 0.4f + noise2d_3 * 0.05f;
+                        float noiseHigh = GetTotalNoiseHigh(x,z);
 
                         //空气部分
                         if (y > noiseHigh)
