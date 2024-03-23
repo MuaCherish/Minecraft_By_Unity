@@ -93,7 +93,7 @@ public class Chunk : MonoBehaviour
     float GetTotalNoiseHigh(int _x, int _z)
     {
         //(平原-山脉)过度噪声
-        float biome_moutainAndPlane = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((float)_x * 5e-05f + myposition.x * 5e-05f, (float)_z * 5e-05f + myposition.z * 5e-05f));
+        float biome_moutainAndPlane = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((float)_x * 1e-05f + myposition.x * 1e-05f, (float)_z * 1e-05f + myposition.z * 1e-05f));
         
         //小：平原噪声
         //大：山脉噪声
