@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+
 //using System.Diagnostics;
 using TMPro;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 //全局游戏状态
 public enum Game_State
@@ -130,6 +134,9 @@ public class World : MonoBehaviour
     public Queue<Chunk> WaitToRender = new Queue<Chunk>();
     Coroutine Render_Coroutine;
 
+    //Threading
+    public Queue<Chunk> WaitToCreateMesh = new Queue<Chunk>();
+
     //----------------------------------周期函数---------------------------------------
     private void Start()
     {
@@ -152,8 +159,14 @@ public class World : MonoBehaviour
     private void FixedUpdate()
     {
 
+        //Mesh线程常驻
+        CreateMeshCoroutineManager();
+
+
         //渲染线程常驻
         RenderCoroutineManager();
+
+
 
         //初始化地图
         if (game_state == Game_State.Loading)
@@ -183,9 +196,9 @@ public class World : MonoBehaviour
             if (hasExec)
             {
                 // 将鼠标锁定在屏幕中心
-                Cursor.lockState = CursorLockMode.Locked;
+                UnityEngine.Cursor.lockState = CursorLockMode.Locked;
                 //鼠标不可视
-                Cursor.visible = false;
+                UnityEngine.Cursor.visible = false;
             }
 
 
@@ -677,6 +690,37 @@ public class World : MonoBehaviour
             RenderDelay = nowtime;
         }
     }
+
+
+
+    //Mesh线程
+    void CreateMeshCoroutineManager()
+    {
+        if (WaitToCreateMesh.Count != 0 && Render_Coroutine == null)
+        {
+            StartCoroutine(Mesh_0());
+        }
+    }
+
+
+    IEnumerator Mesh_0()
+    {
+
+        while(true)
+        {
+            Chunk chunktemp = WaitToCreateMesh.Dequeue();
+
+            //Mesh线程
+            Thread myThread = new Thread(new ThreadStart(chunktemp.UpdateChunkMesh));
+            myThread.Start();
+
+            yield return new WaitForSeconds(1f);
+        }
+        
+
+        
+    }
+
 
 
     //---------------------------------------------------------------------------------------
