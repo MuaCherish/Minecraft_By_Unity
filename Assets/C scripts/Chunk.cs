@@ -49,6 +49,10 @@ public class Chunk : MonoBehaviour
     System.Random rand;
     Vector3 myposition;
 
+    //debug
+    bool debug_lookCave;
+
+
     //---------------------------------- 周期函数 ---------------------------------------
 
     //Start()
@@ -61,6 +65,7 @@ public class Chunk : MonoBehaviour
         noise3d_scale = world.noise3d_scale;
         treecount = world.TreeCount;
         caveWidth = world.cave_width;
+        debug_lookCave = world.debug_lookCave;
 
         //Self
         chunkObject = new GameObject();
@@ -76,6 +81,9 @@ public class Chunk : MonoBehaviour
         myposition = chunkObject.transform.position;
         Thread myThread = new Thread(new ThreadStart(CreateData));
         myThread.Start();
+
+
+        //print($"{world.GetChunkLocation(myposition)}");
     }
 
 
@@ -120,7 +128,6 @@ public class Chunk : MonoBehaviour
         
         return smoothNoise;
     }
-
 
     //Data
     void CreateData()
@@ -658,8 +665,14 @@ public class Chunk : MonoBehaviour
 
     //---------------------------------- Mesh部分 ----------------------------------------
 
+    //外界调用的
+    //public void UpdateChunkMesh()
+    //{
+
+    //}
+
     //开始遍历
-    public void UpdateChunkMesh()
+    private void UpdateChunkMesh()
     {
 
         ClearMeshData();
@@ -672,19 +685,21 @@ public class Chunk : MonoBehaviour
                 {
 
                     //竹子断裂
-                    updateBamboo();
+                    //updateBamboo();
 
                     //(是固体 || 是水 || 是水面上一层 || 是竹子)才生成
                     if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water || voxelMap[x, y, z] == VoxelData.Bamboo)
                         UpdateMeshData(new Vector3(x, y, z));
 
+                    //UpdateMeshData(new Vector3(x, y, z));
                 }
-            }
+            } 
         }
 
         //添加到world的渲染队列
         isReadyToRender = true;
-        world.WaitToRender.Enqueue(this);
+        //print($"添加{world.GetChunkLocation(myposition)}到渲染列表");
+        world.WaitToRender.Enqueue(this); 
     }
 
     //清除网格
@@ -736,10 +751,173 @@ public class Chunk : MonoBehaviour
             //	print("");
             //}
 
+            //Front
+            if (z > VoxelData.ChunkWidth - 1)
+            {
+                //如果能查到
+                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                {
+                    //print($"{world.GetChunkLocation(myposition)} 找到Front:{world.GetChunkLocation(chunktemp.myposition)}");
+                    //呼叫系统(1次)
+                    if (isFind_Front == false)
+                    {
+                        //print($"{world.GetChunkLocation(myposition)} 呼叫Front:{world.GetChunkLocation(chunktemp.myposition)}");
+                        
+
+                        //update
+                        isFind_Front = true;
+                        chunktemp.isFind_Back = true;
+                        //print($"isFindFront:{isFind_Front},targetisFindBack:{chunktemp.isFind_Back}");
+
+                        //呼叫更新
+                        chunktemp.UpdateChunkMesh();
+                    }
+
+                    //如果target是空气，则返回false
+                    if (chunktemp.voxelMap[x, y, 0] == VoxelData.Air)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                }
+                else
+                {
+                    if (debug_lookCave)
+                        return true;
+                }
+            }
 
 
+            //Back
+            if (z < 0)
+            {
+                //如果能查到
+                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                {
+                    //print($"{world.GetChunkLocation(myposition)} 找到Back:{world.GetChunkLocation(chunktemp.myposition)}");
+                    //呼叫系统(1次)
+                    if (isFind_Back == false)
+                    {
+                        //print($"{world.GetChunkLocation(myposition)} 呼叫Back:{world.GetChunkLocation(chunktemp.myposition)}");
 
-            //自己是不是空气
+
+                        //update
+                        isFind_Back = true;
+                        chunktemp.isFind_Front = true;
+                        //print($"isFindBack:{isFind_Back},targetisFindFront:{chunktemp.isFind_Front}");
+
+                        //呼叫更新
+                        chunktemp.UpdateChunkMesh();
+                    }
+
+                    //如果target是空气，则返回false
+                    if (chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1] == VoxelData.Air)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                }
+                else
+                {
+                    if (debug_lookCave)
+                        return true;
+                }
+
+
+            }
+
+
+            //Left
+            if (x < 0)
+            {
+                //如果能查到
+                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                {
+                    //print($"{world.GetChunkLocation(myposition)} 找到Left:{world.GetChunkLocation(chunktemp.myposition)}");
+                    //呼叫系统(1次)
+                    if (isFind_Left == false)
+                    {
+                        //update
+                        isFind_Left = true;
+                        chunktemp.isFind_Right = true;
+
+                        //呼叫更新
+                        chunktemp.UpdateChunkMesh();
+                    }
+
+                    //如果target是空气，则返回false
+                    if (chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z] == VoxelData.Air)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                }
+                else
+                {
+                    if (debug_lookCave)
+                        return true;
+                }
+            }
+
+
+            //Right
+            if (x > VoxelData.ChunkWidth - 1)
+            {
+                //如果能查到
+                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                {
+                    //print($"{world.GetChunkLocation(myposition)} 找到Right:{world.GetChunkLocation(chunktemp.myposition)}");
+                    //呼叫系统(1次)
+                    if (isFind_Right == false)
+                    {
+                        //呼叫更新
+                        chunktemp.UpdateChunkMesh();
+
+                        //update
+                        isFind_Right = true;
+                        chunktemp.isFind_Left = true;
+                    }
+
+                    //如果target是空气，则返回false
+                    if (chunktemp.voxelMap[0, y, z] == VoxelData.Air)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                }
+                else
+                {
+                    if (debug_lookCave)
+                        return true;
+                }
+            }
+
+
+            //Up不需要考虑
+
+            //Down:最下层一律不绘制
+            if (y < 0)
+            {
+                return true;
+            }
+
+            //else:自己是不是空气
             if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air || voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Water)
             {
                 return true;
@@ -750,9 +928,13 @@ public class Chunk : MonoBehaviour
             }
 
 
+
+
         }
         else
         {
+            //Debug.Log("未出界");
+
             //自己是空气 && 目标是竹子 则绘制
             if (voxelMap[x, y, z] == VoxelData.Bamboo && voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air)
             {
@@ -884,6 +1066,18 @@ public class Chunk : MonoBehaviour
 
 
 
+    //------------------------------------------------------------------------------------
+
+
+
+
+
+
+    //------------------------------ CallSurround功能 ------------------------------------
+    public bool isFind_Front = false;
+    public bool isFind_Back = false;
+    public bool isFind_Left = false;
+    public bool isFind_Right = false;
     //------------------------------------------------------------------------------------
 
 

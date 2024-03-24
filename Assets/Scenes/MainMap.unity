@@ -9055,8 +9055,9 @@ MonoBehaviour:
   DestroySize: 7
   noise2d_scale_smooth: 0.01
   noise2d_scale_steep: 0.04
-  noise3d_scale: 0.1
-  cave_width: 0.45
+  debug_lookCave: 0
+  noise3d_scale: 0.08
+  cave_width: 0.38
   isRandomSeed: 1
   Seed: 0
   soil_min: 20
@@ -9074,7 +9075,7 @@ MonoBehaviour:
   PlayerFoot: {fileID: 656216633}
   ERROR_CODE_OUTOFVOXELMAP: 255
   Start_Position: {x: 1600, y: 63, z: 1600}
-  InitCorountineDelay: 0.0001
+  InitCorountineDelay: 0.01
   CreateCoroutineDelay: 0.001
   RemoveCoroutineDelay: 0.001
   RenderDelay: 0.001
