@@ -46,8 +46,8 @@ public class Chunk : MonoBehaviour
     public float stdDev = 5f; // 标准差
 
     //多线程变量
-    System.Random rand;
-    Vector3 myposition;
+    public System.Random rand;
+    public Vector3 myposition;
 
     //debug
     bool debug_lookCave;
@@ -75,15 +75,16 @@ public class Chunk : MonoBehaviour
         chunkObject.transform.SetParent(world.Chunks.transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
+        myposition = chunkObject.transform.position;
 
         //Data线程
         rand = new System.Random(world.Seed);
-        myposition = chunkObject.transform.position;
         Thread myThread = new Thread(new ThreadStart(CreateData));
         myThread.Start();
 
 
-        //print($"{world.GetChunkLocation(myposition)}");
+        //print($"----------------------------------------------");
+        //print($"{world.GetChunkLocation(myposition)}已经生成！");
     }
 
 
@@ -141,6 +142,9 @@ public class Chunk : MonoBehaviour
                 {
                     // 生成0或1的随机数
                     int randomInt = rand.Next(0, 2);
+
+
+
 
                     //判断基岩
                     //0~3层不准生成矿洞
@@ -318,9 +322,10 @@ public class Chunk : MonoBehaviour
         //}
 
 
-        //Mesh线程
-        Thread myThread = new Thread(new ThreadStart(UpdateChunkMesh));
-        myThread.Start();
+        
+
+        //交给world来create
+        world.WaitToCreateMesh.Enqueue(this);
 
     }
 
@@ -665,14 +670,8 @@ public class Chunk : MonoBehaviour
 
     //---------------------------------- Mesh部分 ----------------------------------------
 
-    //外界调用的
-    //public void UpdateChunkMesh()
-    //{
-
-    //}
-
     //开始遍历
-    private void UpdateChunkMesh()
+    public void UpdateChunkMesh()
     {
 
         ClearMeshData();
@@ -693,13 +692,18 @@ public class Chunk : MonoBehaviour
 
                     //UpdateMeshData(new Vector3(x, y, z));
                 }
-            } 
+            }
         }
+
+       
 
         //添加到world的渲染队列
         isReadyToRender = true;
+        
         //print($"添加{world.GetChunkLocation(myposition)}到渲染列表");
-        world.WaitToRender.Enqueue(this); 
+        world.WaitToRender.Enqueue(this);
+
+
     }
 
     //清除网格
@@ -757,19 +761,18 @@ public class Chunk : MonoBehaviour
                 //如果能查到
                 if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
-                    //print($"{world.GetChunkLocation(myposition)} 找到Front:{world.GetChunkLocation(chunktemp.myposition)}");
+                    
+
                     //呼叫系统(1次)
                     if (isFind_Front == false)
                     {
-                        //print($"{world.GetChunkLocation(myposition)} 呼叫Front:{world.GetChunkLocation(chunktemp.myposition)}");
-                        
-
                         //update
                         isFind_Front = true;
                         chunktemp.isFind_Back = true;
                         //print($"isFindFront:{isFind_Front},targetisFindBack:{chunktemp.isFind_Back}");
 
                         //呼叫更新
+                        //print($"{world.GetChunkLocation(myposition)} 呼叫Front:{world.GetChunkLocation(chunktemp.myposition)}");
                         chunktemp.UpdateChunkMesh();
                     }
 
@@ -798,19 +801,18 @@ public class Chunk : MonoBehaviour
                 //如果能查到
                 if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
-                    //print($"{world.GetChunkLocation(myposition)} 找到Back:{world.GetChunkLocation(chunktemp.myposition)}");
+                    
+
                     //呼叫系统(1次)
                     if (isFind_Back == false)
                     {
-                        //print($"{world.GetChunkLocation(myposition)} 呼叫Back:{world.GetChunkLocation(chunktemp.myposition)}");
-
-
                         //update
                         isFind_Back = true;
                         chunktemp.isFind_Front = true;
                         //print($"isFindBack:{isFind_Back},targetisFindFront:{chunktemp.isFind_Front}");
 
                         //呼叫更新
+                        //print($"{world.GetChunkLocation(myposition)} 呼叫Back:{world.GetChunkLocation(chunktemp.myposition)}");
                         chunktemp.UpdateChunkMesh();
                     }
 
@@ -841,7 +843,7 @@ public class Chunk : MonoBehaviour
                 //如果能查到
                 if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
-                    //print($"{world.GetChunkLocation(myposition)} 找到Left:{world.GetChunkLocation(chunktemp.myposition)}");
+                    
                     //呼叫系统(1次)
                     if (isFind_Left == false)
                     {
@@ -850,6 +852,8 @@ public class Chunk : MonoBehaviour
                         chunktemp.isFind_Right = true;
 
                         //呼叫更新
+                        //print($"{world.GetChunkLocation(myposition)} 呼叫Left:{world.GetChunkLocation(chunktemp.myposition)}");
+ 
                         chunktemp.UpdateChunkMesh();
                     }
 
@@ -878,16 +882,19 @@ public class Chunk : MonoBehaviour
                 //如果能查到
                 if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
-                    //print($"{world.GetChunkLocation(myposition)} 找到Right:{world.GetChunkLocation(chunktemp.myposition)}");
+                    
+
                     //呼叫系统(1次)
                     if (isFind_Right == false)
                     {
-                        //呼叫更新
-                        chunktemp.UpdateChunkMesh();
-
                         //update
                         isFind_Right = true;
                         chunktemp.isFind_Left = true;
+                         
+                        //呼叫更新
+                        //print($"{world.GetChunkLocation(myposition)} 呼叫Right:{world.GetChunkLocation(chunktemp.myposition)}");
+                        chunktemp.UpdateChunkMesh();
+
                     }
 
                     //如果target是空气，则返回false
