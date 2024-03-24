@@ -47,6 +47,7 @@ public class World : MonoBehaviour
     [Header("Cave-洞穴系统")]
     //noise3d_scale越大洞穴破损越严重，越大越好
     //cave_width越小洞穴平均宽度变小，不能太大，不然全是洞
+    public bool debug_lookCave = false;
     public float noise3d_scale = 0.085f;
     public float cave_width = 0.45f;
 
@@ -86,7 +87,6 @@ public class World : MonoBehaviour
 
 
     //全部Chunk位置
-    [HideInInspector]
     public Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
 
     //等待添加队列
@@ -206,6 +206,8 @@ public class World : MonoBehaviour
         }
 
     }
+
+
 
     void OnApplicationQuit()
     {
