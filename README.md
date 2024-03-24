@@ -6,7 +6,7 @@ A long-term project from beginner
 
 - Play Screen
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/Play1.png" width="600px">
-<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/Play2.png" width="600px">
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/Play2.jpg" width="600px">
 
 - Cave
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/7.png" width="600px">
