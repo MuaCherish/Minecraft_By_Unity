@@ -4,16 +4,17 @@ A long-term project from beginner
 - Overview
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/4.png" width="600px">
 
-- Seaside
-<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/5.png" width="600px">
+- Play Screen
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/Play1.png" width="600px">
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/Play2.png" width="600px">
 
-- Mountain
-<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/6.png" width="600px">
-
-- Mine and terrain statification
+- Cave
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/7.png" width="600px">
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/Cave1.png" width="600px">
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/Cave2.png" width="600px">
 
-- Map
+- Biome
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/5.png" width="600px">
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/map1.png" width="600px">
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/map2.png" width="600px">
 
@@ -28,7 +29,11 @@ A long-term project from beginner
 - [X] Add a day-night alternation system.
 - [X] Add some sound effects.
 - [X] And More Blocks.
-- [ ] Biological system
+- [X] Threading
+- [X] DayNight system
+- [X] Survival system
+- [X] Biological system
+- [ ] Add Zombies or Slim
 - [ ] Better picture quality..
 - [ ] More stuff? maybe
 
