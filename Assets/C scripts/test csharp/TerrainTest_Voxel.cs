@@ -140,23 +140,21 @@ public class TerrainTest_Voxel : MonoBehaviour
 
     }
 
-    float GetTotalNoiseHigh_3(int _x, int _z)
+    float GetTotalNoiseHigh_10(int _x, int _z)
     {
-        //平原:20   50   0.02   0.004
-        //山脉:20   64   0.05   0.05
-        
+        //(平原-山脉)过度噪声
+        float biome_moutainAndPlane = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((float)_x *clarrfy_biome + myposition.x * clarrfy_biome, (float)_z * clarrfy_biome + myposition.z * clarrfy_biome));
 
-        float biome_moutainAndPlane = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((float)_x * noise2d_scale_smooth + myposition.x * noise2d_scale_smooth, (float)_z * noise2d_scale_smooth + myposition.z * noise2d_scale_smooth));
-
+        //小：平原噪声
+        //大：山脉噪声
         float soilmax = Mathf.Lerp(平原最高, 山脉最高, biome_moutainAndPlane);
-        float smooth = Mathf.Lerp(平原Smooth, 山脉Smooth, biome_moutainAndPlane);
-        float steep = Mathf.Lerp(平原Steep, 山脉Steep, biome_moutainAndPlane);
+        float smooth = Mathf.Lerp(平原Smooth, 平原Steep, biome_moutainAndPlane);
+        float steep = Mathf.Lerp(山脉Smooth, 山脉Steep, biome_moutainAndPlane);
 
+        //最终噪声
         float noise2d_1 = Mathf.Lerp((float)20, (float)soilmax, Mathf.PerlinNoise((float)_x * smooth + myposition.x * smooth, (float)_z * smooth + myposition.z * smooth));
         float noise2d_2 = Mathf.Lerp((float)20, (float)soilmax, Mathf.PerlinNoise((float)_x * steep + myposition.x * steep, (float)_z * steep + myposition.z * steep));
-        float noiseHigh = noise2d_1 * scale_Smooth + noise2d_2 * scale_Steep;
-
-
+        float noiseHigh = noise2d_1 * 0.7f + noise2d_2 * 0.3f;
 
         return noiseHigh;
     }
@@ -216,7 +214,7 @@ public class TerrainTest_Voxel : MonoBehaviour
         {
             for (int x = 0; x <= Terrain_Width; x++)
             {
-                vertices[z * (Terrain_Width + 1) + x] = new Vector3(x, Mathf.FloorToInt(GetSmoothNoise_Tree(x,z)), z);
+                vertices[z * (Terrain_Width + 1) + x] = new Vector3(x, Mathf.FloorToInt(GetTotalNoiseHigh_10(x,z)), z);
                 uv[z * (Terrain_Width + 1) + x] = new Vector2((float)x / Terrain_Width, (float)z / Terrain_Width);
             }
         }
