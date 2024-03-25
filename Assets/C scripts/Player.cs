@@ -179,6 +179,11 @@ public class Player : MonoBehaviour
     {
         HighLightMaterial.color = new Color(0, 0, 0, 0);
         HighLightMaterial.mainTexture = DestroyTextures[0];
+
+        //X = [800,1600]
+        //Z = [400,800]
+        transform.position = new Vector3(Random.Range(800,1600), transform.position.y, Random.Range(400, 800));
+
     }
 
     private void FixedUpdate()
