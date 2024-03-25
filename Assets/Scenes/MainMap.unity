@@ -9055,7 +9055,7 @@ MonoBehaviour:
   DestroySize: 7
   noise2d_scale_smooth: 0.01
   noise2d_scale_steep: 0.04
-  debug_lookCave: 1
+  debug_lookCave: 0
   noise3d_scale: 0.08
   cave_width: 0.38
   isRandomSeed: 1

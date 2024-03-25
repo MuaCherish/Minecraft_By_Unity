@@ -331,7 +331,7 @@ public class BackPackManager : MonoBehaviour
         if (slots[player.selectindex].blockId != 255 && slots[player.selectindex].number > 0)
         {
             //创造掉落物
-            CreateDropBox(new Vector3(Eyes.transform.position.x, Eyes.transform.position.y - 0.3f, Eyes.transform.position.z), slots[player.selectindex].blockId, true, ColdTime_Absorb);
+            CreateDropBox(Eyes.transform.forward * 0.3f +  new Vector3(Eyes.transform.position.x, Eyes.transform.position.y - 0.3f, Eyes.transform.position.z), slots[player.selectindex].blockId, true, ColdTime_Absorb);
 
             //物品栏减一
             update_slots(1, 0);
