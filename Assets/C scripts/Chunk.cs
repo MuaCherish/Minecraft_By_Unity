@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
+using Unity.Collections.LowLevel.Unsafe;
 
 public class Chunk : MonoBehaviour
 {
@@ -804,12 +805,24 @@ public class Chunk : MonoBehaviour
         } 
         else
         {
-            print($"{world.GetChunkLocation(myposition)}Mesh完成");
+            //print($"{world.GetChunkLocation(myposition)}Mesh完成");
             world.MeshLock = false;
         }
+
+        if (world.RenderLock)
+        {
+            world.WaitToRender_temp.Enqueue(this);
+            //print($"{world.GetChunkLocation(myposition)}被堵塞，入队temp");
+        }
+        else
+        {
+            //print($"{world.GetChunkLocation(myposition)}入队");
+            world.WaitToRender.Enqueue(this);
+        }
         
+
+
         
-        world.WaitToRender.Enqueue(this);
 
 
     }
@@ -866,167 +879,197 @@ public class Chunk : MonoBehaviour
             //}
 
             //Front
-            if (z > VoxelData.ChunkWidth - 1)
-            {
-                //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
-                {
+            //if (z > VoxelData.ChunkWidth - 1)
+            //{
+            //    //如果能查到
+            //    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+            //    {
                     
 
-                    //呼叫系统(1次)
-                    if (isFind_Front == false)
-                    {
-                        //update
-                        isFind_Front = true;
-                        chunktemp.isFind_Back = true;
-                        //print($"isFindFront:{isFind_Front},targetisFindBack:{chunktemp.isFind_Back}");
+            //        //呼叫系统(1次)
+            //        if (isFind_Front == false)
+            //        {
+            //            //update
+            //            isFind_Front = true;
+            //            chunktemp.isFind_Back = true;
+            //            //print($"isFindFront:{isFind_Front},targetisFindBack:{chunktemp.isFind_Back}");
 
-                        //呼叫更新
-                        //print($"{world.GetChunkLocation(myposition)} 呼叫Front:{world.GetChunkLocation(chunktemp.myposition)}");
-                        chunktemp.isCalled = true;
-                        chunktemp.UpdateChunkMesh();
-                    }
+            //            //呼叫更新
+            //            //print($"{world.GetChunkLocation(myposition)} 呼叫Front:{world.GetChunkLocation(chunktemp.myposition)}");
+            //            chunktemp.isCalled = true;
 
-                    //如果target是空气，则返回false
-                    if (chunktemp.voxelMap[x, y, 0] == VoxelData.Air)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+            //            if (!world.RenderLock)
+            //            {
+            //                chunktemp.UpdateChunkMesh();
+            //            }
+            //            else
+            //            {
+            //                world.WaitToRender.Enqueue(this);
+            //            }
+                        
+            //        }
 
-                }
-                else
-                {
-                    if (debug_lookCave)
-                        return true;
-                }
-            }
+            //        //如果target是空气，则返回false
+            //        if (chunktemp.voxelMap[x, y, 0] == VoxelData.Air)
+            //        {
+            //            return false;
+            //        }
+            //        else
+            //        {
+            //            return true;
+            //        }
+
+            //    }
+            //    else
+            //    {
+            //        if (debug_lookCave)
+            //            return true;
+            //    }
+            //}
 
 
-            //Back
-            if (z < 0)
-            {
-                //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
-                {
+            ////Back
+            //if (z < 0)
+            //{
+            //    //如果能查到
+            //    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+            //    {
                     
 
-                    //呼叫系统(1次)
-                    if (isFind_Back == false)
-                    {
-                        //update
-                        isFind_Back = true;
-                        chunktemp.isFind_Front = true;
-                        //print($"isFindBack:{isFind_Back},targetisFindFront:{chunktemp.isFind_Front}");
+            //        //呼叫系统(1次)
+            //        if (isFind_Back == false)
+            //        {
+            //            //update
+            //            isFind_Back = true;
+            //            chunktemp.isFind_Front = true;
+            //            //print($"isFindBack:{isFind_Back},targetisFindFront:{chunktemp.isFind_Front}");
 
-                        //呼叫更新
-                        //print($"{world.GetChunkLocation(myposition)} 呼叫Back:{world.GetChunkLocation(chunktemp.myposition)}");
-                        chunktemp.isCalled = true;
-                        chunktemp.UpdateChunkMesh();
-                    }
+            //            //呼叫更新
+            //            //print($"{world.GetChunkLocation(myposition)} 呼叫Back:{world.GetChunkLocation(chunktemp.myposition)}");
+            //            chunktemp.isCalled = true;
+            //            if (!world.RenderLock)
+            //            {
+            //                chunktemp.UpdateChunkMesh();
+            //            }
+            //            else
+            //            {
+            //                world.WaitToRender.Enqueue(this);
+            //            }
+            //        }
 
-                    //如果target是空气，则返回false
-                    if (chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1] == VoxelData.Air)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+            //        //如果target是空气，则返回false
+            //        if (chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1] == VoxelData.Air)
+            //        {
+            //            return false;
+            //        }
+            //        else
+            //        {
+            //            return true;
+            //        }
 
-                }
-                else
-                {
-                    if (debug_lookCave)
-                        return true;
-                }
-
-
-            }
+            //    }
+            //    else
+            //    {
+            //        if (debug_lookCave)
+            //            return true;
+            //    }
 
 
-            //Left
-            if (x < 0)
-            {
-                //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
-                {
+            //}
+
+
+            ////Left
+            //if (x < 0)
+            //{
+            //    //如果能查到
+            //    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+            //    {
                     
-                    //呼叫系统(1次)
-                    if (isFind_Left == false)
-                    {
-                        //update
-                        isFind_Left = true;
-                        chunktemp.isFind_Right = true;
+            //        //呼叫系统(1次)
+            //        if (isFind_Left == false)
+            //        {
+            //            //update
+            //            isFind_Left = true;
+            //            chunktemp.isFind_Right = true;
 
-                        //呼叫更新
-                        //print($"{world.GetChunkLocation(myposition)} 呼叫Left:{world.GetChunkLocation(chunktemp.myposition)}");
-                        chunktemp.isCalled = true;
-                        chunktemp.UpdateChunkMesh();
-                    }
+            //            //呼叫更新
+            //            //print($"{world.GetChunkLocation(myposition)} 呼叫Left:{world.GetChunkLocation(chunktemp.myposition)}");
+            //            chunktemp.isCalled = true;
+            //            if (!world.RenderLock)
+            //            {
+            //                chunktemp.UpdateChunkMesh();
+            //            }
+            //            else
+            //            {
+            //                world.WaitToRender.Enqueue(this);
+            //            }
+            //        }
 
-                    //如果target是空气，则返回false
-                    if (chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z] == VoxelData.Air)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+            //        //如果target是空气，则返回false
+            //        if (chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z] == VoxelData.Air)
+            //        {
+            //            return false;
+            //        }
+            //        else
+            //        {
+            //            return true;
+            //        }
 
-                }
-                else
-                {
-                    if (debug_lookCave)
-                        return true;
-                }
-            }
+            //    }
+            //    else
+            //    {
+            //        if (debug_lookCave)
+            //            return true;
+            //    }
+            //}
 
 
-            //Right
-            if (x > VoxelData.ChunkWidth - 1)
-            {
-                //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
-                {
+            ////Right
+            //if (x > VoxelData.ChunkWidth - 1)
+            //{
+            //    //如果能查到
+            //    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+            //    {
                     
 
-                    //呼叫系统(1次)
-                    if (isFind_Right == false)
-                    {
-                        //update
-                        isFind_Right = true;
-                        chunktemp.isFind_Left = true;
+            //        //呼叫系统(1次)
+            //        if (isFind_Right == false)
+            //        {
+            //            //update
+            //            isFind_Right = true;
+            //            chunktemp.isFind_Left = true;
 
-                        //呼叫更新
-                        //print($"{world.GetChunkLocation(myposition)} 呼叫Right:{world.GetChunkLocation(chunktemp.myposition)}");
-                        chunktemp.isCalled = true;
-                        chunktemp.UpdateChunkMesh();
+            //            //呼叫更新
+            //            //print($"{world.GetChunkLocation(myposition)} 呼叫Right:{world.GetChunkLocation(chunktemp.myposition)}");
+            //            chunktemp.isCalled = true;
+            //            if (!world.RenderLock)
+            //            {
+            //                chunktemp.UpdateChunkMesh();
+            //            }
+            //            else
+            //            {
+            //                world.WaitToRender.Enqueue(this);
+            //            }
 
-                    }
+            //        }
 
-                    //如果target是空气，则返回false
-                    if (chunktemp.voxelMap[0, y, z] == VoxelData.Air)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+            //        //如果target是空气，则返回false
+            //        if (chunktemp.voxelMap[0, y, z] == VoxelData.Air)
+            //        {
+            //            return false;
+            //        }
+            //        else
+            //        {
+            //            return true;
+            //        }
 
-                }
-                else
-                {
-                    if (debug_lookCave)
-                        return true;
-                }
-            }
+            //    }
+            //    else
+            //    {
+            //        if (debug_lookCave)
+            //            return true;
+            //    }
+            //}
 
 
             //Up不需要考虑
@@ -1144,9 +1187,11 @@ public class Chunk : MonoBehaviour
 
     }
 
-    //最后生成网格体
+    // 最后生成网格体
     public void CreateMesh()
     {
+        world.RenderLock = true;
+        //print($"{world.GetChunkLocation(myposition)}CreateMesh 开始");
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
@@ -1155,6 +1200,18 @@ public class Chunk : MonoBehaviour
         mesh.Optimize();
         mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
+
+
+        //print($"{world.GetChunkLocation(myposition)}CreateMesh 结束");
+
+        world.RenderLock = false;
+
+        while (world.WaitToRender_temp.Count > 0)
+        {
+            world.WaitToRender_temp.TryDequeue(out Chunk chunktemp);
+            world.WaitToRender.Enqueue(chunktemp);
+        }
+
 
     }
 
