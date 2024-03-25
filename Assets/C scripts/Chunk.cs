@@ -9,6 +9,7 @@ public class Chunk : MonoBehaviour
     //state
     public bool isShow = true;
     public bool isReadyToRender = false;
+    public bool isCalled = false;
 
     //Transform
     World world;
@@ -95,10 +96,9 @@ public class Chunk : MonoBehaviour
 
 
 
+    //----------------------------------- Noise ----------------------------------------
 
-    //---------------------------------- Data线程 ---------------------------------------
-    
-    //噪声生成器
+    //地形噪声生成器
     float GetTotalNoiseHigh(int _x, int _z)
     {
         //(平原-山脉)过度噪声
@@ -118,7 +118,7 @@ public class Chunk : MonoBehaviour
         return noiseHigh;
     }
 
-    //获取简单噪声
+    //Tree简单噪声
     float GetSmoothNoise_Tree()
     {
         float randomoffset = rand.Next(0, 10);
@@ -129,6 +129,34 @@ public class Chunk : MonoBehaviour
         
         return smoothNoise;
     }
+
+    //Desert简单噪声
+    float GetSmoothNoise_Desert(int _x,int _z)
+    {
+        //float randomoffset = rand.Next(0, 10);
+        //float Offset_x = 100f * randomoffset;
+        //float Offset_z = 100f * randomoffset;
+
+        return Mathf.PerlinNoise((_x + myposition.x) * 0.003f, (_z + myposition.z) * 0.003f);
+    }
+
+    //洞穴噪声生成器
+    float GetCaveNoise(int _x, int _y, int _z)
+    {
+        return Perlin3D(( (float)_x + myposition.x) * noise3d_scale,     ((float)_y + y) * noise3d_scale,      ((float)_z + myposition.z )* noise3d_scale); // 将100改为0.1
+
+    }
+
+
+    //-----------------------------------------------------------------------------------
+
+
+
+
+
+
+    //---------------------------------- Data线程 ---------------------------------------
+
 
     //Data
     void CreateData()
@@ -143,8 +171,14 @@ public class Chunk : MonoBehaviour
                     // 生成0或1的随机数
                     int randomInt = rand.Next(0, 2);
 
+                    //地形噪声
+                    float noiseHigh = GetTotalNoiseHigh(x, z);
 
+                    //矿洞噪声
+                    float noise3d = GetCaveNoise(x,y,z);
 
+                    //沙漠噪声
+                    float noise_desery = GetSmoothNoise_Desert(x,z);
 
                     //判断基岩
                     //0~3层不准生成矿洞
@@ -163,17 +197,13 @@ public class Chunk : MonoBehaviour
                             voxelMap[x, y, z] = VoxelData.Stone;
                         }
                     }
+                    else if (noise3d < caveWidth)
+                    {
+                        voxelMap[x, y, z] = VoxelData.Air;
+                    }
                     else
                     {
-
-                        //三个2d噪声
-                        //float noise2d_1 = Mathf.Lerp((float)world.soil_min, (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_smooth + myposition.x * noise2d_scale_smooth, (float)z * noise2d_scale_smooth + myposition.z * noise2d_scale_smooth));
-                        //float noise2d_2 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * noise2d_scale_steep + myposition.x * noise2d_scale_steep, (float)z * noise2d_scale_steep + myposition.z * noise2d_scale_steep));
-                        //float noise2d_3 = Mathf.Lerp((float)(world.soil_min), (float)world.soil_max, Mathf.PerlinNoise((float)x * 0.1f + myposition.x * 0.1f, (float)z * 0.15f + myposition.z * 0.15f));
-
-                        //噪声叠加
-                        //float noiseHigh = noise2d_1 * 0.6f + noise2d_2 * 0.4f + noise2d_3 * 0.05f;
-                        float noiseHigh = GetTotalNoiseHigh(x,z);
+                        
 
                         //空气部分
                         if (y > noiseHigh)
@@ -218,14 +248,35 @@ public class Chunk : MonoBehaviour
                         }//地表1层
                         else if ((y + 1) > noiseHigh)
                         {
-                            if (y > world.sea_level)
+
+                            //沙漠判断
+                            if (noise_desery > 0.5f)
                             {
-                                voxelMap[x, y, z] = VoxelData.Grass;
+                                voxelMap[x, y, z] = VoxelData.Sand;
+
                             }
                             else
                             {
-                                voxelMap[x, y, z] = VoxelData.Sand;
+                                if (y > world.sea_level)
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Grass;
+                                }
+                                else
+                                {
+                                    if (randomInt == 0)
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Sand;
+                                    }
+                                    else
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Soil;
+                                    }
+                                    
+                                }
                             }
+
+
+                            
 
                         }
 
@@ -233,74 +284,121 @@ public class Chunk : MonoBehaviour
                         //泥土的判断
                         else if (y > noiseHigh - 7)
                         {
-                            voxelMap[x, y, z] = VoxelData.Soil;
+                            //沙漠判断
+                            if (noise_desery > 0.5f)
+                            {
+                                voxelMap[x, y, z] = VoxelData.Sand;
+                            }
+                            else
+                            {
+                                voxelMap[x, y, z] = VoxelData.Soil;
+                            }
+
+                                
                         }
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && randomInt == 1)
                         {
-                            voxelMap[x, y, z] = VoxelData.Soil;
+                            //沙漠判断
+                            if (noise_desery > 0.5f)
+                            {
+                                voxelMap[x, y, z] = VoxelData.Sand;
+                            }
+                            else
+                            {
+                                voxelMap[x, y, z] = VoxelData.Soil;
+                            }
+
+                                
                         }
 
                         //地下判断
                         else
                         {
 
-                            //判断空气
-                            float noise3d = Perlin3D((float)x * noise3d_scale + myposition.x * noise3d_scale, (float)y * noise3d_scale + y * noise3d_scale, (float)z * noise3d_scale + myposition.z * noise3d_scale); // 将100改为0.1
 
                             //洞穴深度概率
                             //float randomCave = Probability(y);
 
                             //空气
-                            if (noise3d < caveWidth)
-                            {
-                                voxelMap[x, y, z] = VoxelData.Air;
+                            //if (noise3d < caveWidth)
+                            //{
+                            //    voxelMap[x, y, z] = VoxelData.Air;
 
-                                if (y >= 4 && y <= 6)
-                                {
-                                    if (randomInt == 1)
-                                    {
-                                        voxelMap[x, y, z] = VoxelData.Stone;
-                                    }
-                                }
+                            //    if (y >= 4 && y <= 6)
+                            //    {
+                            //        if (randomInt == 1)
+                            //        {
+                            //            voxelMap[x, y, z] = VoxelData.Stone;
+                            //        }
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    //煤炭
+                            //    if (rand.Next(0, world.Random_Coal) < 1)
+                            //    {
+                            //        voxelMap[x, y, z] = VoxelData.Stone;
+                            //        Coals.Enqueue(new Vector3(x, y, z));
+                            //    }//铁
+                            //    else if (rand.Next(0, world.Random_Iron) < 1)
+                            //    {
+                            //        voxelMap[x, y, z] = VoxelData.Iron;
+                            //    }//金
+                            //    else if (rand.Next(0, world.Random_Gold) < 1)
+                            //    {
+                            //        voxelMap[x, y, z] = VoxelData.Gold;
+                            //    }//青金石
+                            //    else if (rand.Next(0, world.Random_Blue_Crystal) < 1)
+                            //    {
+                            //        voxelMap[x, y, z] = VoxelData.Blue_Crystal;
+                            //    }//钻石
+                            //    else if (rand.Next(0, world.Random_Diamond) < 1)
+                            //    {
+                            //        voxelMap[x, y, z] = VoxelData.Diamond;
+                            //    }
+                            //    else
+                            //    {
+                            //        voxelMap[x, y, z] = VoxelData.Stone;
+                            //    }
+
+                            //}
+
+                            //煤炭
+                            if (rand.Next(0, world.Random_Coal) < 1)
+                            {
+                                voxelMap[x, y, z] = VoxelData.Stone;
+                                Coals.Enqueue(new Vector3(x, y, z));
+                            }//铁
+                            else if (rand.Next(0, world.Random_Iron) < 1)
+                            {
+                                voxelMap[x, y, z] = VoxelData.Iron;
+                            }//金
+                            else if (rand.Next(0, world.Random_Gold) < 1)
+                            {
+                                voxelMap[x, y, z] = VoxelData.Gold;
+                            }//青金石
+                            else if (rand.Next(0, world.Random_Blue_Crystal) < 1)
+                            {
+                                voxelMap[x, y, z] = VoxelData.Blue_Crystal;
+                            }//钻石
+                            else if (rand.Next(0, world.Random_Diamond) < 1)
+                            {
+                                voxelMap[x, y, z] = VoxelData.Diamond;
                             }
                             else
                             {
-                                //煤炭
-                                if (rand.Next(0, world.Random_Coal) < 1)
-                                {
-                                    voxelMap[x, y, z] = VoxelData.Stone;
-                                    Coals.Enqueue(new Vector3(x, y, z));
-                                }//铁
-                                else if (rand.Next(0, world.Random_Iron) < 1)
-                                {
-                                    voxelMap[x, y, z] = VoxelData.Iron;
-                                }//金
-                                else if (rand.Next(0, world.Random_Gold) < 1)
-                                {
-                                    voxelMap[x, y, z] = VoxelData.Gold;
-                                }//青金石
-                                else if (rand.Next(0, world.Random_Blue_Crystal) < 1)
-                                {
-                                    voxelMap[x, y, z] = VoxelData.Blue_Crystal;
-                                }//钻石
-                                else if (rand.Next(0, world.Random_Diamond) < 1)
-                                {
-                                    voxelMap[x, y, z] = VoxelData.Diamond;
-                                }
-                                else
-                                {
-                                    voxelMap[x, y, z] = VoxelData.Stone;
-                                }
-
+                                voxelMap[x, y, z] = VoxelData.Stone;
                             }
+
+
+
 
 
 
                         }
-
-
-
                     }
+
+                    
 
                 }
             }
@@ -699,8 +797,18 @@ public class Chunk : MonoBehaviour
 
         //添加到world的渲染队列
         isReadyToRender = true;
+
+        if (isCalled)
+        {
+            isCalled = false;
+        }
+        else
+        {
+            //print($"{world.GetChunkLocation(myposition)}Mesh完成");
+            world.MeshLock = false;
+        }
         
-        //print($"添加{world.GetChunkLocation(myposition)}到渲染列表");
+        
         world.WaitToRender.Enqueue(this);
 
 
@@ -773,6 +881,7 @@ public class Chunk : MonoBehaviour
 
                         //呼叫更新
                         //print($"{world.GetChunkLocation(myposition)} 呼叫Front:{world.GetChunkLocation(chunktemp.myposition)}");
+                        chunktemp.isCalled = true;
                         chunktemp.UpdateChunkMesh();
                     }
 
@@ -813,6 +922,7 @@ public class Chunk : MonoBehaviour
 
                         //呼叫更新
                         //print($"{world.GetChunkLocation(myposition)} 呼叫Back:{world.GetChunkLocation(chunktemp.myposition)}");
+                        chunktemp.isCalled = true;
                         chunktemp.UpdateChunkMesh();
                     }
 
@@ -853,7 +963,7 @@ public class Chunk : MonoBehaviour
 
                         //呼叫更新
                         //print($"{world.GetChunkLocation(myposition)} 呼叫Left:{world.GetChunkLocation(chunktemp.myposition)}");
- 
+                        chunktemp.isCalled = true;
                         chunktemp.UpdateChunkMesh();
                     }
 
@@ -890,9 +1000,10 @@ public class Chunk : MonoBehaviour
                         //update
                         isFind_Right = true;
                         chunktemp.isFind_Left = true;
-                         
+
                         //呼叫更新
                         //print($"{world.GetChunkLocation(myposition)} 呼叫Right:{world.GetChunkLocation(chunktemp.myposition)}");
+                        chunktemp.isCalled = true;
                         chunktemp.UpdateChunkMesh();
 
                     }

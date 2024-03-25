@@ -135,7 +135,9 @@ public class World : MonoBehaviour
     Coroutine Render_Coroutine;
 
     //Threading
+    public bool MeshLock = false;
     public Queue<Chunk> WaitToCreateMesh = new Queue<Chunk>();
+    Coroutine Mesh_Coroutine;
 
     //----------------------------------周期函数---------------------------------------
     private void Start()
@@ -696,9 +698,9 @@ public class World : MonoBehaviour
     //Mesh线程
     void CreateMeshCoroutineManager()
     {
-        if (WaitToCreateMesh.Count != 0 && Render_Coroutine == null)
+        if (WaitToCreateMesh.Count != 0 && Mesh_Coroutine == null)
         {
-            StartCoroutine(Mesh_0());
+            Mesh_Coroutine = StartCoroutine(Mesh_0());
         }
     }
 
@@ -708,13 +710,32 @@ public class World : MonoBehaviour
 
         while(true)
         {
-            Chunk chunktemp = WaitToCreateMesh.Dequeue();
 
-            //Mesh线程
-            Thread myThread = new Thread(new ThreadStart(chunktemp.UpdateChunkMesh));
-            myThread.Start();
+            if (MeshLock == false)
+            {
+                MeshLock = true;
 
-            yield return new WaitForSeconds(1f);
+
+                Chunk chunktemp = WaitToCreateMesh.Dequeue();
+
+                //print($"{GetChunkLocation(chunktemp.myposition)}添加到meshQueue");
+
+                //Mesh线程
+                Thread myThread = new Thread(new ThreadStart(chunktemp.UpdateChunkMesh));
+                myThread.Start();
+
+                if (WaitToCreateMesh.Count == 0)
+                {
+                    Mesh_Coroutine = null;
+                    break;
+                }
+
+
+                yield return new WaitForSeconds(RenderDelay);
+
+            }
+
+            
         }
         
 
