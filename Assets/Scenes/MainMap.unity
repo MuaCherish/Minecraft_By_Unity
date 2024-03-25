@@ -9055,7 +9055,7 @@ MonoBehaviour:
   DestroySize: 7
   noise2d_scale_smooth: 0.01
   noise2d_scale_steep: 0.04
-  debug_lookCave: 0
+  debug_lookCave: 1
   noise3d_scale: 0.08
   cave_width: 0.38
   isRandomSeed: 1
@@ -9081,6 +9081,7 @@ MonoBehaviour:
   RenderDelay: 0.001
   initprogress: 0
   Chunks: {fileID: 0}
+  RenderLock: 0
   MeshLock: 0
 --- !u!4 &699955242
 Transform:
@@ -10876,7 +10877,6 @@ RectTransform:
   m_Children:
   - {fileID: 2130517685}
   - {fileID: 566761178}
-  - {fileID: 1108986470}
   m_Father: {fileID: 1660979562}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -14284,16 +14284,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1108986467}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 849139297}
+  m_Father: {fileID: 1823691734}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 34, y: 669.2}
+  m_AnchoredPosition: {x: 34, y: 359}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1112929040
@@ -22566,6 +22566,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1590162286}
+  - {fileID: 1108986470}
   m_Father: {fileID: 566761178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

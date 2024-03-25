@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -131,12 +132,14 @@ public class World : MonoBehaviour
     Coroutine RemoveCoroutine;
 
     //Render_0 && Render_1 协程
-    public Queue<Chunk> WaitToRender = new Queue<Chunk>();
+    public bool RenderLock = false;
+    public ConcurrentQueue<Chunk> WaitToRender = new ConcurrentQueue<Chunk>();
+    public ConcurrentQueue<Chunk> WaitToRender_temp = new ConcurrentQueue<Chunk>();
     Coroutine Render_Coroutine;
 
     //Threading
     public bool MeshLock = false;
-    public Queue<Chunk> WaitToCreateMesh = new Queue<Chunk>();
+    public ConcurrentQueue<Chunk> WaitToCreateMesh = new ConcurrentQueue<Chunk>();
     Coroutine Mesh_Coroutine;
 
     //----------------------------------周期函数---------------------------------------
@@ -640,6 +643,7 @@ public class World : MonoBehaviour
     {
         if (WaitToRender.Count != 0 && Render_Coroutine == null)
         {
+            //print($"启动渲染协程");
             Render_Coroutine = StartCoroutine(Render_0());
         }
 
@@ -651,35 +655,28 @@ public class World : MonoBehaviour
     {
         while (true)
         {
+            //Queue
             WaitToRender.TryDequeue(out Chunk chunktemp);
 
-            //if (chunktemp.isReadyToRender)
-            //{
-            //    float startTime = Time.realtimeSinceStartup;
+            //print($"{GetChunkLocation(chunktemp.myposition)}开始渲染");
 
-            //    chunktemp.CreateMesh();
-
-            //    float executionTime = Time.realtimeSinceStartup - startTime;
-
-            //    // 输出执行时间（毫秒）
-            //    //Debug.Log($"{chunktemp.chunkObject.name}:Execution time: " + executionTime * 1000 + " ms");
-            //    dynamicRandertime(executionTime);
-
-            //}
-
+            //CreateMesh
             if (chunktemp.isReadyToRender)
             {
                 chunktemp.CreateMesh();
             }
 
+            //Empty
             if (WaitToRender.Count == 0)
             {
+                //print($"队列为空，停止协程");
                 Render_Coroutine = null;
+                RenderLock = false;
                 break;
             }
 
-            //yield return new WaitForSeconds(RenderDelay);
             yield return new WaitForSeconds(RenderDelay);
+
         }
 
     }
@@ -715,10 +712,9 @@ public class World : MonoBehaviour
             {
                 MeshLock = true;
 
+                WaitToCreateMesh.TryDequeue(out Chunk chunktemp);
 
-                Chunk chunktemp = WaitToCreateMesh.Dequeue();
-
-                print($"{GetChunkLocation(chunktemp.myposition)}添加到meshQueue");
+                //print($"{GetChunkLocation(chunktemp.myposition)}添加到meshQueue");
 
                 //Mesh线程
                 Thread myThread = new Thread(new ThreadStart(chunktemp.UpdateChunkMesh));
@@ -731,11 +727,13 @@ public class World : MonoBehaviour
                 }
 
 
-                yield return new WaitForSeconds(RenderDelay);
+                
 
             }
 
-            
+            yield return new WaitForSeconds(RenderDelay);
+
+
         }
         
 
