@@ -718,7 +718,7 @@ public class World : MonoBehaviour
 
                 Chunk chunktemp = WaitToCreateMesh.Dequeue();
 
-                //print($"{GetChunkLocation(chunktemp.myposition)}添加到meshQueue");
+                print($"{GetChunkLocation(chunktemp.myposition)}添加到meshQueue");
 
                 //Mesh线程
                 Thread myThread = new Thread(new ThreadStart(chunktemp.UpdateChunkMesh));

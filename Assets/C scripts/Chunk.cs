@@ -785,7 +785,7 @@ public class Chunk : MonoBehaviour
                     //updateBamboo();
 
                     //(是固体 || 是水 || 是水面上一层 || 是竹子)才生成
-                    if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water || voxelMap[x, y, z] == VoxelData.Bamboo)
+                    if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water)
                         UpdateMeshData(new Vector3(x, y, z));
 
                     //UpdateMeshData(new Vector3(x, y, z));
@@ -801,10 +801,10 @@ public class Chunk : MonoBehaviour
         if (isCalled)
         {
             isCalled = false;
-        }
+        } 
         else
         {
-            //print($"{world.GetChunkLocation(myposition)}Mesh完成");
+            print($"{world.GetChunkLocation(myposition)}Mesh完成");
             world.MeshLock = false;
         }
         
@@ -826,6 +826,8 @@ public class Chunk : MonoBehaviour
     //编辑方块
     public void EditData(Vector3 pos, byte targetBlocktype)
     {
+
+        ClearFInd_Direvtion();
 
         int x = Mathf.FloorToInt(pos.x);
         int y = Mathf.FloorToInt(pos.y);
@@ -1196,6 +1198,15 @@ public class Chunk : MonoBehaviour
     public bool isFind_Back = false;
     public bool isFind_Left = false;
     public bool isFind_Right = false;
+
+    public void ClearFInd_Direvtion()
+    {
+        isFind_Front = false;
+        isFind_Back = false;
+        isFind_Left = false;
+        isFind_Right = false;
+}
+
     //------------------------------------------------------------------------------------
 
 
