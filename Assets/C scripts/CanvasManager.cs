@@ -9,6 +9,7 @@ public class CanvasManager : MonoBehaviour
 {
     [Header("Transforms")]
     //场景对象
+    public ParticleSystem partSystem;
     public World world;
     public Transform Camera;
     public MusicManager musicmanager;
@@ -226,6 +227,7 @@ public class CanvasManager : MonoBehaviour
             {
                 //data
                 //Debug.Log("IntoWater");
+                partSystem.Play();
                 Swimming_Screen.SetActive(true);
                 LifeManager.Oxy_IntoWater();
 
@@ -237,7 +239,7 @@ public class CanvasManager : MonoBehaviour
         else
         {
             Swimming_Screen.SetActive(false);
-
+            partSystem.Stop();
 
 
             //出水
@@ -296,12 +298,12 @@ public class CanvasManager : MonoBehaviour
         {
             //入水
             Swimming_Screen.SetActive(true);
-
+            partSystem.Play();
         }
         else
         {
             Swimming_Screen.SetActive(false);
-
+            partSystem.Stop();
 
         }
     }
