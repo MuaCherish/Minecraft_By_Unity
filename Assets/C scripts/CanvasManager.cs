@@ -227,8 +227,11 @@ public class CanvasManager : MonoBehaviour
             {
                 //data
                 //Debug.Log("IntoWater");
-                partSystem.Play();
+                
                 Swimming_Screen.SetActive(true);
+
+                partSystem.Play();
+
                 LifeManager.Oxy_IntoWater();
 
                 //update
@@ -239,6 +242,7 @@ public class CanvasManager : MonoBehaviour
         else
         {
             Swimming_Screen.SetActive(false);
+
             partSystem.Stop();
 
 
