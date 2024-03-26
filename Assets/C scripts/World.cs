@@ -142,6 +142,10 @@ public class World : MonoBehaviour
     public ConcurrentQueue<Chunk> WaitToCreateMesh = new ConcurrentQueue<Chunk>();
     Coroutine Mesh_Coroutine;
 
+    //Init
+    public bool InitError = false;
+
+
     //----------------------------------周期函数---------------------------------------
     private void Start()
     {
@@ -178,11 +182,7 @@ public class World : MonoBehaviour
         {
             if (hasExec_SetSeed)
             {
-                //检查是否输入种子
-                CheckSeed();
-
-                //检查是否输入RenderSize
-                CheckRenderSize();
+                
 
                 //开始初始化
                 Update_CenterChunks();
@@ -252,7 +252,7 @@ public class World : MonoBehaviour
     }
 
     //检查种子
-    void CheckSeed()
+    public void CheckSeed()
     {
         if (input_Seed != null && string.IsNullOrEmpty(input_Seed.text))
         {
@@ -268,13 +268,24 @@ public class World : MonoBehaviour
             {
                 // 转换成功，number 中存储了输入字段中的数字
                 //Debug.Log("种子为: " + number);
-                Seed = number;
+
+                if (number > 0)
+                {
+                    Seed = number;
+                }
+                else
+                {
+                    InitError = true;
+                    Debug.Log("种子转换失败！");
+                }
+                
 
                 //设置水平面
                 //sea_level = Random.Range(20, 42); 
             }
             else
             {
+                InitError = true;
                 // 转换失败，输入字段中的字符串不是有效的整数
                 Debug.Log("种子转换失败！");
             }
@@ -284,7 +295,7 @@ public class World : MonoBehaviour
     }
 
     //检查渲染范围
-    void CheckRenderSize()
+    public void CheckRenderSize()
     {
         //size如果是6则跳过，否则则赋值
 
@@ -294,18 +305,23 @@ public class World : MonoBehaviour
         {
             // 转换成功，number 中存储了输入字段中的数字
             //Debug.Log("种子为: " + number);
-            if (number == 6)
+            if (number > 0)
             {
-                return;
+                renderSize = number;
+            }
+            else
+            {
+                InitError = true;
             }
 
 
-            renderSize = number;
+            
 
         }
         else
         {
             // 转换失败，输入字段中的字符串不是有效的整数
+            InitError = true;
             Debug.Log("RenderSIze转换失败！");
         }
     }
@@ -484,11 +500,11 @@ public class World : MonoBehaviour
     {
 
         //先判断一下有没有
-        //if (Allchunks.ContainsKey(pos))
-        //{
-        //    Allchunks[pos].ShowChunk();
-        //    return;
-        //}
+        if (Allchunks.ContainsKey(pos))
+        {
+            Allchunks[pos].ShowChunk();
+            return;
+        }
 
         //调用Chunk
         Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this);

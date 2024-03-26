@@ -33,6 +33,9 @@ public class CanvasManager : MonoBehaviour
     public TextMeshProUGUI tmp;
     public GameObject handle;
 
+    //InitScreen
+    public TextMeshProUGUI ErrorMessage;
+
     //Playing屏幕内容
     public GameObject OpenYourEyes;
     public GameObject Debug_Screen;
@@ -363,27 +366,58 @@ public class CanvasManager : MonoBehaviour
     //Init -> Loading
     public void ClickToLoading()
     {
-        //清内存
-        MainCamera.SetActive(false);
 
-        //screen切换
-        Init_Screen.SetActive(false);
-        Loading_Screen.SetActive(true);
+        //检查是否输入种子
+        world.CheckSeed();
 
-        //游戏状态切换
-        world.game_state = Game_State.Loading;
+        //检查是否输入RenderSize
+        world.CheckRenderSize();
 
-        //主摄像机切换
-        PlayerObject.SetActive(true);
-        MainCamera.SetActive(false);
+        if (world.InitError == false)
+        {
+            //清内存
+            MainCamera.SetActive(false);
 
-        //其他
-        HideCursor();
+            //screen切换
+            Init_Screen.SetActive(false);
+            Loading_Screen.SetActive(true);
 
-        //music
-        musicmanager.PlaySound_Click();
+            //游戏状态切换
+            world.game_state = Game_State.Loading;
+
+            //主摄像机切换
+            PlayerObject.SetActive(true);
+            MainCamera.SetActive(false);
+
+            //其他
+            HideCursor();
+
+            //music
+            musicmanager.PlaySound_Click();
+        }
+        else
+        {
+
+            StartCoroutine(ShowErrorMessage());
+
+            world.InitError = false;
+        }
+
+        
 
     }
+
+    IEnumerator ShowErrorMessage()
+    {
+        ErrorMessage.text = "illegal input !!";
+
+        yield return new WaitForSeconds(2f);
+
+        ErrorMessage.text = "";
+    }
+
+
+
 
     //Init -> Start
     public void BackToStart()
