@@ -184,6 +184,7 @@ public class Chunk : MonoBehaviour
                 {
                     // 生成0或1的随机数
                     int randomInt = rand.Next(0, 2);
+                    int randomFrom_0_10 = rand.Next(0, 10);
 
                     //地形噪声
                     float noiseHigh = GetTotalNoiseHigh(x, z);
@@ -260,25 +261,54 @@ public class Chunk : MonoBehaviour
 
 
 
-                        }//地表1层
+                        }
+
+                        //地上一层
+                        //else if ((y + 2) > noiseHigh)
+                        //{
+
+                        //    // 如果脚下是草地
+                        //    // 判断小草
+                        //    //if (voxelMap[x, y - 1, z] == VoxelData.Grass || voxelMap[x, y - 1, z] == VoxelData.Soil)
+                        //    //{
+                                
+                        //    //    if (randomFrom_0_10 > 5)
+                        //    //    {
+                        //    //        voxelMap[x, y, z] = VoxelData.TNT;
+                        //    //    }
+                        //    //    else
+                        //    //    {
+                        //    //        voxelMap[x, y, z] = VoxelData.Air;
+                        //    //    }
+                        //    //}
+
+                            
+                        //}
+
+
+                        //地表
                         else if ((y + 1) > noiseHigh)
                         {
-
-                            //沙漠判断
+                            
+                            //沙漠气候
                             if (noise_desery > 0.5f)
                             {
                                 voxelMap[x, y, z] = VoxelData.Sand;
 
                             }
+
+                            //草原气候
                             else
                             {
+                                //高于海平面
                                 if (y > world.sea_level)
                                 {
+                                    
                                     voxelMap[x, y, z] = VoxelData.Grass;
                                 }
                                 else
                                 {
-                                    if (randomInt == 0)
+                                    if (randomFrom_0_10 > 3)
                                     {
                                         voxelMap[x, y, z] = VoxelData.Sand;
                                     }
@@ -1162,20 +1192,12 @@ public class Chunk : MonoBehaviour
     //创建mesh里的参数
     void UpdateMeshData(Vector3 pos)
     {
+        byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
 
         //判断六个面
         for (int p = 0; p < 6; p++)
         {
-
-            //if (x == 10 && y == 37 && z == 14)
-            //{
-            //    print("");
-            //}
-
-            //voxelMap[pos + VoxelData.faceChecks[p]]
-            //Debug.Log(pos);
-
-            byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
+            
 
             if (!CheckVoxel(pos + VoxelData.faceChecks[p], p))
             {
