@@ -49,8 +49,8 @@ public class Player : MonoBehaviour
     [Header("碰撞参数")]
     public float playerWidth = 0.3f;
     public float playerHeight = 1.7f;
-    public float extend_delta = 0.1f;
-    public float delta = 0.05f;
+    private float extend_delta = 0.1f;
+    private float delta = 0.05f;
 
     [Header("打掉方块需要的时间")]
     //public float destroyTime = 2f;
