@@ -1,6 +1,12 @@
 # 👻Minecraft_By_Unity
 A long-term project from beginner
 
+PS:
+关于构建项目的注意事项：
+- TextMeshPro
+- 然后给Font目录下的Minecraft字体新建一个TMPFone，不然打开项目会发生空指针报错
+
+
 - Overview
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/4.png" width="600px">
 
