@@ -126,6 +126,8 @@ public class FloatingCube : MonoBehaviour
         //播放音效
         musicmanager.PlaySound_Absorb();
 
+        
+
         //背包系统计数
         if (world.game_mode == GameMode.Survival && point_Block_type != VoxelData.BedRock)
         {
@@ -140,6 +142,8 @@ public class FloatingCube : MonoBehaviour
             backpackmanager.update_slots(0, _point_Block_type);
         }
 
+        //切换手中物品动画
+        backpackmanager.ChangeBlockInHand();
 
         // 移动完成后销毁自身
         Destroy(gameObject);

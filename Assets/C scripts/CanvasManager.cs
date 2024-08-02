@@ -53,7 +53,7 @@ public class CanvasManager : MonoBehaviour
     //修改值参数
     public Slider slider_bgm;
     public Slider slider_sound;
-    public Slider slider_render_speed;
+    public Slider slider_MouseSensitivity;
     public Toggle toggle_SpaceMode;  
     public Toggle toggle_SuperMing;
 
@@ -73,8 +73,8 @@ public class CanvasManager : MonoBehaviour
     private float previous_sound = 0.5f;
     
     //render speed
-    public float render_speed = 0.5f;
-    private float previous_render_speed = 0.5f;
+    public float Mouse_Sensitivity = 0.5f;
+    private float previous_Mouse_Sensitivity = 0.5f;
 
     //isSpaceMode
     public bool SpaceMode_isOn = false;
@@ -170,8 +170,11 @@ public class CanvasManager : MonoBehaviour
             
             
         }
-
-        UpdatePauseScreenValue();
+        if (Pause_Screen.activeSelf)
+        {
+            UpdatePauseScreenValue();
+        }
+        
 
         Prompt_FlashLight();
     }
@@ -713,22 +716,15 @@ public class CanvasManager : MonoBehaviour
             previous_sound = volume_sound;
         }
 
-        //render speed
-        render_speed = slider_render_speed.value;
+        //MouseSensitivity
+        Mouse_Sensitivity = Mathf.Lerp(1f, 4f, slider_MouseSensitivity.value);
 
-        if (render_speed > 0.9f)
+        if (Mouse_Sensitivity != previous_Mouse_Sensitivity)
         {
-            render_speed = 0.9f;
-        }
-
-        if (render_speed != previous_render_speed)
-        {
-            //delay = 1 - speed
-            world.CreateCoroutineDelay = 1 - render_speed; 
-            world.RemoveCoroutineDelay = 1 - render_speed;
+            //改变鼠标灵敏度
 
             //更新previous
-            previous_render_speed = render_speed;
+            previous_Mouse_Sensitivity = Mouse_Sensitivity;
         }
 
 
@@ -842,6 +838,7 @@ public class CanvasManager : MonoBehaviour
         Application.Quit();
     }
 
+    //显示Block名字
     public void Change_text_selectBlockname(byte prokeblocktype)
     {
         //255代表是切换方块

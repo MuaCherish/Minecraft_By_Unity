@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     public bool isMoving;
     public bool isSquating;
     public bool isFlying;
+    public bool isCatchBlock;
 
     [Header("Transforms")]
     public Material HighLightMaterial;
@@ -34,6 +35,8 @@ public class Player : MonoBehaviour
     public GameObject Eye_Light;
     public BackPackManager backpackmanager;
     public LifeManager lifemanager;
+    public GameObject Particle_Broken;
+    public Transform particel_Broken_transform;
 
     [Header("角色参数")]
     public Transform foot;
@@ -209,7 +212,8 @@ public class Player : MonoBehaviour
             change_eyesview();
 
             //计算碰撞点
-            update_block();
+            if(!isFlying)
+                update_block();
 
             //计算玩家状态
             GetPlayerState();
@@ -385,8 +389,8 @@ public class Player : MonoBehaviour
 
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
-        mouseHorizontal = Input.GetAxis("Mouse X");
-        mouseVerticalspeed = Input.GetAxis("Mouse Y");
+        mouseHorizontal = Input.GetAxis("Mouse X") * canvasManager.Mouse_Sensitivity;
+        mouseVerticalspeed = Input.GetAxis("Mouse Y") * canvasManager.Mouse_Sensitivity;
         scrollWheelInput = Input.GetAxis("Mouse ScrollWheel");
 
 
@@ -547,6 +551,7 @@ public class Player : MonoBehaviour
                     if (world.game_mode == GameMode.Survival)
                     {
                         backpackmanager.update_slots(1, point_Block_type);
+                        backpackmanager.ChangeBlockInHand();
                     }
                     
                 }
@@ -657,19 +662,31 @@ public class Player : MonoBehaviour
         elapsedTime = 0.0f;
         musicmanager.isbroking = false;
 
+        //材质还原
+        HighLightMaterial.color = new Color(0, 0, 0, 0);
+        HighLightMaterial.mainTexture = DestroyTextures[0];
+
         //只有生存模式才会掉掉落物
-        if (world.game_mode == GameMode.Survival)
+        if (world.game_mode == GameMode.Survival && world.blocktypes[point_Block_type].candropBlock)
         {
             backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type, false, backpackmanager.ColdTime_Absorb);
 
         }
 
         //放进背包由掉落物执行
+        //canvasManager.Change_text_selectBlockname(point_Block_type);
 
-        canvasManager.Change_text_selectBlockname(point_Block_type);
+        //破坏粒子效果
+        GameObject particleInstance = Instantiate(Particle_Broken);
+        particleInstance.transform.parent = particel_Broken_transform;
+        particleInstance.transform.position = position;
+        if (world.blocktypes[point_Block_type].Particle_Material == null)
+            particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[VoxelData.Soil].Particle_Material;
+        else
+            particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[point_Block_type].Particle_Material;
+        Destroy(particleInstance, 1.0f);
 
-        
-
+        //World
         world.GetChunkObject(position).EditData(world.GetRelalocation(position), VoxelData.Air);
 
         //print($"绝对坐标为：{position}");
