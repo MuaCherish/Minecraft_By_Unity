@@ -271,7 +271,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &22826876
 Transform:
   m_ObjectHideFlags: 0
@@ -307,90 +307,6 @@ MonoBehaviour:
   NightTime: 120
   switchTime: 20
   DelayTime: 0.1
---- !u!1 &43446074
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 43446076}
-  - component: {fileID: 43446075}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &43446075
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 43446074}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59aaf38c6658e2745913e689b44f2cb4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CreatureValue:
-    world: {fileID: 0}
-    foot_BlockType: 4
-    isGrounded: 0
-    isSwiming: 0
-    isMoving: 0
-    jumpRequest: 0
-    velocity: {x: 0, y: 0, z: 0}
-    walkSpeed: 4
-    jumpForce: 6
-    gravity: -15
-    MaxHurtHigh: 7
-    playerWidth: 0.3
-    playerHeight: 1.7
-    extend_delta: 0.1
-    delta: 0.05
-    "up_\u5DE6\u4E0A": {x: 0, y: 0, z: 0}
-    "up_\u53F3\u4E0A": {x: 0, y: 0, z: 0}
-    "up_\u53F3\u4E0B": {x: 0, y: 0, z: 0}
-    "up_\u5DE6\u4E0B": {x: 0, y: 0, z: 0}
-    "down_\u5DE6\u4E0A": {x: 0, y: 0, z: 0}
-    "down_\u53F3\u4E0A": {x: 0, y: 0, z: 0}
-    "down_\u53F3\u4E0B": {x: 0, y: 0, z: 0}
-    "down_\u5DE6\u4E0B": {x: 0, y: 0, z: 0}
-    "front_\u5DE6\u4E0A": {x: 0, y: 0, z: 0}
-    "front_\u53F3\u4E0A": {x: 0, y: 0, z: 0}
-    "front_\u5DE6\u4E0B": {x: 0, y: 0, z: 0}
-    "front_\u53F3\u4E0B": {x: 0, y: 0, z: 0}
-    "back_\u5DE6\u4E0A": {x: 0, y: 0, z: 0}
-    "back_\u53F3\u4E0A": {x: 0, y: 0, z: 0}
-    "back_\u5DE6\u4E0B": {x: 0, y: 0, z: 0}
-    "back_\u53F3\u4E0B": {x: 0, y: 0, z: 0}
-    "left_\u5DE6\u4E0A": {x: 0, y: 0, z: 0}
-    "left_\u53F3\u4E0A": {x: 0, y: 0, z: 0}
-    "left_\u5DE6\u4E0B": {x: 0, y: 0, z: 0}
-    "left_\u53F3\u4E0B": {x: 0, y: 0, z: 0}
-    "right_\u5DE6\u4E0A": {x: 0, y: 0, z: 0}
-    "right_\u53F3\u4E0A": {x: 0, y: 0, z: 0}
-    "right_\u5DE6\u4E0B": {x: 0, y: 0, z: 0}
-    "right_\u53F3\u4E0B": {x: 0, y: 0, z: 0}
---- !u!4 &43446076
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 43446074}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1098.8391, y: 63.385914, z: 617.2666}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &45077094
 GameObject:
   m_ObjectHideFlags: 0
@@ -3651,7 +3567,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &325552235
 Transform:
   m_ObjectHideFlags: 0
@@ -13849,7 +13765,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1066840321
 Transform:
   m_ObjectHideFlags: 0
@@ -30274,7 +30190,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2136429364
 Transform:
   m_ObjectHideFlags: 0
@@ -30375,4 +30291,3 @@ SceneRoots:
   - {fileID: 811817622}
   - {fileID: 1660979562}
   - {fileID: 1504082081}
-  - {fileID: 43446076}
