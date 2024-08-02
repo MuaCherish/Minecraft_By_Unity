@@ -14,9 +14,9 @@ PS:
 - Overview
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/4.png" width="600px">
 
-- Survivalmode and creativemode
-<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/8.jpg" width="600px">
+- Play Screen
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/Play1.png" width="600px">
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/Play2.jpg" width="600px">
 
 - Cave
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/7.png" width="600px">
