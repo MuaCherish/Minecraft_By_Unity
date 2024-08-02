@@ -9,6 +9,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using static UnityEditor.PlayerSettings;
 
 //全局游戏状态
 public enum Game_State
@@ -79,13 +80,19 @@ public class World : MonoBehaviour
 
 
     [Header("生成概率(n分之一)")]
-    public int Random_Bamboo;
     public int Random_Coal;
     public int Random_Iron;
     public int Random_Gold;
     public int Random_Blue_Crystal;
     public int Random_Diamond;
 
+    [Header("生成概率(n%)")]
+    public float Random_Bush;
+    public int Random_Bamboo;
+    public float Random_BlueFlower;
+    public float Random_WhiteFlower1;
+    public float Random_WhiteFlower2;
+    public float Random_YellowFlower;
 
 
     //玩家
@@ -430,11 +437,23 @@ public class World : MonoBehaviour
         {
             add_vec = (Center_Now / VoxelData.ChunkWidth) + Center_direction * (renderSize - 1);
 
+            //新增Chunk
             for (int i = -renderSize; i < renderSize; i++)
             {
                 //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
 
                 WatingToCreate_Chunks.Add(add_vec + new Vector3((float)i, 0, 0));
+
+
+            }
+
+            //呼叫里侧Chunk更新
+            for (int i = -renderSize; i < renderSize; i++)
+            {
+                //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
+                if (Allchunks.TryGetValue(add_vec + new Vector3((float)i, 0, -1), out Chunk chunktemp))
+                    WaitToCreateMesh.Enqueue(chunktemp);
+
 
 
             }
@@ -449,6 +468,16 @@ public class World : MonoBehaviour
             {
                 WatingToCreate_Chunks.Add(add_vec + new Vector3((float)i, 0, 0));
             }
+
+            //呼叫里侧Chunk更新
+            for (int i = -renderSize; i < renderSize; i++)
+            {
+                //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
+                if (Allchunks.TryGetValue(add_vec + new Vector3((float)i, 0, 1), out Chunk chunktemp))
+                    WaitToCreateMesh.Enqueue(chunktemp);
+
+
+            }
         }
 
         //Left
@@ -461,6 +490,16 @@ public class World : MonoBehaviour
                 //CreateChunk(add_vec + new Vector3(0, 0, (float)i));
                 WatingToCreate_Chunks.Add(add_vec + new Vector3(0, 0, (float)i));
             }
+
+            //呼叫里侧Chunk更新
+            for (int i = -renderSize; i < renderSize; i++)
+            {
+                //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
+                if (Allchunks.TryGetValue(add_vec + new Vector3(1, 0, (float)i), out Chunk chunktemp))
+                    WaitToCreateMesh.Enqueue(chunktemp);
+
+
+            }
         }
 
         //Right
@@ -472,6 +511,16 @@ public class World : MonoBehaviour
             {
                 //CreateChunk(add_vec + new Vector3(0, 0, (float)i));
                 WatingToCreate_Chunks.Add(add_vec + new Vector3(0, 0, (float)i));
+            }
+
+            //呼叫里侧Chunk更新
+            for (int i = -renderSize; i < renderSize; i++)
+            {
+                //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
+                if (Allchunks.TryGetValue(add_vec + new Vector3(-1, 0, (float)i), out Chunk chunktemp))
+                    WaitToCreateMesh.Enqueue(chunktemp);
+
+
             }
         }
 
@@ -529,7 +578,7 @@ public class World : MonoBehaviour
         }
     }
     //生成Chunk
-    //BaseChunk不会呼叫周边方块
+    //BaseChunk不会进行自身剔除
     void CreateBaseChunk(Vector3 pos)
     {
 

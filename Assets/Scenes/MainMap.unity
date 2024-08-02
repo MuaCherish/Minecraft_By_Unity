@@ -8815,7 +8815,7 @@ MonoBehaviour:
   - blockName: water
     DestroyTime: 0
     isSolid: 0
-    isTransparent: 0
+    isTransparent: 1
     canBeChoose: 0
     candropBlock: 0
     icon: {fileID: -1121316251, guid: 65dd7ce3fe9afcc449601c2a5ee0e173, type: 3}
@@ -8886,7 +8886,7 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 1
     canBeChoose: 1
-    candropBlock: 1
+    candropBlock: 0
     icon: {fileID: -480959984, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
     texture: {fileID: 0}
     dropsprite: {fileID: 0}
@@ -8906,10 +8906,10 @@ MonoBehaviour:
     DrawMode: 1
   - blockName: whiteFlower_1
     DestroyTime: 0.1
-    isSolid: 1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
-    candropBlock: 1
+    candropBlock: 0
     icon: {fileID: 1645535455, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
     texture: {fileID: 0}
     dropsprite: {fileID: 0}
@@ -8920,19 +8920,19 @@ MonoBehaviour:
     - {fileID: 0}
     broking_clip: {fileID: 0}
     broken_clip: {fileID: 0}
-    backFaceTexture: 17
-    frontFaceTexture: 17
+    backFaceTexture: 15
+    frontFaceTexture: 15
     topFaceTexture: 15
     bottomFaceTexture: 15
-    leftFaceTexture: 17
-    rightFaceTexture: 17
-    DrawMode: 0
+    leftFaceTexture: 15
+    rightFaceTexture: 15
+    DrawMode: 1
   - blockName: whiteFlower_2
     DestroyTime: 0.1
-    isSolid: 1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
-    candropBlock: 1
+    candropBlock: 0
     icon: {fileID: -734642697, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
     texture: {fileID: 0}
     dropsprite: {fileID: 0}
@@ -8943,19 +8943,19 @@ MonoBehaviour:
     - {fileID: 0}
     broking_clip: {fileID: 0}
     broken_clip: {fileID: 0}
-    backFaceTexture: 17
-    frontFaceTexture: 17
+    backFaceTexture: 22
+    frontFaceTexture: 22
     topFaceTexture: 22
     bottomFaceTexture: 22
-    leftFaceTexture: 17
-    rightFaceTexture: 17
-    DrawMode: 0
+    leftFaceTexture: 22
+    rightFaceTexture: 22
+    DrawMode: 1
   - blockName: yellowFlower
     DestroyTime: 0.1
-    isSolid: 1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
-    candropBlock: 1
+    candropBlock: 0
     icon: {fileID: -85298334, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
     texture: {fileID: 0}
     dropsprite: {fileID: 0}
@@ -8966,13 +8966,13 @@ MonoBehaviour:
     - {fileID: 0}
     broking_clip: {fileID: 0}
     broken_clip: {fileID: 0}
-    backFaceTexture: 17
-    frontFaceTexture: 17
+    backFaceTexture: 20
+    frontFaceTexture: 20
     topFaceTexture: 20
     bottomFaceTexture: 20
-    leftFaceTexture: 17
-    rightFaceTexture: 17
-    DrawMode: 0
+    leftFaceTexture: 20
+    rightFaceTexture: 20
+    DrawMode: 1
   - blockName: Candle
     DestroyTime: 0.4
     isSolid: 1
@@ -9208,7 +9208,7 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 1
     canBeChoose: 1
-    candropBlock: 1
+    candropBlock: 0
     icon: {fileID: -2062449787, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
     texture: {fileID: 0}
     dropsprite: {fileID: 0}
@@ -9221,11 +9221,11 @@ MonoBehaviour:
     broken_clip: {fileID: 0}
     backFaceTexture: 13
     frontFaceTexture: 13
-    topFaceTexture: 255
-    bottomFaceTexture: 255
+    topFaceTexture: 13
+    bottomFaceTexture: 13
     leftFaceTexture: 13
     rightFaceTexture: 13
-    DrawMode: 0
+    DrawMode: 1
   - blockName: WoodenPlanks
     DestroyTime: 1
     isSolid: 1
@@ -9300,7 +9300,7 @@ MonoBehaviour:
   DestroySize: 7
   noise2d_scale_smooth: 0.01
   noise2d_scale_steep: 0.04
-  debug_CanLookCave: 1
+  debug_CanLookCave: 0
   noise3d_scale: 0.08
   cave_width: 0.38
   isRandomSeed: 1
@@ -9311,12 +9311,17 @@ MonoBehaviour:
   TreeCount: 5
   TreeHigh_min: 3
   TreeHigh_max: 5
-  Random_Bamboo: 50
   Random_Coal: 500
   Random_Iron: 700
   Random_Gold: 1000
   Random_Blue_Crystal: 1000
   Random_Diamond: 3000
+  Random_Bush: 30
+  Random_Bamboo: 50
+  Random_BlueFlower: 1
+  Random_WhiteFlower1: 1
+  Random_WhiteFlower2: 1
+  Random_YellowFlower: 1
   PlayerFoot: {fileID: 656216633}
   ERROR_CODE_OUTOFVOXELMAP: 255
   Start_Position: {x: 1600, y: 63, z: 1600}
@@ -14897,7 +14902,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.5
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
