@@ -88,6 +88,7 @@ public static class VoxelData
     public static readonly Byte Bamboo = 25;
     public static readonly Byte WoodenPlanks = 26;
     public static readonly Byte Fluor = 27;
+    public static readonly Byte Bush = 28;
 
 
     //音乐宏定义
@@ -190,7 +191,7 @@ public static class VoxelData
     };
 
 
-    //绘制序列
+    //Block绘制序列
     public static readonly int[,] voxelTris = new int[6, 4] {
 
         {0, 3, 1, 2}, // Back Face
@@ -201,6 +202,16 @@ public static class VoxelData
 		{1, 2, 5, 6}  // Right Face
 
 	};
+
+    //绘制序列 - Bush
+    public static readonly int[,] voxelTris_Bush = new int[4, 4] {
+
+        {0, 3, 6, 5},
+        {5, 6, 3, 0},
+        {4, 7, 2, 1},
+        {1, 2, 7, 4},
+
+    };
 
     //UV数组
     public static readonly Vector2[] voxelUvs = new Vector2[4] {

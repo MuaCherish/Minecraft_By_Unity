@@ -34,7 +34,7 @@ public class LifeManager : MonoBehaviour
     Coroutine RecoveryCoroutine;
 
     //一次性代码
-    bool hasExec_PlaySound = true;
+    //bool hasExec_PlaySound = true;
     
 
     //------------------------------------ 血条 ------------------------------------------

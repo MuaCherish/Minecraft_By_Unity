@@ -37,7 +37,7 @@ public class NighManager : MonoBehaviour
     Coroutine lights;
 
     //一次性代码
-    bool hasExec_calltoPrompt = true;
+    //private bool hasExec_calltoPrompt = true;
 
     private void Start()
     {
@@ -83,7 +83,7 @@ public class NighManager : MonoBehaviour
             if (!canvasManager.hasExec_PromptScreen_isShow)
             {
                 canvasManager.First_Prompt_PlayerThe_Flashlight();
-                hasExec_calltoPrompt = false;
+                //hasExec_calltoPrompt = false;
             }
             
             //Nighttime

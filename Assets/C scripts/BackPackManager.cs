@@ -30,7 +30,7 @@ public class BackPackManager : MonoBehaviour
 
     //切换手中物品的
     [Header("ChangingBlock")]
-    byte previous_HandBlock = 255;   //255代表手本身
+    public byte previous_HandBlock = 255;   //255代表手本身
     public GameObject Hand_Hold;
     public GameObject Hand;
     public GameObject HandBlock;
@@ -335,6 +335,8 @@ public class BackPackManager : MonoBehaviour
 
             //物品栏减一
             update_slots(1, 0);
+
+            ChangeBlockInHand();
         }
 
 
@@ -345,9 +347,9 @@ public class BackPackManager : MonoBehaviour
     public void ChangeBlockInHand()
     {
         byte now_HandBlock = slots[player.selectindex].blockId;
-        
-        //如果不一样，就要切换方块
-        if (now_HandBlock != previous_HandBlock)
+
+        //如果不一样，就要切换方块 或者 方块槽里有方块但是isCatchBloch = false 或者 方块槽里无方块但是却是isCatchBloch = true
+        if (now_HandBlock != previous_HandBlock || (now_HandBlock != 255 && player.isCatchBlock == false) || (now_HandBlock == 255 && player.isCatchBlock == true))
         {
             //切换手
             if (now_HandBlock == 255)
@@ -364,6 +366,9 @@ public class BackPackManager : MonoBehaviour
 
                 //拿出Hand_Hold
                 Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Up");
+
+                //状态
+                player.isCatchBlock = false;
 
             }
             //切换方块
@@ -393,7 +398,8 @@ public class BackPackManager : MonoBehaviour
                 //拿出Hand_Hold
                 Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Up");
 
-                
+                //状态
+                player.isCatchBlock = true;
 
             }
 
@@ -401,6 +407,10 @@ public class BackPackManager : MonoBehaviour
             previous_HandBlock = now_HandBlock;
         }
     }
+
+
+    
+
 
     //切换方块冷却时间
     IEnumerator ChangeBlockColdTime()

@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.VisualScripting;
 
 public class Chunk : MonoBehaviour
 {
     //state
     public bool isShow = true;
     public bool isReadyToRender = false;
-    public bool isCalled = false;
+    public bool BaseChunk;
+    public bool isCalled = false;  //不要删我！！
 
     //Transform
     World world;
@@ -52,13 +54,16 @@ public class Chunk : MonoBehaviour
     public Vector3 myposition;
 
     //debug
-    bool debug_lookCave;
+    bool debug_CanLookCave;
 
 
     //---------------------------------- 周期函数 ---------------------------------------
 
+
+
+
     //Start()
-    public Chunk(Vector3 thisPosition, World _world)
+    public Chunk(Vector3 thisPosition, World _world, bool _BaseChunk)
     {
         //World
         world = _world;
@@ -67,7 +72,8 @@ public class Chunk : MonoBehaviour
         noise3d_scale = world.noise3d_scale;
         treecount = world.TreeCount;
         caveWidth = world.cave_width;
-        debug_lookCave = world.debug_lookCave;
+        debug_CanLookCave = !world.debug_CanLookCave;
+        BaseChunk = _BaseChunk;
 
         //Self
         chunkObject = new GameObject();
@@ -233,29 +239,26 @@ public class Chunk : MonoBehaviour
                             else
                             {
 
-                                ////地表2层
-                                //if (y - 1 < noiseHigh)
-                                //{
-                                //    //竹子
-                                //    //if (rand.Next(0, world.Random_Bamboo) < 1)
-                                //    //{
-                                //    //    voxelMap[x, y, z] = VoxelData.Air;
-                                //    //    Bamboos.Enqueue(new Vector3(x, y, z));
-                                //    //}
-                                //    //else
-                                //    //{
-                                //    //    voxelMap[x, y, z] = VoxelData.Air;
-                                //    //}
+                                //地上一层-灌木丛
+                                if (y - 1 < noiseHigh)
+                                {
+  
+                                    if (GetProbability(30) && voxelMap[x, y - 1, z] != VoxelData.Sand && voxelMap[x, y - 1, z] != VoxelData.Air)
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Bush;
+                                    }
+                                    else
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Air;
+                                    }
 
-                                //    voxelMap[x, y, z] = VoxelData.Air;
+                                }
+                                else
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Air;
+                                }
 
-                                //}
-                                //else
-                                //{
-                                //    voxelMap[x, y, z] = VoxelData.Air;
-                                //}
 
-                                voxelMap[x, y, z] = VoxelData.Air;
 
                             }
 
@@ -267,23 +270,25 @@ public class Chunk : MonoBehaviour
                         //else if ((y + 2) > noiseHigh)
                         //{
 
-                        //    // 如果脚下是草地
-                        //    // 判断小草
+                        //    //如果脚下是草地
+                        //    //判断小草
                         //    //if (voxelMap[x, y - 1, z] == VoxelData.Grass || voxelMap[x, y - 1, z] == VoxelData.Soil)
                         //    //{
-                                
-                        //    //    if (randomFrom_0_10 > 5)
+
+                        //    //    if (GetProbability(20))
                         //    //    {
-                        //    //        voxelMap[x, y, z] = VoxelData.TNT;
+                        //    //        voxelMap[x, y, z] = VoxelData.Leaves;
                         //    //    }
                         //    //    else
                         //    //    {
                         //    //        voxelMap[x, y, z] = VoxelData.Air;
                         //    //    }
                         //    //}
+                        //    //voxelMap[x, y, z] = VoxelData.TNT;
 
-                            
                         //}
+
+
 
 
                         //地表
@@ -804,6 +809,16 @@ public class Chunk : MonoBehaviour
         }
     }
 
+    //灌木丛消失
+    void updateBush()
+    {
+        //如果自己是Bush && 自己下面是空气 则自己变为空气
+        if (voxelMap[x, y, z] == VoxelData.Bush && voxelMap[x, y - 1, z] == VoxelData.Air)
+        {
+            voxelMap[x, y, z] = VoxelData.Air;
+        }
+    }
+
     //------------------------------------------------------------------------------------
 
 
@@ -814,11 +829,18 @@ public class Chunk : MonoBehaviour
     //---------------------------------- Mesh部分 ----------------------------------------
 
     //开始遍历
-    public void UpdateChunkMesh()
+    public void UpdateChunkMesh_WithSurround() //参数重载，如果不写默认为false
     {
+        UpdateChunkMesh_WithSurround(false);
+    }
+
+    public void UpdateChunkMesh_WithSurround(object obj)
+    {
+        bool _iscaller = (bool)obj;
 
         ClearMeshData();
 
+        //刷新自己
         for (y = 0; y < VoxelData.ChunkHeight; y++)
         {
             for (x = 0; x < VoxelData.ChunkWidth; x++)
@@ -829,8 +851,11 @@ public class Chunk : MonoBehaviour
                     //竹子断裂
                     //updateBamboo();
 
-                    //(是固体 || 是水 || 是水面上一层 || 是竹子)才生成
-                    if (world.blocktypes[voxelMap[x, y, z]].isSolid || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water)
+                    //Bush消失
+                    updateBush();
+
+                    //(绘制模式不是空气 || 是水 || 是水面上一层 || 是竹子)才生成
+                    if (world.blocktypes[voxelMap[x, y, z]].DrawMode != DrawMode.Air || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water)
                         UpdateMeshData(new Vector3(x, y, z));
 
                     //UpdateMeshData(new Vector3(x, y, z));
@@ -838,7 +863,23 @@ public class Chunk : MonoBehaviour
             }
         }
 
-       
+        //通知周围方块刷新
+        if (_iscaller)
+        {
+            Chunk DirectChunk;
+            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
+                DirectChunk.UpdateChunkMesh_WithSurround();
+            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
+                DirectChunk.UpdateChunkMesh_WithSurround();
+            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
+                DirectChunk.UpdateChunkMesh_WithSurround();
+            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
+                DirectChunk.UpdateChunkMesh_WithSurround();
+            _iscaller = false;
+        }
+
+
+
 
         //添加到world的渲染队列
         isReadyToRender = true;
@@ -846,7 +887,7 @@ public class Chunk : MonoBehaviour
         if (isCalled)
         {
             isCalled = false;
-        } 
+        }
         else
         {
             //print($"{world.GetChunkLocation(myposition)}Mesh完成");
@@ -862,6 +903,12 @@ public class Chunk : MonoBehaviour
         {
             //print($"{world.GetChunkLocation(myposition)}入队");
             world.WaitToRender.Enqueue(this);
+        }
+
+
+        if (BaseChunk == true)
+        {
+            BaseChunk = false;
         }
         
 
@@ -897,7 +944,7 @@ public class Chunk : MonoBehaviour
 
         voxelMap[x, y, z] = targetBlocktype;
 
-        UpdateChunkMesh();
+        UpdateChunkMesh_WithSurround(true);
     }
 
     //面生成的判断
@@ -922,7 +969,7 @@ public class Chunk : MonoBehaviour
             //	print("");
             //}
 
-            if (debug_lookCave)
+            if (!BaseChunk)
             {
                 //Front
                 if (z > VoxelData.ChunkWidth - 1)
@@ -932,31 +979,8 @@ public class Chunk : MonoBehaviour
                     {
 
 
-                        //呼叫系统(1次)
-                        if (isFind_Front == false)
-                        {
-                            //update
-                            isFind_Front = true;
-                            chunktemp.isFind_Back = true;
-                            //print($"isFindFront:{isFind_Front},targetisFindBack:{chunktemp.isFind_Back}");
-
-                            //呼叫更新
-                            //print($"{world.GetChunkLocation(myposition)} 呼叫Front:{world.GetChunkLocation(chunktemp.myposition)}");
-                            chunktemp.isCalled = true;
-
-                            if (!world.RenderLock)
-                            {
-                                chunktemp.UpdateChunkMesh();
-                            }
-                            else
-                            {
-                                world.WaitToRender.Enqueue(this);
-                            }
-
-                        }
-
                         //如果target是空气，则返回false
-                        if (chunktemp.voxelMap[x, y, 0] == VoxelData.Air)
+                        if (world.blocktypes[chunktemp.voxelMap[x, y, 0]].isTransparent)
                         {
                             return false;
                         }
@@ -965,11 +989,19 @@ public class Chunk : MonoBehaviour
                             return true;
                         }
 
+
+
                     }
                     else
                     {
-                        if (debug_lookCave)
+                        if (debug_CanLookCave)
+                        {
+                            return false;
+                        }
+                        else
+                        {
                             return true;
+                        }
                     }
                 }
 
@@ -982,29 +1014,8 @@ public class Chunk : MonoBehaviour
                     {
 
 
-                        //呼叫系统(1次)
-                        if (isFind_Back == false)
-                        {
-                            //update
-                            isFind_Back = true;
-                            chunktemp.isFind_Front = true;
-                            //print($"isFindBack:{isFind_Back},targetisFindFront:{chunktemp.isFind_Front}");
-
-                            //呼叫更新
-                            //print($"{world.GetChunkLocation(myposition)} 呼叫Back:{world.GetChunkLocation(chunktemp.myposition)}");
-                            chunktemp.isCalled = true;
-                            if (!world.RenderLock)
-                            {
-                                chunktemp.UpdateChunkMesh();
-                            }
-                            else
-                            {
-                                world.WaitToRender.Enqueue(this);
-                            }
-                        }
-
                         //如果target是空气，则返回false
-                        if (chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1] == VoxelData.Air)
+                        if (world.blocktypes[chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1]].isTransparent)
                         {
                             return false;
                         }
@@ -1013,11 +1024,19 @@ public class Chunk : MonoBehaviour
                             return true;
                         }
 
+
+
                     }
                     else
                     {
-                        if (debug_lookCave)
+                        if (debug_CanLookCave)
+                        {
+                            return false;
+                        }
+                        else
+                        {
                             return true;
+                        }
                     }
 
 
@@ -1031,28 +1050,9 @@ public class Chunk : MonoBehaviour
                     if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
 
-                        //呼叫系统(1次)
-                        if (isFind_Left == false)
-                        {
-                            //update
-                            isFind_Left = true;
-                            chunktemp.isFind_Right = true;
-
-                            //呼叫更新
-                            //print($"{world.GetChunkLocation(myposition)} 呼叫Left:{world.GetChunkLocation(chunktemp.myposition)}");
-                            chunktemp.isCalled = true;
-                            if (!world.RenderLock)
-                            {
-                                chunktemp.UpdateChunkMesh();
-                            }
-                            else
-                            {
-                                world.WaitToRender.Enqueue(this);
-                            }
-                        }
 
                         //如果target是空气，则返回false
-                        if (chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z] == VoxelData.Air)
+                        if (world.blocktypes[chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z]].isTransparent)
                         {
                             return false;
                         }
@@ -1061,11 +1061,19 @@ public class Chunk : MonoBehaviour
                             return true;
                         }
 
+
+
                     }
                     else
                     {
-                        if (debug_lookCave)
+                        if (debug_CanLookCave)
+                        {
+                            return false;
+                        }
+                        else
+                        {
                             return true;
+                        }
                     }
                 }
 
@@ -1076,31 +1084,8 @@ public class Chunk : MonoBehaviour
                     //如果能查到
                     if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
-
-
-                        //呼叫系统(1次)
-                        if (isFind_Right == false)
-                        {
-                            //update
-                            isFind_Right = true;
-                            chunktemp.isFind_Left = true;
-
-                            //呼叫更新
-                            //print($"{world.GetChunkLocation(myposition)} 呼叫Right:{world.GetChunkLocation(chunktemp.myposition)}");
-                            chunktemp.isCalled = true;
-                            if (!world.RenderLock)
-                            {
-                                chunktemp.UpdateChunkMesh();
-                            }
-                            else
-                            {
-                                world.WaitToRender.Enqueue(this);
-                            }
-
-                        }
-
                         //如果target是空气，则返回false
-                        if (chunktemp.voxelMap[0, y, z] == VoxelData.Air)
+                        if (world.blocktypes[chunktemp.voxelMap[0, y, z]].isTransparent)
                         {
                             return false;
                         }
@@ -1109,18 +1094,22 @@ public class Chunk : MonoBehaviour
                             return true;
                         }
 
+
+
                     }
                     else
                     {
-                        if (debug_lookCave)
+                        if (debug_CanLookCave)
+                        {
+                            return false;
+                        }
+                        else
+                        {
                             return true;
+                        }
                     }
                 }
             }
-
-
-
-
 
             //Up不需要考虑
 
@@ -1149,10 +1138,10 @@ public class Chunk : MonoBehaviour
             //Debug.Log("未出界");
 
             //自己是空气 && 目标是竹子 则绘制
-            if (voxelMap[x, y, z] == VoxelData.Bamboo && voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air)
-            {
-                return true;
-            }
+            //if (voxelMap[x, y, z] == VoxelData.Bamboo && voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air)
+            //{
+            //    return true;
+            //}
 
 
             //判断是不是透明方块
@@ -1194,38 +1183,81 @@ public class Chunk : MonoBehaviour
     {
         byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
 
-        //判断六个面
-        for (int p = 0; p < 6; p++)
+        //方块绘制模式
+        switch (world.blocktypes[voxelMap[x, y, z]].DrawMode)
         {
-            
+            case DrawMode.Bush:// Bush绘制模式
 
-            if (!CheckVoxel(pos + VoxelData.faceChecks[p], p))
-            {
+                for (int faceIndex = 0; faceIndex < 4; faceIndex++)
+                {
+                    vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris_Bush[faceIndex, 0]]);
+                    vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris_Bush[faceIndex, 1]]);
+                    vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris_Bush[faceIndex, 2]]);
+                    vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris_Bush[faceIndex, 3]]);
 
-                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
-                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
-                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
-                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
+                    float x = 3f / 8;
+                    float y = 3f / 8;
+                    float temp = 1f / 8;
+                    uvs.Add(new Vector2(x, y));
+                    uvs.Add(new Vector2(x, y + temp));
+                    uvs.Add(new Vector2(x + temp, y + temp));
+                    uvs.Add(new Vector2(x + temp, y));
+                    //AddTexture(world.blocktypes[blockID].GetTextureID(0));
 
-                //uvs.Add (VoxelData.voxelUvs [0]);
-                //uvs.Add (VoxelData.voxelUvs [1]);
-                //uvs.Add (VoxelData.voxelUvs [2]);
-                //uvs.Add (VoxelData.voxelUvs [3]);
-                //AddTexture(1);
+                    triangles.Add(vertexIndex);
+                    triangles.Add(vertexIndex + 1); 
+                    triangles.Add(vertexIndex + 2);
+                    triangles.Add(vertexIndex + 2); 
+                    triangles.Add(vertexIndex + 3); 
+                    triangles.Add(vertexIndex);
+                    vertexIndex += 4;
 
-                //根据p生成对应的面，对应的UV
-                AddTexture(world.blocktypes[blockID].GetTextureID(p));
 
-                triangles.Add(vertexIndex);
-                triangles.Add(vertexIndex + 1);
-                triangles.Add(vertexIndex + 2);
-                triangles.Add(vertexIndex + 2);
-                triangles.Add(vertexIndex + 1);
-                triangles.Add(vertexIndex + 3);
-                vertexIndex += 4;
+                }
 
-            }
+                break;
+
+            default: //默认Block绘制模式
+
+                
+
+                //判断六个面
+                for (int p = 0; p < 6; p++)
+                {
+
+
+                    if (!CheckVoxel(pos + VoxelData.faceChecks[p], p))
+                    {
+
+                        vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
+                        vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
+                        vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
+                        vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
+
+                        //uvs.Add (VoxelData.voxelUvs [0]);
+                        //uvs.Add (VoxelData.voxelUvs [1]);
+                        //uvs.Add (VoxelData.voxelUvs [2]);
+                        //uvs.Add (VoxelData.voxelUvs [3]);
+                        //AddTexture(1);
+
+                        //根据p生成对应的面，对应的UV
+                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+
+                        triangles.Add(vertexIndex);
+                        triangles.Add(vertexIndex + 1);
+                        triangles.Add(vertexIndex + 2);
+                        triangles.Add(vertexIndex + 2);
+                        triangles.Add(vertexIndex + 1);
+                        triangles.Add(vertexIndex + 3);
+                        vertexIndex += 4;
+
+                    }
+                }
+
+                break;
         }
+
+        
 
     }
 
@@ -1274,12 +1306,6 @@ public class Chunk : MonoBehaviour
         uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
         uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
 
-
-    }
-
-    //生成小花小草
-    void updateMeshFlower()
-    {
 
     }
 

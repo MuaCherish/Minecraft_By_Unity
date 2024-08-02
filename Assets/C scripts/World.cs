@@ -21,6 +21,12 @@ public enum GameMode
     Creative, Survival,
 }
 
+
+public enum DrawMode
+{
+    Block,Bush,Torch,Air,
+}
+
 public class World : MonoBehaviour
 {
     [Header("Transforms")]
@@ -52,7 +58,7 @@ public class World : MonoBehaviour
     [Header("Cave-洞穴系统")]
     //noise3d_scale越大洞穴破损越严重，越大越好
     //cave_width越小洞穴平均宽度变小，不能太大，不然全是洞
-    public bool debug_lookCave = false;
+    public bool debug_CanLookCave = false;
     public float noise3d_scale = 0.085f;
     public float cave_width = 0.45f;
 
@@ -248,7 +254,11 @@ public class World : MonoBehaviour
     //主菜单地图
     public void Start_Screen_Init()
     {
-        Chunk chunk_temp = new Chunk(new Vector3(0, 0, 0), this);
+        Chunk chunk_temp = new Chunk(new Vector3(0, 0, 0), this ,true);
+
+        //GameObject chunkGameObject = new GameObject("TheMenuChunk");
+        //Chunk chunk = chunkGameObject.AddComponent<Chunk>();
+        //chunk.InitChunk(new Vector3(0, 0, 0), this);
     }
 
     //检查种子
@@ -257,7 +267,7 @@ public class World : MonoBehaviour
         if (input_Seed != null && string.IsNullOrEmpty(input_Seed.text))
         {
             //Debug.Log("种子为空！");
-        }
+        } 
         else
         {
             //Debug.Log("种子不为空！");
@@ -347,11 +357,10 @@ public class World : MonoBehaviour
             for (int z = -renderSize + (int)(Center_Now.z / VoxelData.ChunkWidth); z < renderSize + (int)(Center_Now.z / VoxelData.ChunkWidth); z++)
             {
 
-                 
                 //Create
-                CreateChunk(new Vector3(x, 0, z));
+                CreateBaseChunk(new Vector3(x, 0, z));
 
-
+                //剩余进度计算
                 float max = renderSize * renderSize * 4;
                 temp++;
                 initprogress = Mathf.Lerp(0f, 0.9f, temp / max);
@@ -360,9 +369,15 @@ public class World : MonoBehaviour
             }
         }
 
+        //重新初始化玩家位置，放置穿模
         Init_Player_Location();
-        yield return new WaitForSeconds(1f);
+
+        //游戏开始
+        yield return new WaitForSeconds(0.5f);
         initprogress = 1f;
+
+        //开启面优化协程
+        StartCoroutine(Chunk_Optimization());
 
     }
 
@@ -381,6 +396,24 @@ public class World : MonoBehaviour
 
         yield return null;
     }
+
+    //优化Chunk面数协程
+    //本质上是把BaseChunk全部重新生成一遍
+
+    public IEnumerator Chunk_Optimization()
+    {
+        foreach (var Chunk in Allchunks)
+        {
+
+            WaitToCreateMesh.Enqueue(Chunk.Value);
+
+        }
+
+
+
+        yield return new WaitForSeconds(1f);
+    }
+
 
     //--------------------------------------------------------------------------------------
 
@@ -496,6 +529,29 @@ public class World : MonoBehaviour
         }
     }
     //生成Chunk
+    //BaseChunk不会呼叫周边方块
+    void CreateBaseChunk(Vector3 pos)
+    {
+
+        //先判断一下有没有
+        if (Allchunks.ContainsKey(pos))
+        {
+            Allchunks[pos].ShowChunk();
+            return;
+        }
+
+        //调用Chunk
+        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, true);
+
+        //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
+        //Chunk chunktemp = chunkGameObject.AddComponent<Chunk>();
+        //chunktemp.InitChunk(new Vector3(0, 0, 0), this);
+
+        //添加到字典
+        Allchunks.Add(pos, chunk_temp);
+    }
+
+    //非BaseChunk会进行Chunk面剔除
     void CreateChunk(Vector3 pos)
     {
 
@@ -507,11 +563,17 @@ public class World : MonoBehaviour
         }
 
         //调用Chunk
-        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this);
+        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, false);
+
+        //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
+        //Chunk chunktemp = chunkGameObject.AddComponent<Chunk>();
+        //chunktemp.InitChunk(new Vector3(0, 0, 0), this);
 
         //添加到字典
         Allchunks.Add(pos, chunk_temp);
     }
+
+
     //--------------------------------------------------------------------------------------
 
 
@@ -720,7 +782,6 @@ public class World : MonoBehaviour
 
     IEnumerator Mesh_0()
     {
-
         while(true)
         {
 
@@ -733,7 +794,7 @@ public class World : MonoBehaviour
                 //print($"{GetChunkLocation(chunktemp.myposition)}添加到meshQueue");
 
                 //Mesh线程
-                Thread myThread = new Thread(new ThreadStart(chunktemp.UpdateChunkMesh));
+                Thread myThread = new Thread(new ThreadStart(chunktemp.UpdateChunkMesh_WithSurround));
                 myThread.Start();
 
                 if (WaitToCreateMesh.Count == 0)
@@ -960,10 +1021,10 @@ public class World : MonoBehaviour
         if (vec.y >= VoxelData.ChunkHeight) { return false; }
 
         //竹子返回true
-        if (GetBlockType(pos) == VoxelData.Bamboo) { return true; }
+        //if (GetBlockType(pos) == VoxelData.Bamboo) { return true; }
 
         //返回固体还是空气
-        return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z]].isSolid;
+        return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z]].canBeChoose;
 
     }
 
@@ -981,14 +1042,17 @@ public class BlockType
 
     public string blockName;
     public float DestroyTime;
-    public bool isSolid;
-    public bool isTransparent;
+    public bool isSolid;       //是否会阻挡玩家
+    public bool isTransparent; //周边方块是否面剔除
+    public bool canBeChoose;   //是否可被高亮方块捕捉到
+    public bool candropBlock;  //是否掉落方块
 
     [Header("Sprite")]
     public Sprite icon;
     public Texture texture;
     public Sprite dropsprite;
     public Sprite top_dropsprite;
+    public Material Particle_Material;
 
     [Header("Clips")]
     public AudioClip[] walk_clips = new AudioClip[2]; 
@@ -1001,7 +1065,10 @@ public class BlockType
     public int topFaceTexture;
     public int bottomFaceTexture;
     public int leftFaceTexture;
-    public int rightFaceTexture; 
+    public int rightFaceTexture;
+
+    [Header("DrawMode")]
+    public DrawMode DrawMode;
 
     //贴图中的面的坐标
     public int GetTextureID(int faceIndex)

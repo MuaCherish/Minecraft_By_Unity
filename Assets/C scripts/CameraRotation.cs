@@ -4,29 +4,22 @@ using UnityEngine;
 
 public class CameraRotation : MonoBehaviour
 {
-    private Vector3 Center = new Vector3(1f,40f,13f);
-    private Vector3 LookAtTransform = new Vector3(8f,38f,6f);
-    private float radius = 20f;
-    private float rotationSpeed = 5f;
-
-    private Vector3 offset;
-
-    void Start()
-    {
-        // Calculate initial offset from center to camera
-        offset = transform.position - Center;
-    }
+    public Transform LookAtObject; // The object the camera will look at
+    public float RotationSpeed = 1.0f; // Speed of rotation
+    public float Height = 10.0f; // Height of the camera above the ground
+    public float Radius = 20.0f; // Radius of the circular path
 
     void FixedUpdate()
     {
-        // Calculate the desired position based on current angle and radius
-        float angle = Time.time * rotationSpeed;
-        Vector3 desiredPosition = Center + Quaternion.Euler(0, angle, 0) * new Vector3(0, 0, radius);
+        // Calculate the desired position based on current angle, radius, and height
+        float angle = Time.time * RotationSpeed;
+        Vector3 offset = new Vector3(Mathf.Sin(angle) * Radius, Height, Mathf.Cos(angle) * Radius);
+        Vector3 desiredPosition = LookAtObject.position + offset;
 
         // Update camera position
-        transform.position = desiredPosition + offset;
+        transform.position = desiredPosition;
 
         // Ensure the camera looks at the target while rotating
-        transform.LookAt(LookAtTransform);
+        transform.LookAt(LookAtObject);
     }
 }
