@@ -285,7 +285,7 @@ public class Chunk : MonoBehaviour
                         if ((y + 1) > noiseHigh)
                         {
                             //沙漠气候
-                            if (noise_desery > 0.5f)
+                            if (noise_desery > 0.6f)
                             {
                                 voxelMap[x, y, z] = VoxelData.Sand;
                             }
@@ -1136,6 +1136,53 @@ public class Chunk : MonoBehaviour
                 }
 
                 break;
+
+
+
+            case DrawMode.Water:  //水面绘制模式
+
+
+
+                //判断六个面
+                for (int p = 0; p < 6; p++)
+                {
+
+
+                    if (!CheckVoxel(pos + VoxelData.faceChecks[p], p))
+                    {
+
+                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
+
+                        //uvs.Add (VoxelData.voxelUvs [0]);
+                        //uvs.Add (VoxelData.voxelUvs [1]);
+                        //uvs.Add (VoxelData.voxelUvs [2]);
+                        //uvs.Add (VoxelData.voxelUvs [3]); 
+                        //AddTexture(1);
+
+                        //根据p生成对应的面，对应的UV
+                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+
+                        triangles.Add(vertexIndex);
+                        triangles.Add(vertexIndex + 1);
+                        triangles.Add(vertexIndex + 2);
+                        triangles.Add(vertexIndex + 2);
+                        triangles.Add(vertexIndex + 1);
+                        triangles.Add(vertexIndex + 3);
+                        vertexIndex += 4;
+
+                    }
+                }
+
+
+
+
+
+                break;
+
+
 
             default: //默认Block绘制模式
 

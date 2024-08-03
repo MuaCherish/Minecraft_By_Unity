@@ -176,6 +176,20 @@ public static class VoxelData
 
     };
 
+    //顶点数组
+    public static readonly Vector3[] voxelVerts_Water = new Vector3[8] {
+
+        new Vector3(0.0f, 0.0f, 0.0f),
+        new Vector3(1.0f, 0.0f, 0.0f),
+        new Vector3(1.0f, 0.8f, 0.0f),
+        new Vector3(0.0f, 0.8f, 0.0f),
+        new Vector3(0.0f, 0.0f, 1.0f),
+        new Vector3(1.0f, 0.0f, 1.0f),
+        new Vector3(1.0f, 0.8f, 1.0f),
+        new Vector3(0.0f, 0.8f, 1.0f),
+
+    };
+
 
     //指定方向
     public static readonly Vector3[] faceChecks = new Vector3[6]

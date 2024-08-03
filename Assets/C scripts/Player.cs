@@ -649,6 +649,9 @@ public class Player : MonoBehaviour
                 HighLightMaterial.color = new Color(0, 0, 0, 0);
                 HighLightMaterial.mainTexture = DestroyTextures[0];
 
+                //音效暂停
+                musicmanager.Audio_player_broke.Stop();
+
                 yield break;
             }
 
@@ -671,7 +674,7 @@ public class Player : MonoBehaviour
         {
             backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type, false, backpackmanager.ColdTime_Absorb);
 
-        }
+        } 
 
         //放进背包由掉落物执行
         //canvasManager.Change_text_selectBlockname(point_Block_type);
@@ -685,6 +688,8 @@ public class Player : MonoBehaviour
         else
             particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[point_Block_type].Particle_Material;
         Destroy(particleInstance, 1.0f);
+
+
 
         //World
         world.GetChunkObject(position).EditData(world.GetRelalocation(position), VoxelData.Air);
