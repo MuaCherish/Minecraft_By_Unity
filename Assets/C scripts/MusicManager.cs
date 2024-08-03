@@ -47,7 +47,6 @@ public class MusicManager : MonoBehaviour
     private bool isPausing = false;
 
     //place and broke
-    [HideInInspector]
     public bool isbroking = false;
 
     //moving
@@ -308,6 +307,9 @@ public class MusicManager : MonoBehaviour
                         
 
                         Audio_player_broke.Play();
+                    }
+                    else{
+                        Audio_player_broke.Stop();
                     }
                 }
 

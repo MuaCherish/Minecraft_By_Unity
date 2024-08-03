@@ -9,7 +9,6 @@ using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
 
 //È«¾ÖÓÎÏ·×´Ì¬
 public enum Game_State
@@ -25,7 +24,7 @@ public enum GameMode
 
 public enum DrawMode
 {
-    Block,Bush,Torch,Air,
+    Block,Bush,Torch,Air,Water,
 }
 
 public class World : MonoBehaviour

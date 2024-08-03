@@ -25,6 +25,7 @@ public class CanvasManager : MonoBehaviour
     public GameObject Survival_Screen;
 
     //主要屏幕
+    public bool isInTheInitScreen;  //按下了开始游戏，进入了Init界面
     public GameObject Start_Screen;
     public GameObject Init_Screen;
     public GameObject Loading_Screen;
@@ -73,12 +74,12 @@ public class CanvasManager : MonoBehaviour
     private float previous_sound = 0.5f;
     
     //render speed
-    public float Mouse_Sensitivity = 0.5f;
-    private float previous_Mouse_Sensitivity = 0.5f;
+    public float Mouse_Sensitivity = 1f;
+    private float previous_Mouse_Sensitivity = 1f;
 
     //isSpaceMode
     public bool SpaceMode_isOn = false;
-    private bool previous_spaceMode_isOn = false;
+    private bool previous_spaceMode_isOn = false; 
 
     //isSpaceMode
     public bool SuperMining_isOn = false;
@@ -126,9 +127,20 @@ public class CanvasManager : MonoBehaviour
         
     }
 
-    private void FixedUpdate()
+    private void Update() 
     {
-        
+
+        //初始化
+        if (world.game_state == Game_State.Start && isInTheInitScreen)
+        {
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                ClickToLoading();
+            }
+        }
+
+
+
         //加载中
         if (world.game_state == Game_State.Loading)
         {
@@ -223,7 +235,7 @@ public class CanvasManager : MonoBehaviour
 
 
         //SwimmingScreen
-        if (world.GetBlockType(Camera.transform.position) == VoxelData.Water && !isPausing)
+        if (world.GetBlockType(Camera.transform.position + new Vector3(0f, 0.2f, 0f)) == VoxelData.Water && !isPausing)
         {
             //入水
             if (hasExec_InWater == false)
@@ -332,6 +344,7 @@ public class CanvasManager : MonoBehaviour
         //screen切换
         Start_Screen.SetActive(false);
         Init_Screen.SetActive(true);
+        isInTheInitScreen = true;
 
         //music
         musicmanager.PlaySound_Click();
@@ -434,7 +447,7 @@ public class CanvasManager : MonoBehaviour
         //screen切换
         Init_Screen.SetActive(false);
         Start_Screen.SetActive(true);
-
+        isInTheInitScreen = false;
         //music
         musicmanager.PlaySound_Click();
     }

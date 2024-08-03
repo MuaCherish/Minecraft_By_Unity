@@ -9307,7 +9307,7 @@ MonoBehaviour:
   Seed: 0
   soil_min: 20
   soil_max: 50
-  sea_level: 30
+  sea_level: 35
   TreeCount: 5
   TreeHigh_min: 3
   TreeHigh_max: 5
@@ -13433,6 +13433,7 @@ MonoBehaviour:
   CreativeButtom: {fileID: 1616094715}
   SurvivalButtom: {fileID: 309043258}
   Survival_Screen: {fileID: 314824850}
+  isInTheInitScreen: 0
   Start_Screen: {fileID: 1362257022}
   Init_Screen: {fileID: 1708541543}
   Loading_Screen: {fileID: 849139296}
@@ -13459,7 +13460,7 @@ MonoBehaviour:
   isPausing: 0
   volume_bgm: 0.5
   volume_sound: 0.5
-  Mouse_Sensitivity: 0.5
+  Mouse_Sensitivity: 4
   SpaceMode_isOn: 0
   SuperMining_isOn: 0
   promptShowspeed: 450
