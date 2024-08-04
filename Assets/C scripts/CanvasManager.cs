@@ -289,7 +289,7 @@ public class CanvasManager : MonoBehaviour
             Prompt_Screen.SetActive(true);
 
             toggle_SuperMing.isOn = true;
-
+            player.isSuperMining = true;
             openyoureyes();
 
             BackPackManager.CreativeMode();

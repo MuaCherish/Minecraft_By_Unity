@@ -8815,7 +8815,7 @@ MonoBehaviour:
   - blockName: water
     DestroyTime: 0
     isSolid: 0
-    isTransparent: 1
+    isTransparent: 0
     canBeChoose: 0
     candropBlock: 0
     icon: {fileID: -1121316251, guid: 65dd7ce3fe9afcc449601c2a5ee0e173, type: 3}
@@ -8834,7 +8834,7 @@ MonoBehaviour:
     bottomFaceTexture: 4
     leftFaceTexture: 4
     rightFaceTexture: 4
-    DrawMode: 0
+    DrawMode: 4
   - blockName: Coal
     DestroyTime: 3
     isSolid: 1
@@ -9329,6 +9329,10 @@ MonoBehaviour:
   CreateCoroutineDelay: 0.001
   RemoveCoroutineDelay: 0.001
   RenderDelay: 0.001
+  Mesh_0_TaskCount: 0
+  Delay_RenderFlowWater: 3
+  MaxDistant_RenderFlowWater: 5
+  Delay_RenderMesh: 1000
   initprogress: 0
   Chunks: {fileID: 0}
   RenderLock: 0

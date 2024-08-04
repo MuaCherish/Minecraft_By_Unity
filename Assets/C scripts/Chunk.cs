@@ -13,6 +13,8 @@ public class Chunk : MonoBehaviour
     public bool isReadyToRender = false;
     public bool BaseChunk;
     public bool isCalled = false;  //不要删我！！
+    public bool iHaveWater = false; private bool haeExec_iHaveWater = true;
+    public bool hasExec_isHadupdateWater = true;  //该标志允许一个Chunk每次只能更新一次水体
 
     //Transform
     World world;
@@ -20,7 +22,7 @@ public class Chunk : MonoBehaviour
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
 
-    //噪声
+    //噪声 
     private float noise2d_scale_smooth;
     private float noise2d_scale_steep;
     private float noise3d_scale;
@@ -74,7 +76,7 @@ public class Chunk : MonoBehaviour
         caveWidth = world.cave_width;
         debug_CanLookCave = !world.debug_CanLookCave;
         BaseChunk = _BaseChunk;
-
+      
         //Self
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
@@ -277,6 +279,15 @@ public class Chunk : MonoBehaviour
                     else if (y > noiseHigh && y - 1 < world.sea_level)
                     {
                         voxelMap[x, y, z] = VoxelData.Water;
+
+
+                        //更新属性
+                        if (haeExec_iHaveWater)
+                        {
+                            iHaveWater = true;
+
+                            haeExec_iHaveWater = false;
+                        }
                     }
                     //空气之下
                     else
@@ -731,6 +742,110 @@ public class Chunk : MonoBehaviour
         }
     }
 
+    //[水的流动]
+    //如果自己是水
+    //前后左右下如果是空气，则把他们变成水
+    public void Always_updateWater()
+    {
+
+        //待优化 - 如果先判断周围一圈都是水，则不执行检查直接跳过
+
+        ClearMeshData();
+
+        //刷新自己
+        for (y = 0; y < VoxelData.ChunkHeight; y++)
+        {
+            for (x = 0; x < VoxelData.ChunkWidth; x++)
+            {
+                for (z = 0; z < VoxelData.ChunkWidth; z++)
+                {
+                    //修改VoxelMap
+                    if(hasExec_isHadupdateWater)
+                        _updateWater();
+
+                    // 非空气 - 渲染
+                    // 水面上 - 渲染
+                    if (world.blocktypes[voxelMap[x, y, z]].DrawMode != DrawMode.Air)
+                        UpdateMeshData(new Vector3(x, y, z));
+                }
+            }
+        }
+
+
+        hasExec_isHadupdateWater = true;
+
+        //添加到world的渲染队列
+        isReadyToRender = true;
+
+        //交给渲染线程
+        if (world.RenderLock)
+        {
+            world.WaitToRender_temp.Enqueue(this);
+            //print($"{world.GetChunkLocation(myposition)}被堵塞，入队temp");
+        }
+        else
+        {
+            //print($"{world.GetChunkLocation(myposition)}入队");
+            world.WaitToRender.Enqueue(this);
+        }
+
+    }
+
+    void _updateWater()
+    {
+        //只在自己是水的情况下执行
+        if (voxelMap[x, y, z] == VoxelData.Water)
+        {
+
+            //检查五个方向
+            for (int _p = 0; _p < 5; _p++)
+            {
+
+                //如果出界
+                if (isOutOfRange(new Vector3(x,y,z) + VoxelData.faceChecks_WaterFlow[_p]))
+                {
+                    //能获取到对面Chunk
+                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks_WaterFlow[_p], out Chunk chunktemp))
+                    {
+                        Vector3 directlocation = GetDirectChunkVoxelMapLocation(new Vector3(x,y,z) + VoxelData.faceChecks_WaterFlow[_p]);
+
+                        if (chunktemp.voxelMap[(int)directlocation.x, (int)directlocation.y, (int)directlocation.z] == VoxelData.Air)
+                        {
+                            chunktemp.voxelMap[(int)directlocation.x, (int)directlocation.y, (int)directlocation.z] = VoxelData.Water;
+                            
+                            //给不含水区块变成含水区块
+                            if (chunktemp.iHaveWater == false)
+                            {
+                                chunktemp.iHaveWater = true;
+                            }
+
+                            hasExec_isHadupdateWater = false;
+
+                        }
+                    }
+
+
+                }
+
+                //没出界
+                else
+                {
+                    if (voxelMap[x + (int)VoxelData.faceChecks_WaterFlow[_p].x, y + (int)VoxelData.faceChecks_WaterFlow[_p].y, z + (int)VoxelData.faceChecks_WaterFlow[_p].z] == VoxelData.Air)
+                    {
+                        voxelMap[x + (int)VoxelData.faceChecks_WaterFlow[_p].x, y + (int)VoxelData.faceChecks_WaterFlow[_p].y, z + (int)VoxelData.faceChecks_WaterFlow[_p].z] = VoxelData.Water;
+                        
+                        hasExec_isHadupdateWater = false;
+
+                    }
+                }
+
+
+            }
+        }
+    }
+
+
+
     //灌木丛消失
     void updateBush()
     {
@@ -778,8 +893,12 @@ public class Chunk : MonoBehaviour
                     //Bush消失
                     updateBush();
 
-                    //(绘制模式不是空气 || 是水 || 是水面上一层 || 是竹子)才生成
-                    if (world.blocktypes[voxelMap[x, y, z]].DrawMode != DrawMode.Air || voxelMap[x, y, z] == VoxelData.Water || voxelMap[x, y - 1, z] == VoxelData.Water)
+                    //[已废弃，移动至单独的线程执行]水的流动
+                    //updateWater();
+
+                    // 非空气 - 渲染
+                    // 水面上 - 渲染
+                    if (world.blocktypes[voxelMap[x, y, z]].DrawMode != DrawMode.Air)
                         UpdateMeshData(new Vector3(x, y, z));
 
                     //UpdateMeshData(new Vector3(x, y, z));
@@ -895,6 +1014,11 @@ public class Chunk : MonoBehaviour
 
             if (!BaseChunk)
             {
+
+
+
+
+
                 //Front
                 if (z > VoxelData.ChunkWidth - 1)
                 {
@@ -902,9 +1026,24 @@ public class Chunk : MonoBehaviour
                     if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
 
+                        //[已废弃，代码统一到一个函数里了]
+                        //水的流动
+                        //如果自己是水且对面是空气，则把对面变成水
+                        //if (voxelMap[x, y, z - 1] == VoxelData.Water && chunktemp.voxelMap[x, y, 0] == VoxelData.Air)
+                        //{
+                        //    chunktemp.voxelMap[x, y, 0] = VoxelData.Water;
 
-                        //如果target是空气，则返回false
-                        if (world.blocktypes[chunktemp.voxelMap[x, y, 0]].isTransparent && !world.blocktypes[voxelMap[x, y, z - 1]].isTransparent)
+                        //    world.WaitToCreateMesh.Enqueue(chunktemp);
+
+                        //    return true;
+                        //}
+
+
+                        //target是透明的
+                        //target是水
+                        //且自己不是透明的
+                        //则返回false
+                        if (((world.blocktypes[chunktemp.voxelMap[x, y, 0]].isTransparent || chunktemp.voxelMap[x, y, 0] == VoxelData.Water)  && (!world.blocktypes[voxelMap[x, y, z - 1]].isTransparent && voxelMap[x, y, z - 1] != VoxelData.Water)))
                         {
 
                             return false;
@@ -919,14 +1058,18 @@ public class Chunk : MonoBehaviour
                     }
                     else
                     {
-                        if (debug_CanLookCave)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            return true;
-                        }
+                        //if (debug_CanLookCave)
+                        //{
+                        //    return false;
+                        //}
+                        //else
+                        //{
+                        //    return true;
+                        //}
+
+                        //查不到一律生成
+                        return false;
+
                     }
                 }
 
@@ -939,8 +1082,21 @@ public class Chunk : MonoBehaviour
                     {
 
 
+                        //[已废弃，代码统一到一个函数里了]
+                        //水的流动
+                        //如果自己是水且对面是空气，则把对面变成水
+                        //if (voxelMap[x, y, z + 1] == VoxelData.Water && chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1] == VoxelData.Air)
+                        //{
+                        //    chunktemp.voxelMap[x, y, 0] = VoxelData.Water;
+
+                        //    return true;
+                        //}
+
+
+
                         //如果target是空气，则返回false
-                        if (world.blocktypes[chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1]].isTransparent && !world.blocktypes[voxelMap[x, y, z + 1]].isTransparent)
+                        //target是水
+                        if (((world.blocktypes[chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1]].isTransparent || chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1] == VoxelData.Water) && (!world.blocktypes[voxelMap[x, y, z + 1]].isTransparent && voxelMap[x, y, z + 1] != VoxelData.Water)))
                         {
                             return false;
                         }
@@ -954,14 +1110,17 @@ public class Chunk : MonoBehaviour
                     }
                     else
                     {
-                        if (debug_CanLookCave)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            return true;
-                        }
+                        //if (debug_CanLookCave)
+                        //{
+                        //    return false;
+                        //}
+                        //else
+                        //{
+                        //    return true;
+                        //}
+
+                        //查不到一律生成
+                        return false;
                     }
 
 
@@ -976,8 +1135,19 @@ public class Chunk : MonoBehaviour
                     {
 
 
+                        //[已废弃，代码统一到一个函数里了]
+                        //水的流动
+                        //如果自己是水且对面是空气，则把对面变成水
+                        //if (voxelMap[x + 1, y, z] == VoxelData.Water && chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z] == VoxelData.Air)
+                        //{
+                        //    chunktemp.voxelMap[x, y, 0] = VoxelData.Water;
+
+                        //    return true;
+                        //}
+
                         //如果target是空气，则返回false
-                        if (world.blocktypes[chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z]].isTransparent && !world.blocktypes[voxelMap[x + 1, y, z]].isTransparent)
+                        //target是水
+                        if (((world.blocktypes[chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z]].isTransparent || chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z] == VoxelData.Water) && (!world.blocktypes[voxelMap[x + 1, y, z]].isTransparent && voxelMap[x + 1, y, z] != VoxelData.Water)))
                         {
                             return false;
                         }
@@ -991,14 +1161,17 @@ public class Chunk : MonoBehaviour
                     }
                     else
                     {
-                        if (debug_CanLookCave)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            return true;
-                        }
+                    //    if (debug_CanLookCave)
+                    //    {
+                    //        return false;
+                    //    }
+                    //    else
+                    //    {
+                    //        return true;
+                    //    }
+
+                        //查不到一律生成
+                        return false;
                     }
                 }
 
@@ -1009,8 +1182,22 @@ public class Chunk : MonoBehaviour
                     //如果能查到
                     if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
+
+
+                        //[已废弃，代码统一到一个函数里了]
+                        //水的流动
+                        ////如果自己是水且对面是空气，则把对面变成水
+                        //if (voxelMap[x - 1, y, z] == VoxelData.Water && chunktemp.voxelMap[0, y, z] == VoxelData.Air)
+                        //{
+                        //    chunktemp.voxelMap[x, y, 0] = VoxelData.Water;
+
+                        //    return true;
+                        //}
+
+
                         //如果target是空气，则返回false
-                        if (world.blocktypes[chunktemp.voxelMap[0, y, z]].isTransparent && !world.blocktypes[voxelMap[x - 1, y, z]].isTransparent)
+                        //target是水
+                        if (((world.blocktypes[chunktemp.voxelMap[0, y, z]].isTransparent || chunktemp.voxelMap[0, y, z] == VoxelData.Water) && (!world.blocktypes[voxelMap[x - 1, y, z]].isTransparent && voxelMap[x - 1, y, z] != VoxelData.Water)))
                         {
                             return false;
                         }
@@ -1024,14 +1211,17 @@ public class Chunk : MonoBehaviour
                     }
                     else
                     {
-                        if (debug_CanLookCave)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            return true;
-                        }
+                        //if (debug_CanLookCave)
+                        //{
+                        //    return false;
+                        //}
+                        //else
+                        //{
+                        //    return true;
+                        //}
+
+                        //查不到一律生成
+                        return false;
                     }
                 }
             }
@@ -1058,6 +1248,9 @@ public class Chunk : MonoBehaviour
 
 
         }
+
+
+        //未出界的情况
         else
         {
             //Debug.Log("未出界");
@@ -1071,20 +1264,18 @@ public class Chunk : MonoBehaviour
 
             
 
-            //判断自己和目标是不是都是空气 || 自己和目标是不是都是水
-            //不生成面的情况
+            //自己与目标都是空气
+            //或者自己与目标都是水
+            //不生成面
             if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air) && voxelMap[x, y, z] == VoxelData.Air) || ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Water) && voxelMap[x, y, z] == VoxelData.Water))
             {
                 return true;
             }
             else // 生成面的情况
             {
-                //(如果自己是水，目标是空气) || (自己是空气，目标是水)
+                //如果自己是水，目标是空气
+                //生成面
                 if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Water) && voxelMap[x, y, z] == VoxelData.Air))
-                {
-                    return false;
-                }
-                else if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air) && voxelMap[x, y, z] == VoxelData.Water))
                 {
                     return false;
                 }
@@ -1104,8 +1295,11 @@ public class Chunk : MonoBehaviour
 
     //遍历中：：顺带判断面的生成方向
     //创建mesh里的参数
+    //_calledFrom = 0 来自UpdateChunkMesh_WithSurround
+    //_calledFrom = 1 来自UpdateWater
     void UpdateMeshData(Vector3 pos)
     {
+
         byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
 
         //方块绘制模式
@@ -1147,31 +1341,62 @@ public class Chunk : MonoBehaviour
                 for (int p = 0; p < 6; p++)
                 {
 
-
+                    //可以绘制
                     if (!CheckVoxel(pos + VoxelData.faceChecks[p], p))
                     {
 
-                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
-                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
-                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
+                        //如果上下方有水，则换成方块的渲染方式
+                        if ((voxelMap[(int)pos.x, (int)pos.y + 1, (int)pos.z] == VoxelData.Water || voxelMap[(int)pos.x, (int)pos.y - 1, (int)pos.z] == VoxelData.Water) && p != 2 && p != 3 && voxelMap[(int)pos.x, (int)pos.y + 1, (int)pos.z] != VoxelData.Air)
+                        {
+                            vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
+                            vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
+                            vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
+                            vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
 
-                        //uvs.Add (VoxelData.voxelUvs [0]);
-                        //uvs.Add (VoxelData.voxelUvs [1]);
-                        //uvs.Add (VoxelData.voxelUvs [2]);
-                        //uvs.Add (VoxelData.voxelUvs [3]); 
-                        //AddTexture(1);
+                            //uvs.Add (VoxelData.voxelUvs [0]);
+                            //uvs.Add (VoxelData.voxelUvs [1]);
+                            //uvs.Add (VoxelData.voxelUvs [2]);
+                            //uvs.Add (VoxelData.voxelUvs [3]); 
+                            //AddTexture(1);
 
-                        //根据p生成对应的面，对应的UV
-                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //根据p生成对应的面，对应的UV
+                            AddTexture(world.blocktypes[blockID].GetTextureID(p));
 
-                        triangles.Add(vertexIndex);
-                        triangles.Add(vertexIndex + 1);
-                        triangles.Add(vertexIndex + 2);
-                        triangles.Add(vertexIndex + 2);
-                        triangles.Add(vertexIndex + 1);
-                        triangles.Add(vertexIndex + 3);
-                        vertexIndex += 4;
+                            triangles.Add(vertexIndex);
+                            triangles.Add(vertexIndex + 1);
+                            triangles.Add(vertexIndex + 2);
+                            triangles.Add(vertexIndex + 2);
+                            triangles.Add(vertexIndex + 1);
+                            triangles.Add(vertexIndex + 3);
+                            vertexIndex += 4;
+                        }
+                        else
+                        {
+                            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
+                            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
+                            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
+
+                            //uvs.Add (VoxelData.voxelUvs [0]);
+                            //uvs.Add (VoxelData.voxelUvs [1]);
+                            //uvs.Add (VoxelData.voxelUvs [2]);
+                            //uvs.Add (VoxelData.voxelUvs [3]); 
+                            //AddTexture(1);
+
+                            //根据p生成对应的面，对应的UV
+                            AddTexture(world.blocktypes[blockID].GetTextureID(p));
+
+                            triangles.Add(vertexIndex);
+                            triangles.Add(vertexIndex + 1);
+                            triangles.Add(vertexIndex + 2);
+                            triangles.Add(vertexIndex + 2);
+                            triangles.Add(vertexIndex + 1);
+                            triangles.Add(vertexIndex + 3);
+                            vertexIndex += 4;
+                        }
+
+
+                        
 
                     }
                 }
@@ -1377,9 +1602,9 @@ public class Chunk : MonoBehaviour
     }
 
     //是否出界
-    bool isOutOfRange(int x, int y, int z)
+    bool isOutOfRange(int _x, int _y, int _z)
     {
-        if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1)
+        if (_x < 0 || _x > VoxelData.ChunkWidth - 1 || _y < 0 || _y > VoxelData.ChunkHeight - 1 || _z < 0 || _z > VoxelData.ChunkWidth - 1)
         {
             return true;
         }
@@ -1388,6 +1613,38 @@ public class Chunk : MonoBehaviour
             return false;
         }
     }
+
+    //出界重载
+    bool isOutOfRange(Vector3 pos)
+    {
+        int _x = (int)pos.x;
+        int _y = (int)pos.y;
+        int _z = (int)pos.z;
+
+        if (_x < 0 || _x > VoxelData.ChunkWidth - 1 || _y < 0 || _y > VoxelData.ChunkHeight - 1 || _z < 0 || _z > VoxelData.ChunkWidth - 1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    //是否在边框上
+    bool isOnEdge(int x, int y, int z)
+    {
+        if (x == 0 || x == VoxelData.ChunkWidth - 1 || y == 0 || y == VoxelData.ChunkHeight - 1 || z == 0 || z == VoxelData.ChunkWidth - 1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 
     //洞穴生成概率
     float Probability(float y)
@@ -1400,6 +1657,40 @@ public class Chunk : MonoBehaviour
         possible = 1 - ratio;
 
         return Mathf.Clamp01(possible); // 返回归一化到 [0, 1] 区间的概率值
+    }
+
+    //获得对面Chunk的坐标
+    //0 0 -1 会变成 0 0 15
+    //0 0 16 会变成 0 0 0
+    Vector3 GetDirectChunkVoxelMapLocation(Vector3 _vec)
+    {
+        //检测到16或者-1
+        //Front
+        if (_vec.z == 16)
+        {
+            return new Vector3(_vec.x, _vec.y, 0);
+        }
+        //Back
+        else if (_vec.z == -1)
+        {
+            return new Vector3(_vec.x, _vec.y, 15);
+        }
+        //Left
+        else if (_vec.x == -1)
+        {
+            return new Vector3(15, _vec.y, _vec.z);
+        }
+        //Right
+        else if (_vec.x == 16)
+        {
+            return new Vector3(0, _vec.y, _vec.z);
+        }
+        //没检测到
+        else
+        {
+            print("Chunk.GetDirectChunkVoxelMapLocation()参数输入异常！");
+            return new Vector3(0, 0, 0);
+        }
     }
 
 
