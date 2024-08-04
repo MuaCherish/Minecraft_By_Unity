@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Threading;
 //using System.Diagnostics;
 using TMPro;
 using Unity.Collections.LowLevel.Unsafe;
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -13,7 +15,7 @@ using UnityEngine.UIElements;
 //全局游戏状态
 public enum Game_State
 {
-    Start, Loading, Playing, Pause, Dead,
+    Start, Loading, Playing, Pause, Dead, Ending,
 }
 
 public enum GameMode
@@ -105,6 +107,7 @@ public class World : MonoBehaviour
 
     //全部Chunk位置
     public Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
+    private readonly object Allchunks_Lock = new object();
 
     //等待添加队列
     //private List<chunkWithsequence> WatingToCreateChunks = new List<chunkWithsequence>();
@@ -120,6 +123,17 @@ public class World : MonoBehaviour
     public float CreateCoroutineDelay = 0.5f;
     public float RemoveCoroutineDelay = 0.5f;
     public float RenderDelay = 0.1f;
+    public int Mesh_0_TaskCount = 0;
+
+    [Header("水面流动渲染线程")]
+    private Thread myThread_Water;
+    public int Delay_RenderFlowWater = 5;
+    public float MaxDistant_RenderFlowWater = 5;
+
+    [Header("[暂时未启用]新的渲染管线(延迟为毫秒)")]
+    public Thread myThread_Render;
+    public int Delay_RenderMesh = 1000;
+    public ConcurrentQueue<Chunk> WaitToRender_New = new ConcurrentQueue<Chunk>();
 
     //生成方向
     private Vector3 Center_Now;
@@ -144,18 +158,18 @@ public class World : MonoBehaviour
     Coroutine RemoveCoroutine;
 
     //Render_0 && Render_1 协程
-    public bool RenderLock = false;
+    [HideInInspector] public bool RenderLock = false;
     public ConcurrentQueue<Chunk> WaitToRender = new ConcurrentQueue<Chunk>();
     public ConcurrentQueue<Chunk> WaitToRender_temp = new ConcurrentQueue<Chunk>();
     Coroutine Render_Coroutine;
 
     //Threading
-    public bool MeshLock = false;
+    [HideInInspector]public bool MeshLock = false;
     public ConcurrentQueue<Chunk> WaitToCreateMesh = new ConcurrentQueue<Chunk>();
     Coroutine Mesh_Coroutine;
 
     //Init
-    public bool InitError = false;
+    [HideInInspector] public bool InitError = false;
 
 
     //----------------------------------周期函数---------------------------------------
@@ -176,6 +190,7 @@ public class World : MonoBehaviour
         //初始化一个小岛
         Start_Screen_Init();
     }
+
 
     private void FixedUpdate()
     {
@@ -241,8 +256,24 @@ public class World : MonoBehaviour
 
     void OnApplicationQuit()
     {
+        //结束游戏
+        game_state = Game_State.Ending;
+
         //print("Quit");
         RenderSettings.skybox.SetFloat("_Exposure", 0.69f);
+
+        //等待Water线程
+        if (myThread_Water != null && myThread_Water.IsAlive)
+        {
+            myThread_Water.Join(); // 等待线程安全地终止
+        }
+
+        //等待Render线程
+        if (myThread_Render != null && myThread_Render.IsAlive)
+        {
+            myThread_Render.Join(); // 等待线程安全地终止
+        }
+
     }
 
     //---------------------------------------------------------------------------------------
@@ -385,6 +416,14 @@ public class World : MonoBehaviour
         //开启面优化协程
         StartCoroutine(Chunk_Optimization());
 
+        //开启持续渲染水体流动线程
+        //myThread_Water = new Thread(new ThreadStart(Thread_AwaysUpdate_Water));
+        //myThread_Water.Start();
+
+        //开启渲染Mesh线程
+        //myThread_Render = new Thread(new ThreadStart(Thread_RenderMesh));
+        //myThread_Render.Start();
+
     }
 
 
@@ -420,6 +459,50 @@ public class World : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
+    //一直更新水的线程
+    void Thread_AwaysUpdate_Water()
+    {
+        int 次数 = 0;
+        int 个数 = 0;
+
+        //一直循环
+        while (game_state != Game_State.Ending)
+        {
+
+            lock (Allchunks_Lock)
+            {
+                //遍历所有AllChunks
+                foreach (var chunktemp in Allchunks)
+                {
+
+                    //如果区块包含水，且在12区块内，则更新
+                    if (chunktemp.Value.iHaveWater && GetVector3Length(chunktemp.Value.myposition - Center_Now) > MaxDistant_RenderFlowWater)
+                    {
+                        chunktemp.Value.Always_updateWater();
+                        //print($"刷新了{chunktemp.Value.name}");
+
+                        个数++;
+                    }
+                }
+            }
+
+            
+
+
+
+
+            //休眠5秒钟
+            次数++;
+            print($"第{次数}次刷新，一共刷新{个数}个");
+            个数 = 0;
+            Thread.Sleep(Delay_RenderFlowWater * 1000);
+        }
+
+        Debug.LogError("Water线程中止");
+        
+    }
+
+
 
     //--------------------------------------------------------------------------------------
 
@@ -450,8 +533,14 @@ public class World : MonoBehaviour
             for (int i = -renderSize; i < renderSize; i++)
             {
                 //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
-                if (Allchunks.TryGetValue(add_vec + new Vector3((float)i, 0, -1), out Chunk chunktemp))
-                    WaitToCreateMesh.Enqueue(chunktemp);
+
+                lock (Allchunks_Lock)
+                {
+                    if (Allchunks.TryGetValue(add_vec + new Vector3((float)i, 0, -1), out Chunk chunktemp))
+                        WaitToCreateMesh.Enqueue(chunktemp);
+                }
+                 
+                    
 
 
 
@@ -472,8 +561,13 @@ public class World : MonoBehaviour
             for (int i = -renderSize; i < renderSize; i++)
             {
                 //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
-                if (Allchunks.TryGetValue(add_vec + new Vector3((float)i, 0, 1), out Chunk chunktemp))
-                    WaitToCreateMesh.Enqueue(chunktemp);
+                lock (Allchunks_Lock)
+                {
+                    if (Allchunks.TryGetValue(add_vec + new Vector3((float)i, 0, 1), out Chunk chunktemp))
+                        WaitToCreateMesh.Enqueue(chunktemp);
+                }
+
+                    
 
 
             }
@@ -493,9 +587,14 @@ public class World : MonoBehaviour
             //呼叫里侧Chunk更新
             for (int i = -renderSize; i < renderSize; i++)
             {
-                //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
-                if (Allchunks.TryGetValue(add_vec + new Vector3(1, 0, (float)i), out Chunk chunktemp))
-                    WaitToCreateMesh.Enqueue(chunktemp);
+
+                lock (Allchunks_Lock)
+                {
+                    //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
+                    if (Allchunks.TryGetValue(add_vec + new Vector3(1, 0, (float)i), out Chunk chunktemp))
+                        WaitToCreateMesh.Enqueue(chunktemp);
+                }
+                    
 
 
             }
@@ -515,9 +614,14 @@ public class World : MonoBehaviour
             //呼叫里侧Chunk更新
             for (int i = -renderSize; i < renderSize; i++)
             {
-                //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
-                if (Allchunks.TryGetValue(add_vec + new Vector3(-1, 0, (float)i), out Chunk chunktemp))
-                    WaitToCreateMesh.Enqueue(chunktemp);
+
+                lock (Allchunks_Lock)
+                {
+                    //CreateChunk(add_vec + new Vector3((float)i, 0, 0));
+                    if (Allchunks.TryGetValue(add_vec + new Vector3(-1, 0, (float)i), out Chunk chunktemp))
+                        WaitToCreateMesh.Enqueue(chunktemp);
+                }
+                    
 
 
             }
@@ -789,6 +893,7 @@ public class World : MonoBehaviour
             //CreateMesh
             if (chunktemp.isReadyToRender)
             {
+
                 chunktemp.CreateMesh();
             }
 
@@ -818,7 +923,7 @@ public class World : MonoBehaviour
 
 
 
-    //Mesh线程
+    //Mesh协程
     void CreateMeshCoroutineManager()
     {
         if (WaitToCreateMesh.Count != 0 && Mesh_Coroutine == null)
@@ -856,13 +961,39 @@ public class World : MonoBehaviour
 
             }
 
+            Mesh_0_TaskCount = WaitToCreateMesh.Count;
+            //print("WaitToCreateMesh.Count");
             yield return new WaitForSeconds(RenderDelay);
 
 
         }
+
+
+
+       
         
 
         
+    }
+
+    //新的渲染管线
+    void Thread_RenderMesh()
+    {
+        while (game_state != Game_State.Ending)
+        {
+            if (WaitToRender_New.TryDequeue(out Chunk chunktemp))
+            {
+                if (chunktemp.isReadyToRender)
+                {
+                    chunktemp.CreateMesh();
+                }
+
+            }
+
+            Thread.Sleep(Delay_RenderMesh);
+        }
+
+        Debug.LogError("Render线程中止");
     }
 
 

@@ -1106,13 +1106,13 @@ public class Player : MonoBehaviour
                 return true;
             else if (isSquating)
             {
-                if (
-                world.CheckForVoxel(back_左上) ||
-                world.CheckForVoxel(back_右上) ||
-                world.CheckForVoxel(back_左下) ||
-                world.CheckForVoxel(back_右下)
-                )
+
+                //(右上固体 && 右上延伸不是固体) || (右下固体 && 右下延伸不是固体)
+                if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x - extend_delta, down_左上.y, down_左上.z))) || (world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))))
+                {
+
                     return true;
+                }
                 else
                     return false;
 

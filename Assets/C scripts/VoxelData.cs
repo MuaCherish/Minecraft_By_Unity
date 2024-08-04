@@ -195,12 +195,24 @@ public static class VoxelData
     public static readonly Vector3[] faceChecks = new Vector3[6]
     {
 
-        new Vector3(0.0f, 0.0f, -1.0f),
-        new Vector3(0.0f, 0.0f, 1.0f),
-        new Vector3(0.0f, 1.0f, 0.0f),
-        new Vector3(0.0f, -1.0f, 0.0f),
-        new Vector3(-1.0f, 0.0f, 0.0f),
-        new Vector3(1.0f, 0.0f, 0.0f),
+        new Vector3(0.0f, 0.0f, -1.0f), //Back
+        new Vector3(0.0f, 0.0f, 1.0f),  //Front
+        new Vector3(0.0f, 1.0f, 0.0f),  //Up
+        new Vector3(0.0f, -1.0f, 0.0f), //Down
+        new Vector3(-1.0f, 0.0f, 0.0f), //Left
+        new Vector3(1.0f, 0.0f, 0.0f),  //Right
+
+    };
+
+
+    //水流流动方向
+    public static readonly Vector3[] faceChecks_WaterFlow = new Vector3[5]
+    {
+        new Vector3(0.0f, -1.0f, 0.0f), //Down
+        new Vector3(0.0f, 0.0f, 1.0f),  //Front
+        new Vector3(0.0f, 0.0f, -1.0f), //Back
+        new Vector3(-1.0f, 0.0f, 0.0f), //Left
+        new Vector3(1.0f, 0.0f, 0.0f),  //Right
 
     };
 
