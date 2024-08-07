@@ -41,6 +41,7 @@ public class World : MonoBehaviour
 
     [Header("Material-方块类型")]
     public Material material;
+    public Material material_Water;
     public BlockType[] blocktypes;
 
     [Header("World-渲染设置")]
