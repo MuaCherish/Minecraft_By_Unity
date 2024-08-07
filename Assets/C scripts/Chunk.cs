@@ -37,6 +37,7 @@ public class Chunk : MonoBehaviour
     int vertexIndex = 0;
     List<Vector3> vertices = new List<Vector3>();
     List<int> triangles = new List<int>();
+    List<int> triangles_Water = new List<int>();
     List<Vector2> uvs = new List<Vector2>();
 
     //群系参数
@@ -967,6 +968,7 @@ public class Chunk : MonoBehaviour
         vertexIndex = 0;
         vertices.Clear();
         triangles.Clear();
+        triangles_Water.Clear();
         uvs.Clear();
     }
 
@@ -1362,12 +1364,12 @@ public class Chunk : MonoBehaviour
                             //根据p生成对应的面，对应的UV
                             AddTexture(world.blocktypes[blockID].GetTextureID(p));
 
-                            triangles.Add(vertexIndex);
-                            triangles.Add(vertexIndex + 1);
-                            triangles.Add(vertexIndex + 2);
-                            triangles.Add(vertexIndex + 2);
-                            triangles.Add(vertexIndex + 1);
-                            triangles.Add(vertexIndex + 3);
+                            triangles_Water.Add(vertexIndex);
+                            triangles_Water.Add(vertexIndex + 1);
+                            triangles_Water.Add(vertexIndex + 2);
+                            triangles_Water.Add(vertexIndex + 2);
+                            triangles_Water.Add(vertexIndex + 1);
+                            triangles_Water.Add(vertexIndex + 3);
                             vertexIndex += 4;
                         }
                         else
@@ -1377,21 +1379,24 @@ public class Chunk : MonoBehaviour
                             vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
                             vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
 
-                            //uvs.Add (VoxelData.voxelUvs [0]);
-                            //uvs.Add (VoxelData.voxelUvs [1]);
-                            //uvs.Add (VoxelData.voxelUvs [2]);
-                            //uvs.Add (VoxelData.voxelUvs [3]); 
+                            //uvs.Add(VoxelData.voxelUvs[0]);
+                            //uvs.Add(VoxelData.voxelUvs[1]);
+                            //uvs.Add(VoxelData.voxelUvs[2]);
+                            //uvs.Add(new Vector2(0 ,0));
+                            //uvs.Add(new Vector2(0, 1));
+                            //uvs.Add(new Vector2(1, 1));
+                            //uvs.Add(new Vector2(1, 0));
                             //AddTexture(1);
 
                             //根据p生成对应的面，对应的UV
                             AddTexture(world.blocktypes[blockID].GetTextureID(p));
 
-                            triangles.Add(vertexIndex);
-                            triangles.Add(vertexIndex + 1);
-                            triangles.Add(vertexIndex + 2);
-                            triangles.Add(vertexIndex + 2);
-                            triangles.Add(vertexIndex + 1);
-                            triangles.Add(vertexIndex + 3);
+                            triangles_Water.Add(vertexIndex);
+                            triangles_Water.Add(vertexIndex + 1);
+                            triangles_Water.Add(vertexIndex + 2);
+                            triangles_Water.Add(vertexIndex + 2);
+                            triangles_Water.Add(vertexIndex + 1);
+                            triangles_Water.Add(vertexIndex + 3);
                             vertexIndex += 4;
                         }
 
@@ -1461,12 +1466,21 @@ public class Chunk : MonoBehaviour
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
         mesh.uv = uvs.ToArray();
+        //mesh.triangles = triangles.ToArray();
+
+        //使用双材质
+        meshRenderer.materials = new Material[] { world.material, world.material_Water };
+        mesh.subMeshCount = 2;
+        mesh.SetTriangles(triangles.ToArray(), 0); // 第一个子网格使用triangles数组
+        mesh.SetTriangles(triangles_Water.ToArray(), 1); // 第二个子网格使用triangles_2数组
+
+        //优化
         mesh.Optimize();
         mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
 
+        //print($"triangles:{triangles.Count}, triangles_Water:{triangles_Water.Count}");
 
         //print($"{world.GetChunkLocation(myposition)}CreateMesh 结束");
 
