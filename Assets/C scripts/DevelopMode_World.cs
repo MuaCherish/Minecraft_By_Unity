@@ -78,9 +78,9 @@ public class DevelopModeWorld : MonoBehaviour
     Coroutine Mesh_Coroutine;
 
 
-    public Rect rect;
+    //public Rect rect;
 
-
+    public float CoroutineFlashDelay = 10f;
 
     private void Start()
     {
@@ -98,16 +98,29 @@ public class DevelopModeWorld : MonoBehaviour
 
         CreateXYChunks();
 
+        StartCoroutine(AlwaysFlashChunkCoroutine());
+
     }
 
 
-    private void OnGUI()
+    IEnumerator AlwaysFlashChunkCoroutine()
     {
-        if (GUI.Button(rect, "Ë¢ÐÂChunks"))
+        while(true)
         {
             FlashAllChunks();
+
+            yield return new WaitForSeconds(CoroutineFlashDelay);
+
         }
+        
     }
+    //private void OnGUI()
+    //{
+    //    if (GUI.Button(rect, "Ë¢ÐÂChunks"))
+    //    {
+    //        FlashAllChunks();
+    //    }
+    //}
 
 
 
