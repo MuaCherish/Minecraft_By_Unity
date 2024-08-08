@@ -1104,13 +1104,8 @@ MonoBehaviour:
   Random_WhiteFlower1: 1
   Random_WhiteFlower2: 1
   Random_YellowFlower: 1
-  Chunks: {fileID: 0}
-  rect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 100
-    height: 100
+  ChunkPATH: {fileID: 0}
+  CoroutineFlashDelay: 5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
