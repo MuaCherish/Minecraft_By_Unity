@@ -22,11 +22,6 @@ public class DevelopModeChunk : MonoBehaviour
     public MeshRenderer meshRenderer;
 
 
-    //噪声 
-    private float noise2d_scale_smooth;
-    private float noise2d_scale_steep;
-
-
     //BlockMap
     private int x;
     private int y;
@@ -67,16 +62,10 @@ public class DevelopModeChunk : MonoBehaviour
     //Start()
     public DevelopModeChunk(Vector3 thisPosition, DevelopModeWorld _world)
     {
-
         //print("开始执行初始化");
         //World
         world = _world;
-        noise2d_scale_smooth = world.noise2d_scale_smooth;
-        noise2d_scale_steep = world.noise2d_scale_steep;
-
         treecount = world.TreeCount;
-
-
 
         //Self
         chunkObject = new GameObject();
@@ -85,17 +74,21 @@ public class DevelopModeChunk : MonoBehaviour
         meshRenderer.sharedMaterial = world.material;
         chunkObject.transform.SetParent(world.ChunkPATH.transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
-        chunkObject.name = thisPosition.x + "," + thisPosition.z;
+        chunkObject.name = "BlockChunk--" + thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
-
-
-        //Data线程
         rand = new System.Random(world.Seed);
-        //Thread myThread = new Thread(new ThreadStart(CreateData));
-        //myThread.Start();
 
-        CreateData();
-       
+        ////切换状态
+        if (myposition == new Vector3((world.RenderWidth - 1) * 16f, 0f, (world.RenderWidth - 1) * 16f))
+        {
+            world.isLoading = false;
+        }
+        //Data线程
+        Thread myThread = new Thread(new ThreadStart(CreateData));
+        myThread.Start();
+
+        //CreateData();
+
 
         //print($"----------------------------------------------");
         //print($"{world.GetChunkLocation(myposition)}已经生成！");
@@ -110,35 +103,6 @@ public class DevelopModeChunk : MonoBehaviour
 
 
     //----------------------------------- Noise ----------------------------------------
-
-
-
-    //地形噪声生成器
-    float GetTotalNoiseHigh(int _x, int _z)
-    {
-
-
-        //(平原-山脉)过度噪声
-        float biome_moutainAndPlane = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((float)_x * 1e-05f + myposition.x * 1e-05f, (float)_z * 1e-05f + myposition.z * 1e-05f));
-
-
-        //小：平原噪声
-        //大：山脉噪声
-        float soilmax = Mathf.Lerp(50, 64, biome_moutainAndPlane);
-        float smooth = Mathf.Lerp(0.002f, 0.04f, biome_moutainAndPlane);
-        float steep = Mathf.Lerp(0.004f, 0.05f, biome_moutainAndPlane);
-
-
-        //最终噪声
-        float noise2d_1 = Mathf.Lerp((float)20, (float)soilmax, Mathf.PerlinNoise((float)_x * smooth + myposition.x * smooth, (float)_z * smooth + myposition.z * smooth));
-        float noise2d_2 = Mathf.Lerp((float)20, (float)soilmax, Mathf.PerlinNoise((float)_x * steep + myposition.x * steep, (float)_z * steep + myposition.z * steep));
-        float noiseHigh = noise2d_1 * 0.7f + noise2d_2 * 0.3f;
-
-
-        return noiseHigh;
-
-
-    }
 
 
 
@@ -205,7 +169,7 @@ public class DevelopModeChunk : MonoBehaviour
 
 
                     //地形噪声
-                    float noiseHigh = GetTotalNoiseHigh(x, z);
+                    float noiseHigh = world.GetTotalNoiseHigh(x, z,myposition);
 
 
                     //矿洞噪声
@@ -381,9 +345,11 @@ public class DevelopModeChunk : MonoBehaviour
         }
 
         //交给world来create
-        world.WaitToCreateMesh.Enqueue(this);
+        //world.WaitToCreateMesh.Enqueue(this);
 
         UpdateChunkMesh();
+        //Thread myThread = new Thread(new ThreadStart(UpdateChunkMesh));
+        //myThread.Start();
     }
 
 
@@ -862,7 +828,7 @@ public class DevelopModeChunk : MonoBehaviour
 
         world.WaitToRender.Enqueue(this);
 
-        CreateMesh();
+        //CreateMesh();
 
 
 
@@ -1375,7 +1341,10 @@ public class DevelopModeChunk : MonoBehaviour
 
     }
 
-
+    public void Destroyself()
+    {
+        Destroy(chunkObject);
+    }
 
 
     //----------------------------------------------------------------------------------

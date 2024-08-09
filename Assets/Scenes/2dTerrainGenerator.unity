@@ -241,7 +241,7 @@ Transform:
   m_GameObject: {fileID: 1123030989}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 944.016, y: 33.66102, z: 639.951}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -273,7 +273,7 @@ Transform:
   m_GameObject: {fileID: 1140079341}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 944.016, y: 33.66102, z: 639.951}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -367,7 +367,7 @@ Transform:
   m_GameObject: {fileID: 1520535468}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0.000000059604645, z: -0.000000029802322, w: 0.70710677}
-  m_LocalPosition: {x: -848.72565, y: 176.0792, z: -544.21246}
+  m_LocalPosition: {x: 123.86586, y: 209.77202, z: 96.268814}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -417,8 +417,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 136564c3dbb9185428bc939af42738a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isLoading: 0
+  MainCamera: {fileID: 1520535468}
   material: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
   material_Water: {fileID: 2100000, guid: e401bc414787ebc4eaf3eb598c2a55cf, type: 2}
+  material_VoxelChunk: {fileID: 2100000, guid: 79c5f1d2b8332b8408379f8ad24f5a18, type: 2}
   blocktypes:
   - blockName: BedRock
     DestroyTime: 0
@@ -1087,14 +1090,32 @@ MonoBehaviour:
     leftFaceTexture: 35
     rightFaceTexture: 35
     DrawMode: 1
-  renderSize: 2
-  noise2d_scale_smooth: 0.01
-  noise2d_scale_steep: 0.04
+  ChunkPATH: {fileID: 0}
+  RenderWidth: 4
+  CoroutineFlashDelay: 5
+  Noise_Scale: 0.05
+  biomeclarify:
+  - name: "\u5E73\u539F"
+    Domain: 50
+    color: {r: 0.44784087, g: 0.8207547, b: 0.32907617, a: 0}
+  - name: "\u9AD8\u539F"
+    Domain: 40
+    color: {r: 0.46226418, g: 0.34805778, b: 0, a: 0}
+  - name: "\u6C99\u6F20"
+    Domain: 30
+    color: {r: 0.9744191, g: 1, b: 0, a: 0}
+  - name: "\u6CBC\u6CFD"
+    Domain: 20
+    color: {r: 0, g: 0.3160377, b: 0.13107215, a: 0}
+  "\u6C27\u6C14\u6D53\u5EA6OxygenDensity": 0.5
+  "\u4E09\u7EF4\u5BC6\u5EA6Density3d": 0.6
+  "\u5E72\u71E5\u7A0B\u5EA6Aridity": 0.6
+  "\u7A7A\u6C14\u6E7F\u5EA6MoistureLevel": 0.7
   isRandomSeed: 1
   Seed: 0
   soil_min: 0
-  soil_max: 60
-  sea_level: 40
+  soil_max: 0
+  sea_level: 36
   TreeCount: 5
   TreeHigh_min: 3
   TreeHigh_max: 5
@@ -1104,8 +1125,30 @@ MonoBehaviour:
   Random_WhiteFlower1: 1
   Random_WhiteFlower2: 1
   Random_YellowFlower: 1
-  ChunkPATH: {fileID: 0}
-  CoroutineFlashDelay: 5
+  CreateWorldRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 200
+    height: 100
+  CreateWorldRect2:
+    serializedVersion: 2
+    x: 0
+    y: 100
+    width: 200
+    height: 100
+  CreateWorldRect3:
+    serializedVersion: 2
+    x: 0
+    y: 200
+    width: 200
+    height: 100
+  CreateWorldRect4:
+    serializedVersion: 2
+    x: 118
+    y: 274
+    width: 200
+    height: 100
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
