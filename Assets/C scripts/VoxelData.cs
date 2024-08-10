@@ -108,6 +108,8 @@ public static class VoxelData
     public static readonly Byte Bush = 28;
     public static readonly Byte Snow = 29;
     public static readonly Byte SnowPower = 30;
+    public static readonly Byte Mycelium = 31;   //菌丝体
+    
 
 
     //音乐宏定义

@@ -621,7 +621,7 @@ public class CanvasManager : MonoBehaviour
     //手电筒的提示
     void Prompt_FlashLight()
     { 
-        if (player.transform.position.y <= world.soil_min + 5f)
+        if (player.transform.position.y <= 50f + 5f)
         {
             if (hasExec_PromptScreen_isShow == false)
             {

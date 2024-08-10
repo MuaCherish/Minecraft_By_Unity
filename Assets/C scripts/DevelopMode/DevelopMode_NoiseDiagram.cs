@@ -20,7 +20,7 @@ public class DevelopMode_NoiseDiagram : MonoBehaviour
 
         //计算像素
         textureSize = 16 * world.RenderWidth;
-        rand = new System.Random(world.Seed);
+        rand = new System.Random(world.terrainLayerProbabilitySystem.Seed);
 
         // 创建一个新的Plane对象
         thisobject = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -58,7 +58,7 @@ public class DevelopMode_NoiseDiagram : MonoBehaviour
     }
 
 
-    //群系染色
+    //根据测试集染色
     public Color BiomeRenderColor(float _noisevalue)
     {
 
@@ -74,7 +74,8 @@ public class DevelopMode_NoiseDiagram : MonoBehaviour
 
     }
 
-
+     
+    //根据群系染色
     public Color GetBiome(int _x, int _z, Vector3 _myposition)
     {
 
@@ -83,21 +84,61 @@ public class DevelopMode_NoiseDiagram : MonoBehaviour
         float _C = world.GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f));
         float _D = world.GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f));
 
-        //沙漠
-        if (_C >= world.干燥程度Aridity)
+        ////沙漠
+        //if (_C >= world.干燥程度Aridity)
+        //{
+
+        //    return world.biomeclarify[2].color;
+
+        //}
+
+        //else
+        //{
+
+        //    //高原
+        //    if (_B >= world.三维密度Density3d)
+        //    {
+        //        return world.biomeclarify[1].color;
+        //    }
+
+        //    //草原
+        //    else if (_A >= world.氧气浓度OxygenDensity)
+        //    {
+
+        //        if (_D >= world.空气湿度MoistureLevel)
+        //        {
+        //            return world.biomeclarify[3].color;
+        //        }
+        //        else
+        //        {
+        //            return world.biomeclarify[0].color;
+        //        }
+
+
+
+        //    }
+        //    else
+        //    {
+        //        return world.biomeclarify[4].color;
+        //    }
+
+        //}
+
+        //高原
+        if (_B >= world.三维密度Density3d)
         {
 
-            return world.biomeclarify[2].color;
+            return world.biomeclarify[1].color;
 
         }
 
         else
         {
 
-            //高原
-            if (_B >= world.三维密度Density3d)
+            //沙漠
+            if (_C >= world.干燥程度Aridity)
             {
-                return world.biomeclarify[1].color;
+                return world.biomeclarify[2].color;
             }
 
             //草原
@@ -123,10 +164,14 @@ public class DevelopMode_NoiseDiagram : MonoBehaviour
 
         }
 
+
+
     }
 
 
 
+
+    #region tools
 
     public bool isAlive()
     {
@@ -144,4 +189,7 @@ public class DevelopMode_NoiseDiagram : MonoBehaviour
     {
         Destroy(thisobject);
     }
+
+    #endregion
+
 }

@@ -212,8 +212,8 @@ public class Player : MonoBehaviour
 
         //X = [800,1600]
         //Z = [400,800]
-        transform.position = new Vector3(Random.Range(800,1600), transform.position.y, Random.Range(400, 800));
-
+        transform.position = new Vector3(Random.Range(800,3200), transform.position.y, Random.Range(800, 3200));
+        //print(transform.position);
     }
 
 
@@ -551,7 +551,7 @@ public class Player : MonoBehaviour
 
 
         // 如果在水中按下跳跃键 && leg低于水面，触发跳跃请求 
-        if (isSwiming && Input.GetKey(KeyCode.Space) && (leg.position.y - 0.1f < world.sea_level))
+        if (isSwiming && Input.GetKey(KeyCode.Space) && (leg.position.y - 0.1f < world.terrainLayerProbabilitySystem.sea_level))
         {
 
             jumpRequest = true;

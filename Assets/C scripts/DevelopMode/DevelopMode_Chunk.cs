@@ -38,7 +38,7 @@ public class DevelopModeChunk : MonoBehaviour
 
 
     //群系参数
-    int Plain_treecount;
+    int Normal_treecount;
     int Forest_treecount;
 
 
@@ -66,8 +66,8 @@ public class DevelopModeChunk : MonoBehaviour
         //print("开始执行初始化");
         //World
         world = _world;
-        Plain_treecount = world.一般树木采样次数Plain_treecount;
-        Forest_treecount = world.密林树木采样次数Forest_treecount;
+        Normal_treecount = world.terrainLayerProbabilitySystem.Normal_treecount; 
+        Forest_treecount = world.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
 
         //Self
         chunkObject = new GameObject();
@@ -78,7 +78,7 @@ public class DevelopModeChunk : MonoBehaviour
         chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
         chunkObject.name = "BlockChunk--" + thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
-        rand = new System.Random(world.Seed);
+        rand = new System.Random(world.terrainLayerProbabilitySystem.Seed);
 
         ////切换状态
         if (myposition == new Vector3((world.RenderWidth - 1) * 16f, 0f, (world.RenderWidth - 1) * 16f))
@@ -179,50 +179,50 @@ public class DevelopModeChunk : MonoBehaviour
 
 
                     //沙漠噪声
-                    float noise_desery = GetSmoothNoise_Desert(x, z);
+                    //float noise_desery = GetSmoothNoise_Desert(x, z);
 
                     //空气部分
-                    if (y > noiseHigh && y > world.sea_level)
+                    if (y > noiseHigh && y > world.terrainLayerProbabilitySystem.sea_level)
                     {
-
+                        
                         //地上一层
                         if (y - 1 < noiseHigh)
                         {
 
                             //如果可生成
-                            if (voxelMap[x, y - 1, z] != VoxelData.Sand && voxelMap[x, y - 1, z] != VoxelData.Air)
+                            if (voxelMap[x, y - 1, z] != VoxelData.Sand && voxelMap[x, y - 1, z] != VoxelData.Air && voxelMap[x, y - 1, z] != VoxelData.Snow)
                             {
 
                                 //灌木丛
-                                if (GetProbability(world.Random_Bush))
+                                if (GetProbability(world.terrainLayerProbabilitySystem.Random_Bush))
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.Bush;
 
-                                }
+                                } 
                                 //BlueFlower
-                                else if (GetProbability(world.Random_BlueFlower))
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_BlueFlower))
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.BlueFlower;
 
                                 }
                                 //WhiteFlower_1
-                                else if (GetProbability(world.Random_WhiteFlower1))
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower1))
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.WhiteFlower_1;
 
                                 }
                                 //WhiteFlower_2
-                                else if (GetProbability(world.Random_WhiteFlower2))
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower2))
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.WhiteFlower_2;
 
                                 }
                                 //YellowFlower
-                                else if (GetProbability(world.Random_YellowFlower))
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_YellowFlower))
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.YellowFlower;
@@ -237,7 +237,7 @@ public class DevelopModeChunk : MonoBehaviour
                             }
 
                             //竹子
-                            else if (voxelMap[x, y - 1, z] == VoxelData.Sand && GetProbability(world.Random_Bamboo))
+                            else if (voxelMap[x, y - 1, z] == VoxelData.Sand && GetProbability(world.terrainLayerProbabilitySystem.Random_Bamboo))
                             {
 
                                 voxelMap[x, y, z] = VoxelData.Air;
@@ -261,7 +261,7 @@ public class DevelopModeChunk : MonoBehaviour
                     }
 
                     //判断水面
-                    else if (y > noiseHigh && y - 1 < world.sea_level)
+                    else if (y > noiseHigh && y - 1 < world.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         voxelMap[x, y, z] = VoxelData.Water;
@@ -277,7 +277,7 @@ public class DevelopModeChunk : MonoBehaviour
                         {
 
                             //沙漠气候
-                            if (noise_desery > 0.6f)
+                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
                             {
 
                                 voxelMap[x, y, z] = VoxelData.Sand;
@@ -288,13 +288,13 @@ public class DevelopModeChunk : MonoBehaviour
                             else
                             {
                                 //100雪地
-                                if (y > world.Snow_Level)
+                                if (y > world.terrainLayerProbabilitySystem.Snow_Level)
                                 {
                                     voxelMap[x, y, z] = VoxelData.Snow;
                                 }
 
                                 //90~100概率生成雪地
-                                else if ((y > (world.Snow_Level - 10f)) && GetProbability_New(50))
+                                else if ((y > (world.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(50))
                                 {
                                     voxelMap[x, y, z] = VoxelData.Snow;
                                 }
@@ -302,16 +302,28 @@ public class DevelopModeChunk : MonoBehaviour
 
 
                                 //高于海平面
-                                else if (y > world.sea_level)
+                                else if (y > world.terrainLayerProbabilitySystem.sea_level)
                                 {
 
-                                    voxelMap[x, y, z] = VoxelData.Grass;
+                                    
+
+                                    //是否是菌丝体
+                                    if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Marsh)
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Mycelium;
+                                    }
+                                    else
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Grass;
+                                    }
+
+
                                      
                                 }
-                                else
+                                else 
                                 {
 
-                                    if (GetProbability_New(90))
+                                    if (world.GetSimpleNoiseWithOffset(x,z,myposition,new Vector2(111f,222f), 0.1f) > 0.5f)
                                     {
 
                                         voxelMap[x, y, z] = VoxelData.Sand;
@@ -385,7 +397,7 @@ public class DevelopModeChunk : MonoBehaviour
                 int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
                 int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
                 int random_y = VoxelData.ChunkHeight;
-                int random_Tree_High = rand.Next(world.TreeHigh_min, world.TreeHigh_max + 1);
+                int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
                 //如果可以生成树桩
                 //向上延伸树干
@@ -424,13 +436,15 @@ public class DevelopModeChunk : MonoBehaviour
         else
         {
             //[确定XZ]xoz上随便选择5个点
-            while (world.一般树木采样次数Plain_treecount-- != 0)
+            int count = rand.Next(0, Normal_treecount);
+
+            while (count-- != 0)
             {
 
                 int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
                 int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
                 int random_y = VoxelData.ChunkHeight;
-                int random_Tree_High = rand.Next(world.TreeHigh_min, world.TreeHigh_max + 1);
+                int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
                 //如果可以生成树桩
                 //向上延伸树干
@@ -469,7 +483,7 @@ public class DevelopModeChunk : MonoBehaviour
     }
 
     // 返回一个概率值，范围在0~100，根据输入值越接近100，概率接近100%，越接近0，概率接近0%
-    bool GetProbability_New(float input)
+    bool GetProbability(float input)
     {
         // 确保输入值在 0 到 100 之间
         input = Mathf.Clamp(input, 0, 100);
@@ -483,25 +497,6 @@ public class DevelopModeChunk : MonoBehaviour
     }
 
 
-    bool GetProbability(float input)
-    {
-
-        if (input > 50f)
-        {
-
-            // 如果输入值大于45，总是返回true
-            return true;
-
-        }
-        else
-        {
-
-            // 如果输入值在0~45之间，根据概率返回true或者false
-            float probability = rand.Next(0, 200);
-            return probability <= input;
-
-        }
-    }
 
 
     //构造树叶

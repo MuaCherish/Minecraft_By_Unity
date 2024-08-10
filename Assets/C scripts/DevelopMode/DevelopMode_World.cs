@@ -16,23 +16,16 @@ public class DevelopModeWorld : MonoBehaviour
     [Header("Transforms")]
     public GameObject MainCamera;
 
-    [Header("Material-方块类型")]
+    [Header("渲染设置")]
+    public int RenderWidth = 5; private int _RenderWidth = 5;
+    [HideInInspector] public GameObject ChunkPATH;
+    
+
+    [Header("方块类型")]
     public Material material;
     public Material material_Water;
     public Material material_VoxelChunk;
     public BlockType[] blocktypes;
-
-
-    [Header("World-渲染设置")]
-    [HideInInspector] public GameObject ChunkPATH;
-    public int RenderWidth = 5; private int _RenderWidth = 5;
-    public float CoroutineFlashDelay = 10f;
-
-
-    [Header("特征测试集")]
-    public float Noise_Scale = 1f;
-    public float Snow_Level = 60;
-    public BiomeClarify[] biomeclarify; private BiomeClarify[] _biomeclarify;
 
 
     [Header("群系特征概率和数据(值越大范围越小)")]
@@ -40,30 +33,17 @@ public class DevelopModeWorld : MonoBehaviour
     public float 三维密度Density3d;
     public float 干燥程度Aridity;
     public float 空气湿度MoistureLevel;
-    public int 一般树木采样次数Plain_treecount;
-    public int 密林树木采样次数Forest_treecount;
     public BiomeNoiseSystem[] biomenoisesystems;
 
 
-    [Header("Chunk-分层结构")]
-    public bool isRandomSeed = true;
-    public int Seed = 0;
-    [Range(0, 60)] public float soil_min = 15;
-    [Range(0, 60)] public float soil_max = 55;
-    [Range(0, 60)] public float sea_level = 30;
-    public int TreeCount = 5;
-    public int TreeHigh_min = 5;
-    public int TreeHigh_max = 7;
-
-
-    [Header("生成概率(n%)")]
+    [Header("地质分层与概率系统(n%)")]
+    public TerrainLayerProbabilitySystem terrainLayerProbabilitySystem;
     public System.Random rand;
-    public float Random_Bush;
-    public int Random_Bamboo;
-    public float Random_BlueFlower;
-    public float Random_WhiteFlower1;
-    public float Random_WhiteFlower2;
-    public float Random_YellowFlower;
+
+
+
+    [Header("特征测试集")]
+    public BiomeClarify[] biomeclarify; private BiomeClarify[] _biomeclarify;
 
 
     [Header("OnGui")]
@@ -106,8 +86,8 @@ public class DevelopModeWorld : MonoBehaviour
         ChunkPATH.transform.SetParent(GameObject.Find("Environment").transform);
 
         //设置种子
-        Seed = Random.Range(0, 100);
-        rand = new System.Random(Seed);
+        terrainLayerProbabilitySystem.Seed = Random.Range(0, 100);
+        rand = new System.Random(terrainLayerProbabilitySystem.Seed);
 
         //初始化一个NoiseDiagram
         NoiseDiagramTemp = new DevelopMode_NoiseDiagram(this);
@@ -315,10 +295,10 @@ public class DevelopModeWorld : MonoBehaviour
 
         if (CreateBlockChunkCoroutine == null)
         {
-            if (isRandomSeed)
+            if (terrainLayerProbabilitySystem.isRandomSeed)
             {
-                Seed = Random.Range(0, 100);
-                rand = new System.Random(Seed);
+                terrainLayerProbabilitySystem.Seed = Random.Range(0, 100);
+                rand = new System.Random(terrainLayerProbabilitySystem.Seed);
             }
 
             CreateBlockChunkCoroutine = StartCoroutine(_CreateBlockChunks());
@@ -393,21 +373,62 @@ public class DevelopModeWorld : MonoBehaviour
         float _C = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f));
         float _D = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f));
 
-        //沙漠
-        if (_C >= 干燥程度Aridity)
+        ////沙漠
+        //if (_C >= 干燥程度Aridity)
+        //{
+
+        //    return 2;
+
+        //}
+
+        //else
+        //{
+
+        //    //高原
+        //    if (_B >= 三维密度Density3d)
+        //    {
+        //        return 1;
+        //    }
+
+        //    //草原
+        //    else if (_A >= 氧气浓度OxygenDensity)
+        //    {
+
+        //        if (_D >= 空气湿度MoistureLevel)
+        //        {
+        //            return 3;
+        //        }
+        //        else
+        //        {
+        //            return 0;
+        //        }
+
+
+
+        //    }
+        //    else
+        //    {
+        //        //返回密林
+        //        return 4;
+        //    }
+
+        //}
+
+        //高原
+        if (_B >= 三维密度Density3d)
         {
-
-            return 2;
-
+            return 1;
         }
 
         else
         {
 
-            //高原
-            if (_B >= 三维密度Density3d)
+            //沙漠
+            if (_C >= 干燥程度Aridity)
             {
-                return 1;
+
+                return 2;
+
             }
 
             //草原
@@ -433,6 +454,7 @@ public class DevelopModeWorld : MonoBehaviour
             }
 
         }
+
 
     }
 
@@ -480,16 +502,19 @@ public class DevelopModeWorld : MonoBehaviour
 
         //获得当前群系
         //获得群系混合强度
-        if (_C >= 干燥程度Aridity)
+        //高原
+        if (_B >= 三维密度Density3d)
         {
-            BiomeType = VoxelData.Biome_Dessert;
-            BiomeIntensity = Mathf.InverseLerp(干燥程度Aridity,1f, _C);
-        }else{
-            //高原
-            if (_B >= 三维密度Density3d)
+            BiomeType = VoxelData.Biome_Plateau;
+            BiomeIntensity = Mathf.InverseLerp(三维密度Density3d, 1f, _B);
+        }
+        else
+        {
+            
+            if (_C >= 干燥程度Aridity)
             {
-                BiomeType = VoxelData.Biome_Plateau;
-                BiomeIntensity = Mathf.InverseLerp(三维密度Density3d, 1f, _B);
+                BiomeType = VoxelData.Biome_Dessert;
+                BiomeIntensity = Mathf.InverseLerp(干燥程度Aridity, 1f, _C);
             }
             //草原
             else if (_A >= 氧气浓度OxygenDensity)
@@ -513,15 +538,19 @@ public class DevelopModeWorld : MonoBehaviour
 
         }
 
+        //BiomeType = 1;
+
         //混合群系
         float Mixnoise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.x);
         float Mixnoise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.y);
         float Mixnoise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.z);
         float Mixnoise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[BiomeType].Noise_Rank_123.x + noise_2 * biomenoisesystems[BiomeType].Noise_Rank_123.y + noise_3 * biomenoisesystems[BiomeType].Noise_Rank_123.z);
         float Mixnoise_High = Mathf.Lerp(biomenoisesystems[BiomeType].HighDomain.x, biomenoisesystems[BiomeType].HighDomain.y, Mixnoise);
-        
 
-        return Mathf.Lerp(noise_High, Mixnoise_High,BiomeIntensity); 
+        float 增量噪声 = Mathf.Lerp(noise_High, Mixnoise_High, BiomeIntensity);
+
+        return 增量噪声;
+        //return noise_High + 增量噪声 * 增量噪声放大倍数; 
     
     }
 
@@ -633,7 +662,7 @@ public class DevelopModeWorld : MonoBehaviour
 
 }
 
-
+//测试集
 [System.Serializable]
 public class BiomeClarify
 {
@@ -643,13 +672,6 @@ public class BiomeClarify
 }
 
 
-[System.Serializable]
-public class BiomeNoiseSystem
-{
-    public string BiomeName;
-    public Color BiomeColor;
-    public Vector2 HighDomain;
-    public Vector3 Noise_Scale_123;
-    public Vector3 Noise_Rank_123;
-}
+
+
 

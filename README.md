@@ -7,7 +7,7 @@ A long-term project from beginner
 - Install TextMeshPro
 - Create a new TMPFone for the Minecraft Font in the font directory, otherwise opening the project will result in a null pointer error
 
----
+<img src="https://github.com/jrohitofficial/jrohitofficial/blob/master/line-neon.gif" width="100%"> 
 
 
 - Overview

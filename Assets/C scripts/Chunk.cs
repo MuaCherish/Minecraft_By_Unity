@@ -25,12 +25,13 @@ public class Chunk : MonoBehaviour
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
 
-
-    //噪声 
-    private float noise2d_scale_smooth;
-    private float noise2d_scale_steep;
+    //noise
     private float noise3d_scale;
 
+
+    //群系参数
+    int Normal_treecount;
+    int Forest_treecount;
 
     //BlockMap
     private int x;
@@ -45,11 +46,6 @@ public class Chunk : MonoBehaviour
     List<int> triangles = new List<int>();
     List<int> triangles_Water = new List<int>();
     List<Vector2> uvs = new List<Vector2>();
-
-
-    //群系参数
-    int treecount;
-
 
     //生长类方块
     Queue<Vector3> Coals = new Queue<Vector3>();
@@ -68,7 +64,7 @@ public class Chunk : MonoBehaviour
 
 
     //debug
-    bool debug_CanLookCave;
+    //bool debug_CanLookCave;
 
 
 
@@ -85,14 +81,12 @@ public class Chunk : MonoBehaviour
 
         //World
         world = _world;
-        noise2d_scale_smooth = world.noise2d_scale_smooth;
-        noise2d_scale_steep = world.noise2d_scale_steep;
-        noise3d_scale = world.noise3d_scale;
-        treecount = world.TreeCount;
         caveWidth = world.cave_width;
-        debug_CanLookCave = !world.debug_CanLookCave;
+        //debug_CanLookCave = !world.debug_CanLookCave;
         BaseChunk = _BaseChunk;
-      
+        noise3d_scale = world.noise3d_scale;
+        Normal_treecount = world.terrainLayerProbabilitySystem.Normal_treecount;
+        Forest_treecount = world.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
 
         //Self
         chunkObject = new GameObject();
@@ -106,7 +100,7 @@ public class Chunk : MonoBehaviour
 
 
         //Data线程
-        rand = new System.Random(world.Seed);
+        rand = new System.Random(world.terrainLayerProbabilitySystem.Seed);
         Thread myThread = new Thread(new ThreadStart(CreateData));
         myThread.Start();
 
@@ -244,12 +238,13 @@ public class Chunk : MonoBehaviour
 
 
                     // 生成0或1的随机数
-                    int randomInt = rand.Next(0, 2);
-                    int randomFrom_0_10 = rand.Next(0, 10);
+                    //int randomInt = rand.Next(0, 2);
+                    //int randomFrom_0_10 = rand.Next(0, 10);
 
 
                     //地形噪声
-                    float noiseHigh = GetTotalNoiseHigh(x, z);
+                    //float noiseHigh = GetTotalNoiseHigh(x, z);
+                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition);
 
 
                     //矿洞噪声
@@ -257,7 +252,7 @@ public class Chunk : MonoBehaviour
 
 
                     //沙漠噪声
-                    float noise_desery = GetSmoothNoise_Desert(x, z);
+                    //float noise_desery = GetSmoothNoise_Desert(x, z);
 
 
                     //判断基岩
@@ -271,7 +266,7 @@ public class Chunk : MonoBehaviour
                             voxelMap[x, y, z] = VoxelData.BedRock;
 
                         }
-                        else if (y > 0 && y < 3 && randomInt == 1)
+                        else if (y > 0 && y < 3 && GetProbability(50))
                         {
 
                             voxelMap[x, y, z] = VoxelData.BedRock;
@@ -285,7 +280,7 @@ public class Chunk : MonoBehaviour
                         }
                     }
                     //空气部分
-                    else if (y > noiseHigh && y > world.sea_level)
+                    else if (y > noiseHigh && y > world.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         //地上一层
@@ -293,39 +288,39 @@ public class Chunk : MonoBehaviour
                         {
 
                             //如果可生成
-                            if (voxelMap[x, y - 1, z] != VoxelData.Sand && voxelMap[x, y - 1, z] != VoxelData.Air)
+                            if (voxelMap[x, y - 1, z] != VoxelData.Sand && voxelMap[x, y - 1, z] != VoxelData.Air && voxelMap[x, y - 1, z] != VoxelData.Snow)
                             {
 
                                 //灌木丛
-                                if (GetProbability(world.Random_Bush))
+                                if (GetProbability(world.terrainLayerProbabilitySystem.Random_Bush))
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.Bush;
 
                                 }
                                 //BlueFlower
-                                else if (GetProbability(world.Random_BlueFlower))
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_BlueFlower))
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.BlueFlower;
 
                                 }
                                 //WhiteFlower_1
-                                else if (GetProbability(world.Random_WhiteFlower1))
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower1))
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.WhiteFlower_1;
 
                                 }
                                 //WhiteFlower_2
-                                else if (GetProbability(world.Random_WhiteFlower2))
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower2))
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.WhiteFlower_2;
 
                                 }
                                 //YellowFlower
-                                else if (GetProbability(world.Random_YellowFlower))
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_YellowFlower))
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.YellowFlower;
@@ -340,7 +335,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //竹子
-                            else if (voxelMap[x, y - 1, z] == VoxelData.Sand && GetProbability(world.Random_Bamboo))
+                            else if (voxelMap[x, y - 1, z] == VoxelData.Sand && GetProbability(world.terrainLayerProbabilitySystem.Random_Bamboo))
                             {
 
                                 voxelMap[x, y, z] = VoxelData.Air;
@@ -364,19 +359,11 @@ public class Chunk : MonoBehaviour
                     }
 
                     //判断水面
-                    else if (y > noiseHigh && y - 1 < world.sea_level)
+                    else if (y > noiseHigh && y - 1 < world.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         voxelMap[x, y, z] = VoxelData.Water;
 
-
-                        //更新属性
-                        if (haeExec_iHaveWater)
-                        {
-                            iHaveWater = true;
-
-                            haeExec_iHaveWater = false;
-                        }
                     }
 
                     //空气之下
@@ -388,7 +375,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //沙漠气候
-                            if (noise_desery > 0.6f)
+                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
                             {
 
                                 voxelMap[x, y, z] = VoxelData.Sand;
@@ -398,18 +385,39 @@ public class Chunk : MonoBehaviour
                             //草原气候
                             else
                             {
+                                //100雪地
+                                if (y > world.terrainLayerProbabilitySystem.Snow_Level)
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Snow;
+                                }
+
+                                //90~100概率生成雪地
+                                else if ((y > (world.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(50))
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Snow;
+                                }
+
+
 
                                 //高于海平面
-                                if (y > world.sea_level)
+                                else if (y > world.terrainLayerProbabilitySystem.sea_level)
                                 {
 
-                                    voxelMap[x, y, z] = VoxelData.Grass;
+                                    //是否是菌丝体
+                                    if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Marsh)
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Mycelium;
+                                    }
+                                    else
+                                    {
+                                        voxelMap[x, y, z] = VoxelData.Grass;
+                                    }
 
                                 }
                                 else
                                 {
 
-                                    if (GetProbability_New(90))
+                                    if (world.GetSimpleNoiseWithOffset(x, z, myposition, new Vector2(111f, 222f), 0.1f) > 0.5f)
                                     {
 
                                         voxelMap[x, y, z] = VoxelData.Sand;
@@ -417,7 +425,7 @@ public class Chunk : MonoBehaviour
                                     }
                                     else
                                     {
-                                         
+
                                         voxelMap[x, y, z] = VoxelData.Soil;
 
                                     }
@@ -425,42 +433,42 @@ public class Chunk : MonoBehaviour
                                 }
                             }
                         }
+
+
                         //泥土的判断
                         else if (y > noiseHigh - 7)
                         {
-
                             //沙漠判断
-                            if (noise_desery > 0.5f)
+                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
                             {
-
                                 voxelMap[x, y, z] = VoxelData.Sand;
-
                             }
                             else
                             {
-
                                 voxelMap[x, y, z] = VoxelData.Soil;
-
                             }
-                        }
 
-                        else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && randomInt == 1)
+
+                        }
+                        else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
                         {
-
                             //沙漠判断
-                            if (noise_desery > 0.5f)
+                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
                             {
-
                                 voxelMap[x, y, z] = VoxelData.Sand;
-
                             }
                             else
                             {
-
                                 voxelMap[x, y, z] = VoxelData.Soil;
-
                             }
+
+
                         }
+
+
+
+
+
                         //矿洞
                         else if (noise3d < GetVaveWidth(y))
                         {
@@ -474,42 +482,42 @@ public class Chunk : MonoBehaviour
                         {
 
                             //煤炭
-                            if (rand.Next(0, world.Random_Coal) < 1)
+                            if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Coal))
                             {
-
+                                
                                 voxelMap[x, y, z] = VoxelData.Stone;
                                 Coals.Enqueue(new Vector3(x, y, z));
 
                             }
 
                             //铁
-                            else if (rand.Next(0, world.Random_Iron) < 1)
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Iron))
                             {
-
+                                
                                 voxelMap[x, y, z] = VoxelData.Iron;
 
                             }
 
                             //金
-                            else if (rand.Next(0, world.Random_Gold) < 1)
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Gold))
                             {
-
+                                
                                 voxelMap[x, y, z] = VoxelData.Gold;
 
                             }
 
                             //青金石
-                            else if (rand.Next(0, world.Random_Blue_Crystal) < 1)
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Blue_Crystal))
                             {
-
+                                
                                 voxelMap[x, y, z] = VoxelData.Blue_Crystal;
 
                             }
 
                             //钻石
-                            else if (rand.Next(0, world.Random_Diamond) < 1)
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Diamond))
                             {
-
+                                
                                 voxelMap[x, y, z] = VoxelData.Diamond;
 
                             }
@@ -559,18 +567,17 @@ public class Chunk : MonoBehaviour
     //tree
     void CreateTree()
     {
-
-        if (GetSmoothNoise_Tree() > 35f && GetSmoothNoise_Tree() < 60)
+        //密林群系
+        if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Forest)
         {
-
             //[确定XZ]xoz上随便选择5个点
-            while (treecount-- != 0)
+            while (Forest_treecount-- != 0)
             {
 
                 int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
                 int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
                 int random_y = VoxelData.ChunkHeight;
-                int random_Tree_High = rand.Next(world.TreeHigh_min, world.TreeHigh_max + 1);
+                int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
                 //如果可以生成树桩
                 //向上延伸树干
@@ -606,12 +613,57 @@ public class Chunk : MonoBehaviour
                 //Debug.Log($"{random_x}, {random_y}, {random_z}");
             }
         }
+        else
+        {
+            //[确定XZ]xoz上随便选择5个点
+            int count = rand.Next(0, Normal_treecount);
 
-        
+            while (count-- != 0)
+            {
+
+                int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
+                int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
+                int random_y = VoxelData.ChunkHeight;
+                int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+
+                //如果可以生成树桩
+                //向上延伸树干
+                random_y = CanSetStump(random_x, random_y, random_z, random_Tree_High);
+                if (random_y != -1f)
+                {
+
+                    for (int i = 0; i <= random_Tree_High; i++)
+                    {
+
+                        if (random_y + i >= VoxelData.ChunkHeight - 1)
+                        {
+
+                            Debug.Log($"random_y:{random_y},i={i}");
+
+                        }
+
+                        else
+                        {
+
+                            voxelMap[random_x, random_y + i, random_z] = VoxelData.Wood;
+
+                        }
+
+                    }
+
+                    //生成树叶
+                    BuildLeaves(random_x, random_y + random_Tree_High, random_z);
+
+                }
+
+
+                //Debug.Log($"{random_x}, {random_y}, {random_z}");
+            }
+        }
     }
 
     // 返回一个概率值，范围在0~100，根据输入值越接近100，概率接近100%，越接近0，概率接近0%
-    bool GetProbability_New(float input)
+    bool GetProbability(float input)
     {
         // 确保输入值在 0 到 100 之间
         input = Mathf.Clamp(input, 0, 100);
@@ -620,29 +672,31 @@ public class Chunk : MonoBehaviour
         float randomValue = rand.Next(0, 100);
 
         // 如果随机数小于等于输入值，则返回 true
-        return randomValue <= input;
+        //Debug.Log(randomValue);
+        bool a = randomValue < input;
+
+
+        return a;
     }
 
-
-    bool GetProbability(float input)
+    // 返回一个概率值，范围在0~100，根据输入值越接近100，概率接近100%，越接近0，概率接近0%
+    bool GetProbabilityTenThousandth(float input)  
     {
+        // 确保输入值在 0 到 100 之间
+        input = Mathf.Clamp(input, 0, 100);
 
-        if (input > 50f)
-        {
+        // 生成一个 0 到 100 之间的随机数
+        float randomValue = rand.Next(0, 10000);
 
-            // 如果输入值大于45，总是返回true
-            return true;
+        // 如果随机数小于等于输入值，则返回 true
+        //Debug.Log(randomValue);
+        bool a = randomValue < input;
 
-        }
-        else
-        {
 
-            // 如果输入值在0~45之间，根据概率返回true或者false
-            float probability = rand.Next(0, 200);
-            return probability <= input;
-
-        }
+        return a;
     }
+
+
 
 
     //构造树叶
@@ -1160,19 +1214,28 @@ public class Chunk : MonoBehaviour
 
             Chunk DirectChunk;
             if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
-                DirectChunk.UpdateChunkMesh_WithSurround();
-
+            {
+                world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                //DirectChunk.UpdateChunkMesh_WithSurround();
+            }
             if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
-                DirectChunk.UpdateChunkMesh_WithSurround();
-
+            {
+                world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                //DirectChunk.UpdateChunkMesh_WithSurround();
+            }
             if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
-                DirectChunk.UpdateChunkMesh_WithSurround();
-
+            {
+                world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                //DirectChunk.UpdateChunkMesh_WithSurround();
+            }
             if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
-                DirectChunk.UpdateChunkMesh_WithSurround();
+            {
+                world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                //DirectChunk.UpdateChunkMesh_WithSurround();
+            }
 
             iscaller = false;
-
+             
         }
 
 
@@ -1241,13 +1304,14 @@ public class Chunk : MonoBehaviour
     public void EditData(Vector3 pos, byte targetBlocktype)
     {
 
-        ClearFInd_Direvtion();
+        //ClearFInd_Direvtion();
 
         int x = Mathf.FloorToInt(pos.x);
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
 
-        if (y >= 62)
+        //防止过高
+        if (y >= VoxelData.ChunkHeight - 2)
         {
 
             return;
@@ -1939,21 +2003,21 @@ public class Chunk : MonoBehaviour
 
 
 
-    //------------------------------ CallSurround功能 ------------------------------------
+    //------------------------------ PerlinNoise ------------------------------------
 
 
-    public bool isFind_Front = false;
-    public bool isFind_Back = false;
-    public bool isFind_Left = false;
-    public bool isFind_Right = false;
+    //public bool isFind_Front = false;
+    //public bool isFind_Back = false;
+    //public bool isFind_Left = false;
+    //public bool isFind_Right = false;
 
-    public void ClearFInd_Direvtion()
-    {
-        isFind_Front = false;
-        isFind_Back = false;
-        isFind_Left = false;
-        isFind_Right = false;
-}
+    //public void ClearFInd_Direvtion()
+    //{
+    //    isFind_Front = false;
+    //    isFind_Back = false;
+    //    isFind_Left = false;
+    //    isFind_Right = false;
+    //}
 
 
     //------------------------------------------------------------------------------------
@@ -2069,19 +2133,19 @@ public class Chunk : MonoBehaviour
 
 
     //洞穴生成概率
-    float Probability(float y)
-    {
+    //float Probability(float y)
+    //{
 
-        float possible = 0;
-        float mid = world.soil_max / 2;
+    //    //float possible = 0;
+    //    //float mid = world.soil_max / 2;
 
-        // 如果y越接近0，则possible越接近0，反之越接近1
-        float ratio = y / mid;
-        possible = 1 - ratio;
+    //    //// 如果y越接近0，则possible越接近0，反之越接近1
+    //    //float ratio = y / mid;
+    //    //possible = 1 - ratio;
 
-        return Mathf.Clamp01(possible); // 返回归一化到 [0, 1] 区间的概率值
+    //    //return Mathf.Clamp01(possible); // 返回归一化到 [0, 1] 区间的概率值
 
-    }
+    //}
 
     //获得对面Chunk的坐标
     //0 0 -1 会变成 0 0 15
@@ -2134,4 +2198,60 @@ public class Chunk : MonoBehaviour
 
     //----------------------------------------------------------------------------------
 
+}
+
+
+
+
+//PerlinNoise噪声类
+public static class PerlinNoise
+{
+    static float interpolate(float a0, float a1, float w)
+    {
+        //线性插值
+        //return (a1 - a0) * w + a0;
+
+        //hermite插值
+        return Mathf.SmoothStep(a0, a1, w);
+    }
+
+
+    static Vector2 randomVector2(Vector2 p)
+    {
+        float random = Mathf.Sin(666 + p.x * 5678 + p.y * 1234) * 4321;
+        return new Vector2(Mathf.Sin(random), Mathf.Cos(random));
+    }
+
+
+    static float dotGridGradient(Vector2 p1, Vector2 p2)
+    {
+        Vector2 gradient = randomVector2(p1);
+        Vector2 offset = p2 - p1;
+        return Vector2.Dot(gradient, offset) / 2 + 0.5f;
+    }
+
+
+    public static float perlin(float x, float y)
+    {
+        //声明二维坐标
+        Vector2 pos = new Vector2(x, y);
+        //声明该点所处的'格子'的四个顶点坐标
+        Vector2 rightUp = new Vector2((int)x + 1, (int)y + 1);
+        Vector2 rightDown = new Vector2((int)x + 1, (int)y);
+        Vector2 leftUp = new Vector2((int)x, (int)y + 1);
+        Vector2 leftDown = new Vector2((int)x, (int)y);
+
+        //计算x上的插值
+        float v1 = dotGridGradient(leftDown, pos);
+        float v2 = dotGridGradient(rightDown, pos);
+        float interpolation1 = interpolate(v1, v2, x - (int)x);
+
+        //计算y上的插值
+        float v3 = dotGridGradient(leftUp, pos);
+        float v4 = dotGridGradient(rightUp, pos);
+        float interpolation2 = interpolate(v3, v4, x - (int)x);
+
+        float value = interpolate(interpolation1, interpolation2, y - (int)y);
+        return value;
+    }
 }
