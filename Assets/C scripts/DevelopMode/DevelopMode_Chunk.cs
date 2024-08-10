@@ -38,7 +38,8 @@ public class DevelopModeChunk : MonoBehaviour
 
 
     //群系参数
-    int treecount;
+    int Plain_treecount;
+    int Forest_treecount;
 
 
     //生长类方块
@@ -65,7 +66,8 @@ public class DevelopModeChunk : MonoBehaviour
         //print("开始执行初始化");
         //World
         world = _world;
-        treecount = world.TreeCount;
+        Plain_treecount = world.一般树木采样次数Plain_treecount;
+        Forest_treecount = world.密林树木采样次数Forest_treecount;
 
         //Self
         chunkObject = new GameObject();
@@ -169,7 +171,7 @@ public class DevelopModeChunk : MonoBehaviour
 
 
                     //地形噪声
-                    float noiseHigh = world.GetTotalNoiseHigh(x, z,myposition);
+                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition);
 
 
                     //矿洞噪声
@@ -179,7 +181,7 @@ public class DevelopModeChunk : MonoBehaviour
                     //沙漠噪声
                     float noise_desery = GetSmoothNoise_Desert(x, z);
 
-
+                    //空气部分
                     if (y > noiseHigh && y > world.sea_level)
                     {
 
@@ -285,13 +287,26 @@ public class DevelopModeChunk : MonoBehaviour
                             //草原气候
                             else
                             {
+                                //100雪地
+                                if (y > world.Snow_Level)
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Snow;
+                                }
+
+                                //90~100概率生成雪地
+                                else if ((y > (world.Snow_Level - 10f)) && GetProbability_New(50))
+                                {
+                                    voxelMap[x, y, z] = VoxelData.Snow;
+                                }
+
+
 
                                 //高于海平面
-                                if (y > world.sea_level)
+                                else if (y > world.sea_level)
                                 {
 
                                     voxelMap[x, y, z] = VoxelData.Grass;
-
+                                     
                                 }
                                 else
                                 {
@@ -360,12 +375,11 @@ public class DevelopModeChunk : MonoBehaviour
     //tree
     void CreateTree()
     {
-
-        if (GetSmoothNoise_Tree() > 35f && GetSmoothNoise_Tree() < 60)
+        //密林群系
+        if (world.GetBiomeType(x,z,myposition) == VoxelData.Biome_Forest)
         {
-
             //[确定XZ]xoz上随便选择5个点
-            while (treecount-- != 0)
+            while (Forest_treecount-- != 0)
             {
 
                 int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
@@ -407,8 +421,51 @@ public class DevelopModeChunk : MonoBehaviour
                 //Debug.Log($"{random_x}, {random_y}, {random_z}");
             }
         }
+        else
+        {
+            //[确定XZ]xoz上随便选择5个点
+            while (world.一般树木采样次数Plain_treecount-- != 0)
+            {
+
+                int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
+                int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
+                int random_y = VoxelData.ChunkHeight;
+                int random_Tree_High = rand.Next(world.TreeHigh_min, world.TreeHigh_max + 1);
+
+                //如果可以生成树桩
+                //向上延伸树干
+                random_y = CanSetStump(random_x, random_y, random_z, random_Tree_High);
+                if (random_y != -1f)
+                {
+
+                    for (int i = 0; i <= random_Tree_High; i++)
+                    {
+
+                        if (random_y + i >= VoxelData.ChunkHeight - 1)
+                        {
+
+                            Debug.Log($"random_y:{random_y},i={i}");
+
+                        }
+
+                        else
+                        {
+
+                            voxelMap[random_x, random_y + i, random_z] = VoxelData.Wood;
+
+                        }
+
+                    }
+
+                    //生成树叶
+                    BuildLeaves(random_x, random_y + random_Tree_High, random_z);
+
+                }
 
 
+                //Debug.Log($"{random_x}, {random_y}, {random_z}");
+            }
+        }
     }
 
     // 返回一个概率值，范围在0~100，根据输入值越接近100，概率接近100%，越接近0，概率接近0%

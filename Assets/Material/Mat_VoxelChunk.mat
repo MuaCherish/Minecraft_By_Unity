@@ -29,7 +29,7 @@ Material:
     - _BUILTIN_QueueOffset: 0
     - _SpaceWorld: 1
     - _Spread: 20
-    - _YDown: 36
+    - _YDown: 60
     m_Colors:
     - _ColorA: {r: 0, g: 0.55509377, b: 1, a: 0}
     - _ColorB: {r: 0.9921569, g: 0.8352942, b: 0.33333334, a: 0}

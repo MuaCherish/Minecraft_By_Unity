@@ -52,14 +52,14 @@ public class DevelopModeVoxelChunk : MonoBehaviour
         {
             for (int x = 0; x <= VoxelData.ChunkWidth; x++)
             {
-                vertices[z * (VoxelData.ChunkWidth + 1) + x] = new Vector3(x, Mathf.FloorToInt(world.GetTotalNoiseHigh(x, z, myposition)), z);
+                vertices[z * (VoxelData.ChunkWidth + 1) + x] = new Vector3(x, Mathf.FloorToInt(world.GetTotalNoiseHigh_Biome(x, z, myposition)), z);
                 uv[z * (VoxelData.ChunkWidth + 1) + x] = new Vector2((float)x / VoxelData.ChunkWidth, (float)z / VoxelData.ChunkWidth);
             }
         }
 
         mesh.vertices = vertices;
         mesh.uv = uv;
-
+         
         int[] triangles = new int[VoxelData.ChunkWidth * VoxelData.ChunkWidth * 6];
         int index = 0;
 

@@ -1090,32 +1090,113 @@ MonoBehaviour:
     leftFaceTexture: 35
     rightFaceTexture: 35
     DrawMode: 1
+  - blockName: Snow
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    texture: {fileID: 2800000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    dropsprite: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    Particle_Material: {fileID: 2100000, guid: 3490270c47af72c4f90b0f3f4245b453, type: 2}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 76a8b350f474d524d9716cceed894035, type: 3}
+    broken_clip: {fileID: 8300000, guid: 5080f508bd8293a42ad2bd55adfd0cb5, type: 3}
+    backFaceTexture: 5
+    frontFaceTexture: 5
+    topFaceTexture: 5
+    bottomFaceTexture: 5
+    leftFaceTexture: 5
+    rightFaceTexture: 5
+    DrawMode: 0
+  - blockName: SnowPower
+    DestroyTime: 0.1
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 0
+    icon: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    texture: {fileID: 2800000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    dropsprite: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    Particle_Material: {fileID: 2100000, guid: 3490270c47af72c4f90b0f3f4245b453, type: 2}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
+    backFaceTexture: 255
+    frontFaceTexture: 255
+    topFaceTexture: 255
+    bottomFaceTexture: 255
+    leftFaceTexture: 255
+    rightFaceTexture: 255
+    DrawMode: 0
   ChunkPATH: {fileID: 0}
-  RenderWidth: 4
+  RenderWidth: 6
   CoroutineFlashDelay: 5
-  Noise_Scale: 0.05
+  Noise_Scale: 1.01
+  Snow_Level: 100
   biomeclarify:
   - name: "\u5E73\u539F"
-    Domain: 50
-    color: {r: 0.44784087, g: 0.8207547, b: 0.32907617, a: 0}
+    Domain: 80
+    color: {r: 0.20367439, g: 0.7783019, b: 0.16520561, a: 0}
   - name: "\u9AD8\u539F"
-    Domain: 40
-    color: {r: 0.46226418, g: 0.34805778, b: 0, a: 0}
+    Domain: 60
+    color: {r: 1, g: 1, b: 1, a: 0}
   - name: "\u6C99\u6F20"
-    Domain: 30
-    color: {r: 0.9744191, g: 1, b: 0, a: 0}
+    Domain: 0
+    color: {r: 1, g: 0.9372549, b: 0, a: 0}
   - name: "\u6CBC\u6CFD"
-    Domain: 20
-    color: {r: 0, g: 0.3160377, b: 0.13107215, a: 0}
-  "\u6C27\u6C14\u6D53\u5EA6OxygenDensity": 0.5
+    Domain: 0
+    color: {r: 0.10460695, g: 0.1981132, b: 0.07943218, a: 0}
+  - name: water
+    Domain: 0
+    color: {r: 1, g: 0.023631789, b: 0, a: 0}
+  - name: test
+    Domain: 0.5
+    color: {r: 0.7783019, g: 0.6631276, b: 0.1358357, a: 0}
+  "\u6C27\u6C14\u6D53\u5EA6OxygenDensity": 0.4
   "\u4E09\u7EF4\u5BC6\u5EA6Density3d": 0.6
   "\u5E72\u71E5\u7A0B\u5EA6Aridity": 0.6
   "\u7A7A\u6C14\u6E7F\u5EA6MoistureLevel": 0.7
+  "\u5E73\u539F\u6811\u6728\u91C7\u6837\u6B21\u6570Plain_treecount": 3
+  "\u5BC6\u6797\u6811\u6728\u91C7\u6837\u6B21\u6570Forest_treecount": 10
+  biomenoisesystems:
+  - BiomeName: "\u8349\u539F"
+    BiomeColor: {r: 0.20392159, g: 0.77647066, b: 0.16470589, a: 0}
+    HighDomain: {x: 20, y: 100}
+    Noise_Scale_123: {x: 0.001, y: 0.015, z: 0}
+    Noise_Rank_123: {x: 0.7, y: 0.3, z: 0}
+  - BiomeName: "\u9AD8\u539F"
+    BiomeColor: {r: 1, g: 1, b: 1, a: 0}
+    HighDomain: {x: 20, y: 180}
+    Noise_Scale_123: {x: 0.1, y: 0.01, z: 0.008}
+    Noise_Rank_123: {x: 0.1, y: 0.7, z: 0.2}
+  - BiomeName: "\u6C99\u6F20"
+    BiomeColor: {r: 1, g: 0.93725497, b: 0, a: 0}
+    HighDomain: {x: 60, y: 80}
+    Noise_Scale_123: {x: 0.03, y: 0.01, z: 0.008}
+    Noise_Rank_123: {x: 1, y: 0, z: 0}
+  - BiomeName: "\u6CBC\u6CFD"
+    BiomeColor: {r: 0.10588236, g: 0.20000002, b: 0.078431375, a: 0}
+    HighDomain: {x: 40, y: 82}
+    Noise_Scale_123: {x: 0.002, y: 0.04, z: 0.001}
+    Noise_Rank_123: {x: 0.5, y: 0.4, z: 0.1}
+  - BiomeName: "\u5BC6\u6797"
+    BiomeColor: {r: 1, g: 0.03761355, b: 0, a: 0}
+    HighDomain: {x: 40, y: 82}
+    Noise_Scale_123: {x: 0.002, y: 0.04, z: 0.001}
+    Noise_Rank_123: {x: 0.5, y: 0.4, z: 0.1}
   isRandomSeed: 1
   Seed: 0
   soil_min: 0
   soil_max: 0
-  sea_level: 36
+  sea_level: 60
   TreeCount: 5
   TreeHigh_min: 3
   TreeHigh_max: 5

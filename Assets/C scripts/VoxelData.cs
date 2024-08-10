@@ -5,6 +5,20 @@ using UnityEngine;
 
 public static class VoxelData
 {
+    /*群系系统
+     *平原：0
+     *高原：1
+     *沙漠：2
+     *沼泽：3
+     */
+    public static readonly byte Biome_Plain = 0;
+    public static readonly byte Biome_Plateau = 1;
+    public static readonly byte Biome_Dessert = 2;
+    public static readonly byte Biome_Marsh = 3;
+    public static readonly byte Biome_Forest = 4;
+
+
+
     //地形参数
     /*
      * 平原：soil[10,30],sealevel[17],tree[1]
@@ -59,6 +73,9 @@ public static class VoxelData
     25:竹子Bamboo
     26:木板WoodenPlanks
     27:萤石Fluor
+    28:灌木Bush
+    29:雪块Snow
+    30:雪碎片SnowPower
 	*/
     public static readonly Byte BedRock = 0;
     public static readonly Byte Stone = 1;
@@ -89,6 +106,8 @@ public static class VoxelData
     public static readonly Byte WoodenPlanks = 26;
     public static readonly Byte Fluor = 27;
     public static readonly Byte Bush = 28;
+    public static readonly Byte Snow = 29;
+    public static readonly Byte SnowPower = 30;
 
 
     //音乐宏定义
@@ -150,7 +169,7 @@ public static class VoxelData
 
     //chunk大小
     public static readonly int ChunkWidth = 16;
-    public static readonly int ChunkHeight = 64;
+    public static readonly int ChunkHeight = 128;
 
     public static readonly int TextureAtlasSizeInBlocks = 8;
 
