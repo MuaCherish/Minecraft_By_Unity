@@ -294,7 +294,7 @@ public class DevelopModeChunk : MonoBehaviour
                                 }
 
                                 //90~100概率生成雪地
-                                else if ((y > (world.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(50))
+                                else if ((y > (world.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(70))
                                 {
                                     voxelMap[x, y, z] = VoxelData.Snow;
                                 }
@@ -512,6 +512,14 @@ public class DevelopModeChunk : MonoBehaviour
 
             CreateLeaves(_x, _y + 1, _z);
 
+            //生成雪的判定
+            if (((_y + 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < VoxelData.ChunkHeight))
+            {
+                voxelMap[_x, _y + 2, _z] = VoxelData.Snow;
+            }
+
+            
+
         }
         else if (randomInt == 1)
         {
@@ -522,6 +530,16 @@ public class DevelopModeChunk : MonoBehaviour
             CreateLeaves(_x + 1, _y + 1, _z);
             CreateLeaves(_x, _y + 1, _z - 1);
 
+            //生成雪的判定
+            if (((_y + 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < VoxelData.ChunkHeight))
+            {
+                voxelMap[_x, _y + 2, _z + 1] = VoxelData.Snow;
+                voxelMap[_x - 1, _y + 2, _z] = VoxelData.Snow;
+                voxelMap[_x, _y + 2, _z] = VoxelData.Snow;
+                voxelMap[_x + 1, _y + 2, _z] = VoxelData.Snow;
+                voxelMap[_x, _y + 2, _z - 1] = VoxelData.Snow;
+            }
+
         }
 
         //第二层
@@ -529,6 +547,17 @@ public class DevelopModeChunk : MonoBehaviour
         CreateLeaves(_x + 1, _y, _z);
         CreateLeaves(_x, _y, _z - 1);
         CreateLeaves(_x, _y, _z + 1);
+
+        //生成雪的判定
+        if (((_y) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 1) < VoxelData.ChunkHeight) && voxelMap[_x - 1,_y + 1,_z] != VoxelData.Leaves)
+        {
+
+            voxelMap[_x - 1, _y + 1, _z] = VoxelData.Snow;
+            voxelMap[_x + 1, _y + 1, _z] = VoxelData.Snow;
+            voxelMap[_x, _y + 1, _z - 1] = VoxelData.Snow;
+            voxelMap[_x, _y + 1, _z + 1] = VoxelData.Snow;
+
+        }
 
         //第三层
         CreateLeaves(_x - 1, _y - 1, _z + 2);
@@ -555,6 +584,33 @@ public class DevelopModeChunk : MonoBehaviour
         CreateLeaves(_x - 1, _y - 1, _z - 2);
         CreateLeaves(_x, _y - 1, _z - 2);
         CreateLeaves(_x + 1, _y - 1, _z - 2);
+
+        //Snow
+        if ((_y - 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f)
+        {
+            voxelMap[_x, _y, _z + 2] = VoxelData.Snow;
+            voxelMap[_x - 1, _y, _z + 2] = VoxelData.Snow;
+            voxelMap[_x + 1, _y, _z + 2] = VoxelData.Snow;
+            voxelMap[_x - 2, _y, _z + 1] = VoxelData.Snow;
+            voxelMap[_x - 1, _y, _z + 1] = VoxelData.Snow;
+            voxelMap[_x + 1, _y, _z + 1] = VoxelData.Snow;
+            voxelMap[_x + 2, _y, _z + 1] = VoxelData.Snow;
+            voxelMap[_x - 2, _y, _z] = VoxelData.Snow;
+            voxelMap[_x + 2, _y, _z] = VoxelData.Snow;
+            voxelMap[_x - 2, _y, _z - 1] = VoxelData.Snow;
+            voxelMap[_x - 1, _y, _z - 1] = VoxelData.Snow;
+            voxelMap[_x + 1, _y, _z - 1] = VoxelData.Snow;
+            voxelMap[_x + 2, _y, _z - 1] = VoxelData.Snow;
+            voxelMap[_x - 1, _y, _z - 2] = VoxelData.Snow;
+            voxelMap[_x, _y, _z - 2] = VoxelData.Snow; 
+            voxelMap[_x + 1, _y, _z - 2] = VoxelData.Snow;
+
+            //十字架不生成雪避免挤掉第二层
+            //voxelMap[_x, _y, _z + 1] = VoxelData.Snow;
+            //voxelMap[_x - 1, _y, _z] = VoxelData.Snow;
+            //voxelMap[_x + 1, _y, _z] = VoxelData.Snow;
+            //voxelMap[_x, _y, _z - 1] = VoxelData.Snow;
+        }
 
         //第四层
         CreateLeaves(_x - 1, _y - 2, _z + 2);
@@ -598,7 +654,7 @@ public class DevelopModeChunk : MonoBehaviour
                 if (voxelMap[_x, _y - 1, _z] != VoxelData.Air)
                 {
 
-                    if (voxelMap[_x, _y - 1, _z] == VoxelData.Grass || voxelMap[_x, _y - 1, _z] == VoxelData.Soil)
+                    if (voxelMap[_x, _y - 1, _z] == VoxelData.Grass || voxelMap[_x, _y - 1, _z] == VoxelData.Soil && voxelMap[_x, _y - 2, _z] != VoxelData.Leaves)
                     {
 
                         //判断树干是否太高

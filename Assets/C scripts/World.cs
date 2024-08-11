@@ -32,7 +32,7 @@ public enum GameMode
 public enum DrawMode
 {
 
-    Block,Bush,Torch,Air,Water,
+    Block,Bush,Torch,Air,Water,SnowPower,
 
 }
 

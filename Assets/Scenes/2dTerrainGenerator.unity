@@ -417,9 +417,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 136564c3dbb9185428bc939af42738a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  noise_Scale: 0.01
+  isRandommyPosition: 0
+  Normal_Myposition: {x: 1000, y: 0, z: 0}
   isLoading: 0
   MainCamera: {fileID: 1520535468}
-  RenderWidth: 6
+  RenderWidth: 12
   ChunkPATH: {fileID: 0}
   material: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
   material_Water: {fileID: 2100000, guid: e401bc414787ebc4eaf3eb598c2a55cf, type: 2}
@@ -1131,13 +1134,13 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 255
-    frontFaceTexture: 255
-    topFaceTexture: 255
-    bottomFaceTexture: 255
-    leftFaceTexture: 255
-    rightFaceTexture: 255
-    DrawMode: 0
+    backFaceTexture: 4
+    frontFaceTexture: 4
+    topFaceTexture: 4
+    bottomFaceTexture: 4
+    leftFaceTexture: 4
+    rightFaceTexture: 4
+    DrawMode: 5
   - blockName: Mycelium
     DestroyTime: 1
     isSolid: 1

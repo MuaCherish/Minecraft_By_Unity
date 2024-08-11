@@ -10,6 +10,12 @@ using UnityEngine.XR;
 
 public class DevelopModeWorld : MonoBehaviour
 {
+    //新增
+    public float noise_Scale = 0.01f;
+    public bool isRandommyPosition = false;
+    public Vector3 Normal_Myposition;
+
+
     [Header("状态")]
     public bool isLoading = false;
 
@@ -91,6 +97,8 @@ public class DevelopModeWorld : MonoBehaviour
 
         //初始化一个NoiseDiagram
         NoiseDiagramTemp = new DevelopMode_NoiseDiagram(this);
+
+        
 
         _RenderWidth = RenderWidth;
 
@@ -182,6 +190,14 @@ public class DevelopModeWorld : MonoBehaviour
 
     #region 地形生成模式
 
+    void setRandomPosition()
+    {
+        if (isRandommyPosition)
+        {
+            Normal_Myposition = new Vector3(rand.Next(0, 10000), 0, rand.Next(0, 10000));
+        }
+    }
+
 
     //生成什么的标志
     //0：噪声图
@@ -194,6 +210,7 @@ public class DevelopModeWorld : MonoBehaviour
     void ChooseToGenerate()
     {
         MoveCamera();
+        setRandomPosition();
 
         //Clear
         switch (GenerateMode)
@@ -266,7 +283,7 @@ public class DevelopModeWorld : MonoBehaviour
         {
             for (float z = 0; z < RenderWidth; z++)
             {
-                DevelopModeVoxelChunk Chunktemp = new DevelopModeVoxelChunk(new Vector3(x, 0, z), this);
+                DevelopModeVoxelChunk Chunktemp = new DevelopModeVoxelChunk(Normal_Myposition + new Vector3(x, 0, z), this);
                 AllVoxelChunks.Add(new Vector3(x, 0, z), Chunktemp);
             }
         }
@@ -352,6 +369,12 @@ public class DevelopModeWorld : MonoBehaviour
     public float GetSimpleNoise(int _x, int _z, Vector3 _myposition)
     {
         float smoothNoise = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((_x + _myposition.x) * 0.01f, (_z + _myposition.z) * 0.01f));
+        return smoothNoise;
+    }
+
+    public float GetSimpleNoise(int _x, int _z, Vector3 _myposition, float _Scale)
+    {
+        float smoothNoise = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((_x + _myposition.x) * _Scale, (_z + _myposition.z) * _Scale));
         return smoothNoise;
     }
 
@@ -495,10 +518,10 @@ public class DevelopModeWorld : MonoBehaviour
         //数据定义
         int BiomeType = -1;
         float BiomeIntensity = 0f;
-        float _A = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(0f, 0f, 0f));
-        float _B = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(123f, 0f, 456f));
-        float _C = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f));
-        float _D = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f));
+        float _A = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(0f, 0f, 0f), noise_Scale);
+        float _B = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(123f, 0f, 456f), noise_Scale);
+        float _C = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f), noise_Scale);
+        float _D = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f), noise_Scale);
 
         //获得当前群系
         //获得群系混合强度

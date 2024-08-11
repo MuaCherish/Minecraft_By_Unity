@@ -49,7 +49,7 @@ public class DevelopMode_NoiseDiagram : MonoBehaviour
                 //float noisevalue = world.GetSimpleNoiseWithOffset(x,z,new Vector3(0,0,0), new Vector2(111f,222f), world.Noise_Scale);
 
                 //noiseTexture.SetPixel(x, z, BiomeRenderColor(noisevalue));
-                noiseTexture.SetPixel(x, z, GetBiome(x, z, new Vector3(0,0,0)));
+                noiseTexture.SetPixel(x, z, GetBiome(x, z, world.Normal_Myposition));
             }
         } 
 
@@ -79,10 +79,10 @@ public class DevelopMode_NoiseDiagram : MonoBehaviour
     public Color GetBiome(int _x, int _z, Vector3 _myposition)
     {
 
-        float _A = world.GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(0f, 0f, 0f));
-        float _B = world.GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(123f, 0f, 456f));
-        float _C = world.GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f));
-        float _D = world.GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f));
+        float _A = world.GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(0f, 0f, 0f), world.noise_Scale);
+        float _B = world.GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(123f, 0f, 456f), world.noise_Scale);
+        float _C = world.GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f) , world.noise_Scale);
+        float _D = world.GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f), world.noise_Scale);
 
         ////沙漠
         //if (_C >= world.干燥程度Aridity)

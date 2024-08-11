@@ -197,7 +197,7 @@ public static class VoxelData
 
     };
 
-    //顶点数组
+    //顶点数组Water
     public static readonly Vector3[] voxelVerts_Water = new Vector3[8] {
 
         new Vector3(0.0f, 0.0f, 0.0f),
