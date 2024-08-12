@@ -2,30 +2,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Threading;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
+using UnityEngine.XR;
 
 
-public class DevelopModeChunk : MonoBehaviour
+public class TestChunk : MonoBehaviour
 {
 
     //state
+    public bool isShow = true;
     public bool isReadyToRender = false;
-    public bool hasExec_isHadupdateWater = true;  //该标志允许一个Chunk每次只能更新一次水体
-
+    public bool BaseChunk;
+    public bool isCalled = false;  //不要删我！！
 
     //Transform
-    DevelopModeWorld world;
+    TestWorld world;
     public GameObject chunkObject;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
 
+    //noise
+    private float noise3d_scale;
+
+
+    //群系参数
+    int Normal_treecount;
+    int Forest_treecount;
 
     //BlockMap
     private int x;
     private int y;
-    private int z;
+    private int z; 
     public VoxelStruct[,,] voxelMap = new VoxelStruct[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
 
 
@@ -36,21 +44,24 @@ public class DevelopModeChunk : MonoBehaviour
     List<int> triangles_Water = new List<int>();
     List<Vector2> uvs = new List<Vector2>();
 
-
-    //群系参数
-    int Normal_treecount;
-    int Forest_treecount;
-
-
     //生长类方块
     Queue<Vector3> Coals = new Queue<Vector3>();
     Queue<Vector3> Bamboos = new Queue<Vector3>();
+
+
+    //矿洞
+    float caveWidth;
+    public float mean = 16f; // 均值
+    public float stdDev = 5f; // 标准差
 
 
     //多线程变量
     public System.Random rand;
     public Vector3 myposition;
 
+
+    //debug
+    //bool debug_CanLookCave;
 
 
 
@@ -61,30 +72,30 @@ public class DevelopModeChunk : MonoBehaviour
 
 
     //Start()
-    public DevelopModeChunk(Vector3 thisPosition, DevelopModeWorld _world)
-    {
-        //print("开始执行初始化");
+    public TestChunk(Vector3 thisPosition, TestWorld _world, bool _BaseChunk)
+    { 
+
+
         //World
         world = _world;
-        Normal_treecount = world.terrainLayerProbabilitySystem.Normal_treecount; 
+        caveWidth = world.cave_width;
+        //debug_CanLookCave = !world.debug_CanLookCave;
+        BaseChunk = _BaseChunk;
+        noise3d_scale = world.noise3d_scale;
+        Normal_treecount = world.terrainLayerProbabilitySystem.Normal_treecount;
         Forest_treecount = world.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
+        rand = new System.Random(world.terrainLayerProbabilitySystem.Seed);
 
         //Self
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = world.material;
-        chunkObject.transform.SetParent(world.ChunkPATH.transform);
+        chunkObject.transform.SetParent(world.Chunks.transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
-        chunkObject.name = "BlockChunk--" + thisPosition.x + "," + thisPosition.z;
+        chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
-        rand = new System.Random(world.terrainLayerProbabilitySystem.Seed);
 
-        ////切换状态
-        if (myposition == new Vector3((world.RenderWidth - 1) * 16f, 0f, (world.RenderWidth - 1) * 16f))
-        {
-            world.isLoading = false;
-        }
 
         for (int x = 0; x < VoxelData.ChunkWidth; x++)
         {
@@ -97,17 +108,12 @@ public class DevelopModeChunk : MonoBehaviour
             }
         }
 
-
-        //Data线程
-        Thread myThread = new Thread(new ThreadStart(CreateData));
-        myThread.Start();
-
-        //CreateData();
-
+        CreateData();
 
         //print($"----------------------------------------------");
         //print($"{world.GetChunkLocation(myposition)}已经生成！");
     }
+
 
 
     //-----------------------------------------------------------------------------------
@@ -119,39 +125,31 @@ public class DevelopModeChunk : MonoBehaviour
 
     //----------------------------------- Noise ----------------------------------------
 
-
-
-    //Tree简单噪声
-    float GetSmoothNoise_Tree()
+    //洞穴噪声生成器
+    float GetCaveNoise(int _x, int _y, int _z)
     {
-
-        float randomoffset = rand.Next(0, 10);
-        float Offset_x = 100f * randomoffset;
-        float Offset_z = 100f * randomoffset;
-
-
-        float smoothNoise = Mathf.Lerp((float)0, (float)100, Mathf.PerlinNoise((myposition.x + Offset_x) * 0.005f, (myposition.z + Offset_z) * 0.005f));
-        return smoothNoise;
+        return Perlin3D(((float)_x + myposition.x) * noise3d_scale, ((float)_y + y) * noise3d_scale, ((float)_z + myposition.z) * noise3d_scale); // 将100改为0.1
 
     }
 
-
-    //Desert简单噪声
-    float GetSmoothNoise_Desert(int _x, int _z)
+    //洞穴概率递减器
+    float GetVaveWidth(int _y)
     {
 
-        //float randomoffset = rand.Next(0, 10);
-        //float Offset_x = 100f * randomoffset;
-        //float Offset_z = 100f * randomoffset;
+        if (_y >= 3 && _y <= 6)
+        {
 
-        return Mathf.PerlinNoise((_x + myposition.x) * 0.003f, (_z + myposition.z) * 0.003f);
+            return Mathf.Lerp(0, caveWidth, (_y - 3) / 3);
+
+        }
+        else
+        {
+
+            return caveWidth;
+
+        }
+
     }
-
-
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -165,9 +163,9 @@ public class DevelopModeChunk : MonoBehaviour
 
 
     //Data
-    public void CreateData()
+    void CreateData()
     {
-        //print("开始执行CreateData");
+
 
         //对一个chunk进行遍历
         for (int y = 0; y < VoxelData.ChunkHeight; y++)
@@ -184,20 +182,46 @@ public class DevelopModeChunk : MonoBehaviour
 
 
                     //地形噪声
+                    //float noiseHigh = GetTotalNoiseHigh(x, z);
                     float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition);
 
 
                     //矿洞噪声
-                    //float noise3d = GetCaveNoise(x, y, z);
+                    float noise3d = GetCaveNoise(x, y, z);
 
 
                     //沙漠噪声
                     //float noise_desery = GetSmoothNoise_Desert(x, z);
 
-                    //空气部分
-                    if (y > noiseHigh && y > world.terrainLayerProbabilitySystem.sea_level)
+
+                    //判断基岩
+                    //0~3层不准生成矿洞
+                    if (y >= 0 && y <= 3)
                     {
-                        
+
+                        if (y == 0)
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.BedRock;
+
+                        }
+                        else if (y > 0 && y < 3 && GetProbability(50))
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.BedRock;
+
+                        }
+                        else
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Stone;
+
+                        }
+                    }
+                    //空气部分
+                    else if (y > noiseHigh && y > world.terrainLayerProbabilitySystem.sea_level)
+                    {
+
                         //地上一层
                         if (y - 1 < noiseHigh)
                         {
@@ -212,7 +236,7 @@ public class DevelopModeChunk : MonoBehaviour
 
                                     voxelMap[x, y, z].voxelType = VoxelData.Bush;
 
-                                } 
+                                }
                                 //BlueFlower
                                 else if (GetProbability(world.terrainLayerProbabilitySystem.Random_BlueFlower))
                                 {
@@ -318,8 +342,6 @@ public class DevelopModeChunk : MonoBehaviour
                                 else if (y > world.terrainLayerProbabilitySystem.sea_level)
                                 {
 
-                                    
-
                                     //是否是菌丝体
                                     if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Marsh)
                                     {
@@ -330,13 +352,11 @@ public class DevelopModeChunk : MonoBehaviour
                                         voxelMap[x, y, z].voxelType = VoxelData.Grass;
                                     }
 
-
-                                     
                                 }
-                                else 
+                                else
                                 {
 
-                                    if (world.GetSimpleNoiseWithOffset(x,z,myposition,new Vector2(111f,222f), 0.1f) > 0.5f)
+                                    if (world.GetSimpleNoiseWithOffset(x, z, myposition, new Vector2(111f, 222f), 0.1f) > 0.5f)
                                     {
 
                                         voxelMap[x, y, z].voxelType = VoxelData.Sand;
@@ -344,7 +364,7 @@ public class DevelopModeChunk : MonoBehaviour
                                     }
                                     else
                                     {
-                                         
+
                                         voxelMap[x, y, z].voxelType = VoxelData.Soil;
 
                                     }
@@ -352,12 +372,101 @@ public class DevelopModeChunk : MonoBehaviour
                                 }
                             }
                         }
+
+
+                        //泥土的判断
+                        else if (y > noiseHigh - 7)
+                        {
+                            //沙漠判断
+                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Sand;
+                            }
+                            else
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Soil;
+                            }
+
+
+                        }
+                        else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
+                        {
+                            //沙漠判断
+                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Sand;
+                            }
+                            else
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Soil;
+                            }
+
+
+                        }
+
+
+
+
+
+                        //矿洞
+                        else if (noise3d < GetVaveWidth(y))
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                        }
+
                         //地下判断
                         else
                         {
-                            voxelMap[x, y, z].voxelType = VoxelData.Air;
-                           
-                           
+
+                            //煤炭
+                            if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Coal))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Stone;
+                                Coals.Enqueue(new Vector3(x, y, z));
+
+                            }
+
+                            //铁
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Iron))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Iron;
+
+                            }
+
+                            //金
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Gold))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Gold;
+
+                            }
+
+                            //青金石
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Blue_Crystal;
+
+                            }
+
+                            //钻石
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Diamond))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Diamond;
+
+                            }
+
+                            else
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Stone;
+
+                            }
                         }
                     }
                 }
@@ -387,9 +496,8 @@ public class DevelopModeChunk : MonoBehaviour
         //交给world来create
         //world.WaitToCreateMesh.Enqueue(this);
 
-        UpdateChunkMesh();
-        //Thread myThread = new Thread(new ThreadStart(UpdateChunkMesh));
-        //myThread.Start();
+        UpdateChunkMesh_WithSurround();
+
     }
 
 
@@ -401,7 +509,7 @@ public class DevelopModeChunk : MonoBehaviour
     void CreateTree()
     {
         //密林群系
-        if (world.GetBiomeType(x,z,myposition) == VoxelData.Biome_Forest)
+        if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Forest)
         {
             //[确定XZ]xoz上随便选择5个点
             while (Forest_treecount-- != 0)
@@ -431,7 +539,7 @@ public class DevelopModeChunk : MonoBehaviour
                         else
                         {
 
-                            voxelMap[random_x, random_y + i, random_z].voxelType= VoxelData.Wood;
+                            voxelMap[random_x, random_y + i, random_z].voxelType = VoxelData.Wood;
 
                         }
 
@@ -478,7 +586,7 @@ public class DevelopModeChunk : MonoBehaviour
                         else
                         {
 
-                            voxelMap[random_x, random_y + i, random_z].voxelType= VoxelData.Wood;
+                            voxelMap[random_x, random_y + i, random_z].voxelType = VoxelData.Wood;
 
                         }
 
@@ -506,11 +614,28 @@ public class DevelopModeChunk : MonoBehaviour
 
         // 如果随机数小于等于输入值，则返回 true
         //Debug.Log(randomValue);
-        return randomValue <= input;
+        bool a = randomValue < input;
+
+
+        return a;
     }
 
+    // 返回一个概率值，范围在0~100，根据输入值越接近100，概率接近100%，越接近0，概率接近0%
+    bool GetProbabilityTenThousandth(float input)
+    {
+        // 确保输入值在 0 到 100 之间
+        input = Mathf.Clamp(input, 0, 100);
+
+        // 生成一个 0 到 100 之间的随机数
+        float randomValue = rand.Next(0, 10000);
+
+        // 如果随机数小于等于输入值，则返回 true
+        //Debug.Log(randomValue);
+        bool a = randomValue < input;
 
 
+        return a;
+    }
 
     //构造树叶
     void BuildLeaves(int _x, int _y, int _z)
@@ -528,10 +653,10 @@ public class DevelopModeChunk : MonoBehaviour
             //生成雪的判定
             if (((_y + 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < VoxelData.ChunkHeight))
             {
-                voxelMap[_x, _y + 2, _z].voxelType= VoxelData.Snow;
+                voxelMap[_x, _y + 2, _z].voxelType = VoxelData.Snow;
             }
 
-            
+
 
         }
         else if (randomInt == 1)
@@ -547,9 +672,9 @@ public class DevelopModeChunk : MonoBehaviour
             if (((_y + 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < VoxelData.ChunkHeight))
             {
                 voxelMap[_x, _y + 2, _z + 1].voxelType = VoxelData.Snow;
-                voxelMap[_x - 1, _y + 2, _z].voxelType= VoxelData.Snow;
-                voxelMap[_x, _y + 2, _z].voxelType= VoxelData.Snow;
-                voxelMap[_x + 1, _y + 2, _z].voxelType= VoxelData.Snow;
+                voxelMap[_x - 1, _y + 2, _z].voxelType = VoxelData.Snow;
+                voxelMap[_x, _y + 2, _z].voxelType = VoxelData.Snow;
+                voxelMap[_x + 1, _y + 2, _z].voxelType = VoxelData.Snow;
                 voxelMap[_x, _y + 2, _z - 1].voxelType = VoxelData.Snow;
             }
 
@@ -562,11 +687,11 @@ public class DevelopModeChunk : MonoBehaviour
         CreateLeaves(_x, _y, _z + 1);
 
         //生成雪的判定
-        if (((_y) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 1) < VoxelData.ChunkHeight) && voxelMap[_x - 1,_y + 1,_z].voxelType!= VoxelData.Leaves)
+        if (((_y) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 1) < VoxelData.ChunkHeight) && voxelMap[_x - 1, _y + 1, _z].voxelType != VoxelData.Leaves)
         {
 
-            voxelMap[_x - 1, _y + 1, _z].voxelType= VoxelData.Snow;
-            voxelMap[_x + 1, _y + 1, _z].voxelType= VoxelData.Snow;
+            voxelMap[_x - 1, _y + 1, _z].voxelType = VoxelData.Snow;
+            voxelMap[_x + 1, _y + 1, _z].voxelType = VoxelData.Snow;
             voxelMap[_x, _y + 1, _z - 1].voxelType = VoxelData.Snow;
             voxelMap[_x, _y + 1, _z + 1].voxelType = VoxelData.Snow;
 
@@ -608,20 +733,20 @@ public class DevelopModeChunk : MonoBehaviour
             voxelMap[_x - 1, _y, _z + 1].voxelType = VoxelData.Snow;
             voxelMap[_x + 1, _y, _z + 1].voxelType = VoxelData.Snow;
             voxelMap[_x + 2, _y, _z + 1].voxelType = VoxelData.Snow;
-            voxelMap[_x - 2, _y, _z].voxelType= VoxelData.Snow;
-            voxelMap[_x + 2, _y, _z].voxelType= VoxelData.Snow;
+            voxelMap[_x - 2, _y, _z].voxelType = VoxelData.Snow;
+            voxelMap[_x + 2, _y, _z].voxelType = VoxelData.Snow;
             voxelMap[_x - 2, _y, _z - 1].voxelType = VoxelData.Snow;
             voxelMap[_x - 1, _y, _z - 1].voxelType = VoxelData.Snow;
             voxelMap[_x + 1, _y, _z - 1].voxelType = VoxelData.Snow;
             voxelMap[_x + 2, _y, _z - 1].voxelType = VoxelData.Snow;
             voxelMap[_x - 1, _y, _z - 2].voxelType = VoxelData.Snow;
-            voxelMap[_x, _y, _z - 2].voxelType = VoxelData.Snow; 
+            voxelMap[_x, _y, _z - 2].voxelType = VoxelData.Snow;
             voxelMap[_x + 1, _y, _z - 2].voxelType = VoxelData.Snow;
 
             //十字架不生成雪避免挤掉第二层
             //voxelMap[_x, _y, _z + 1] = VoxelData.Snow;
-            //voxelMap[_x - 1, _y, _z].voxelType= VoxelData.Snow;
-            //voxelMap[_x + 1, _y, _z].voxelType= VoxelData.Snow;
+            //voxelMap[_x - 1, _y, _z] = VoxelData.Snow;
+            //voxelMap[_x + 1, _y, _z] = VoxelData.Snow;
             //voxelMap[_x, _y, _z - 1] = VoxelData.Snow;
         }
 
@@ -696,12 +821,6 @@ public class DevelopModeChunk : MonoBehaviour
 
                 _y--;
 
-                //如果树顶超过最大高度，不生成
-                //else if (random_y + random_Tree_High >= VoxelData.ChunkHeight)
-                //{
-                //    needTree = false;
-                //    break;
-                //}
             }
         }
 
@@ -717,7 +836,7 @@ public class DevelopModeChunk : MonoBehaviour
     {
 
         //如果是固体，就不用生成树叶了
-        if (voxelMap[x, y, z].voxelType!= VoxelData.Air)
+        if (voxelMap[x, y, z].voxelType != VoxelData.Air)
         {
 
             return;
@@ -726,7 +845,7 @@ public class DevelopModeChunk : MonoBehaviour
         else
         {
 
-            voxelMap[x, y, z].voxelType= VoxelData.Leaves;
+            voxelMap[x, y, z].voxelType = VoxelData.Leaves;
 
         }
     }
@@ -807,8 +926,8 @@ public class DevelopModeChunk : MonoBehaviour
         else
         {
 
-            if (voxelMap[_x, _y, _z].voxelType== VoxelData.Stone)
-                voxelMap[_x, _y, _z].voxelType= VoxelData.Coal;
+            if (voxelMap[_x, _y, _z].voxelType == VoxelData.Stone)
+                voxelMap[_x, _y, _z].voxelType = VoxelData.Coal;
 
         }
 
@@ -830,7 +949,7 @@ public class DevelopModeChunk : MonoBehaviour
             for (int temp = 0; temp < rand.Next(1, 4); temp++)
             {
 
-                voxelMap[x, y + temp, z].voxelType= VoxelData.Bamboo;
+                voxelMap[x, y + temp, z].voxelType = VoxelData.Bamboo;
 
             }
 
@@ -851,7 +970,7 @@ public class DevelopModeChunk : MonoBehaviour
             for (int _z = 0; _z < 1; _z++)
             {
 
-                if (voxelMap[_x, y - 1, _z].voxelType== VoxelData.Water)
+                if (voxelMap[_x, y - 1, _z].voxelType == VoxelData.Water)
                 {
 
                     return true;
@@ -871,24 +990,23 @@ public class DevelopModeChunk : MonoBehaviour
     {
 
         //如果自己是竹子 && 自己下面是空气 则自己变为空气
-        if (voxelMap[x, y, z].voxelType== VoxelData.Bamboo && voxelMap[x, y - 1, z].voxelType== VoxelData.Air)
+        if (voxelMap[x, y, z].voxelType == VoxelData.Bamboo && voxelMap[x, y - 1, z].voxelType == VoxelData.Air)
         {
 
-            voxelMap[x, y, z].voxelType= VoxelData.Air;
+            voxelMap[x, y, z].voxelType = VoxelData.Air;
 
         }
     }
-
 
     //灌木丛消失
     void updateBush()
     {
 
         //如果自己是Bush && 自己下面是空气 则自己变为空气
-        if (voxelMap[x, y, z].voxelType== VoxelData.Bush && voxelMap[x, y - 1, z].voxelType== VoxelData.Air)
+        if (voxelMap[x, y, z].voxelType == VoxelData.Bush && voxelMap[x, y - 1, z].voxelType == VoxelData.Air)
         {
 
-            voxelMap[x, y, z].voxelType= VoxelData.Air;
+            voxelMap[x, y, z].voxelType = VoxelData.Air;
 
         }
 
@@ -903,11 +1021,10 @@ public class DevelopModeChunk : MonoBehaviour
 
     //---------------------------------- Mesh部分 ----------------------------------------
 
-    //开始遍历
 
-    public void UpdateChunkMesh()
+    public void UpdateChunkMesh_WithSurround()
     {
-        //print("开始执行UpdateChunkMesh");
+
         ClearMeshData();
 
         //刷新自己
@@ -942,19 +1059,7 @@ public class DevelopModeChunk : MonoBehaviour
         }
 
 
-        //添加到world的渲染队列
-        isReadyToRender = true;
-
-
-
-        world.WaitToRender.Enqueue(this);
-
-        //CreateMesh();
-
-
-
-
-
+        CreateMesh();
 
     }
 
@@ -969,8 +1074,6 @@ public class DevelopModeChunk : MonoBehaviour
         uvs.Clear();
 
     }
-
-
 
     //面生成的判断
     //是方块吗----Y不绘制----N绘制
@@ -994,30 +1097,32 @@ public class DevelopModeChunk : MonoBehaviour
             //	print("");
             //}
 
+            
+
             //Down:最下层一律不绘制
-            if (y < 0)
-            {
+            //if (y < 0)
+            //{
 
-                return true;
+            //    return true;
 
-            }
+            //}
 
-            //else:自己是不是空气
-            if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType== VoxelData.Air || voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType== VoxelData.Water)
-            {
+            ////else:自己是不是空气
+            //if (voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Air || voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Water)
+            //{
 
-                return true;
+            //    return true;
 
-            }
-            else
-            {
+            //}
+            //else
+            //{
 
-                return false;
+            //    return false;
 
-            }
+            //}
 
 
-
+            return true;
 
         }
 
@@ -1028,7 +1133,7 @@ public class DevelopModeChunk : MonoBehaviour
             //Debug.Log("未出界");
 
             //自己是空气 && 目标是竹子 则绘制
-            //if (voxelMap[x, y, z].voxelType== VoxelData.Bamboo && voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType== VoxelData.Air)
+            //if (voxelMap[x, y, z] == VoxelData.Bamboo && voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z] == VoxelData.Air)
             //{
             //    return true;
             //}
@@ -1039,7 +1144,7 @@ public class DevelopModeChunk : MonoBehaviour
             //自己与目标都是空气
             //或者自己与目标都是水
             //不生成面
-            if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType== VoxelData.Air) && voxelMap[x, y, z].voxelType== VoxelData.Air) || ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType== VoxelData.Water) && voxelMap[x, y, z].voxelType== VoxelData.Water))
+            if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Air) && voxelMap[x, y, z].voxelType == VoxelData.Air) || ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Water) && voxelMap[x, y, z].voxelType == VoxelData.Water))
             {
 
                 return true;
@@ -1049,7 +1154,7 @@ public class DevelopModeChunk : MonoBehaviour
             {
                 //如果自己是水，目标是空气
                 //生成面
-                if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType== VoxelData.Water) && voxelMap[x, y, z].voxelType== VoxelData.Air))
+                if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Water) && voxelMap[x, y, z].voxelType == VoxelData.Air))
                 {
 
                     return false;
@@ -1073,76 +1178,8 @@ public class DevelopModeChunk : MonoBehaviour
 
     }
 
-    //接收自己和目标的类型，判断是否生成面
-    //false：不生成
-    bool CheckSelfAndTarget(byte _self, byte _target)
-    {
-
-        // 如果自己是空气或灌木，无论如何都不生成面
-        if (world.blocktypes[_self].isTransparent)
-        {
-
-            return true;
-
-        }
-
-        //如果自己是水
-        // 目标是Transparent，生成
-        //目标是水或者固体，不生成
-        if (_self == VoxelData.Water)
-        {
-
-            if (world.blocktypes[_target].isTransparent)
-            {
-
-                return false;
-
-            }
-
-            if (_target == VoxelData.Water || world.blocktypes[_target].isSolid)
-            {
-
-                return true;
-
-            }
-
-        }
-
-        //如果自己是固体
-        //目标是固体，则不生成
-        //其他都生成
-        if (world.blocktypes[_self].isSolid)
-        {
-
-            if (world.blocktypes[_target].isSolid)
-            {
-
-                return true;
-
-
-            }
-            else
-            {
-
-                return false;
-
-            }
-
-        }
-
-
-
-        return true;
-
-    }
-
-
-
 
     //遍历中：：顺带判断面的生成方向
-    //创建mesh里的参数
-    //_calledFrom = 0 来自UpdateChunkMesh_WithSurround
-    //_calledFrom = 1 来自UpdateWater
     void UpdateMeshData(Vector3 pos)
     {
 
@@ -1194,7 +1231,7 @@ public class DevelopModeChunk : MonoBehaviour
                     {
 
                         //如果上下方有水，则换成方块的渲染方式
-                        if ((voxelMap[(int)pos.x, (int)pos.y + 1, (int)pos.z].voxelType== VoxelData.Water || voxelMap[(int)pos.x, (int)pos.y - 1, (int)pos.z].voxelType== VoxelData.Water) && p != 2 && p != 3 && voxelMap[(int)pos.x, (int)pos.y + 1, (int)pos.z].voxelType!= VoxelData.Air)
+                        if ((voxelMap[(int)pos.x, (int)pos.y + 1, (int)pos.z].voxelType == VoxelData.Water || voxelMap[(int)pos.x, (int)pos.y - 1, (int)pos.z].voxelType == VoxelData.Water) && p != 2 && p != 3 && voxelMap[(int)pos.x, (int)pos.y + 1, (int)pos.z].voxelType != VoxelData.Air)
                         {
 
                             vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
@@ -1202,11 +1239,6 @@ public class DevelopModeChunk : MonoBehaviour
                             vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
                             vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
 
-                            //uvs.Add (VoxelData.voxelUvs [0]);
-                            //uvs.Add (VoxelData.voxelUvs [1]);
-                            //uvs.Add (VoxelData.voxelUvs [2]);
-                            //uvs.Add (VoxelData.voxelUvs [3]); 
-                            //AddTexture(1);
                             uvs.Add(new Vector2(0f, 0f));
                             uvs.Add(new Vector2(0f, 1f));
                             uvs.Add(new Vector2(1f, 0f));
@@ -1226,17 +1258,13 @@ public class DevelopModeChunk : MonoBehaviour
                         else
                         {
 
+
+
                             //如果朝上 && 是水面 && 上方是空气 => 尝试搜索周边水面进行面的融合
                             if (p == 2 && voxelMap[x, y, z].voxelType == VoxelData.Water && voxelMap[x, y + 1, z].voxelType == VoxelData.Air && voxelMap[x, y, z].up == true)
                             {
                                 int _zz = 0;
                                 int _xx = 0;
-
-                                //if (x == 15 && z == 9)
-                                //{
-                                //    print("");
-                                //}
-
 
                                 //局部变量
                                 int __z = 0;
@@ -1248,13 +1276,10 @@ public class DevelopModeChunk : MonoBehaviour
                                     for (__z = 0; __z < VoxelData.ChunkWidth; __z++)
                                     {
 
-                                        
-
-
-                                        //如果出界则停止
+                                        //如果出界则继续
                                         if (isOutOfRange(x + _xx, y, z + __z))
                                         {
-                                            break;
+                                            continue;
                                         }
 
                                         //if(_xx == 8){
@@ -1271,8 +1296,6 @@ public class DevelopModeChunk : MonoBehaviour
 
                                     }
 
-                                    
-
 
                                     if (__z > _zz)
                                     {
@@ -1281,9 +1304,9 @@ public class DevelopModeChunk : MonoBehaviour
 
 
                                     if (Z排碰到障碍物)
-                                    { 
+                                    {
 
-                                        if (_xx == 0) 
+                                        if (_xx == 0)
                                         {
                                             for (int i = 0; i < __z; i++)
                                             {
@@ -1300,12 +1323,6 @@ public class DevelopModeChunk : MonoBehaviour
                                         for (int i = 0; i < __z; i++)
                                         {
                                             voxelMap[x + _xx, y, z + i].up = false;
-                                        }
-
-                                        //如果出界则停止
-                                        if (x + _xx == VoxelData.ChunkWidth)
-                                        {
-                                            break;
                                         }
 
                                     }
@@ -1326,7 +1343,7 @@ public class DevelopModeChunk : MonoBehaviour
                                 {
                                     vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
                                     vertices.Add(pos + ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
-                                    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
+                                    vertices.Add(pos + ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]], new Vector3(1, 1, 1)));
                                     vertices.Add(pos + ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(1, 1, _zz)));
 
 
@@ -1369,29 +1386,25 @@ public class DevelopModeChunk : MonoBehaviour
 
                             }
 
-                            //加上会导致水面生成两次，面会叠加
-                            //else
-                            //{
-                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
-                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
-                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
 
-                            //    //根据p生成对应的面，对应的UV
-                            //    //AddTexture(world.blocktypes[blockID].GetTextureID(p));
-                            //    uvs.Add(new Vector2(0f, 0f));
-                            //    uvs.Add(new Vector2(0f, 1f));
-                            //    uvs.Add(new Vector2(1f, 0f));
-                            //    uvs.Add(new Vector2(1f, 1f));
 
-                            //    triangles_Water.Add(vertexIndex);
-                            //    triangles_Water.Add(vertexIndex + 1);
-                            //    triangles_Water.Add(vertexIndex + 2);
-                            //    triangles_Water.Add(vertexIndex + 2);
-                            //    triangles_Water.Add(vertexIndex + 1);
-                            //    triangles_Water.Add(vertexIndex + 3);
-                            //    vertexIndex += 4;
-                            //}
+
+                            //vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                            //vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
+                            //vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
+                            //vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
+                            //uvs.Add(new Vector2(0f, 0f));
+                            //uvs.Add(new Vector2(0f, 1f));
+                            //uvs.Add(new Vector2(1f, 0f));
+                            //uvs.Add(new Vector2(1f, 1f));
+                            //triangles_Water.Add(vertexIndex);
+                            //triangles_Water.Add(vertexIndex + 1);
+                            //triangles_Water.Add(vertexIndex + 2);
+                            //triangles_Water.Add(vertexIndex + 2);
+                            //triangles_Water.Add(vertexIndex + 1);
+                            //triangles_Water.Add(vertexIndex + 3);
+                            //vertexIndex += 4;
+
 
                         }
 
@@ -1459,8 +1472,6 @@ public class DevelopModeChunk : MonoBehaviour
     // 最后生成网格体
     public void CreateMesh()
     {
-        //print("开始执行CreateMesh");
-        //print($"{world.GetChunkLocation(myposition)}CreateMesh 开始");
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
@@ -1478,19 +1489,11 @@ public class DevelopModeChunk : MonoBehaviour
         mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
 
-        //print($"triangles:{triangles.Count}, triangles_Water:{triangles_Water.Count}");
-
-
-
-
     }
 
     //生成面——UV的处理
     void AddTexture(int textureID)
     {
-
-
-
 
         float y = textureID / VoxelData.TextureAtlasSizeInBlocks;
         float x = textureID - (y * VoxelData.TextureAtlasSizeInBlocks);
@@ -1505,19 +1508,8 @@ public class DevelopModeChunk : MonoBehaviour
         uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
         uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
 
-        //if (textureID == 35)
-        //{
-        //    if (hasExec_2)
-
-        //    {
-        //        print($"别人的方法：x = {x},y = {y}");
-        //        hasExec_2 = false;
-        //    }
-        //}
 
     }
-
-
 
     //生成面——Bush
     void AddTexture_Bush(int textureID)
@@ -1550,27 +1542,25 @@ public class DevelopModeChunk : MonoBehaviour
 
 
 
-    //------------------------------------------------------------------------------------
+    //---------------------------------- tools ----------------------------------------
 
 
-
-
-
-
-    //---------------------------------- 辅助部分 ----------------------------------------
-
-    // 分量乘法
-    Vector3 ComponentwiseMultiply(Vector3 a, Vector3 b)
+    //3d噪声
+    public static float Perlin3D(float x, float y, float z)
     {
-        return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
-    }
 
-    // 处理 Vector2 的分量乘法
-    Vector2 ComponentwiseMultiply(Vector2 a, Vector2 b)
-    {
-        return new Vector2(a.x * b.x, a.y * b.y);
-    }
+        float AB = Mathf.PerlinNoise(x, y);
+        float BC = Mathf.PerlinNoise(y, z);
+        float AC = Mathf.PerlinNoise(x, z);
 
+        float BA = Mathf.PerlinNoise(y, x);
+        float CB = Mathf.PerlinNoise(z, y);
+        float CA = Mathf.PerlinNoise(z, x);
+
+        float ABC = AB + BC + AC + BA + CB + CA;
+        return ABC / 6f;
+
+    }
 
     //是否出界
     bool isOutOfRange(int _x, int _y, int _z)
@@ -1610,12 +1600,20 @@ public class DevelopModeChunk : MonoBehaviour
 
     }
 
-    public void Destroyself()
+    // 分量乘法
+    Vector3 ComponentwiseMultiply(Vector3 a, Vector3 b)
     {
-        Destroy(chunkObject);
+        return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z); 
     }
 
+    // 处理 Vector2 的分量乘法
+    Vector2 ComponentwiseMultiply(Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.x * b.x, a.y * b.y);
+    }
 
     //----------------------------------------------------------------------------------
 
 }
+
+

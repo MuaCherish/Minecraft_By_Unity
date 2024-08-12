@@ -127,6 +127,10 @@ public class World : MonoBehaviour
     public ConcurrentQueue<Chunk> WaitToRender_New = new ConcurrentQueue<Chunk>();
 
 
+    [Header("Debug")]
+    public bool 是否生成Chunk侧面 = false;
+
+
     //生成方向
     private Vector3 Center_Now;
     private Vector3 Center_direction; //这个代表了方向
@@ -1489,7 +1493,7 @@ public class World : MonoBehaviour
 
             }
 
-            byte block_type = chunktemp.voxelMap[(int)GetRelalocation(pos).x, (int)GetRelalocation(pos).y, (int)GetRelalocation(pos).z];
+            byte block_type = chunktemp.voxelMap[(int)GetRelalocation(pos).x, (int)GetRelalocation(pos).y, (int)GetRelalocation(pos).z].voxelType;
 
             return block_type;
         }
@@ -1651,7 +1655,7 @@ public class World : MonoBehaviour
         if (GetBlockType(pos) == VoxelData.Bamboo) { return false; }
 
         //返回固体还是空气
-        return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z]].isSolid;
+        return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z].voxelType].isSolid;
 
     }
 
@@ -1674,11 +1678,21 @@ public class World : MonoBehaviour
         //if (GetBlockType(pos) == VoxelData.Bamboo) { return true; }
 
         //返回固体还是空气
-        return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z]].canBeChoose;
+        return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z].voxelType].canBeChoose;
 
     }
 
+    // 分量乘法
+    public Vector3 ComponentwiseMultiply(Vector3 a, Vector3 b)
+    {
+        return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+    }
 
+    // 处理 Vector2 的分量乘法
+    public Vector2 ComponentwiseMultiply(Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.x * b.x, a.y * b.y);
+    }
 
 
 }
@@ -1760,6 +1774,17 @@ public class BlockType
     }
 
 }
+
+
+//方块种类结构体
+public class VoxelStruct
+{
+    public byte voxelType = VoxelData.Air;
+
+    //面生成的六个方向
+    public bool up = true;
+}
+
 
 //群系系统
 [System.Serializable]

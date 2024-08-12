@@ -164,7 +164,9 @@ public static class VoxelData
     //Select
     public static readonly float[] SelectLocation_x = new float[9]
     {
+
         46f,126f,206f,286f,366f,445f,526f,606f,686f,
+
     };
 
 
@@ -182,9 +184,11 @@ public static class VoxelData
 
     }
 
+    #region 顶点数组
 
-    //顶点数组
-    public static readonly Vector3[] voxelVerts = new Vector3[8] {
+    //顶点数组 - Block
+    public static readonly Vector3[] voxelVerts = new Vector3[8] 
+    {
 
         new Vector3(0.0f, 0.0f, 0.0f),
         new Vector3(1.0f, 0.0f, 0.0f),
@@ -197,8 +201,9 @@ public static class VoxelData
 
     };
 
-    //顶点数组Water
-    public static readonly Vector3[] voxelVerts_Water = new Vector3[8] {
+    //顶点数组 - Water
+    public static readonly Vector3[] voxelVerts_Water = new Vector3[8] 
+    {
 
         new Vector3(0.0f, 0.0f, 0.0f),
         new Vector3(1.0f, 0.0f, 0.0f),
@@ -211,8 +216,24 @@ public static class VoxelData
 
     };
 
+    //顶点数组 - SnowPower
+    public static readonly Vector3[] voxelVerts_SnowPower = new Vector3[8]
+    {
 
-    //指定方向
+        new Vector3(0.0f, 0.0f, 0.0f),
+        new Vector3(1.0f, 0.0f, 0.0f),
+        new Vector3(1.0f, 0.2f, 0.0f),
+        new Vector3(0.0f, 0.2f, 0.0f),
+        new Vector3(0.0f, 0.0f, 1.0f),
+        new Vector3(1.0f, 0.0f, 1.0f),
+        new Vector3(1.0f, 0.2f, 1.0f),
+        new Vector3(0.0f, 0.2f, 1.0f),
+
+    };
+
+    #endregion
+
+    //6个指定方向
     public static readonly Vector3[] faceChecks = new Vector3[6]
     {
 
@@ -225,10 +246,25 @@ public static class VoxelData
 
     };
 
+    //4个指定方向
+    public static readonly Vector3[] faceChecks_Surround = new Vector3[4]
+    {
+        //顺时针遍历，因为朝着XZ正方向判定
 
-    //水流流动方向
+        new Vector3(0.0f, 0.0f, 1.0f),  //Front
+        new Vector3(1.0f, 0.0f, 0.0f),  //Right
+
+        new Vector3(0.0f, 0.0f, -1.0f), //Back
+        new Vector3(-1.0f, 0.0f, 0.0f), //Left
+        
+
+    };
+
+
+    //水流动态流动方向
     public static readonly Vector3[] faceChecks_WaterFlow = new Vector3[5]
     {
+
         new Vector3(0.0f, -1.0f, 0.0f), //Down
         new Vector3(0.0f, 0.0f, 1.0f),  //Front
         new Vector3(0.0f, 0.0f, -1.0f), //Back
@@ -237,9 +273,11 @@ public static class VoxelData
 
     };
 
+    #region 绘制序列
 
-    //Block绘制序列
-    public static readonly int[,] voxelTris = new int[6, 4] {
+    //绘制序列 - Block
+    public static readonly int[,] voxelTris = new int[6, 4] 
+    {
 
         {0, 3, 1, 2}, // Back Face
 		{5, 6, 4, 7}, // Front Face
@@ -251,7 +289,8 @@ public static class VoxelData
 	};
 
     //绘制序列 - Bush
-    public static readonly int[,] voxelTris_Bush = new int[4, 4] {
+    public static readonly int[,] voxelTris_Bush = new int[4, 4] 
+    {
 
         {0, 3, 6, 5},
         {5, 6, 3, 0},
@@ -260,8 +299,11 @@ public static class VoxelData
 
     };
 
+    #endregion
+
     //UV数组
-    public static readonly Vector2[] voxelUvs = new Vector2[4] {
+    public static readonly Vector2[] voxelUvs = new Vector2[4] 
+    {
 
         new Vector2 (0.0f, 0.0f),
         new Vector2 (0.0f, 1.0f),

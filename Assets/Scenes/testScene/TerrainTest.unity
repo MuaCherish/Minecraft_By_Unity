@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 10
+  serializedVersion: 9
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,12 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.46169513, g: 0.5124164, b: 0.58993304, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 12
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -66,6 +66,9 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
+    m_FinalGather: 0
+    m_FinalGatherFiltering: 1
+    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -119,37 +122,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &204773914
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 204773915}
-  m_Layer: 0
-  m_Name: Cubes
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &204773915
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 204773914}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 0, z: 2}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &282476664
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,12 +207,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 282476664}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -4.0116596, y: 1.8380516, z: -9.47389}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2133227662}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &321088208
 GameObject:
@@ -267,8 +239,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 321088208}
   m_Enabled: 1
-  serializedVersion: 11
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -329,13 +302,13 @@ Transform:
   m_GameObject: {fileID: 321088208}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: -4.0116596, y: 3.8380516, z: 0.5261097}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2133227662}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &380867272
+--- !u!1 &1535505785
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -343,52 +316,828 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 380867274}
-  - component: {fileID: 380867275}
-  - component: {fileID: 380867276}
-  - component: {fileID: 380867273}
-  - component: {fileID: 380867277}
+  - component: {fileID: 1535505787}
+  - component: {fileID: 1535505786}
+  - component: {fileID: 1535505788}
   m_Layer: 0
-  m_Name: Manager
+  m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &380867273
+--- !u!114 &1535505786
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380867272}
+  m_GameObject: {fileID: 1535505785}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd69503f212a6840a2d9f0a2b0355fa, type: 3}
+  m_Script: {fileID: 11500000, guid: eb9afec3cfb2f06498350fa1c01da92f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mymaterial: {fileID: 2100000, guid: 4c37c08766a8a4345a4e8a2b6f47c3b2, type: 2}
-  clarrfy_biome: 5
-  Terrain_Width: 64
-  soil_min: 50
-  soil_max: 64
-  noise2d_scale_smooth: 0.005
-  noise2d_scale_steep: 0.04
-  scale_Smooth: 0.7
-  scale_Steep: 0.3
-  "\u5E73\u539F\u6700\u9AD8": 50
-  "\u5E73\u539FSmooth": 0.002
-  "\u5E73\u539FSteep": 0.004
-  "\u5C71\u8109\u6700\u9AD8": 64
-  "\u5C71\u8109Smooth": 0.04
-  "\u5C71\u8109Steep": 0.05
---- !u!4 &380867274
+  material: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
+  material_Water: {fileID: 2100000, guid: e401bc414787ebc4eaf3eb598c2a55cf, type: 2}
+  blocktypes:
+  - blockName: BedRock
+    DestroyTime: 0
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: -821054697, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    texture: {fileID: 2800000, guid: d57a7e07dd86ed140a8b71144cee05e1, type: 3}
+    dropsprite: {fileID: 21300000, guid: d8c86c9152fd8ed4391420c36c803f58, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: d8c86c9152fd8ed4391420c36c803f58, type: 3}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 17
+    bottomFaceTexture: 17
+    leftFaceTexture: 17
+    rightFaceTexture: 17
+    DrawMode: 0
+  - blockName: Stone
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 1619130530, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    texture: {fileID: 2800000, guid: d8c86c9152fd8ed4391420c36c803f58, type: 3}
+    dropsprite: {fileID: 21300000, guid: d8c86c9152fd8ed4391420c36c803f58, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: d8c86c9152fd8ed4391420c36c803f58, type: 3}
+    Particle_Material: {fileID: 2100000, guid: 1b7ca1f21ab8ca8479365eb462c09ea7, type: 2}
+    walk_clips:
+    - {fileID: 8300000, guid: e963f3daaa4495345b08255f3d6d3eed, type: 3}
+    - {fileID: 8300000, guid: 0902d3ef50b317f42a877d8372019f63, type: 3}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 0
+    frontFaceTexture: 0
+    topFaceTexture: 0
+    bottomFaceTexture: 0
+    leftFaceTexture: 0
+    rightFaceTexture: 0
+    DrawMode: 0
+  - blockName: Grass
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 1887270547, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
+    backFaceTexture: 2
+    frontFaceTexture: 2
+    topFaceTexture: 11
+    bottomFaceTexture: 1
+    leftFaceTexture: 2
+    rightFaceTexture: 2
+    DrawMode: 0
+  - blockName: Soil
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: -1513934428, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    texture: {fileID: 2800000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    dropsprite: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    Particle_Material: {fileID: 2100000, guid: f25fe9fe149ec9648b6547a75179bd11, type: 2}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 76a8b350f474d524d9716cceed894035, type: 3}
+    broken_clip: {fileID: 8300000, guid: 5080f508bd8293a42ad2bd55adfd0cb5, type: 3}
+    backFaceTexture: 1
+    frontFaceTexture: 1
+    topFaceTexture: 1
+    bottomFaceTexture: 1
+    leftFaceTexture: 1
+    rightFaceTexture: 1
+    DrawMode: 0
+  - blockName: Air
+    DestroyTime: 0
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 0
+    candropBlock: 0
+    icon: {fileID: 0}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 255
+    frontFaceTexture: 255
+    topFaceTexture: 255
+    bottomFaceTexture: 255
+    leftFaceTexture: 255
+    rightFaceTexture: 255
+    DrawMode: 3
+  - blockName: Sand
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: -166098416, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    texture: {fileID: 2800000, guid: 5791c41ebf6291840afca1148a5e7d83, type: 3}
+    dropsprite: {fileID: 21300000, guid: 5791c41ebf6291840afca1148a5e7d83, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 5791c41ebf6291840afca1148a5e7d83, type: 3}
+    Particle_Material: {fileID: 2100000, guid: 6a9d12e106cb6ad4894d8b2810eea8ac, type: 2}
+    walk_clips:
+    - {fileID: 8300000, guid: b0697e5631dae5a408849ff947463fd5, type: 3}
+    - {fileID: 8300000, guid: 4f4be7ba4daf2af4081b9bbc8c69af4a, type: 3}
+    broking_clip: {fileID: 8300000, guid: d6481a9f22fc0f749a18acdc4a33a6f2, type: 3}
+    broken_clip: {fileID: 8300000, guid: 7b57a43064dacd844b14e74b13585053, type: 3}
+    backFaceTexture: 18
+    frontFaceTexture: 18
+    topFaceTexture: 18
+    bottomFaceTexture: 18
+    leftFaceTexture: 18
+    rightFaceTexture: 18
+    DrawMode: 0
+  - blockName: wood
+    DestroyTime: 3.1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 19805498, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    texture: {fileID: 2800000, guid: a7a1a86e3cd686841949e0da5b9a7482, type: 3}
+    dropsprite: {fileID: 21300000, guid: a7a1a86e3cd686841949e0da5b9a7482, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 73029842837fcb5459c56cf9288b5e50, type: 3}
+    Particle_Material: {fileID: 2100000, guid: a688f634fa3c0bb468f43cfb9896f99d, type: 2}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
+    broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
+    backFaceTexture: 9
+    frontFaceTexture: 9
+    topFaceTexture: 10
+    bottomFaceTexture: 10
+    leftFaceTexture: 9
+    rightFaceTexture: 9
+    DrawMode: 0
+  - blockName: leave
+    DestroyTime: 0.4
+    isSolid: 1
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: -478759792, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 2800000, guid: 234236cff880d2e4fa730a16989e9c73, type: 3}
+    dropsprite: {fileID: 21300000, guid: 234236cff880d2e4fa730a16989e9c73, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 234236cff880d2e4fa730a16989e9c73, type: 3}
+    Particle_Material: {fileID: 2100000, guid: 84016130c3a2a324cb613dad02254b11, type: 2}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: 55338325c6ae6ff47887ffaf54a2fcad, type: 3}
+    backFaceTexture: 12
+    frontFaceTexture: 12
+    topFaceTexture: 12
+    bottomFaceTexture: 12
+    leftFaceTexture: 12
+    rightFaceTexture: 12
+    DrawMode: 0
+  - blockName: water
+    DestroyTime: 0
+    isSolid: 0
+    isTransparent: 0
+    canBeChoose: 0
+    candropBlock: 0
+    icon: {fileID: 21300000, guid: d1ef5c4d1d4eda94883d42ff96e30df5, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 4
+    frontFaceTexture: 4
+    topFaceTexture: 4
+    bottomFaceTexture: 4
+    leftFaceTexture: 4
+    rightFaceTexture: 4
+    DrawMode: 4
+  - blockName: Coal
+    DestroyTime: 3
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 737408895, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 3
+    frontFaceTexture: 3
+    topFaceTexture: 3
+    bottomFaceTexture: 3
+    leftFaceTexture: 3
+    rightFaceTexture: 3
+    DrawMode: 0
+  - blockName: BirchWood
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 0}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 21300000, guid: a7a1a86e3cd686841949e0da5b9a7482, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 73029842837fcb5459c56cf9288b5e50, type: 3}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 7
+    frontFaceTexture: 7
+    topFaceTexture: 6
+    bottomFaceTexture: 6
+    leftFaceTexture: 7
+    rightFaceTexture: 7
+    DrawMode: 0
+  - blockName: BlueFlower
+    DestroyTime: 0.1
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 0
+    icon: {fileID: -480959984, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 14
+    frontFaceTexture: 14
+    topFaceTexture: 14
+    bottomFaceTexture: 14
+    leftFaceTexture: 14
+    rightFaceTexture: 14
+    DrawMode: 1
+  - blockName: whiteFlower_1
+    DestroyTime: 0.1
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 0
+    icon: {fileID: 1645535455, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 15
+    frontFaceTexture: 15
+    topFaceTexture: 15
+    bottomFaceTexture: 15
+    leftFaceTexture: 15
+    rightFaceTexture: 15
+    DrawMode: 1
+  - blockName: whiteFlower_2
+    DestroyTime: 0.1
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 0
+    icon: {fileID: -734642697, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 22
+    frontFaceTexture: 22
+    topFaceTexture: 22
+    bottomFaceTexture: 22
+    leftFaceTexture: 22
+    rightFaceTexture: 22
+    DrawMode: 1
+  - blockName: yellowFlower
+    DestroyTime: 0.1
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 0
+    icon: {fileID: -85298334, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 20
+    frontFaceTexture: 20
+    topFaceTexture: 20
+    bottomFaceTexture: 20
+    leftFaceTexture: 20
+    rightFaceTexture: 20
+    DrawMode: 1
+  - blockName: Candle
+    DestroyTime: 0.4
+    isSolid: 1
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: -796056083, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 21
+    bottomFaceTexture: 21
+    leftFaceTexture: 17
+    rightFaceTexture: 17
+    DrawMode: 0
+  - blockName: Cactus
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: -328740914, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 30
+    frontFaceTexture: 30
+    topFaceTexture: 29
+    bottomFaceTexture: 29
+    leftFaceTexture: 30
+    rightFaceTexture: 30
+    DrawMode: 0
+  - blockName: TNT
+    DestroyTime: 0.5
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: -723382273, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 33
+    frontFaceTexture: 33
+    topFaceTexture: 32
+    bottomFaceTexture: 34
+    leftFaceTexture: 33
+    rightFaceTexture: 33
+    DrawMode: 0
+  - blockName: WorkTable
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 2036708510, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 41
+    frontFaceTexture: 41
+    topFaceTexture: 40
+    bottomFaceTexture: 43
+    leftFaceTexture: 42
+    rightFaceTexture: 42
+    DrawMode: 0
+  - blockName: Pumpkin
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: -1809891165, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 50
+    frontFaceTexture: 49
+    topFaceTexture: 48
+    bottomFaceTexture: 51
+    leftFaceTexture: 50
+    rightFaceTexture: 50
+    DrawMode: 0
+  - blockName: Glass
+    DestroyTime: 0.2
+    isSolid: 1
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: -920575563, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 60
+    frontFaceTexture: 60
+    topFaceTexture: 60
+    bottomFaceTexture: 60
+    leftFaceTexture: 60
+    rightFaceTexture: 60
+    DrawMode: 0
+  - blockName: Blue_Crystal
+    DestroyTime: 3
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 769592071, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 56
+    frontFaceTexture: 56
+    topFaceTexture: 56
+    bottomFaceTexture: 56
+    leftFaceTexture: 56
+    rightFaceTexture: 56
+    DrawMode: 0
+  - blockName: Diamond
+    DestroyTime: 5
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 921364288, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 57
+    frontFaceTexture: 57
+    topFaceTexture: 57
+    bottomFaceTexture: 57
+    leftFaceTexture: 57
+    rightFaceTexture: 57
+    DrawMode: 0
+  - blockName: Iron
+    DestroyTime: 3
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 980529096, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 58
+    frontFaceTexture: 58
+    topFaceTexture: 58
+    bottomFaceTexture: 58
+    leftFaceTexture: 58
+    rightFaceTexture: 58
+    DrawMode: 0
+  - blockName: Gold
+    DestroyTime: 3
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 1678008232, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 59
+    frontFaceTexture: 59
+    topFaceTexture: 59
+    bottomFaceTexture: 59
+    leftFaceTexture: 59
+    rightFaceTexture: 59
+    DrawMode: 0
+  - blockName: bamboo
+    DestroyTime: 0.1
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 0
+    icon: {fileID: -2062449787, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 13
+    frontFaceTexture: 13
+    topFaceTexture: 13
+    bottomFaceTexture: 13
+    leftFaceTexture: 13
+    rightFaceTexture: 13
+    DrawMode: 1
+  - blockName: WoodenPlanks
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 1945075179, guid: 2968642f8e3ea294c8a04c54058a04f2, type: 3}
+    texture: {fileID: 0}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
+    broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
+    backFaceTexture: 8
+    frontFaceTexture: 8
+    topFaceTexture: 8
+    bottomFaceTexture: 8
+    leftFaceTexture: 8
+    rightFaceTexture: 8
+    DrawMode: 0
+  - blockName: Fluor
+    DestroyTime: 0.4
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 21300000, guid: 41db7c2d54743bc42906f884e0c310b6, type: 3}
+    texture: {fileID: 2800000, guid: 41db7c2d54743bc42906f884e0c310b6, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 28
+    frontFaceTexture: 28
+    topFaceTexture: 28
+    bottomFaceTexture: 28
+    leftFaceTexture: 28
+    rightFaceTexture: 28
+    DrawMode: 0
+  - blockName: Bush
+    DestroyTime: 0.1
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 0
+    icon: {fileID: -2062449787, guid: 98b10742bbc519a48ae3b2caa0ff3ae1, type: 3}
+    texture: {fileID: 2800000, guid: 41db7c2d54743bc42906f884e0c310b6, type: 3}
+    dropsprite: {fileID: 0}
+    top_dropsprite: {fileID: 0}
+    Particle_Material: {fileID: 0}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
+    backFaceTexture: 35
+    frontFaceTexture: 35
+    topFaceTexture: 35
+    bottomFaceTexture: 35
+    leftFaceTexture: 35
+    rightFaceTexture: 35
+    DrawMode: 1
+  - blockName: Snow
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    texture: {fileID: 2800000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    dropsprite: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    Particle_Material: {fileID: 2100000, guid: 3490270c47af72c4f90b0f3f4245b453, type: 2}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 76a8b350f474d524d9716cceed894035, type: 3}
+    broken_clip: {fileID: 8300000, guid: 5080f508bd8293a42ad2bd55adfd0cb5, type: 3}
+    backFaceTexture: 4
+    frontFaceTexture: 4
+    topFaceTexture: 4
+    bottomFaceTexture: 4
+    leftFaceTexture: 4
+    rightFaceTexture: 4
+    DrawMode: 0
+  - blockName: SnowPower
+    DestroyTime: 0.1
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 0
+    icon: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    texture: {fileID: 2800000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    dropsprite: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 79fb9e88f103d4c4f8a24e665e717edd, type: 3}
+    Particle_Material: {fileID: 2100000, guid: 3490270c47af72c4f90b0f3f4245b453, type: 2}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
+    backFaceTexture: 4
+    frontFaceTexture: 4
+    topFaceTexture: 4
+    bottomFaceTexture: 4
+    leftFaceTexture: 4
+    rightFaceTexture: 4
+    DrawMode: 5
+  - blockName: Mycelium
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    texture: {fileID: 2800000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    dropsprite: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    top_dropsprite: {fileID: 21300000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    Particle_Material: {fileID: 2100000, guid: f25fe9fe149ec9648b6547a75179bd11, type: 2}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
+    backFaceTexture: 37
+    frontFaceTexture: 37
+    topFaceTexture: 36
+    bottomFaceTexture: 1
+    leftFaceTexture: 37
+    rightFaceTexture: 37
+    DrawMode: 0
+  renderSize: 1
+  noise3d_scale: 0.08
+  cave_width: 0.38
+  "\u6C27\u6C14\u6D53\u5EA6OxygenDensity": 0.4
+  "\u4E09\u7EF4\u5BC6\u5EA6Density3d": 0.45
+  "\u5E72\u71E5\u7A0B\u5EA6Aridity": 0.6
+  "\u7A7A\u6C14\u6E7F\u5EA6MoistureLevel": 0.6
+  biomenoisesystems:
+  - BiomeName: "\u8349\u539F"
+    BiomeColor: {r: 0.20392159, g: 0.77647066, b: 0.16470589, a: 0}
+    HighDomain: {x: 20, y: 100}
+    Noise_Scale_123: {x: 0.001, y: 0.015, z: 0}
+    Noise_Rank_123: {x: 0.7, y: 0.3, z: 0}
+  - BiomeName: "\u9AD8\u539F"
+    BiomeColor: {r: 1, g: 1, b: 1, a: 0}
+    HighDomain: {x: 20, y: 160}
+    Noise_Scale_123: {x: 0.1, y: 0.01, z: 0.008}
+    Noise_Rank_123: {x: 0.1, y: 0.7, z: 0.2}
+  - BiomeName: "\u6C99\u6F20"
+    BiomeColor: {r: 1, g: 0.93725497, b: 0, a: 0}
+    HighDomain: {x: 60, y: 100}
+    Noise_Scale_123: {x: 0.03, y: 0.01, z: 0.008}
+    Noise_Rank_123: {x: 1, y: 0, z: 0}
+  - BiomeName: "\u6CBC\u6CFD"
+    BiomeColor: {r: 0.10588236, g: 0.20000002, b: 0.078431375, a: 0}
+    HighDomain: {x: 40, y: 82}
+    Noise_Scale_123: {x: 0.002, y: 0.04, z: 0.001}
+    Noise_Rank_123: {x: 0.5, y: 0.4, z: 0.1}
+  - BiomeName: "\u5BC6\u6797"
+    BiomeColor: {r: 1, g: 0.03761355, b: 0, a: 0}
+    HighDomain: {x: 40, y: 82}
+    Noise_Scale_123: {x: 0.002, y: 0.04, z: 0.001}
+    Noise_Rank_123: {x: 0.5, y: 0.4, z: 0.1}
+  terrainLayerProbabilitySystem:
+    isRandomSeed: 0
+    Seed: 0
+    sea_level: 60
+    Snow_Level: 100
+    Normal_treecount: 3
+    "\u5BC6\u6797\u6811\u6728\u91C7\u6837\u6B21\u6570Forest_treecount": 10
+    TreeHigh_min: 5
+    TreeHigh_max: 7
+    Random_Bush: 30
+    Random_Bamboo: 15
+    Random_BlueFlower: 1
+    Random_WhiteFlower1: 1
+    Random_WhiteFlower2: 1
+    Random_YellowFlower: 1
+    Random_Coal: 50
+    Random_Iron: 30
+    Random_Gold: 20
+    Random_Blue_Crystal: 15
+    Random_Diamond: 10
+  Chunks: {fileID: 0}
+--- !u!4 &1535505787
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380867272}
+  m_GameObject: {fileID: 1535505785}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -397,79 +1146,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &380867275
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380867272}
-  m_Mesh: {fileID: 0}
---- !u!23 &380867276
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380867272}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 4c37c08766a8a4345a4e8a2b6f47c3b2, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &380867277
+--- !u!114 &1535505788
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380867272}
+  m_GameObject: {fileID: 1535505785}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d29fd16957ba6d458975e2cd11d612b, type: 3}
+  m_Script: {fileID: 11500000, guid: c400139db23faca489dfc7369ad529a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mymaterial: {fileID: 2100000, guid: 4c37c08766a8a4345a4e8a2b6f47c3b2, type: 2}
-  Cube: {fileID: 4282100315393139640, guid: 130c65d9f58179a49af476a0b43e344d, type: 3}
-  Cubes: {fileID: 204773915}
-  Terrain_Width: 16
-  soil_min: 20
-  soil_max: 50
-  noise2d_scale_smooth: 0.01
-  noise2d_scale_steep: 0.04
---- !u!1 &1417059408
+  material: {fileID: 2100000, guid: 759847ae04fe6cf4d9173657531aeef2, type: 2}
+--- !u!1 &2133227661
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -477,112 +1167,34 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1417059412}
-  - component: {fileID: 1417059411}
-  - component: {fileID: 1417059410}
-  - component: {fileID: 1417059409}
+  - component: {fileID: 2133227662}
   m_Layer: 0
-  m_Name: Water
+  m_Name: Environment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!64 &1417059409
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1417059408}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1417059410
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1417059408}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 5e951416ba44b614e9c556d39d468a27, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1417059411
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1417059408}
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &1417059412
+  m_IsActive: 1
+--- !u!4 &2133227662
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1417059408}
+  m_GameObject: {fileID: 2133227661}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 104.5, y: 30.8, z: 99.7}
-  m_LocalScale: {x: 26, y: 26, z: 26}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_LocalPosition: {x: 4.0116596, y: -0.83805156, z: -0.5261097}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 282476667}
+  - {fileID: 321088210}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 282476667}
-  - {fileID: 321088210}
-  - {fileID: 204773915}
-  - {fileID: 380867274}
-  - {fileID: 1417059412}
+  - {fileID: 2133227662}
+  - {fileID: 1535505787}

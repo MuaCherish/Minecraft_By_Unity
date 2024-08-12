@@ -422,7 +422,7 @@ MonoBehaviour:
   Normal_Myposition: {x: 1000, y: 0, z: 0}
   isLoading: 0
   MainCamera: {fileID: 1520535468}
-  RenderWidth: 12
+  RenderWidth: 6
   ChunkPATH: {fileID: 0}
   material: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
   material_Water: {fileID: 2100000, guid: e401bc414787ebc4eaf3eb598c2a55cf, type: 2}
