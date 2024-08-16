@@ -1517,7 +1517,8 @@ public class Player : MonoBehaviour
             //}
 
             //(是竹子 || (是固体 && 不是基岩 && 不是水)则返回
-            if (world.GetBlockType(pos) == VoxelData.Bamboo || (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water))
+            //if (world.GetBlockType(pos) == VoxelData.Bamboo || (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water))
+            if(world.blocktypes[world.GetBlockType(pos)].canBeChoose)
             {
                 
 

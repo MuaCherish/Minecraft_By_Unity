@@ -17,7 +17,7 @@ public class Chunk : MonoBehaviour
     public bool isCalled = false;  //不要删我！！
     public bool iHaveWater = false; private bool haeExec_iHaveWater = true;
     public bool hasExec_isHadupdateWater = true;  //该标志允许一个Chunk每次只能更新一次水体
-
+    public bool isSuperPlainMode; 
 
     //Transform
     World world;
@@ -75,7 +75,7 @@ public class Chunk : MonoBehaviour
 
 
     //Start()
-    public Chunk(Vector3 thisPosition, World _world, bool _BaseChunk)
+    public Chunk(Vector3 thisPosition, World _world, bool _BaseChunk, bool _isSuperPlainMode)
     {
 
 
@@ -87,6 +87,7 @@ public class Chunk : MonoBehaviour
         noise3d_scale = world.noise3d_scale;
         Normal_treecount = world.terrainLayerProbabilitySystem.Normal_treecount;
         Forest_treecount = world.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
+        isSuperPlainMode = _isSuperPlainMode;
 
         //Self
         chunkObject = new GameObject();
@@ -97,35 +98,31 @@ public class Chunk : MonoBehaviour
         chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
-
+        rand = new System.Random(world.terrainLayerProbabilitySystem.Seed);
 
         //初始化Voxel数组
         InitVoxelStruct();
 
         //Data线程
-        rand = new System.Random(world.terrainLayerProbabilitySystem.Seed);
-        Thread myThread = new Thread(new ThreadStart(CreateData));
-        myThread.Start();
+
+        if (isSuperPlainMode)
+        {
+            Thread myThread = new Thread(new ThreadStart(CreateData_SuperPlain));
+            myThread.Start();
+        }
+        else
+        {
+            Thread myThread = new Thread(new ThreadStart(CreateData));
+            myThread.Start();
+        }
+        
 
 
         //print($"----------------------------------------------");
         //print($"{world.GetChunkLocation(myposition)}已经生成！");
     }
 
-    void InitVoxelStruct()
-    {
-        for (int x = 0; x < VoxelData.ChunkWidth; x++)
-        {
-            for (int y = 0; y < VoxelData.ChunkHeight; y++)
-            {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
-                {
-                    voxelMap[x, y, z] = new VoxelStruct(); // 初始化每个元素
-                }
-            }
-        }
-    }
-
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -585,7 +582,40 @@ public class Chunk : MonoBehaviour
 
     }
 
+    //超平坦世界
+    void CreateData_SuperPlain()
+    {
+        //对一个chunk进行遍历
+        for (int y = 0; y < 4; y++)
+        {
+            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            {
+                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                {
+                    if (y == 0)
+                    {
+                        voxelMap[x, y, z].voxelType = VoxelData.BedRock;
+                    }
+                    else if (y == 1 || y == 2)
+                    {
+                        voxelMap[x, y, z].voxelType = VoxelData.Soil;
+                    }
+                    else if (y == 3)
+                    {
+                        voxelMap[x, y, z].voxelType = VoxelData.Grass;
+                    }
+                    else
+                    {
+                        voxelMap[x, y, z].voxelType = VoxelData.Air;
+                    }
+                }
+            }
+        }
 
+        //交给world来create
+        world.WaitToCreateMesh.Enqueue(this);
+
+    }
 
 
     //---------------------------------- Tree ----------------------------------------
@@ -2449,6 +2479,19 @@ public class Chunk : MonoBehaviour
 
             return false;
 
+        }
+    }
+    void InitVoxelStruct()
+    {
+        for (int x = 0; x < VoxelData.ChunkWidth; x++)
+        {
+            for (int y = 0; y < VoxelData.ChunkHeight; y++)
+            {
+                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                {
+                    voxelMap[x, y, z] = new VoxelStruct(); // 初始化每个元素
+                }
+            }
         }
     }
 

@@ -46,11 +46,13 @@ public class World : MonoBehaviour
     [Header("Transforms")]
     public TMP_InputField input_Seed;
     public TMP_InputField input_RenderSize;
+    public CanvasManager canvasManager;
 
 
     [Header("游戏状态")]
     public Game_State game_state = Game_State.Start;
-    public GameMode game_mode = GameMode.Survival; 
+    public GameMode game_mode = GameMode.Survival;
+    public bool SuperPlainMode = false; 
 
 
     [Header("Material-方块类型")]
@@ -226,7 +228,8 @@ public class World : MonoBehaviour
 
             if (hasExec_SetSeed)
             {
-                
+                //获取当前模式
+                SuperPlainMode = canvasManager.SuperPlainToggle.isOn;
 
                 //开始初始化
                 Update_CenterChunks();
@@ -342,7 +345,7 @@ public class World : MonoBehaviour
     public void Start_Screen_Init()
     {
 
-        Chunk chunk_temp = new Chunk(new Vector3(5, 0, 2), this ,true);
+        Chunk chunk_temp = new Chunk(new Vector3(5, 0, 2), this ,true, false);
         //Chunk chunk_temp1 = new Chunk(new Vector3(3, 0, 2), this, true);
         //Chunk chunk_temp2 = new Chunk(new Vector3(3, 0, 2), this, true);
         
@@ -908,7 +911,7 @@ public class World : MonoBehaviour
         }
 
         //调用Chunk
-        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, true);
+        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, true, SuperPlainMode);
 
         //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
         //Chunk chunktemp = chunkGameObject.AddComponent<Chunk>();
@@ -935,7 +938,7 @@ public class World : MonoBehaviour
         }
 
         //调用Chunk
-        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, false);
+        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, false, SuperPlainMode);
 
         //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
         //Chunk chunktemp = chunkGameObject.AddComponent<Chunk>();
@@ -1541,7 +1544,7 @@ public class World : MonoBehaviour
 
         if(Allchunks.TryGetValue(GetChunkLocation(pos), out Chunk chunktemp))
         {
-            if ((int)GetRelalocation(pos).y >= VoxelData.ChunkHeight)
+            if ((int)GetRelalocation(pos).y >= VoxelData.ChunkHeight || (int)GetRelalocation(pos).y < 0)
             {
 
                 //isBlock = false;

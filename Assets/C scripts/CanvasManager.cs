@@ -37,6 +37,7 @@ public class CanvasManager : MonoBehaviour
 
     //InitScreen
     public TextMeshProUGUI ErrorMessage;
+    public Toggle SuperPlainToggle;
 
     //PlayingÆÁÄ»ÄÚÈİ
     public GameObject OpenYourEyes;
