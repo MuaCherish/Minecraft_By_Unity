@@ -1404,6 +1404,14 @@ public class Chunk : MonoBehaviour
 
         UpdateChunkMesh_WithSurround(true);
 
+        //将修改细节推送至World里
+        //Dictionary<Vector3, byte> a = new Dictionary<Vector3, byte>(){{pos, targetBlocktype}};
+
+        //world.UpdateSaveList(myposition, a);
+
+
+        //print($"CLocation:{world.GetChunkLocation(myposition)},ELocation:{pos},EType:{targetBlocktype}");
+        //print($"{world.SaveList.Count}");
     }
 
     //面生成的判断
@@ -1695,7 +1703,17 @@ public class Chunk : MonoBehaviour
             //自己与目标都是空气
             //或者自己与目标都是水
             //不生成面
-            if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Air) && voxelMap[x, y, z].voxelType == VoxelData.Air) || ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Water) && voxelMap[x, y, z].voxelType == VoxelData.Water))
+            //if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Air) && voxelMap[x, y, z].voxelType == VoxelData.Air) || ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Water) && voxelMap[x, y, z].voxelType == VoxelData.Water))
+            //{
+
+            //    return true;
+
+            //}
+
+            //voxelMap[x, y, z].voxelType
+            //voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType
+
+            if (voxelMap[x, y, z].voxelType == voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType)
             {
 
                 return true;
@@ -1734,12 +1752,18 @@ public class Chunk : MonoBehaviour
     bool CheckSelfAndTarget(byte _self, byte _target)
     {
 
-        // 如果自己是空气或灌木，无论如何都不生成面
-        if (world.blocktypes[_self].isTransparent)
+        // 如果目标是空气或者透明，无论如何生成面
+        if (world.blocktypes[_target].isTransparent || _target == VoxelData.Air)
         {
 
-            return true;
+            return false;
 
+        }
+
+        //如果自己和目标相等，不生成
+        if (_self == _target)
+        {
+            return true;
         }
 
         //如果自己是水
@@ -1767,16 +1791,17 @@ public class Chunk : MonoBehaviour
         //如果自己是雪碎片
         if (_self == VoxelData.SnowPower)
         {
+            
+
             //目标是水，生成
             //目标是transparent，生成
-            if (world.blocktypes[_target].isTransparent || _target == VoxelData.Water)
+            if (world.blocktypes[_target].isTransparent || _target == VoxelData.Water || _target == _self)
             {
                 return true;
             }
 
             //目标是固体，不生成
-            //目标是自己，不生成
-            if (world.blocktypes[_target].isSolid || _target == _self)
+            if (world.blocktypes[_target].isSolid)
             {
                 return false;
             }
@@ -2527,7 +2552,7 @@ public static class PerlinNoise
     }
 
 
-    public static float perlin(float x, float y)
+    public static float GetPerlinNoise(float x, float y) 
     {
         //声明二维坐标
         Vector2 pos = new Vector2(x, y);

@@ -2,7 +2,9 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
+using System.Xml;
 //using System.Diagnostics;
 using TMPro;
 using Unity.Collections.LowLevel.Unsafe;
@@ -10,6 +12,8 @@ using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using System;
+
 
 
 
@@ -84,6 +88,7 @@ public class World : MonoBehaviour
 
     //玩家
     [Header("Player-玩家脚底坐标")]
+    public List<SavaDataStruct> SaveList = new List<SavaDataStruct>();
     public Transform PlayerFoot;
     [HideInInspector]
     public byte ERROR_CODE_OUTOFVOXELMAP = 255;
@@ -192,7 +197,7 @@ public class World : MonoBehaviour
         Chunks.transform.SetParent(GameObject.Find("Environment").transform);
 
         //设置种子
-        terrainLayerProbabilitySystem.Seed = Random.Range(0, 100);
+        terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 100);
         rand = new System.Random(terrainLayerProbabilitySystem.Seed);
 
         //sea_level = Random.Range(20, 39);
@@ -251,7 +256,7 @@ public class World : MonoBehaviour
 
             //玩家移动刷新
             //如果大于16f
-            if (GetVector3Length(PlayerFoot.transform.position - Center_Now) > (StartToRender * 16f))
+            if (GetVector3Length(PlayerFoot.transform.position - Center_Now) > (StartToRender * 16f) && GetVector3Length(PlayerFoot.transform.position - Center_Now) <= ((StartToRender + 1) * 16f))
             {
 
                 //更新Center
@@ -261,6 +266,22 @@ public class World : MonoBehaviour
                 //添加Chunk
                 AddtoCreateChunks(Center_direction);
                 AddtoRemoveChunks(Center_direction);
+
+            }
+            //玩家移动过远距离
+            else if (GetVector3Length(PlayerFoot.transform.position - Center_Now) > ((StartToRender + 1) * 16f))
+            {
+
+                
+
+                if (Init_Map_Thread_NoInit_Coroutine == null)
+                {
+                    print("玩家移动太快！Center_Now已更新");
+                    Init_Map_Thread_NoInit_Coroutine = StartCoroutine(Init_Map_Thread_NoInit());
+                    HideFarChunks();
+                }
+
+                
 
             }
 
@@ -495,6 +516,31 @@ public class World : MonoBehaviour
     }
 
 
+    Coroutine Init_Map_Thread_NoInit_Coroutine;
+    IEnumerator Init_Map_Thread_NoInit()
+    {
+
+        Center_Now = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, 0, GetRealChunkLocation(PlayerFoot.transform.position).z);
+
+        for (int x = -renderSize + (int)(Center_Now.x / VoxelData.ChunkWidth); x < renderSize + (int)(Center_Now.x / VoxelData.ChunkWidth); x++)
+        {
+
+            for (int z = -renderSize + (int)(Center_Now.z / VoxelData.ChunkWidth); z < renderSize + (int)(Center_Now.z / VoxelData.ChunkWidth); z++)
+            {
+
+                //Create
+                CreateBaseChunk(new Vector3(x, 0, z));
+
+                yield return new WaitForSeconds(InitCorountineDelay);
+            }
+
+        }
+
+        Init_Map_Thread_NoInit_Coroutine = null;
+
+    }
+
+
     //更新中心区块
     public void Update_CenterChunks()
     {
@@ -502,6 +548,18 @@ public class World : MonoBehaviour
         //update加载中心区块
         StartCoroutine(Init_Map_Thread());
     
+    }
+
+
+    public void HideFarChunks()
+    {
+        foreach (var temp in Allchunks)
+        {
+            if (GetVector3Length(PlayerFoot.transform.position - temp.Value.myposition) > (StartToRender * 16f))
+            {
+                temp.Value.HideChunk();
+            }
+        }
     }
 
 
@@ -1694,6 +1752,26 @@ public class World : MonoBehaviour
         return new Vector2(a.x * b.x, a.y * b.y);
     }
 
+    //接收SavedataStruct
+    public void UpdateSaveList(Vector3 _C,Dictionary<Vector3,byte> _E)
+    {
+        foreach (var temp in SaveList)
+        {
+            if (temp.ChunkLocation == _C)
+            {
+                temp.EditData.Add(_E);
+                print("已找到");
+            }
+        }
+
+        //如果找不到就载入
+        SavaDataStruct dataStruct = new SavaDataStruct();
+        dataStruct.ChunkLocation = _C;
+        dataStruct.EditData.Add(_E);
+        SaveList.Add(dataStruct);
+        print("未找到");
+    }
+
 
 }
 
@@ -1832,3 +1910,13 @@ public class TerrainLayerProbabilitySystem
     public float Random_Blue_Crystal;
     public float Random_Diamond;
 }
+
+
+// 定义 SavaData 结构体
+[Serializable]
+public class SavaDataStruct
+{
+    public Vector3 ChunkLocation;
+    public List<Dictionary<Vector3,byte>> EditData = new List<Dictionary<Vector3, byte>>();
+}
+

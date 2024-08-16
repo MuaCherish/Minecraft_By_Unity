@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 //using UnityEngine.Experimental.GlobalIllumination;
@@ -32,6 +33,16 @@ public class NighManager : MonoBehaviour
     float light2Max = 0.4f;
     float light2Min = 0f;
 
+
+    [Header("云朵移动")]
+    public GameObject clouds;
+    public Transform playerLocation;
+    private SpriteRenderer spriteRenderer;
+    public float speed = 5f;
+    public float maxDistance = 1500f;
+    public Color DaylightColor;
+    public Color NightColor;
+
     //协程
     Coroutine skybox;
     Coroutine lights;
@@ -42,6 +53,7 @@ public class NighManager : MonoBehaviour
     private void Start()
     {
         RenderSettings.skybox.SetFloat("_Exposure", skyboxMax);
+        spriteRenderer = clouds.GetComponent<SpriteRenderer>();
     }
 
     private void FixedUpdate()
@@ -49,11 +61,15 @@ public class NighManager : MonoBehaviour
         if (world.game_state == Game_State.Playing && skybox == null)
         {
             skybox = StartCoroutine(SetSkybox());
+
+            InitClouds();
         }
 
         if (world.game_state == Game_State.Playing && lights == null)
         {
             lights = StartCoroutine(SetLights());
+
+            StartCoroutine(ColorSwitchRoutine());
         }
     }
 
@@ -172,6 +188,100 @@ public class NighManager : MonoBehaviour
             }
             directionalLight_2.intensity = light2Max;
             
+        }
+    }
+
+
+    void InitClouds()
+    {
+
+        // 记录初始位置
+        Vector3 startPosition = new Vector3(playerLocation.position.x, clouds.transform.position.y, playerLocation.position.z);
+        clouds.transform.position = startPosition;
+
+
+        // 随机生成XOZ平面上的一个方向
+        Vector3 randomDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
+
+        // 计算目标位置
+        Vector3 targetPosition = startPosition + randomDirection * maxDistance;
+
+        //显示
+        clouds.SetActive(true);
+
+        // 开始协程，传递必要的参数
+        StartCoroutine(MoveBackAndForth(startPosition, targetPosition));
+    }
+
+    IEnumerator MoveBackAndForth(Vector3 startPosition, Vector3 targetPosition)
+    {
+        bool movingToTarget = true;
+
+        while (true)
+        {
+
+            // 计算当前的目标位置
+            Vector3 target = movingToTarget ? targetPosition : startPosition;
+
+            // 移动物体
+            clouds.transform.position = Vector3.MoveTowards(clouds.transform.position, target, speed * Time.deltaTime);
+
+            // 如果到达目标位置，则切换方向
+            if (Vector3.Distance(clouds.transform.position, target) < 0.01f)
+            {
+                movingToTarget = !movingToTarget;
+            }
+
+            // 等待下一帧
+            yield return null;
+        }
+    }
+
+
+    IEnumerator ColorSwitchRoutine()
+    {
+        while (true)
+        {
+            // 等待10秒
+            yield return new WaitForSeconds(DayTime);
+
+            // 插值颜色从DaylightColor到NightColor
+            yield return StartCoroutine(LerpColor(DaylightColor, NightColor, switchTime));
+
+            // 再次等待10秒
+            yield return new WaitForSeconds(NightTime);
+
+            // 插值颜色从NightColor到DaylightColor
+            yield return StartCoroutine(LerpColor(NightColor, DaylightColor, switchTime));
+
+        }
+    }
+
+    IEnumerator LerpColor(Color startColor, Color endColor, float duration)
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            if (spriteRenderer == null)
+            {
+                yield break; // 如果 spriteRenderer 不存在，则退出协程
+            }
+
+            // 计算插值颜色
+            spriteRenderer.color = Color.Lerp(startColor, endColor, elapsedTime / duration);
+
+            // 增加已用时间
+            elapsedTime += Time.deltaTime;
+
+            // 等待下一帧
+            yield return null;
+        }
+
+        // 确保颜色最终设置为目标颜色
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = endColor;
         }
     }
 }

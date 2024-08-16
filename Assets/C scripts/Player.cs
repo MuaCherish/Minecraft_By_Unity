@@ -52,6 +52,7 @@ public class Player : MonoBehaviour
     public float squatSpeed = 3f;
     public float jumpForce = 6f;
     public float gravity = -15f;
+    public float mass = 1f;
     public float MaxHurtHigh = 7f;
 
 
@@ -213,6 +214,7 @@ public class Player : MonoBehaviour
         //X = [800,1600]
         //Z = [400,800]
         transform.position = new Vector3(Random.Range(800,3200), transform.position.y, Random.Range(800, 3200));
+
         //print(transform.position);
     }
 
@@ -329,7 +331,7 @@ public class Player : MonoBehaviour
         {
 
             if (verticalMomentum > gravity)
-                verticalMomentum += Time.fixedDeltaTime * gravity;
+                verticalMomentum += Time.fixedDeltaTime * gravity * mass;
 
         }
         else
@@ -1065,6 +1067,7 @@ public class Player : MonoBehaviour
             }
 
 
+
             //松开
             else
             {
@@ -1314,7 +1317,7 @@ public class Player : MonoBehaviour
             {
 
                 //(右上固体 && 右上延伸不是固体) || (右下固体 && 右下延伸不是固体)
-                if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x - extend_delta, down_左上.y, down_左上.z))) || (world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))))
+                if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x, down_左上.y, down_左上.z - extend_delta))) || (world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x, down_右上.y, down_右上.z - extend_delta))))
                 {
 
                     return true;

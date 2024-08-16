@@ -825,6 +825,8 @@ public class CanvasManager : MonoBehaviour
 
         world.Update_CenterChunks();
 
+        world.HideFarChunks();
+
         openyoureyes();
     }
     //--------------------------------------------------------------------------------------
