@@ -109,6 +109,7 @@ public class Chunk : MonoBehaviour
         {
             Thread myThread = new Thread(new ThreadStart(CreateData_SuperPlain));
             myThread.Start();
+            //CreateData_SuperPlain();
         }
         else
         {
@@ -614,7 +615,7 @@ public class Chunk : MonoBehaviour
 
         //交给world来create
         world.WaitToCreateMesh.Enqueue(this);
-
+        //UpdateChunkMesh_WithSurround(false, true);
     }
 
 
@@ -1273,15 +1274,18 @@ public class Chunk : MonoBehaviour
 
     //---------------------------------- Mesh部分 ----------------------------------------
 
-    //开始遍历
+    //开始遍历 
     public void UpdateChunkMesh_WithSurround() //参数重载，如果不写默认为false
     {
 
-        UpdateChunkMesh_WithSurround(false);
+        UpdateChunkMesh_WithSurround(false, false);
 
     }
 
-    public void UpdateChunkMesh_WithSurround(object obj)
+
+    //参数1：true会呼叫周边区块
+    //参数2：true不会使用多线程
+    public void UpdateChunkMesh_WithSurround(object obj, bool NotNeedThreading)
     {
 
         bool iscaller = (bool)obj;
@@ -1306,9 +1310,14 @@ public class Chunk : MonoBehaviour
 
                     //[已废弃，移动至单独的线程执行]水的流动
                     //updateWater();
-
                     // 非空气 - 渲染
                     // 水面上 - 渲染
+
+                    //if (voxelMap[x, y, z].voxelType == VoxelData.Sand)
+                    //{
+                    //    print("");
+                    //}
+
                     if (world.blocktypes[voxelMap[x, y, z].voxelType].DrawMode != DrawMode.Air)
                         UpdateMeshData(new Vector3(x, y, z));
 
@@ -1370,20 +1379,30 @@ public class Chunk : MonoBehaviour
 
         }
 
-        if (world.RenderLock)
+
+        if (NotNeedThreading)
         {
-
-            world.WaitToRender_temp.Enqueue(this);
-            //print($"{world.GetChunkLocation(myposition)}被堵塞，入队temp");
-
+            CreateMesh();
         }
         else
         {
+            
+            if (world.RenderLock)
+            {
 
-            //print($"{world.GetChunkLocation(myposition)}入队");
-            world.WaitToRender.Enqueue(this);
+                world.WaitToRender_temp.Enqueue(this);
+                //print($"{world.GetChunkLocation(myposition)}被堵塞，入队temp");
 
+            }
+            else
+            {
+
+                //print($"{world.GetChunkLocation(myposition)}入队");
+                world.WaitToRender.Enqueue(this);
+
+            }
         }
+        
 
 
         if (BaseChunk == true)
@@ -1413,7 +1432,7 @@ public class Chunk : MonoBehaviour
     }
 
     //编辑方块
-    public void EditData(Vector3 pos, byte targetBlocktype)
+    public void EditData(Vector3 pos, byte targetBlocktype) 
     {
 
         //ClearFInd_Direvtion();
@@ -1432,7 +1451,7 @@ public class Chunk : MonoBehaviour
 
         voxelMap[x, y, z].voxelType = targetBlocktype;
 
-        UpdateChunkMesh_WithSurround(true);
+        UpdateChunkMesh_WithSurround(true, false);
 
         //将修改细节推送至World里
         //Dictionary<Vector3, byte> a = new Dictionary<Vector3, byte>(){{pos, targetBlocktype}};
@@ -1454,7 +1473,8 @@ public class Chunk : MonoBehaviour
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
 
-        //print($"{x},{y},{z}");
+        
+      //print($"{x},{y},{z}");
 
 
         //如果目标出界
@@ -1504,7 +1524,7 @@ public class Chunk : MonoBehaviour
                         //{
                         //    return true;
                         //}
-                        return CheckSelfAndTarget(voxelMap[x, y, z - 1].voxelType, chunktemp.voxelMap[x, y, 0].voxelType);
+                        return CheckSelfAndTarget(voxelMap[x, y, z - 1].voxelType, chunktemp.voxelMap[x, y, 0].voxelType, 0);
 
 
                     }
@@ -1559,7 +1579,7 @@ public class Chunk : MonoBehaviour
                         //}
 
 
-                        return CheckSelfAndTarget(voxelMap[x, y, z + 1].voxelType, chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1].voxelType);
+                        return CheckSelfAndTarget(voxelMap[x, y, z + 1].voxelType, chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1].voxelType, 0);
 
 
                     }
@@ -1612,7 +1632,7 @@ public class Chunk : MonoBehaviour
                         //    return true;
                         //}
 
-                        return CheckSelfAndTarget(voxelMap[x + 1, y, z].voxelType, chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z].voxelType);
+                        return CheckSelfAndTarget(voxelMap[x + 1, y, z].voxelType, chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z].voxelType, 0);
 
                     }
                     else
@@ -1664,7 +1684,7 @@ public class Chunk : MonoBehaviour
                         //    return true;
                         //}
 
-                        return CheckSelfAndTarget(voxelMap[x - 1, y, z].voxelType, chunktemp.voxelMap[0, y, z].voxelType);
+                        return CheckSelfAndTarget(voxelMap[x - 1, y, z].voxelType, chunktemp.voxelMap[0, y, z].voxelType, 0);
 
                     }
                     else
@@ -1728,61 +1748,93 @@ public class Chunk : MonoBehaviour
             //}
 
 
+            byte _self = voxelMap[x, y, z].voxelType;
+            byte _target = voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType;
 
-
-            //自己与目标都是空气
-            //或者自己与目标都是水
-            //不生成面
-            //if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Air) && voxelMap[x, y, z].voxelType == VoxelData.Air) || ((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Water) && voxelMap[x, y, z].voxelType == VoxelData.Water))
+            //if (_target == VoxelData.Water)
             //{
 
-            //    return true;
+            //    print("");
 
             //}
 
             //voxelMap[x, y, z].voxelType
             //voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType
 
-            if (voxelMap[x, y, z].voxelType == voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType)
-            {
+            return CheckSelfAndTarget(_self, _target, -(int)VoxelData.faceChecks[_p].y);
 
-                return true;
+            
 
-            }
-            else // 生成面的情况
-            {
-                //如果自己是水，目标是空气
-                //生成面
-                if (((voxelMap[x - (int)VoxelData.faceChecks[_p].x, y - (int)VoxelData.faceChecks[_p].y, z - (int)VoxelData.faceChecks[_p].z].voxelType == VoxelData.Water) && voxelMap[x, y, z].voxelType == VoxelData.Air))
-                {
-
-                    return false;
-
-                }
-
-            }
-
-            //判断是不是透明方块
-            if (world.blocktypes[voxelMap[x, y, z].voxelType].isTransparent)
-            {
-
-                return false;
-
-            }
-
+            
         }
 
 
-        return world.blocktypes[voxelMap[x, y, z].voxelType].isSolid;
+
 
     }
 
     //接收自己和目标的类型，判断是否生成面
     //false：不生成
-    bool CheckSelfAndTarget(byte _self, byte _target)
+    //_targetRelativeY:1目标在上方，-1目标在下方，0为同一平面
+    bool CheckSelfAndTarget(byte _self, byte _target, int _targetRelativeY)
     {
 
-        // 如果目标是空气或者透明，无论如何生成面
+
+        //半砖专区
+        //if (_self == VoxelData.SnowPower && world.blocktypes[_target].isSolid)
+        //{
+        //    //如果固体在自己上方则生成，其他不生成
+        //    if (_targetRelativeY == 1)
+        //    {
+        //        return false;
+        //    }
+        //    else
+        //    {
+        //        return true;
+        //    }
+        //}
+        ////目标是半砖
+        //if (_target == VoxelData.SnowPower)
+        //{
+        //    //如果自己是半砖
+        //    if (_self == VoxelData.SnowPower)
+        //    {
+        //        //四周是自己时不生成，其他生成
+        //        if (Mathf.Abs(_targetRelativeY) != 1)
+        //        {
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    //如果自己是固体
+        //    else if (world.blocktypes[_self].isSolid)
+        //    {
+        //        //上方是半砖时不生成, 其他生成
+        //        if (_targetRelativeY == 1)
+        //        {
+        //            return false;
+
+        //        }
+        //        else
+        //        {
+        //            return true;
+        //        }
+
+        //    }
+        //    //其他都不生成
+        //    else
+        //    {
+        //        return true;
+        //    }
+        //}
+
+        //通用判断
+        
+
+        //判断是不是透明方块
         if (world.blocktypes[_target].isTransparent || _target == VoxelData.Air)
         {
 
@@ -1790,81 +1842,112 @@ public class Chunk : MonoBehaviour
 
         }
 
-        //如果自己和目标相等，不生成
+        if (_target == VoxelData.SnowPower && _self != VoxelData.SnowPower)
+        {
+            return false;
+        }
+
+        if (_target == VoxelData.Water && _self != VoxelData.Water)
+        {
+            return false; 
+        }
+
         if (_self == _target)
         {
+
             return true;
-        }
-
-        //如果自己是水
-        // 目标是Transparent，生成
-        //目标是水或者固体，不生成
-        if (_self == VoxelData.Water)
-        {
-
-            if (world.blocktypes[_target].isTransparent)
-            {
-
-                return false;
-
-            }
-
-            if (_target == VoxelData.Water || world.blocktypes[_target].isSolid)
-            {
-
-                return true;
-
-            }
 
         }
 
-        //如果自己是雪碎片
-        if (_self == VoxelData.SnowPower)
-        {
-            
+        //if (_target == VoxelData.Air || world.blocktypes[_target].isTransparent)
+        //{
+        //    return false;
+        //}
 
-            //目标是水，生成
-            //目标是transparent，生成
-            if (world.blocktypes[_target].isTransparent || _target == VoxelData.Water || _target == _self)
-            {
-                return true;
-            }
-
-            //目标是固体，不生成
-            if (world.blocktypes[_target].isSolid)
-            {
-                return false;
-            }
-
-
-
-        }
-
-        //如果自己是固体
-        //目标是固体，则不生成
-        //其他都生成
-        if (world.blocktypes[_self].isSolid)
-        {
-
-            if (world.blocktypes[_target].isSolid)
-            {
-
-                return true;
+        //if (_target == VoxelData.Water)
+        //{
+        //    if (_self == VoxelData.Water)
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
+        //if (world.blocktypes[_target].isSolid)
+        //{ 
+        //    return true;
+        //}
 
 
-            }
-            else
-            {
+        //print("生成了奇怪的面");
+        return world.blocktypes[_self].isSolid;
 
-                return false;
+        // 如果目标是空气或者透明，无论如何生成面
+        //if (world.blocktypes[_target].isTransparent || _target == VoxelData.Air)
+        //{
 
-            }
+        //    return false;
 
-        }
+        //}
+
+        ////如果自己和目标相等，不生成
+        //if (_self == _target)
+        //{
+        //    return true;
+        //}
+
+        ////如果自己是水
+        //// 目标是Transparent，生成
+        ////目标是水或者固体，不生成
+        //if (_self == VoxelData.Water)
+        //{
+
+        //    if (world.blocktypes[_target].isSolid)
+        //    {
+
+        //        return true;
+
+        //    }
+
+        //}
+
+        ////如果自己是雪碎片
+        //if (_self == VoxelData.SnowPower)
+        //{
+
+
+        //    //目标是水，生成
+        //    //目标是transparent，生成
+        //    if (world.blocktypes[_target].isTransparent || _target == VoxelData.Water || _target == _self)
+        //    {
+        //        return true;
+        //    }
+
+        //    //目标是固体，不生成
+        //    if (world.blocktypes[_target].isSolid)
+        //    {
+        //        return false;
+        //    }
 
 
 
-        return true;
+        //}
+
+        ////如果自己是固体
+        ////目标是固体，则不生成
+        ////其他都生成
+        //if (world.blocktypes[_self].isSolid)
+        //{
+
+        //    return false;
+
+        //}
+
+
+
+        //return true;
 
     }
 
@@ -1880,13 +1963,14 @@ public class Chunk : MonoBehaviour
 
         byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z].voxelType;
 
+
         //方块绘制模式
         switch (world.blocktypes[voxelMap[x, y, z].voxelType].DrawMode)
         {
 
             case DrawMode.Bush:// Bush绘制模式
 
-                for (int faceIndex = 0; faceIndex < 4; faceIndex++)
+                for (int faceIndex = 0; faceIndex < 4; faceIndex++) 
                 {
 
                     vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris_Bush[faceIndex, 0]]);
@@ -1966,7 +2050,7 @@ public class Chunk : MonoBehaviour
                     {
 
                         //如果上下方有水，则换成方块的渲染方式
-                        if ((voxelMap[(int)pos.x, (int)pos.y + 1, (int)pos.z].voxelType == VoxelData.Water || voxelMap[(int)pos.x, (int)pos.y - 1, (int)pos.z].voxelType == VoxelData.Water) && p != 2 && p != 3 && voxelMap[(int)pos.x, (int)pos.y + 1, (int)pos.z].voxelType != VoxelData.Air)
+                        if ((voxelMap[(int)pos.x, (int)pos.y + 1, (int)pos.z].voxelType == VoxelData.Water || voxelMap[(int)pos.x, (int)pos.y - 1, (int)pos.z].voxelType == VoxelData.Water) && p != 2  && voxelMap[(int)pos.x, (int)pos.y + 1, (int)pos.z].voxelType != VoxelData.Air)
                         {
 
                             vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
@@ -1995,11 +2079,12 @@ public class Chunk : MonoBehaviour
                             vertexIndex += 4;
 
                         }
-                        else
+                        
+                        //如果是水面
+                        else if (voxelMap[x, y, z].voxelType == VoxelData.Water && voxelMap[x, y + 1, z].voxelType == VoxelData.Air)
                         {
-
-                            //如果朝上 && 是水面 && 上方是空气 => 尝试搜索周边水面进行面的融合
-                            if (p == 2 && voxelMap[x, y, z].voxelType == VoxelData.Water && voxelMap[x, y + 1, z].voxelType == VoxelData.Air && voxelMap[x, y, z].up == true)
+                            //面融合算法
+                            if (p == 2 && voxelMap[x, y, z].up == true)
                             {
                                 int _zz = 0;
                                 int _xx = 0;
@@ -2138,34 +2223,31 @@ public class Chunk : MonoBehaviour
                                 triangles_Water.Add(vertexIndex + 1);
                                 triangles_Water.Add(vertexIndex + 3);
                                 vertexIndex += 4;
-
                             }
-                            
-                            //加上会导致水面生成两次，面会叠加
-                            //else
-                            //{
-                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
-                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
-                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
+                            else
+                            {
+                                vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                                vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
+                                vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
+                                vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
 
-                            //    //根据p生成对应的面，对应的UV
-                            //    //AddTexture(world.blocktypes[blockID].GetTextureID(p));
-                            //    uvs.Add(new Vector2(0f, 0f));
-                            //    uvs.Add(new Vector2(0f, 1f));
-                            //    uvs.Add(new Vector2(1f, 0f));
-                            //    uvs.Add(new Vector2(1f, 1f));
+                                //根据p生成对应的面，对应的UV
+                                //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                                uvs.Add(new Vector2(0f, 0f));
+                                uvs.Add(new Vector2(0f, 1f));
+                                uvs.Add(new Vector2(1f, 0f));
+                                uvs.Add(new Vector2(1f, 1f));
 
-                            //    triangles_Water.Add(vertexIndex);
-                            //    triangles_Water.Add(vertexIndex + 1);
-                            //    triangles_Water.Add(vertexIndex + 2);
-                            //    triangles_Water.Add(vertexIndex + 2);
-                            //    triangles_Water.Add(vertexIndex + 1);
-                            //    triangles_Water.Add(vertexIndex + 3);
-                            //    vertexIndex += 4;
-                            //}
-
+                                triangles_Water.Add(vertexIndex);
+                                triangles_Water.Add(vertexIndex + 1);
+                                triangles_Water.Add(vertexIndex + 2);
+                                triangles_Water.Add(vertexIndex + 2); 
+                                triangles_Water.Add(vertexIndex + 1);
+                                triangles_Water.Add(vertexIndex + 3);
+                                vertexIndex += 4;
+                            }
                         }
+
 
 
 

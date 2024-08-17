@@ -944,6 +944,13 @@ public class Player : MonoBehaviour
 
             Vector3 pos = cam.position + (cam.forward * step);
 
+            //异常检测
+            if (pos.y < 0)
+            {
+                pos = new Vector3(pos.x,0, pos.z);
+            }
+
+
             if (world.eyesCheckForVoxel(pos))
             {
                 point_Block_type = world.GetBlockType(pos);
@@ -1496,7 +1503,6 @@ public class Player : MonoBehaviour
 
 
 
-
     //射线检测——返回打中的方块的相对坐标
     //没打中就是(0,0,0)
     Vector3 RayCast_now()
@@ -1510,6 +1516,12 @@ public class Player : MonoBehaviour
 
             Vector3 pos = cam.position + (cam.forward * step);
 
+            //异常检测
+            if (pos.y < 0)
+            {
+                pos = new Vector3(pos.x, 0, pos.z);
+            }
+
             // 绘制射线以便调试
             //if (debug_ray)
             //{
@@ -1518,7 +1530,7 @@ public class Player : MonoBehaviour
 
             //(是竹子 || (是固体 && 不是基岩 && 不是水)则返回
             //if (world.GetBlockType(pos) == VoxelData.Bamboo || (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water))
-            if(world.blocktypes[world.GetBlockType(pos)].canBeChoose)
+            if (world.blocktypes[world.GetBlockType(pos)].canBeChoose)
             {
                 
 
