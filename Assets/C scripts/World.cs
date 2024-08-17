@@ -1689,31 +1689,47 @@ public class World : MonoBehaviour
     //----------------------------------------------------------------------------------------
 
 
-
+    public Vector3 testPos;
 
     //对玩家碰撞盒的方块判断
     //true：有碰撞
     public bool CheckForVoxel(Vector3 pos)
     {
+        //if (GetBlockType(pos) == VoxelData.Wood)
+        //{
+        //    print("");
+        //}
 
         //计算相对坐标
         Vector3 vec = GetRelalocation(new Vector3(pos.x, pos.y, pos.z));
-
-        //查一下该地形是否存在
-        //Allchunks.TryGetValue(GetChunkLocation(pos), out obj);
-        //if (obj.myState == false)
-        //{
-        //    return true;
-        //}
-
+        
         //判断XOZ上有没有出界
         if (!Allchunks.ContainsKey(GetChunkLocation(pos))) { return true; }
 
         //判断Y上有没有出界
         if (vec.y >= VoxelData.ChunkHeight) { return false; }
 
-        //竹子返回false
-        if (GetBlockType(pos) == VoxelData.Bamboo) { return false; }
+        //小于0
+        if (vec.y < 0) { return false; }
+
+        //识别半砖算法
+        //if (GetBlockType(pos) == VoxelData.Wood)
+        //{
+        //    print("Wood");
+        //    Vector3 _vec = pos;
+            
+             
+        //    if (pos.y - (int)pos.y > 0.5f)
+        //    {
+        //        _vec += new Vector3(0f,0.5f,0f);
+                
+        //        testPos = _vec;
+        //    } 
+
+        //    _vec = GetRelalocation(_vec);
+        //    return blocktypes[Allchunks[GetChunkLocation(pos)].voxelMap[(int)_vec.x, (int)_vec.y, (int)_vec.z].voxelType].isSolid;
+            
+        //}
 
         //返回固体还是空气
         return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z].voxelType].isSolid;

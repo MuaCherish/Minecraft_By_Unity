@@ -109,9 +109,8 @@ public static class VoxelData
     public static readonly Byte Snow = 29;
     public static readonly Byte SnowPower = 30;
     public static readonly Byte Mycelium = 31;   //菌丝体
+    public static readonly Byte Cobblestone = 32; //圆石
     
-
-
     //音乐宏定义
     //宏定义
     /*

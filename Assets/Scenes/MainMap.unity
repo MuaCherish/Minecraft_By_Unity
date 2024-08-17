@@ -9459,6 +9459,29 @@ MonoBehaviour:
     leftFaceTexture: 37
     rightFaceTexture: 37
     DrawMode: 0
+  - blockName: Cobblestone
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    icon: {fileID: -1416841753, guid: 39baecea2283c6248b1ecc8adb3564d2, type: 3}
+    texture: {fileID: 2800000, guid: 748f4f147510e4b44894a406d0fc53c0, type: 3}
+    dropsprite: {fileID: -1416841753, guid: 39baecea2283c6248b1ecc8adb3564d2, type: 3}
+    top_dropsprite: {fileID: -1416841753, guid: 39baecea2283c6248b1ecc8adb3564d2, type: 3}
+    Particle_Material: {fileID: 2100000, guid: f25fe9fe149ec9648b6547a75179bd11, type: 2}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 16
+    frontFaceTexture: 16
+    topFaceTexture: 16
+    bottomFaceTexture: 16
+    leftFaceTexture: 16
+    rightFaceTexture: 16
+    DrawMode: 0
   renderSize: 6
   StartToRender: 1
   DestroySize: 7
@@ -9532,6 +9555,7 @@ MonoBehaviour:
   RenderLock: 0
   MeshLock: 0
   InitError: 0
+  testPos: {x: 0, y: 0, z: 0}
 --- !u!4 &699955242
 Transform:
   m_ObjectHideFlags: 0
