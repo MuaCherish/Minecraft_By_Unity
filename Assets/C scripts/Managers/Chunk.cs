@@ -17,7 +17,10 @@ public class Chunk : MonoBehaviour
     public bool isCalled = false;  //不要删我！！
     public bool iHaveWater = false; private bool haeExec_iHaveWater = true;
     public bool hasExec_isHadupdateWater = true;  //该标志允许一个Chunk每次只能更新一次水体
-    public bool isSuperPlainMode; 
+
+    //Biome
+    public int worldType = 5;
+    //public bool isSuperPlainMode; 
 
     //Transform
     World world;
@@ -59,6 +62,7 @@ public class Chunk : MonoBehaviour
 
 
     //多线程变量
+    Thread myThread;
     public System.Random rand;
     public Vector3 myposition;
 
@@ -75,7 +79,7 @@ public class Chunk : MonoBehaviour
 
 
     //Start()
-    public Chunk(Vector3 thisPosition, World _world, bool _BaseChunk, bool _isSuperPlainMode)
+    public Chunk(Vector3 thisPosition, World _world, bool _BaseChunk)
     {
 
 
@@ -87,7 +91,7 @@ public class Chunk : MonoBehaviour
         noise3d_scale = world.noise3d_scale;
         Normal_treecount = world.terrainLayerProbabilitySystem.Normal_treecount;
         Forest_treecount = world.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
-        isSuperPlainMode = _isSuperPlainMode;
+        //isSuperPlainMode = _isSuperPlainMode;
 
         //Self
         chunkObject = new GameObject();
@@ -98,26 +102,52 @@ public class Chunk : MonoBehaviour
         chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
-        rand = new System.Random(world.terrainLayerProbabilitySystem.Seed);
+        rand = new System.Random(world.worldSetting.seed);
 
         //初始化Voxel数组
         InitVoxelStruct();
 
-        //Data线程
 
-        if (isSuperPlainMode)
-        {
-            Thread myThread = new Thread(new ThreadStart(CreateData_SuperPlain));
-            myThread.Start();
-            //CreateData_SuperPlain();
-        }
-        else
-        {
-            Thread myThread = new Thread(new ThreadStart(CreateData));
-            myThread.Start();
-        }
+        //获取群系类型
+        worldType = world.canvasManager.currentWorldType;
+
         
+        switch (worldType)
+        {
+            //草原群系
+            case 0:
+                myThread = new Thread(new ThreadStart(CreateData));
+                break;
+            //高原群系
+            case 1:
+                myThread = new Thread(new ThreadStart(CreateData));
+                break;
+            //沙漠群系
+            case 2:
+                myThread = new Thread(new ThreadStart(CreateData_Dessert));
+                break;
+            //沼泽群系
+            case 3:
+                myThread = new Thread(new ThreadStart(CreateData_Marsh));
+                break;
+            //密林群系
+            case 4:
+                myThread = new Thread(new ThreadStart(CreateData_Forest));
+                break;
+            //默认
+            case 5:
+                myThread = new Thread(new ThreadStart(CreateData));
+                break;
+            //超平坦
+            case 6:
+                myThread = new Thread(new ThreadStart(CreateData_SuperPlain));
+                break;
+            default:
+                print("chunk.worldType出错");
+                break;
+        }
 
+        myThread.Start();
 
         //print($"----------------------------------------------");
         //print($"{world.GetChunkLocation(myposition)}已经生成！");
@@ -256,7 +286,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition);
+                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.canvasManager.currentWorldType);
 
 
                     //矿洞噪声
@@ -618,6 +648,879 @@ public class Chunk : MonoBehaviour
         //UpdateChunkMesh_WithSurround(false, true);
     }
 
+    //沙漠群系
+    void CreateData_Dessert()
+    {
+        //对一个chunk进行遍历
+        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        {
+            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            {
+                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                {
+
+
+
+                    //地形噪声
+                    //float noiseHigh = GetTotalNoiseHigh(x, z);
+                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.canvasManager.currentWorldType);
+                    //矿洞噪声
+                    float noise3d = GetCaveNoise(x, y, z);
+
+                    //判断基岩
+                    //0~3层不准生成矿洞
+                    if (y >= 0 && y <= 3)
+                    {
+
+                        if (y == 0)
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.BedRock;
+
+                        }
+                        else if (y > 0 && y < 3 && GetProbability(50))
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.BedRock;
+
+                        }
+                        else
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Stone;
+
+                        }
+                    }
+                    //空气部分
+                    else if (y > noiseHigh && y > world.terrainLayerProbabilitySystem.sea_level)
+                    {
+
+                        //地上一层
+                        if (y - 1 < noiseHigh)
+                        {
+
+                            if (voxelMap[x, y - 1, z].voxelType == VoxelData.Sand && GetProbability(world.terrainLayerProbabilitySystem.Random_Bamboo))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Air;
+                                Bamboos.Enqueue(new Vector3(x, y, z));
+
+                            }
+                            else
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                            }
+                        }
+
+                        else
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                        }
+                    }
+                    //空气之下
+                    else
+                    {
+
+                        //地表
+                        if ((y + 1) > noiseHigh)
+                        {
+                            voxelMap[x, y, z].voxelType = VoxelData.Sand;
+                        }
+
+
+                        //泥土的判断
+                        else if (y > noiseHigh - 7)
+                        {
+                            voxelMap[x, y, z].voxelType = VoxelData.Sand;
+
+
+                        }
+                        else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
+                        {
+                            //沙漠判断
+                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Sand;
+                            }
+                            else
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Soil;
+                            }
+
+
+                        }
+                        //矿洞
+                        else if (noise3d < GetVaveWidth(y))
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                        }
+
+                        //地下判断
+                        else
+                        {
+
+                            //煤炭
+                            if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Coal))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Stone;
+                                Coals.Enqueue(new Vector3(x, y, z));
+
+                            }
+
+                            //铁
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Iron))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Iron;
+
+                            }
+
+                            //金
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Gold))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Gold;
+
+                            }
+
+                            //青金石
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Blue_Crystal;
+
+                            }
+
+                            //钻石
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Diamond))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Diamond;
+
+                            }
+
+                            else
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Stone;
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        //补充树
+        //CreateTree();
+
+        //补充煤炭
+        foreach (var item in Coals)
+        {
+
+            CreateCoal((int)item.x, (int)item.y, (int)item.z);
+
+        }
+
+        //补充竹子
+        foreach (var item in Bamboos)
+        {
+
+            CreateBamboo((int)item.x, (int)item.y, (int)item.z);
+
+        }
+
+        //交给world来create
+        world.WaitToCreateMesh.Enqueue(this);
+    }
+
+    //沼泽群系
+    void CreateData_Marsh()
+    {
+
+
+        //对一个chunk进行遍历
+        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        {
+            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            {
+                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                {
+
+                    //地形噪声
+                    //float noiseHigh = GetTotalNoiseHigh(x, z);
+                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.canvasManager.currentWorldType);
+
+
+                    //矿洞噪声
+                    float noise3d = GetCaveNoise(x, y, z);
+
+                    //判断基岩
+                    //0~3层不准生成矿洞
+                    if (y >= 0 && y <= 3)
+                    {
+
+                        if (y == 0)
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.BedRock;
+
+                        }
+                        else if (y > 0 && y < 3 && GetProbability(50))
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.BedRock;
+
+                        }
+                        else
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Stone;
+
+                        }
+                    }
+                    //空气部分
+                    else if (y > noiseHigh && y > world.terrainLayerProbabilitySystem.sea_level)
+                    {
+
+                        //地上一层
+                        if (y - 1 < noiseHigh)
+                        {
+
+                            //草地层
+                            if (voxelMap[x, y - 1, z].voxelType != VoxelData.Sand && voxelMap[x, y - 1, z].voxelType != VoxelData.Air && voxelMap[x, y - 1, z].voxelType != VoxelData.Snow)
+                            {
+
+                                //灌木丛
+                                if (GetProbability(world.terrainLayerProbabilitySystem.Random_Bush))
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.Bush;
+
+                                }
+                                //BlueFlower
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_BlueFlower))
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.BlueFlower;
+
+                                }
+                                //WhiteFlower_1
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower1))
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.WhiteFlower_1;
+
+                                }
+                                //WhiteFlower_2
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower2))
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.WhiteFlower_2;
+
+                                }
+                                //YellowFlower
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_YellowFlower))
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.YellowFlower;
+
+                                }
+                                //草地雪碎片
+                                else if (y > world.terrainLayerProbabilitySystem.Snow_Level - 10)
+                                {
+                                    voxelMap[x, y, z].voxelType = VoxelData.SnowPower;
+                                }
+                                else
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                                }
+                            }
+
+                            //雪地层概率生成雪碎片
+                            else if (voxelMap[x, y - 1, z].voxelType == VoxelData.Snow && GetProbability(50))
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.SnowPower;
+                            }
+
+
+                            //沙子层
+                            else if (voxelMap[x, y - 1, z].voxelType == VoxelData.Sand && GetProbability(world.terrainLayerProbabilitySystem.Random_Bamboo))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Air;
+                                Bamboos.Enqueue(new Vector3(x, y, z));
+
+                            }
+                            else
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                            }
+                        }
+
+                        else
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                        }
+                    }
+
+                    //判断水面
+                    else if (y > noiseHigh && y - 1 < world.terrainLayerProbabilitySystem.sea_level)
+                    {
+
+                        voxelMap[x, y, z].voxelType = VoxelData.Water;
+
+                    }
+
+                    //空气之下
+                    else
+                    {
+
+                        //地表
+                        if ((y + 1) > noiseHigh)
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Mycelium;
+                        }
+
+
+                        //泥土的判断
+                        else if (y > noiseHigh - 7)
+                        {
+                            voxelMap[x, y, z].voxelType = VoxelData.Soil;
+
+
+                        }
+                        else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Soil;
+
+
+                        }
+
+
+
+
+
+                        //矿洞
+                        else if (noise3d < GetVaveWidth(y))
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                        }
+
+                        //地下判断
+                        else
+                        {
+
+                            //煤炭
+                            if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Coal))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Stone;
+                                Coals.Enqueue(new Vector3(x, y, z));
+
+                            }
+
+                            //铁
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Iron))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Iron;
+
+                            }
+
+                            //金
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Gold))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Gold;
+
+                            }
+
+                            //青金石
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Blue_Crystal;
+
+                            }
+
+                            //钻石
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Diamond))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Diamond;
+
+                            }
+
+                            else
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Stone;
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        //补充树
+        //[确定XZ]xoz上随便选择5个点
+        int _Forest_treecount = 3;
+
+        if (GetProbability(70))
+        {
+            _Forest_treecount = 0;
+        }
+
+        while (_Forest_treecount-- != 0)
+        {
+
+            int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
+            int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
+            int random_y = VoxelData.ChunkHeight;
+            int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+
+            //如果可以生成树桩
+            //向上延伸树干
+            random_y = CanSetStump(random_x, random_y, random_z, random_Tree_High);
+           
+            
+
+            if (random_y != -1f)
+            {
+
+                for (int i = 0; i <= random_Tree_High; i++)
+                {
+
+                    if (random_y + i >= VoxelData.ChunkHeight - 1)
+                    {
+
+                        Debug.Log($"random_y:{random_y},i={i}");
+
+                    }
+
+                    else
+                    {
+
+                        voxelMap[random_x, random_y + i, random_z].voxelType = VoxelData.Wood;
+
+                    }
+
+                }
+
+                //生成树叶
+                BuildLeaves(random_x, random_y + random_Tree_High, random_z);
+
+            }
+
+
+            //Debug.Log($"{random_x}, {random_y}, {random_z}");
+        }
+
+        //补充煤炭
+        foreach (var item in Coals)
+        {
+
+            CreateCoal((int)item.x, (int)item.y, (int)item.z);
+
+        }
+
+        //补充竹子
+        foreach (var item in Bamboos)
+        {
+
+            CreateBamboo((int)item.x, (int)item.y, (int)item.z);
+
+        }
+
+        //交给world来create
+        world.WaitToCreateMesh.Enqueue(this);
+
+    }
+
+
+    //密林群系
+    void CreateData_Forest()
+    {
+
+
+        //对一个chunk进行遍历
+        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        {
+            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            {
+                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                {
+
+
+                    // 生成0或1的随机数
+                    //int randomInt = rand.Next(0, 2);
+                    //int randomFrom_0_10 = rand.Next(0, 10);
+
+
+                    //地形噪声
+                    //float noiseHigh = GetTotalNoiseHigh(x, z);
+                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.canvasManager.currentWorldType);
+
+
+                    //矿洞噪声
+                    float noise3d = GetCaveNoise(x, y, z);
+
+                    float _sealevel = 59;
+
+                    //沙漠噪声
+                    //float noise_desery = GetSmoothNoise_Desert(x, z);
+
+
+                    //判断基岩
+                    //0~3层不准生成矿洞
+                    if (y >= 0 && y <= 3)
+                    {
+
+                        if (y == 0)
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.BedRock;
+
+                        }
+                        else if (y > 0 && y < 3 && GetProbability(50))
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.BedRock;
+
+                        }
+                        else
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Stone;
+
+                        }
+                    }
+                    //空气部分
+                    else if (y > noiseHigh && y > _sealevel)
+                    {
+
+                        //地上一层
+                        if (y - 1 < noiseHigh)
+                        {
+
+                            //草地层
+                            if (voxelMap[x, y - 1, z].voxelType != VoxelData.Sand && voxelMap[x, y - 1, z].voxelType != VoxelData.Air && voxelMap[x, y - 1, z].voxelType != VoxelData.Snow)
+                            {
+
+                                //灌木丛
+                                if (GetProbability(world.terrainLayerProbabilitySystem.Random_Bush))
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.Bush;
+
+                                }
+                                //BlueFlower
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_BlueFlower))
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.BlueFlower;
+
+                                }
+                                //WhiteFlower_1
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower1))
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.WhiteFlower_1;
+
+                                }
+                                //WhiteFlower_2
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower2))
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.WhiteFlower_2;
+
+                                }
+                                //YellowFlower
+                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_YellowFlower))
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.YellowFlower;
+
+                                }
+                                //草地雪碎片
+                                else if (y > world.terrainLayerProbabilitySystem.Snow_Level - 10)
+                                {
+                                    voxelMap[x, y, z].voxelType = VoxelData.SnowPower;
+                                }
+                                else
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                                }
+                            }
+
+                            //雪地层概率生成雪碎片
+                            else if (voxelMap[x, y - 1, z].voxelType == VoxelData.Snow && GetProbability(50))
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.SnowPower;
+                            }
+
+                            else
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                            }
+                        }
+
+                        else
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                        }
+                    }
+
+                    //判断水面
+                    else if (y > noiseHigh && y - 1 < _sealevel)
+                    {
+
+                        voxelMap[x, y, z].voxelType = VoxelData.Water;
+
+                    }
+
+                    //空气之下
+                    else
+                    {
+
+                        //地表
+                        if ((y + 1) > noiseHigh)
+                        {
+
+                            //100雪地
+                            if (y > world.terrainLayerProbabilitySystem.Snow_Level)
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Snow;
+                            }
+
+                            //90~100概率生成雪地
+                            else if ((y > (world.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(70))
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Snow;
+                            }
+
+
+
+                            //高于海平面
+                            else if (y > _sealevel)
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Grass;
+
+                            }
+                            else
+                            {
+
+                                if (world.GetSimpleNoiseWithOffset(x, z, myposition, new Vector2(111f, 222f), 0.1f) > 0.5f)
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.Sand;
+
+                                }
+                                else
+                                {
+
+                                    voxelMap[x, y, z].voxelType = VoxelData.Soil;
+
+                                }
+
+                            }
+                        }
+
+
+                        //泥土的判断
+                        else if (y > noiseHigh - 7)
+                        {
+                            //沙漠判断
+                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Sand;
+                            }
+                            else
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Soil;
+                            }
+
+
+                        }
+                        else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
+                        {
+                            //沙漠判断
+                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Sand;
+                            }
+                            else
+                            {
+                                voxelMap[x, y, z].voxelType = VoxelData.Soil;
+                            }
+
+
+                        }
+
+
+
+
+
+                        //矿洞
+                        else if (noise3d < GetVaveWidth(y))
+                        {
+
+                            voxelMap[x, y, z].voxelType = VoxelData.Air;
+
+                        }
+
+                        //地下判断
+                        else
+                        {
+
+                            //煤炭
+                            if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Coal))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Stone;
+                                Coals.Enqueue(new Vector3(x, y, z));
+
+                            }
+
+                            //铁
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Iron))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Iron;
+
+                            }
+
+                            //金
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Gold))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Gold;
+
+                            }
+
+                            //青金石
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Blue_Crystal;
+
+                            }
+
+                            //钻石
+                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Diamond))
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Diamond;
+
+                            }
+
+                            else
+                            {
+
+                                voxelMap[x, y, z].voxelType = VoxelData.Stone;
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        //补充树
+        //[确定XZ]xoz上随便选择5个点
+        int _Forest_treecount = 25;
+        while (_Forest_treecount-- != 0)
+        {
+
+            int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
+            int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
+            int random_y = VoxelData.ChunkHeight;
+            int random_Tree_High = rand.Next(7, 15);
+
+            //如果可以生成树桩
+            //向上延伸树干
+            random_y = CanSetStump(random_x, random_y, random_z, random_Tree_High);
+            if (random_y != -1f)
+            {
+
+                for (int i = 0; i <= random_Tree_High; i++)
+                {
+
+                    if (random_y + i >= VoxelData.ChunkHeight - 1)
+                    {
+
+                        Debug.Log($"random_y:{random_y},i={i}");
+
+                    }
+
+                    else
+                    {
+
+                        voxelMap[random_x, random_y + i, random_z].voxelType = VoxelData.Wood;
+
+                    }
+
+                }
+
+                //生成树叶
+                BuildLeaves(random_x, random_y + random_Tree_High, random_z);
+
+            }
+
+
+            //Debug.Log($"{random_x}, {random_y}, {random_z}");
+        }
+
+        //补充煤炭
+        foreach (var item in Coals)
+        {
+
+            CreateCoal((int)item.x, (int)item.y, (int)item.z);
+
+        }
+
+        ////补充竹子
+        //foreach (var item in Bamboos)
+        //{
+
+        //    CreateBamboo((int)item.x, (int)item.y, (int)item.z);
+
+        //}
+
+        //交给world来create
+        world.WaitToCreateMesh.Enqueue(this);
+
+    }
+
+
 
     //---------------------------------- Tree ----------------------------------------
 
@@ -911,7 +1814,7 @@ public class Chunk : MonoBehaviour
                 if (voxelMap[_x, _y - 1, _z].voxelType != VoxelData.Air)
                 {
 
-                    if (voxelMap[_x, _y - 1, _z].voxelType == VoxelData.Grass || voxelMap[_x, _y - 1, _z].voxelType == VoxelData.Soil && voxelMap[_x, _y - 2, _z].voxelType != VoxelData.Leaves)
+                    if (voxelMap[_x, _y - 1, _z].voxelType == VoxelData.Mycelium || voxelMap[_x, _y - 1, _z].voxelType == VoxelData.Grass || voxelMap[_x, _y - 1, _z].voxelType == VoxelData.Soil && voxelMap[_x, _y - 2, _z].voxelType != VoxelData.Leaves)
                     {
 
                         //判断树干是否太高
@@ -1110,18 +2013,6 @@ public class Chunk : MonoBehaviour
 
     }
 
-    //竹子断裂判断
-    void updateBamboo()
-    {
-
-        //如果自己是竹子 && 自己下面是空气 则自己变为空气
-        if (voxelMap[x, y, z].voxelType == VoxelData.Bamboo && voxelMap[x, y - 1, z].voxelType == VoxelData.Air)
-        {
-
-            voxelMap[x, y, z].voxelType = VoxelData.Air;
-
-        }
-    }
 
 
     //[水的流动]
@@ -1251,17 +2142,20 @@ public class Chunk : MonoBehaviour
 
 
 
-    //灌木丛消失
-    void updateBush()
+
+    //特殊方块变化
+    void updateSomeBlocks()
     {
 
-        //如果自己是Bush && 自己下面是空气 则自己变为空气
-        if (voxelMap[x, y, z].voxelType == VoxelData.Bush && voxelMap[x, y - 1, z].voxelType == VoxelData.Air)
+        //不能浮空的方块(灌木丛 + 竹子 + 细雪)
+        if (!isOutOfRange(x, y - 1, z) && voxelMap[x, y - 1, z].voxelType == VoxelData.Air)
         {
-
-            voxelMap[x, y, z].voxelType = VoxelData.Air;
-
+            if (voxelMap[x, y, z].voxelType == VoxelData.Bush || voxelMap[x, y, z].voxelType == VoxelData.Bamboo || voxelMap[x, y, z].voxelType == VoxelData.SnowPower)
+            {
+                voxelMap[x, y, z].voxelType = VoxelData.Air;
+            }
         }
+
 
     }
 
@@ -1302,21 +2196,11 @@ public class Chunk : MonoBehaviour
                 for (z = 0; z < VoxelData.ChunkWidth; z++)
                 {
 
-                    //竹子断裂
-                    updateBamboo();
-
-                    //Bush消失
-                    updateBush();
+                    //会变化的特殊方块
+                    updateSomeBlocks();
 
                     //[已废弃，移动至单独的线程执行]水的流动
                     //updateWater();
-                    // 非空气 - 渲染
-                    // 水面上 - 渲染
-
-                    //if (voxelMap[x, y, z].voxelType == VoxelData.Sand)
-                    //{
-                    //    print("");
-                    //}
 
                     if (world.blocktypes[voxelMap[x, y, z].voxelType].DrawMode != DrawMode.Air)
                         UpdateMeshData(new Vector3(x, y, z));
@@ -1855,6 +2739,10 @@ public class Chunk : MonoBehaviour
 
             return true;
 
+        }
+        if (_self == VoxelData.Water && world.blocktypes[_target].isSolid)
+        {
+            return true;
         }
 
         //if (_target == VoxelData.Air || world.blocktypes[_target].isTransparent)

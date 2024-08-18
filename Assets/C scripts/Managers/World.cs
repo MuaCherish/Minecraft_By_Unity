@@ -40,16 +40,22 @@ public enum DrawMode
 
 }
 
+public enum WorldType
+{
+    默认, 超平坦世界,
+}
+
+
+
 public class World : MonoBehaviour
 {
 
     [Header("Transforms")]
-    public TMP_InputField input_Seed;
-    public TMP_InputField input_RenderSize;
     public CanvasManager canvasManager;
 
 
     [Header("游戏状态")]
+    public WorldSetting worldSetting;
     public Game_State game_state = Game_State.Start;
     public GameMode game_mode = GameMode.Survival;
     public bool SuperPlainMode = false; 
@@ -85,12 +91,11 @@ public class World : MonoBehaviour
 
     [Header("地质分层与概率系统(n%)(矿物为万分之n)")]
     public TerrainLayerProbabilitySystem terrainLayerProbabilitySystem;
-    public System.Random rand;
 
 
     //玩家
     [Header("Player-玩家脚底坐标")]
-    public List<SavaDataStruct> SaveList = new List<SavaDataStruct>();
+    //public List<SavaDataStruct> SaveList = new List<SavaDataStruct>();
     public Transform PlayerFoot;
     [HideInInspector]
     public byte ERROR_CODE_OUTOFVOXELMAP = 255;
@@ -144,8 +149,8 @@ public class World : MonoBehaviour
 
 
     //UI Manager
-    [HideInInspector]
-    public float initprogress = 0f;
+    //[HideInInspector]
+    //public float initprogress = 0f;
 
 
     //Chunks父级
@@ -179,7 +184,7 @@ public class World : MonoBehaviour
     public ConcurrentQueue<Chunk> WaitToFlashChunkQueue = new ConcurrentQueue<Chunk>();
 
     //Init
-    [HideInInspector] public bool InitError = false;
+    //[HideInInspector] public bool InitError = false;
 
 
     //----------------------------------周期函数---------------------------------------
@@ -199,13 +204,10 @@ public class World : MonoBehaviour
         Chunks.transform.SetParent(GameObject.Find("Environment").transform);
 
         //设置种子
-        terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 100);
-        rand = new System.Random(terrainLayerProbabilitySystem.Seed);
+        terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 10000);
 
-        //sea_level = Random.Range(20, 39);
-
-        //初始化一个小岛
-        //Start_Screen_Init();
+        //初始化世界
+        worldSetting = new WorldSetting(terrainLayerProbabilitySystem.Seed);
 
     }
 
@@ -229,7 +231,10 @@ public class World : MonoBehaviour
             if (hasExec_SetSeed)
             {
                 //获取当前模式
-                SuperPlainMode = canvasManager.SuperPlainToggle.isOn;
+                if (canvasManager.currentWorldType == 6)
+                {
+                    SuperPlainMode = true;
+                }
 
                 //开始初始化
                 Update_CenterChunks();
@@ -342,124 +347,29 @@ public class World : MonoBehaviour
 
 
     //主菜单地图
-    public void Start_Screen_Init()
-    {
+    //public void Start_Screen_Init()
+    //{
 
-        Chunk chunk_temp = new Chunk(new Vector3(5, 0, 2), this ,true, false);
-        //Chunk chunk_temp1 = new Chunk(new Vector3(3, 0, 2), this, true);
-        //Chunk chunk_temp2 = new Chunk(new Vector3(3, 0, 2), this, true);
+    //    Chunk chunk_temp = new Chunk(new Vector3(5, 0, 2), this ,true, false);
+    //    //Chunk chunk_temp1 = new Chunk(new Vector3(3, 0, 2), this, true);
+    //    //Chunk chunk_temp2 = new Chunk(new Vector3(3, 0, 2), this, true);
         
 
-        //for (float x = 0; x < 5; x ++)
-        //{
-        //    for (float z = 0; z < 5; z++)
-        //    {
-        //        Chunk chunk_temp3 = new Chunk(new Vector3(x, 0, z), this, true);
-        //    }
-        //}
-        //GameObject chunkGameObject = new GameObject("TheMenuChunk");
-        //Chunk chunk = chunkGameObject.AddComponent<Chunk>();
-        //chunk.InitChunk(new Vector3(0, 0, 0), this);
+    //    //for (float x = 0; x < 5; x ++)
+    //    //{
+    //    //    for (float z = 0; z < 5; z++)
+    //    //    {
+    //    //        Chunk chunk_temp3 = new Chunk(new Vector3(x, 0, z), this, true);
+    //    //    }
+    //    //}
+    //    //GameObject chunkGameObject = new GameObject("TheMenuChunk");
+    //    //Chunk chunk = chunkGameObject.AddComponent<Chunk>();
+    //    //chunk.InitChunk(new Vector3(0, 0, 0), this);
 
-    }
+    //}
 
-    //检查种子
-    public void CheckSeed()
-    {
+    
 
-        if (input_Seed != null && string.IsNullOrEmpty(input_Seed.text))
-        {
-
-            //Debug.Log("种子为空！");
-
-        } 
-        else
-        {
-            //Debug.Log("种子不为空！");
-
-            //设置种子
-            int number;
-
-            if (int.TryParse(input_Seed.text, out number))
-            {
-
-                // 转换成功，number 中存储了输入字段中的数字
-                //Debug.Log("种子为: " + number);
-
-                if (number > 0)
-                {
-
-                    terrainLayerProbabilitySystem.Seed = number;
-                    rand = new System.Random(terrainLayerProbabilitySystem.Seed);
-                }
-                else
-                {
-
-                    InitError = true;
-                    Debug.Log("种子转换失败！");
-
-                }
-                
-
-                //设置水平面
-                //sea_level = Random.Range(20, 42); 
-
-            }
-            else
-            {
-
-                InitError = true;
-                // 转换失败，输入字段中的字符串不是有效的整数
-                Debug.Log("种子转换失败！");
-
-            }
-
-
-        }
-
-    }
-
-
-
-    //检查渲染范围
-    public void CheckRenderSize()
-    {
-
-        //size如果是6则跳过，否则则赋值
-        int number;
-
-        if (int.TryParse(input_RenderSize.text, out number))
-        {
-
-            // 转换成功，number 中存储了输入字段中的数字
-            //Debug.Log("种子为: " + number);
-            if (number > 1)
-            {
-
-                renderSize = number;
-
-            }
-            else
-            {
-                Debug.Log("渲染范围要大于1！");
-                InitError = true;
-
-            }
-
-
-            
-
-        }
-        else
-        {
-
-            // 转换失败，输入字段中的字符串不是有效的整数
-            InitError = true;
-            Debug.Log("RenderSIze转换失败！");
-
-        }
-
-    }
 
     //初始化地图
     IEnumerator Init_Map_Thread()
@@ -489,7 +399,7 @@ public class World : MonoBehaviour
                 //剩余进度计算
                 float max = renderSize * renderSize * 4;
                 temp++;
-                initprogress = Mathf.Lerp(0f, 0.9f, temp / max);
+                canvasManager.Initprogress = Mathf.Lerp(0f, 0.9f, temp / max);
 
                 yield return new WaitForSeconds(InitCorountineDelay);
             }
@@ -501,7 +411,7 @@ public class World : MonoBehaviour
 
         //游戏开始
         yield return new WaitForSeconds(0.5f);
-        initprogress = 1f;
+        canvasManager.Initprogress = 1f; 
 
         //开启面优化协程
         StartCoroutine(Chunk_Optimization());
@@ -911,7 +821,7 @@ public class World : MonoBehaviour
         }
 
         //调用Chunk
-        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, true, SuperPlainMode);
+        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, true);
 
         //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
         //Chunk chunktemp = chunkGameObject.AddComponent<Chunk>();
@@ -938,7 +848,7 @@ public class World : MonoBehaviour
         }
 
         //调用Chunk
-        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, false, SuperPlainMode);
+        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, false);
 
         //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
         //Chunk chunktemp = chunkGameObject.AddComponent<Chunk>();
@@ -1182,17 +1092,17 @@ public class World : MonoBehaviour
     }
 
     //单位为ms，根据每次渲染，动态改变渲染时间
-    void dynamicRandertime(float nowtime)
-    {
+    //void dynamicRandertime(float nowtime)
+    //{
 
-        if (nowtime > RenderDelay)
-        {
+    //    if (nowtime > RenderDelay)
+    //    {
 
-            RenderDelay = nowtime;
+    //        RenderDelay = nowtime;
 
-        }
+    //    }
 
-    }
+    //}
 
 
 
@@ -1410,74 +1320,90 @@ public class World : MonoBehaviour
 
     //根据给定参数和群系种类
     //变成给定的群系噪声
-    public float GetTotalNoiseHigh_Biome(int _x, int _z, Vector3 _myposition)
+    public float GetTotalNoiseHigh_Biome(int _x, int _z, Vector3 _myposition, int _WorldType)
     {
-        //Noise
-        float noise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.x);
-        float noise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.y);
-        float noise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.z);
-        float noise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[0].Noise_Rank_123.x + noise_2 * biomenoisesystems[0].Noise_Rank_123.y + noise_3 * biomenoisesystems[0].Noise_Rank_123.z);
-        float noise_High = Mathf.Lerp(biomenoisesystems[0].HighDomain.x, biomenoisesystems[0].HighDomain.y, noise);
-
-        //数据定义
-        int BiomeType = -1;
-        float BiomeIntensity = 0f;
-        float _A = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(0f, 0f, 0f));
-        float _B = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(123f, 0f, 456f));
-        float _C = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f));
-        float _D = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f));
-
-        //获得当前群系
-        //获得群系混合强度
-        //高原
-        if (_B >= 三维密度Density3d)
+        //默认
+        if (_WorldType == 0)
         {
-            BiomeType = VoxelData.Biome_Plateau;
-            BiomeIntensity = Mathf.InverseLerp(三维密度Density3d, 1f, _B);
-        }
-        else
-        {
+            //Noise
+            float noise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.x);
+            float noise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.y);
+            float noise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.z);
+            float noise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[0].Noise_Rank_123.x + noise_2 * biomenoisesystems[0].Noise_Rank_123.y + noise_3 * biomenoisesystems[0].Noise_Rank_123.z);
+            float noise_High = Mathf.Lerp(biomenoisesystems[0].HighDomain.x, biomenoisesystems[0].HighDomain.y, noise);
 
-            if (_C >= 干燥程度Aridity)
+            //数据定义
+            int BiomeType = -1;
+            float BiomeIntensity = 0f;
+            float _A = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(0f, 0f, 0f));
+            float _B = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(123f, 0f, 456f));
+            float _C = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f));
+            float _D = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f));
+
+            //获得当前群系
+            //获得群系混合强度
+            //高原
+            if (_B >= 三维密度Density3d)
             {
-                BiomeType = VoxelData.Biome_Dessert;
-                BiomeIntensity = Mathf.InverseLerp(干燥程度Aridity, 1f, _C);
+                BiomeType = VoxelData.Biome_Plateau;
+                BiomeIntensity = Mathf.InverseLerp(三维密度Density3d, 1f, _B);
             }
-            //草原
-            else if (_A >= 氧气浓度OxygenDensity)
+            else
             {
-                if (_D >= 空气湿度MoistureLevel)
+
+                if (_C >= 干燥程度Aridity)
                 {
-                    BiomeType = VoxelData.Biome_Marsh;
-                    BiomeIntensity = Mathf.InverseLerp(空气湿度MoistureLevel, 1f, _D);
+                    BiomeType = VoxelData.Biome_Dessert;
+                    BiomeIntensity = Mathf.InverseLerp(干燥程度Aridity, 1f, _C);
+                }
+                //草原
+                else if (_A >= 氧气浓度OxygenDensity)
+                {
+                    if (_D >= 空气湿度MoistureLevel)
+                    {
+                        BiomeType = VoxelData.Biome_Marsh;
+                        BiomeIntensity = Mathf.InverseLerp(空气湿度MoistureLevel, 1f, _D);
+                    }
+                    else
+                    {
+                        BiomeType = VoxelData.Biome_Plain;
+                        BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
+                    }
                 }
                 else
                 {
                     BiomeType = VoxelData.Biome_Plain;
                     BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
                 }
-            }
-            else
-            {
-                BiomeType = VoxelData.Biome_Plain;
-                BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
+
             }
 
+            //BiomeType = 1;
+
+            //混合群系
+            float Mixnoise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.x);
+            float Mixnoise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.y);
+            float Mixnoise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.z);
+            float Mixnoise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[BiomeType].Noise_Rank_123.x + noise_2 * biomenoisesystems[BiomeType].Noise_Rank_123.y + noise_3 * biomenoisesystems[BiomeType].Noise_Rank_123.z);
+            float Mixnoise_High = Mathf.Lerp(biomenoisesystems[BiomeType].HighDomain.x, biomenoisesystems[BiomeType].HighDomain.y, Mixnoise);
+
+            float 增量噪声 = Mathf.Lerp(noise_High, Mixnoise_High, BiomeIntensity);
+
+            return 增量噪声;
+            //return noise_High + 增量噪声 * 增量噪声放大倍数; 
         }
 
-        //BiomeType = 1;
+        else
+        {
+            //Noise
+            float noise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[_WorldType].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[_WorldType].Noise_Scale_123.x);
+            float noise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[_WorldType].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[_WorldType].Noise_Scale_123.y);
+            float noise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[_WorldType].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[_WorldType].Noise_Scale_123.z);
+            float noise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[_WorldType].Noise_Rank_123.x + noise_2 * biomenoisesystems[_WorldType].Noise_Rank_123.y + noise_3 * biomenoisesystems[_WorldType].Noise_Rank_123.z);
+            float noise_High = Mathf.Lerp(biomenoisesystems[_WorldType].HighDomain.x, biomenoisesystems[_WorldType].HighDomain.y, noise);
+            return noise_High;
+        }
 
-        //混合群系
-        float Mixnoise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.x);
-        float Mixnoise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.y);
-        float Mixnoise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.z);
-        float Mixnoise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[BiomeType].Noise_Rank_123.x + noise_2 * biomenoisesystems[BiomeType].Noise_Rank_123.y + noise_3 * biomenoisesystems[BiomeType].Noise_Rank_123.z);
-        float Mixnoise_High = Mathf.Lerp(biomenoisesystems[BiomeType].HighDomain.x, biomenoisesystems[BiomeType].HighDomain.y, Mixnoise);
-
-        float 增量噪声 = Mathf.Lerp(noise_High, Mixnoise_High, BiomeIntensity);
-
-        return 增量噪声;
-        //return noise_High + 增量噪声 * 增量噪声放大倍数; 
 
     }
 
@@ -1771,25 +1697,25 @@ public class World : MonoBehaviour
         return new Vector2(a.x * b.x, a.y * b.y);
     }
 
-    //接收SavedataStruct
-    public void UpdateSaveList(Vector3 _C,Dictionary<Vector3,byte> _E)
-    {
-        foreach (var temp in SaveList)
-        {
-            if (temp.ChunkLocation == _C)
-            {
-                temp.EditData.Add(_E);
-                print("已找到");
-            }
-        }
+    ////接收SavedataStruct
+    //public void UpdateSaveList(Vector3 _C,Dictionary<Vector3,byte> _E)
+    //{
+    //    foreach (var temp in SaveList)
+    //    {
+    //        if (temp.ChunkLocation == _C)
+    //        {
+    //            temp.EditData.Add(_E);
+    //            print("已找到");
+    //        }
+    //    }
 
-        //如果找不到就载入
-        SavaDataStruct dataStruct = new SavaDataStruct();
-        dataStruct.ChunkLocation = _C;
-        dataStruct.EditData.Add(_E);
-        SaveList.Add(dataStruct);
-        print("未找到");
-    }
+    //    //如果找不到就载入
+    //    SavaDataStruct dataStruct = new SavaDataStruct();
+    //    dataStruct.ChunkLocation = _C;
+    //    dataStruct.EditData.Add(_E);
+    //    SaveList.Add(dataStruct);
+    //    print("未找到");
+    //}
 
 
 }
@@ -1931,11 +1857,19 @@ public class TerrainLayerProbabilitySystem
 }
 
 
-// 定义 SavaData 结构体
-[Serializable]
-public class SavaDataStruct
-{
-    public Vector3 ChunkLocation;
-    public List<Dictionary<Vector3,byte>> EditData = new List<Dictionary<Vector3, byte>>();
-}
 
+// 一个完整的WorldSetting
+[Serializable]
+public class WorldSetting
+{
+    public String name = "新的世界";
+    public int seed = 0;
+    public GameMode gameMode = GameMode.Survival;
+    public WorldType worldtype = WorldType.默认;
+
+
+    public WorldSetting(int _seed)
+    {
+        this.seed = _seed;
+    }
+}
