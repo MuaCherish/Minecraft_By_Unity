@@ -224,10 +224,10 @@ public class Player : MonoBehaviour
 
 
         //初始化数据
-        //isSwiming = false;
+        isSwiming = false;
+        new_foot_high = -100f;
 
 
-        //print(transform.position);
     }
 
 

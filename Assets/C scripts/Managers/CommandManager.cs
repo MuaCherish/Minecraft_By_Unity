@@ -105,11 +105,9 @@ public class CommandManager : MonoBehaviour
     }
 
 
-    //指令处理函数
+    //指令解析-执行函数
     public String CheckCommand(String _input, out Color _color)
     {
-       
-
 
         //检查是否是指令
 
@@ -162,7 +160,7 @@ public class CommandManager : MonoBehaviour
 
 
             case 1:
-                world.SaveWorldData();
+                world.ClassifyWorldData();
                 return "<系统消息> " + "正在尝试保存"; 
 
 
@@ -170,8 +168,13 @@ public class CommandManager : MonoBehaviour
                 lifemanager.UpdatePlayerBlood(30, true, true);
                 DeactivateConsole();
                 return "<系统消息> " + "玩家已死亡";
+                 
+            case 3:
+                world.LoadAllSaves(world.savingPATH + "\\Saves");
+                return "<系统消息> " + "正在尝试读取存档";
 
 
+            //在这里添加新指令----------------------------
             //没有找到
             default:
                 _color = Color.red;

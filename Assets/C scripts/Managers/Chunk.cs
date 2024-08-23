@@ -2340,28 +2340,57 @@ public class Chunk : MonoBehaviour
         voxelMap[x, y, z].voxelType = targetBlocktype;
 
         UpdateChunkMesh_WithSurround(true, false);
-
-        
-        
-        //Dictionary<Vector3, byte> a = new Dictionary<Vector3, byte>(){{pos, targetBlocktype}};
-
-        //world.UpdateSaveList(myposition, a);
-
-
-        //print($"CLocation:{world.GetChunkLocation(myposition)},ELocation:{pos},EType:{targetBlocktype}");
-        //print($"{world.SaveList.Count}");
     }
 
+
+    // 批量编辑方块
+    public void EditData(List<EditStruct> _EditList)
+    {
+        for (int i = 0; i < _EditList.Count; i++)
+        {
+            int x = Mathf.FloorToInt(_EditList[i].editPos.x);
+            int y = Mathf.FloorToInt(_EditList[i].editPos.y);
+            int z = Mathf.FloorToInt(_EditList[i].editPos.z);
+
+            // 出界就跳过
+            if (isOutOfRange(x, y, z))
+            {
+                continue;
+            }
+
+            // 设置方块类型
+            voxelMap[x, y, z].voxelType = _EditList[i].targetType;
+        }
+
+        // 更新区块网格
+        UpdateChunkMesh_WithSurround(true, false);
+    }
+
+
+
     //推送玩家更新的具体方块
+    // 推送玩家更新的具体方块
     public void UpdateEditNumber(Vector3 RealPos, byte targetBlocktype)
     {
-        //将修改细节推送至World里
+        // 将修改细节推送至World里
         // 转换RealPos为整型Vector3以便用作字典的key
         Vector3 intPos = new Vector3((int)RealPos.x, (int)RealPos.y, (int)RealPos.z);
 
-        // 直接使用索引器，自动覆盖已有的key
-        world.EditNumber[intPos] = targetBlocktype;
+        // 查找是否已经存在相同的editPos
+        EditStruct existingEdit = world.EditNumber.Find(edit => edit.editPos == intPos);
+
+        if (existingEdit != null)
+        {
+            // 如果存在，更新targetType
+            existingEdit.targetType = targetBlocktype;
+        }
+        else
+        {
+            // 如果不存在，添加新的EditStruct
+            world.EditNumber.Add(new EditStruct(intPos, targetBlocktype));
+        }
     }
+
 
 
     //面生成的判断
@@ -3159,7 +3188,33 @@ public class Chunk : MonoBehaviour
                         }
 
 
+                        else
+                        {
+                            vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
+                            vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
+                            vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
+                            vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
 
+                            //uvs.Add (VoxelData.voxelUvs [0]);
+                            //uvs.Add (VoxelData.voxelUvs [1]);
+                            //uvs.Add (VoxelData.voxelUvs [2]);
+                            //uvs.Add (VoxelData.voxelUvs [3]); 
+                            //AddTexture(1);
+                            uvs.Add(new Vector2(0f, 0f));
+                            uvs.Add(new Vector2(0f, 1f));
+                            uvs.Add(new Vector2(1f, 0f));
+                            uvs.Add(new Vector2(1f, 1f));
+                            //根据p生成对应的面，对应的UV
+                            //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+
+                            triangles_Water.Add(vertexIndex);
+                            triangles_Water.Add(vertexIndex + 1);
+                            triangles_Water.Add(vertexIndex + 2);
+                            triangles_Water.Add(vertexIndex + 2);
+                            triangles_Water.Add(vertexIndex + 1);
+                            triangles_Water.Add(vertexIndex + 3);
+                            vertexIndex += 4;
+                        }
 
 
                     }

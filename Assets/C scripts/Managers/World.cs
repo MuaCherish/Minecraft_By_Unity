@@ -17,7 +17,6 @@ using System.Linq;
 
 
 
-
 //全局游戏状态
 public enum Game_State
 {
@@ -57,8 +56,9 @@ public class World : MonoBehaviour
     public Player player;
 
     [Header("世界存档")]
+    public String savingPATH = "C:\\Users\\墨鱼\\Desktop"; //存档根目录
     public WorldSetting worldSetting;
-    public Dictionary<Vector3, byte> EditNumber = new Dictionary<Vector3, byte>(); //玩家数据
+    public List<EditStruct> EditNumber = new List<EditStruct>(); //玩家数据
     public List<SavingData> savingDatas = new List<SavingData>();//最终保存数据
 
     [Header("游戏状态")]
@@ -211,7 +211,7 @@ public class World : MonoBehaviour
     {
         //初始化
         game_state = Game_State.Start;
-        EditNumber = new Dictionary<Vector3, byte>();
+        EditNumber = new List<EditStruct>();
         savingDatas = new List<SavingData>();
         renderSize = 5;
         StartToRender = 1f;
@@ -1575,13 +1575,13 @@ public class World : MonoBehaviour
 
 
 
-    // 存档系统
-    public void SaveWorldData()
+    // 将EditNumber归类
+    public void ClassifyWorldData()
     {
         foreach (var edittemp in EditNumber)
         {
             // 获取当前修改所在的区块位置
-            Vector3 _ChunkLocation = GetChunkLocation(edittemp.Key);
+            Vector3 _ChunkLocation = GetChunkLocation(edittemp.editPos);
 
             // 标记是否在 savingDatas 中找到相应的 ChunkLocation
             bool found = false;
@@ -1592,7 +1592,7 @@ public class World : MonoBehaviour
                 if (savingtemp.ChunkLocation == _ChunkLocation)
                 {
                     // 如果找到了相应的 ChunkLocation，则添加相对位置和方块类型到 EditDataInChunk
-                    savingtemp.EditDataInChunk[GetRelalocation(edittemp.Key)] = edittemp.Value;
+                    savingtemp.EditDataInChunk[GetRelalocation(edittemp.editPos)] = edittemp.targetType;
                     found = true;
                     break;  // 找到后直接跳出循环
                 }
@@ -1603,7 +1603,7 @@ public class World : MonoBehaviour
             {
                 // 创建新的 EditDataInChunk 字典，并添加当前的相对位置和方块类型
                 Dictionary<Vector3, byte> newEditDataInChunk = new Dictionary<Vector3, byte>();
-                newEditDataInChunk[GetRelalocation(edittemp.Key)] = edittemp.Value;
+                newEditDataInChunk[GetRelalocation(edittemp.editPos)] = edittemp.targetType;
 
                 // 创建新的 SavingData 并添加到 savingDatas
                 SavingData newSavingData = new SavingData(_ChunkLocation, newEditDataInChunk);
@@ -1620,11 +1620,134 @@ public class World : MonoBehaviour
         //    //{
         //    //    Debug.Log($"Chunk: {savingtemp.ChunkLocation}, Edits: {savingtemp.EditDataInChunk.Count}");
         //    //} 
-
-
         //}
+        SAVINGDATA(savingPATH);
     }
 
+
+    //存档
+    public void SAVINGDATA(string savePath)
+    {
+        // 更新存档结构体
+        worldSetting.gameMode = game_mode;
+        worldSetting.worldtype = canvasManager.currentWorldType;
+        worldSetting.date = DateTime.Now;
+
+        // 将日期格式化为文件夹名称，例如 "2024-08-23_14-30-00"
+        string dateFolderName = worldSetting.date.ToString("yyyy-MM-dd_HH-mm-ss");
+
+        // 创建一个名为 "Saves" 的文件夹
+        string savesFolderPath = Path.Combine(savePath, "Saves");
+        if (!Directory.Exists(savesFolderPath))
+        {
+            Directory.CreateDirectory(savesFolderPath);
+        }
+
+        // 在 "Saves" 文件夹下创建一个以存档创建日期命名的文件夹
+        string folderPath = Path.Combine(savesFolderPath, dateFolderName);
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+
+        // 将所有的 SavingData 的字典转换为列表
+        foreach (var data in savingDatas)
+        {
+            data.EditDataInChunkList = new List<SavingData.Vector3BytePair>();
+            foreach (var kvp in data.EditDataInChunk)
+            {
+                data.EditDataInChunkList.Add(new SavingData.Vector3BytePair(kvp.Key, kvp.Value));
+            }
+        }
+
+        // 将 worldSetting 和 savingDatas 转换为 JSON 字符串
+        string worldSettingJson = JsonUtility.ToJson(worldSetting, true);
+        string savingDatasJson = JsonUtility.ToJson(new Wrapper<SavingData>(savingDatas), true);
+
+        // 将 JSON 字符串保存到指定路径的文件夹中
+        File.WriteAllText(Path.Combine(folderPath, "WorldSetting.json"), worldSettingJson);
+        File.WriteAllText(Path.Combine(folderPath, "SavingDatas.json"), savingDatasJson);
+
+        //Debug.Log("数据已保存到: " + folderPath); 
+    }
+
+
+    //读取全部存档
+    public void LoadAllSaves(string savingPATH)
+    {
+        // 获取存档目录下的所有文件夹路径
+        string[] saveDirectories = Directory.GetDirectories(savingPATH);
+
+        // 遍历每个存档文件夹
+        foreach (string saveDirectory in saveDirectories)
+        {
+            // 输出当前存档文件夹名称
+            string folderName = Path.GetFileName(saveDirectory);
+            Debug.Log($"Loading save from folder: {folderName}");
+
+            // 调用 LoadData 函数读取当前存档
+            LoadData(saveDirectory);
+        }
+
+        Debug.Log($"Total saves loaded: {saveDirectories.Length}");
+    }
+
+    //分析单个存档
+    public void LoadData(string savePath)
+    {
+        // 读取并反序列化JSON
+        string worldSettingPath = Path.Combine(savePath, "WorldSetting.json");
+        if (File.Exists(worldSettingPath))
+        {
+            string worldSettingJson = File.ReadAllText(worldSettingPath);
+            worldSetting = JsonUtility.FromJson<WorldSetting>(worldSettingJson);
+        }
+        else
+        {
+            Debug.LogError("找不到 WorldSetting.json 文件");
+            return;
+        }
+
+        string savingDatasPath = Path.Combine(savePath, "SavingDatas.json");
+        if (File.Exists(savingDatasPath))
+        {
+            string savingDatasJson = File.ReadAllText(savingDatasPath);
+            Wrapper<SavingData> wrapper = JsonUtility.FromJson<Wrapper<SavingData>>(savingDatasJson);
+            savingDatas = wrapper.Items;
+
+            // 还原所有SavingData的字典
+            foreach (var data in savingDatas)
+            {
+                data.RestoreDictionary();
+            }
+        }
+        else
+        {
+            Debug.LogError("找不到 SavingDatas.json 文件");
+            return;
+        }
+
+        Debug.Log("数据已成功加载");
+
+        // 输出 worldSetting 信息
+        Debug.Log($"World Name: {worldSetting.name}");
+        Debug.Log($"Seed: {worldSetting.seed}");
+        Debug.Log($"Game Mode: {worldSetting.gameMode}");
+        Debug.Log($"World Type: {worldSetting.worldtype}");
+        Debug.Log($"Creation Date: {worldSetting.date}");
+
+        // 输出 savingDatas 信息
+        Debug.Log("Saving Data Details:");
+        foreach (var data in savingDatas)
+        {
+            Debug.Log($"Chunk Location: {data.ChunkLocation}");
+            Debug.Log("Edit Data in Chunk:");
+            foreach (var pair in data.EditDataInChunk)
+            {
+                Debug.Log($"Position: {pair.Key}, Type: {pair.Value}");
+            }
+        }
+    }
 
 
 
@@ -1726,10 +1849,47 @@ public class World : MonoBehaviour
 
 
 
-    //----------------------------------------------------------------------------------------
+    //------------------------------------ 保存建筑 --------------------------------------------------------------
+
+    //目前有问题
+
+    //用于记录建筑
+    //recordData.pos存的是绝对坐标
+    public List<EditStruct> recordData = new List<EditStruct>();
+
+    //记录建筑
+    public void RecordBuilding(Vector3 _Start, Vector3 _End)
+    {
+        recordData.Clear();
 
 
-    public Vector3 testPos;
+        for (int x = 0; x < 10; x++)
+        {
+            for (int z = 0; z < 10; z++)
+            {
+
+            }
+        }
+    }
+
+    //释放建筑
+    //根据0下标和end下标，计算其包含的区块，然后把数据丢给区块即可
+    public void ReleaseBuilding(Vector3 place, List<EditStruct> _recordData)
+    {
+
+        Vector3 start = _recordData[0].editPos;
+        Vector3 end = _recordData[_recordData.Count - 1].editPos;
+
+        for (float x = start.x; x < end.x; x += 16f)
+        {
+            for (float z = start.z; z < end.z; z += 16f)
+            {
+
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------------------
 
     //对玩家碰撞盒的方块判断
     //true：有碰撞
@@ -1976,13 +2136,14 @@ public class TerrainLayerProbabilitySystem
 [Serializable]
 public class WorldSetting
 {
+    public DateTime date = DateTime.Now;//存档创建日期
     public String name = "新的世界";
     public int seed = 0;
     public GameMode gameMode = GameMode.Survival;
     public int worldtype = VoxelData.Biome_Default;
 
 
-    public WorldSetting(int _seed)
+    public WorldSetting(int _seed) 
     {
         this.seed = _seed;
     }
@@ -2006,15 +2167,79 @@ public class WorldSetting
 //}
 
 
+//玩家修改的数据缓存
+[System.Serializable]
+public class EditStruct
+{
+    public Vector3 editPos;
+    public byte targetType;
+    
+
+    public EditStruct(Vector3 _editPos, byte _targetType)
+    {
+        editPos = _editPos;
+        targetType = _targetType;
+    }
+
+}
+
+
+
+//最终保存的结构体
 [System.Serializable]
 public class SavingData
 {
     public Vector3 ChunkLocation;
+    public List<Vector3BytePair> EditDataInChunkList = new List<Vector3BytePair>();
+
+    // 为了兼容反序列化后还原为Dictionary
+    [System.NonSerialized]
     public Dictionary<Vector3, byte> EditDataInChunk = new Dictionary<Vector3, byte>();
 
     public SavingData(Vector3 _vec, Dictionary<Vector3, byte> _D)
     {
         ChunkLocation = _vec;
         EditDataInChunk = _D;
+
+        // 将字典转换为列表
+        foreach (var kvp in _D)
+        {
+            EditDataInChunkList.Add(new Vector3BytePair(kvp.Key, kvp.Value));
+        }
+    }
+
+    [System.Serializable]
+    public class Vector3BytePair
+    {
+        public Vector3 Key;
+        public byte Value;
+
+        public Vector3BytePair(Vector3 key, byte value)
+        {
+            Key = key;
+            Value = value;
+        }
+    }
+
+    // 在反序列化后还原Dictionary
+    public void RestoreDictionary()
+    {
+        EditDataInChunk = new Dictionary<Vector3, byte>();
+        foreach (var pair in EditDataInChunkList)
+        {
+            EditDataInChunk[pair.Key] = pair.Value;
+        }
+    }
+}
+
+// 为List对象创建一个封装类，以便能够将其转换为JSON
+[System.Serializable]
+public class Wrapper<T>
+{
+    public List<T> Items;
+
+    public Wrapper(List<T> items)
+    {
+        Items = items;
     }
 }

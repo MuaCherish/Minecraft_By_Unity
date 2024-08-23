@@ -959,7 +959,7 @@ public class CanvasManager : MonoBehaviour
 
             BackPackManager.CreativeMode();
 
-            StopCoroutine(muacherishCoroutine);
+            //StopCoroutine(muacherishCoroutine);
 
             hasExec_Playing = false;
         }
