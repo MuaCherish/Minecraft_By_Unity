@@ -6,7 +6,7 @@ using System.Threading;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using static UnityEditor.PlayerSettings;
-
+//using System.Diagnostics;
 
 public class Chunk : MonoBehaviour
 {
@@ -33,6 +33,9 @@ public class Chunk : MonoBehaviour
     //noise
     private float noise3d_scale;
 
+    //存档
+    public bool isSaving = false;
+    public List<EditStruct> EditList = new List<EditStruct>();
 
     //群系参数
     int Normal_treecount;
@@ -111,9 +114,9 @@ public class Chunk : MonoBehaviour
 
 
         //获取群系类型
-        worldType = world.canvasManager.currentWorldType;
+        worldType = world.worldSetting.worldtype;
+        //print(worldType);
 
-        
         switch (worldType)
         {
             //草原群系
@@ -143,6 +146,7 @@ public class Chunk : MonoBehaviour
             //超平坦
             case 6:
                 myThread = new Thread(new ThreadStart(CreateData_SuperPlain));
+                //CreateData_SuperPlain();
                 break;
             default:
                 print("chunk.worldType出错");
@@ -155,7 +159,85 @@ public class Chunk : MonoBehaviour
         //print($"{world.GetChunkLocation(myposition)}已经生成！");
     }
 
-    
+
+    //Start()
+    public Chunk(Vector3 thisPosition, World _world, bool _BaseChunk, List<EditStruct> _editList)
+    {
+
+
+        //World
+        world = _world;
+        caveWidth = world.cave_width;
+        //debug_CanLookCave = !world.debug_CanLookCave;
+        BaseChunk = _BaseChunk;
+        noise3d_scale = world.noise3d_scale;
+        Normal_treecount = world.terrainLayerProbabilitySystem.Normal_treecount;
+        Forest_treecount = world.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
+        //isSuperPlainMode = _isSuperPlainMode;
+        isSaving = true;
+        EditList = _editList;
+
+        //Self
+        chunkObject = new GameObject();
+        meshFilter = chunkObject.AddComponent<MeshFilter>();
+        meshRenderer = chunkObject.AddComponent<MeshRenderer>();
+        meshRenderer.sharedMaterial = world.material;
+        chunkObject.transform.SetParent(world.Chunks.transform);
+        chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
+        chunkObject.name = thisPosition.x + "," + thisPosition.z;
+        myposition = chunkObject.transform.position;
+        rand = new System.Random(world.worldSetting.seed);
+
+        //初始化Voxel数组
+        InitVoxelStruct();
+
+
+        //获取群系类型
+        worldType = world.worldSetting.worldtype;
+        //print(worldType);
+
+        switch (worldType)
+        {
+            //草原群系
+            case 0:
+                myThread = new Thread(new ThreadStart(CreateData));
+                break; 
+            //高原群系
+            case 1:
+                myThread = new Thread(new ThreadStart(CreateData));
+                break;
+            //沙漠群系
+            case 2:
+                myThread = new Thread(new ThreadStart(CreateData_Dessert));
+                break;
+            //沼泽群系
+            case 3:
+                myThread = new Thread(new ThreadStart(CreateData_Marsh));
+                break;
+            //密林群系
+            case 4:
+                myThread = new Thread(new ThreadStart(CreateData_Forest));
+                break;
+            //默认
+            case 5:
+                myThread = new Thread(new ThreadStart(CreateData));
+                break;
+            //超平坦
+            case 6:
+                myThread = new Thread(new ThreadStart(CreateData_SuperPlain));
+                //CreateData_SuperPlain();
+                break;
+            default:
+                print("chunk.worldType出错");
+                break;
+        }
+
+        myThread.Start();
+
+        //print($"----------------------------------------------");
+        //print($"{world.GetChunkLocation(myposition)}已经生成！");
+    }
+
 
     //-----------------------------------------------------------------------------------
 
@@ -644,6 +726,12 @@ public class Chunk : MonoBehaviour
                 }
             }
         }
+
+        if (isSaving)
+        {
+            EditData(EditList);
+        }
+
 
         //交给world来create
         world.WaitToCreateMesh.Enqueue(this);
@@ -2346,6 +2434,8 @@ public class Chunk : MonoBehaviour
     // 批量编辑方块
     public void EditData(List<EditStruct> _EditList)
     {
+        print($"EditData:{_EditList.Count}");
+
         for (int i = 0; i < _EditList.Count; i++)
         {
             int x = Mathf.FloorToInt(_EditList[i].editPos.x);
@@ -2364,6 +2454,8 @@ public class Chunk : MonoBehaviour
 
         // 更新区块网格
         UpdateChunkMesh_WithSurround(true, false);
+
+        isSaving = false;
     }
 
 
@@ -2899,6 +2991,12 @@ public class Chunk : MonoBehaviour
     //_calledFrom = 1 来自UpdateWater
     void UpdateMeshData(Vector3 pos)
     {
+
+        if (isOutOfRange(pos))
+        {
+            print($"UpdateMeshData出界，pos = {pos}");
+            return;
+        }
 
         byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z].voxelType;
 

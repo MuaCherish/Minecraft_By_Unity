@@ -42,7 +42,7 @@ public enum DrawMode
 
 //public enum WorldType
 //{
-//    默认, 超平坦世界,草原群系,高原群系,沙漠群系,沼泽群系,密林群系,
+//    默认, 超平坦世界, 草原群系, 高原群系, 沙漠群系, 沼泽群系, 密林群系,
 //}
 
 
@@ -58,12 +58,14 @@ public class World : MonoBehaviour
     [Header("世界存档")]
     public String savingPATH = "C:\\Users\\墨鱼\\Desktop"; //存档根目录
     public WorldSetting worldSetting;
+    public List<SavingData> TheSaving = new List<SavingData>(); //读取的存档
     public List<EditStruct> EditNumber = new List<EditStruct>(); //玩家数据
     public List<SavingData> savingDatas = new List<SavingData>();//最终保存数据
 
     [Header("游戏状态")]
     public Game_State game_state = Game_State.Start;
     public GameMode game_mode = GameMode.Survival;
+    public bool isLoadSaving = false;
     //public bool SuperPlainMode = false; 
 
 
@@ -209,6 +211,7 @@ public class World : MonoBehaviour
 
     public void InitWorld()
     {
+        
         //初始化
         game_state = Game_State.Start;
         EditNumber = new List<EditStruct>();
@@ -399,7 +402,7 @@ public class World : MonoBehaviour
     //    Chunk chunk_temp = new Chunk(new Vector3(5, 0, 2), this ,true, false);
     //    //Chunk chunk_temp1 = new Chunk(new Vector3(3, 0, 2), this, true);
     //    //Chunk chunk_temp2 = new Chunk(new Vector3(3, 0, 2), this, true);
-        
+
 
     //    //for (float x = 0; x < 5; x ++)
     //    //{
@@ -414,17 +417,32 @@ public class World : MonoBehaviour
 
     //}
 
-    
+
 
 
     //初始化地图
+    public Coroutine Init_MapCoroutine;
     IEnumerator Init_Map_Thread()
     {
-        Center_Now = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, 0, GetRealChunkLocation(PlayerFoot.transform.position).z);
+
+
+        //确定玩家圈养中心点
+        if (isLoadSaving)
+        {
+
+            Center_Now = new Vector3(GetRealChunkLocation(worldSetting.playerposition).x, 0, GetRealChunkLocation(worldSetting.playerposition).z);
+
+        }
+        else
+        {
+
+            Center_Now = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, 0, GetRealChunkLocation(PlayerFoot.transform.position).z);
+
+        }
 
         //写一个协程，清除或者隐藏过远的区块
-        
-        
+
+
         //print($"Center:{Center_Now}");
         //print($"Foot:{PlayerFoot.transform.position}, ChunkFoot:{GetChunkLocation(PlayerFoot.transform.position)}");
         //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -471,6 +489,7 @@ public class World : MonoBehaviour
         //myThread_Render = new Thread(new ThreadStart(Thread_RenderMesh));
         //myThread_Render.Start();
 
+        Init_MapCoroutine = null;
     }
 
 
@@ -513,9 +532,13 @@ public class World : MonoBehaviour
     //更新中心区块
     public void Update_CenterChunks()
     {
-    
+        //print("更新中心区块");
         //update加载中心区块
-        StartCoroutine(Init_Map_Thread());
+        if (Init_MapCoroutine == null)
+        {
+            Init_MapCoroutine = StartCoroutine(Init_Map_Thread());
+        }
+       
     
     }
 
@@ -877,14 +900,31 @@ public class World : MonoBehaviour
         }
 
         //调用Chunk
-        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, true);
+        Vector3 _ChunkLocation = new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z));
+        Chunk _chunk_temp;
+
+
+        //if (_ChunkLocation == new Vector3(195f,0,89f))
+        //{
+        //    print("");
+        //}
+
+        //调用Chunk
+        if (ContainsChunkLocation(_ChunkLocation))
+        {
+            _chunk_temp = new Chunk(_ChunkLocation, this, false, TheSaving[GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
+        }
+        else
+        {
+            _chunk_temp = new Chunk(_ChunkLocation, this, false);
+        }
 
         //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
         //Chunk chunktemp = chunkGameObject.AddComponent<Chunk>();
         //chunktemp.InitChunk(new Vector3(0, 0, 0), this);
 
         //添加到字典
-        Allchunks.Add(pos, chunk_temp);
+        Allchunks.Add(pos, _chunk_temp);
 
     }
 
@@ -903,15 +943,27 @@ public class World : MonoBehaviour
 
         }
 
+
+        Vector3 _ChunkLocation = new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z));
+        Chunk _chunk_temp;
+
         //调用Chunk
-        Chunk chunk_temp = new Chunk(new Vector3(Mathf.FloorToInt(pos.x), 0, Mathf.FloorToInt(pos.z)), this, false);
+        if (ContainsChunkLocation(_ChunkLocation))
+        {
+            _chunk_temp = new Chunk(_ChunkLocation, this, false, TheSaving[GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
+        }
+        else
+        {
+            _chunk_temp = new Chunk(_ChunkLocation, this, false);
+        }
+        
 
         //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
         //Chunk chunktemp = chunkGameObject.AddComponent<Chunk>();
         //chunktemp.InitChunk(new Vector3(0, 0, 0), this);
 
         //添加到字典
-        Allchunks.Add(pos, chunk_temp);
+        Allchunks.Add(pos, _chunk_temp);
 
     }
 
@@ -1468,18 +1520,28 @@ public class World : MonoBehaviour
     void Init_Player_Location()
     {
 
-        Start_Position = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, VoxelData.ChunkHeight - 1f, GetRealChunkLocation(PlayerFoot.transform.position).z);
-        
-
-        //从<1600,63,1600>向下遍历，直到坐标符合条件
-        while (GetBlockType(Start_Position) == VoxelData.Air)
+        if (isLoadSaving)
         {
+            Start_Position = worldSetting.playerposition;
+            player.gameObject.transform.rotation = worldSetting.playerrotation;
+        }
+        else
+        {
+            Start_Position = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, VoxelData.ChunkHeight - 1f, GetRealChunkLocation(PlayerFoot.transform.position).z);
 
-            Start_Position.y -= 1f;
-        
+            //从<1600,63,1600>向下遍历，直到坐标符合条件
+            while (GetBlockType(Start_Position) == VoxelData.Air)
+            {
+
+                Start_Position.y -= 1f;
+
+            }
+
+            Start_Position.y += 2f;
         }
 
-        Start_Position.y += 2f;
+
+        
         
         player.InitPlayerLocation();
         //print(Start_Position);
@@ -1549,7 +1611,7 @@ public class World : MonoBehaviour
         //}
 
         //如果玩家在区内，但Y值太高
-        print("玩家Y值太高！");
+        print("找不到玩家脚下的Chunk");
         return ERROR_CODE_OUTOFVOXELMAP;
 
 
@@ -1569,11 +1631,19 @@ public class World : MonoBehaviour
 
     //------------------------------------工具------------------------------------------------
 
+    //给定日期，将pointsaving修改为给定参数
+    public String PointSaving = "";
+    public void SelectSaving(String _PointSaving)
+    {
+        PointSaving = _PointSaving;
 
-
-
-
-
+        //将进入选中的世界按钮点亮
+        if (canvasManager.isClickSaving == false)
+        {
+            canvasManager.LightButton();
+        }
+        
+    }
 
     // 将EditNumber归类
     public void ClassifyWorldData()
@@ -1621,6 +1691,10 @@ public class World : MonoBehaviour
         //    //    Debug.Log($"Chunk: {savingtemp.ChunkLocation}, Edits: {savingtemp.EditDataInChunk.Count}");
         //    //} 
         //}
+
+        //合并上次存档内容
+        MergeSavingDataLists();
+
         SAVINGDATA(savingPATH);
     }
 
@@ -1629,12 +1703,13 @@ public class World : MonoBehaviour
     public void SAVINGDATA(string savePath)
     {
         // 更新存档结构体
+        // worldSetting.gameMode = game_mode;
+        // worldSetting.worldtype = canvasManager.currentWorldType;
+        worldSetting.playerposition = player.transform.position;
+        worldSetting.playerrotation = player.transform.rotation;
         worldSetting.gameMode = game_mode;
-        worldSetting.worldtype = canvasManager.currentWorldType;
-        worldSetting.date = DateTime.Now;
-
-        // 将日期格式化为文件夹名称，例如 "2024-08-23_14-30-00"
-        string dateFolderName = worldSetting.date.ToString("yyyy-MM-dd_HH-mm-ss");
+        string previouDate = worldSetting.date;
+        worldSetting.date = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
         // 创建一个名为 "Saves" 的文件夹
         string savesFolderPath = Path.Combine(savePath, "Saves");
@@ -1644,19 +1719,27 @@ public class World : MonoBehaviour
         }
 
         // 在 "Saves" 文件夹下创建一个以存档创建日期命名的文件夹
-        string folderPath = Path.Combine(savesFolderPath, dateFolderName);
+        string folderPath = Path.Combine(savesFolderPath, worldSetting.date);
         if (!Directory.Exists(folderPath))
         {
             Directory.CreateDirectory(folderPath);
         }
 
+        //删除Saves文件夹中名字为previouDate的文件夹，如果能找到的话
+        string oldFolderPath = Path.Combine(savesFolderPath, previouDate);
+        if (Directory.Exists(oldFolderPath))
+        {
+            // 删除旧文件夹及其所有内容
+            Directory.Delete(oldFolderPath, true);
+        }
+
         // 将所有的 SavingData 的字典转换为列表
         foreach (var data in savingDatas)
         {
-            data.EditDataInChunkList = new List<SavingData.Vector3BytePair>();
+            data.EditDataInChunkList = new List<EditStruct>();
             foreach (var kvp in data.EditDataInChunk)
             {
-                data.EditDataInChunkList.Add(new SavingData.Vector3BytePair(kvp.Key, kvp.Value));
+                data.EditDataInChunkList.Add(new EditStruct(kvp.Key, kvp.Value));
             }
         }
 
@@ -1668,86 +1751,113 @@ public class World : MonoBehaviour
         File.WriteAllText(Path.Combine(folderPath, "WorldSetting.json"), worldSettingJson);
         File.WriteAllText(Path.Combine(folderPath, "SavingDatas.json"), savingDatasJson);
 
-        //Debug.Log("数据已保存到: " + folderPath); 
+        // Debug.Log("数据已保存到: " + folderPath); 
     }
+
 
 
     //读取全部存档
     public void LoadAllSaves(string savingPATH)
     {
         // 获取存档目录下的所有文件夹路径
-        string[] saveDirectories = Directory.GetDirectories(savingPATH);
+        string[] saveDirectories = Directory.GetDirectories(savingPATH + "\\Saves");
 
         // 遍历每个存档文件夹
         foreach (string saveDirectory in saveDirectories)
         {
             // 输出当前存档文件夹名称
             string folderName = Path.GetFileName(saveDirectory);
-            Debug.Log($"Loading save from folder: {folderName}");
+            //Debug.Log($"Loading save from folder: {folderName}");
 
             // 调用 LoadData 函数读取当前存档
-            LoadData(saveDirectory);
+            WorldSetting _worldsetting = LoadWorldSetting(saveDirectory);
+            canvasManager.NewWorldGenerate(_worldsetting.name, _worldsetting.date, _worldsetting.gameMode, _worldsetting.worldtype, _worldsetting.seed);
         }
 
-        Debug.Log($"Total saves loaded: {saveDirectories.Length}");
+        //Debug.Log($"Total saves loaded: {saveDirectories.Length}");
     }
 
-    //分析单个存档
-    public void LoadData(string savePath)
+    //分析存档名字
+    public WorldSetting LoadWorldSetting(string savePath)
     {
-        // 读取并反序列化JSON
+        // 构建 WorldSetting.json 文件的完整路径
         string worldSettingPath = Path.Combine(savePath, "WorldSetting.json");
+
+        // 检查 WorldSetting.json 文件是否存在
         if (File.Exists(worldSettingPath))
         {
+            // 读取 WorldSetting.json 文件的内容
             string worldSettingJson = File.ReadAllText(worldSettingPath);
-            worldSetting = JsonUtility.FromJson<WorldSetting>(worldSettingJson);
+
+            // 将 JSON 字符串反序列化为 WorldSetting 对象
+            return JsonUtility.FromJson<WorldSetting>(worldSettingJson);
         }
         else
         {
+            // 如果文件不存在，输出错误信息并返回 null
             Debug.LogError("找不到 WorldSetting.json 文件");
-            return;
-        }
-
-        string savingDatasPath = Path.Combine(savePath, "SavingDatas.json");
-        if (File.Exists(savingDatasPath))
-        {
-            string savingDatasJson = File.ReadAllText(savingDatasPath);
-            Wrapper<SavingData> wrapper = JsonUtility.FromJson<Wrapper<SavingData>>(savingDatasJson);
-            savingDatas = wrapper.Items;
-
-            // 还原所有SavingData的字典
-            foreach (var data in savingDatas)
-            {
-                data.RestoreDictionary();
-            }
-        }
-        else
-        {
-            Debug.LogError("找不到 SavingDatas.json 文件");
-            return;
-        }
-
-        Debug.Log("数据已成功加载");
-
-        // 输出 worldSetting 信息
-        Debug.Log($"World Name: {worldSetting.name}");
-        Debug.Log($"Seed: {worldSetting.seed}");
-        Debug.Log($"Game Mode: {worldSetting.gameMode}");
-        Debug.Log($"World Type: {worldSetting.worldtype}");
-        Debug.Log($"Creation Date: {worldSetting.date}");
-
-        // 输出 savingDatas 信息
-        Debug.Log("Saving Data Details:");
-        foreach (var data in savingDatas)
-        {
-            Debug.Log($"Chunk Location: {data.ChunkLocation}");
-            Debug.Log("Edit Data in Chunk:");
-            foreach (var pair in data.EditDataInChunk)
-            {
-                Debug.Log($"Position: {pair.Key}, Type: {pair.Value}");
-            }
+            return null;
         }
     }
+
+    //加载存档
+    public void LoadSavingData(string savePath)
+    {
+        isLoadSaving = true;
+
+        // 构建 SavingDatas.json 文件的完整路径
+        string savingDatasPath = Path.Combine(savePath, "SavingDatas.json");
+
+        // 检查 SavingDatas.json 文件是否存在
+        if (File.Exists(savingDatasPath))
+        {
+            // 读取 SavingDatas.json 文件的内容
+            string savingDatasJson = File.ReadAllText(savingDatasPath);
+
+            // 将 JSON 字符串反序列化为 Wrapper<SavingData> 对象
+            Wrapper<SavingData> wrapper = JsonUtility.FromJson<Wrapper<SavingData>>(savingDatasJson);
+
+            // 检查 wrapper 是否为 null
+            if (wrapper != null && wrapper.Items != null)
+            {
+                // 将反序列化的 Items 列表赋值给 TheSaving
+                TheSaving = wrapper.Items;
+
+                // 遍历 TheSaving 列表，恢复每个 SavingData 对象中的字典
+                foreach (var data in TheSaving)
+                {
+                    data.RestoreDictionary();
+
+                    // Debug打印
+                    Debug.Log($"Chunk Location: {data.ChunkLocation}");
+                    foreach (var pair in data.EditDataInChunk)
+                    {
+                        Debug.Log($"Position: {pair.Key}, Type: {pair.Value}");
+                    }
+                }
+
+                worldSetting = LoadWorldSetting(savePath);
+
+
+                //更新一些参数
+                game_mode = worldSetting.gameMode;
+
+
+
+            }
+            else
+            {
+                // 如果 wrapper 或 wrapper.Items 为 null，输出警告信息
+                Debug.LogWarning("Wrapper<SavingData> 或 Items 列表为 null");
+            }
+        }
+        else
+        {
+            // 如果文件不存在，输出错误信息
+            Debug.LogError("找不到 SavingDatas.json 文件");
+        }
+    }
+
 
 
 
@@ -1890,6 +2000,129 @@ public class World : MonoBehaviour
     }
 
     //--------------------------------------------------------------------------------------------------------------
+
+    //合并存档
+    public void MergeSavingDataLists()
+    {
+        // 创建一个字典来临时存储 `savingDatas` 中的 `SavingData` 实例
+        Dictionary<Vector3, SavingData> savingDataDict = new Dictionary<Vector3, SavingData>();
+
+        // 将 `savingDatas` 列表中的数据添加到字典中
+        foreach (var data in savingDatas)
+        {
+            savingDataDict[data.ChunkLocation] = data;
+        }
+
+        // 遍历 `TheSaving` 列表，将其数据强覆盖到字典中
+        foreach (var data in TheSaving)
+        {
+            if (savingDataDict.TryGetValue(data.ChunkLocation, out var existingData))
+            {
+                // 如果字典中已存在相同 `ChunkLocation`，则强覆盖 `EditDataInChunkList`
+                var newEditDataDict = new Dictionary<Vector3, byte>();
+
+                // 将 TheSaving 中的 EditDataInChunkList 添加到新的字典
+                foreach (var editStruct in data.EditDataInChunkList)
+                {
+                    newEditDataDict[editStruct.editPos] = editStruct.targetType;
+                }
+
+                // 更新 existingData 的字典
+                existingData.EditDataInChunk = newEditDataDict;
+
+                // 更新 existingData 的列表
+                existingData.EditDataInChunkList = new List<EditStruct>();
+                foreach (var kvp in newEditDataDict)
+                {
+                    existingData.EditDataInChunkList.Add(new EditStruct(kvp.Key, kvp.Value));
+                }
+            }
+            else
+            {
+                // 如果字典中不存在相同 `ChunkLocation`，则直接添加
+                savingDataDict[data.ChunkLocation] = data;
+            }
+        }
+
+        // 更新 `savingDatas` 列表
+        savingDatas = new List<SavingData>(savingDataDict.Values);
+    }
+
+
+
+    //获取TheSaving的索引
+    public int GetIndexOfChunkLocation(Vector3 location)
+    {
+        // 遍历 TheSaving 列表
+        for (int i = 0; i < TheSaving.Count; i++)
+        {
+            var savingData = TheSaving[i];
+            // 使用 SavingData 的 ContainsChunkLocation 方法检查 ChunkLocation
+            if (savingData.ContainsChunkLocation(location))
+            {
+                return i; // 返回匹配项的索引
+            }
+        }
+
+        return -1; // 如果没有找到匹配项，则返回 -1
+    }
+
+
+    //返回TheSaving是否包含ChunkLocation
+    public bool ContainsChunkLocation(Vector3 location)
+    {
+        // 遍历 TheSaving 列表
+        foreach (var savingData in TheSaving)
+        {
+            // 使用 SavingData 的 ContainsChunkLocation 方法检查 ChunkLocation
+            if (savingData.ContainsChunkLocation(location))
+            {
+                return true; // 找到匹配的 ChunkLocation
+            }
+        }
+
+        return false; // 没有找到匹配的 ChunkLocation
+    }
+
+
+
+    //给定int，返回世界类型的中文
+    public String GetWorldTypeString(int WorldType)
+    {
+        switch (WorldType)
+        {
+            case 0:
+                return "草原群系";
+            case 1:
+                return "高原群系";
+            case 2:
+                return "沙漠群系";
+            case 3:
+                return "沼泽群系";
+            case 4:
+                return "密林群系";
+            case 5:
+                return "默认群系";
+            case 6:
+                return "超平坦世界";
+            default:
+                return "给定世界类型有误GetWorldTypeChinese";
+        }
+    }
+
+    //给定游戏模式的中文
+    public String GetGameModeString(GameMode gamemode)
+    {
+        if (gamemode == GameMode.Survival)
+        {
+            return "生存模式";
+        }
+        else
+        {
+            return "创造模式";
+        }
+    }
+
 
     //对玩家碰撞盒的方块判断
     //true：有碰撞
@@ -2136,14 +2369,15 @@ public class TerrainLayerProbabilitySystem
 [Serializable]
 public class WorldSetting
 {
-    public DateTime date = DateTime.Now;//存档创建日期
+    public String date = "0000";//存档创建日期
     public String name = "新的世界";
     public int seed = 0;
     public GameMode gameMode = GameMode.Survival;
     public int worldtype = VoxelData.Biome_Default;
+    public Vector3 playerposition;   // 保存玩家的坐标
+    public Quaternion playerrotation; // 保存玩家的旋转
 
-
-    public WorldSetting(int _seed) 
+    public WorldSetting(int _seed)  
     {
         this.seed = _seed;
     }
@@ -2190,7 +2424,7 @@ public class EditStruct
 public class SavingData
 {
     public Vector3 ChunkLocation;
-    public List<Vector3BytePair> EditDataInChunkList = new List<Vector3BytePair>();
+    public List<EditStruct> EditDataInChunkList = new List<EditStruct>();
 
     // 为了兼容反序列化后还原为Dictionary
     [System.NonSerialized]
@@ -2204,20 +2438,7 @@ public class SavingData
         // 将字典转换为列表
         foreach (var kvp in _D)
         {
-            EditDataInChunkList.Add(new Vector3BytePair(kvp.Key, kvp.Value));
-        }
-    }
-
-    [System.Serializable]
-    public class Vector3BytePair
-    {
-        public Vector3 Key;
-        public byte Value;
-
-        public Vector3BytePair(Vector3 key, byte value)
-        {
-            Key = key;
-            Value = value;
+            EditDataInChunkList.Add(new EditStruct(kvp.Key, kvp.Value));
         }
     }
 
@@ -2225,12 +2446,19 @@ public class SavingData
     public void RestoreDictionary()
     {
         EditDataInChunk = new Dictionary<Vector3, byte>();
-        foreach (var pair in EditDataInChunkList)
+        foreach (var structItem in EditDataInChunkList)
         {
-            EditDataInChunk[pair.Key] = pair.Value;
+            EditDataInChunk[structItem.editPos] = structItem.targetType;
         }
     }
+
+    // 检查是否包含指定的 ChunkLocation
+    public bool ContainsChunkLocation(Vector3 location)
+    {
+        return ChunkLocation == location;
+    }
 }
+
 
 // 为List对象创建一个封装类，以便能够将其转换为JSON
 [System.Serializable]

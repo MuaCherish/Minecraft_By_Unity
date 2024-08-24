@@ -160,8 +160,9 @@ public class CommandManager : MonoBehaviour
 
 
             case 1:
-                world.ClassifyWorldData();
-                return "<系统消息> " + "正在尝试保存"; 
+                //world.ClassifyWorldData();
+                _color = Color.red;
+                return "<系统消息> " + "该指令已停用"; 
 
 
             case 2:

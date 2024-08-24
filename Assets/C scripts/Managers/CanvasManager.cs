@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using static UnityEditor.Progress;
 
 public class CanvasManager : MonoBehaviour
 {
@@ -38,8 +39,8 @@ public class CanvasManager : MonoBehaviour
     public BackPackManager BackPackManager;
     public LifeManager LifeManager; 
     public TextMeshProUGUI gamemodeTEXT;
-    public GameObject CreativeButtom;
-    public GameObject SurvivalButtom;
+    //public GameObject CreativeButtom;
+    //public GameObject SurvivalButtom;
     //public GameObject Survival_Screen;
 
     //主要屏幕
@@ -205,7 +206,8 @@ public class CanvasManager : MonoBehaviour
         previous_mappedValue = 0;  // 渲染范围
         previous_starttoreder_mappedValue = 0;  // 开始渲染范围
 
-
+        //恢复按钮
+        UIManager[VoxelData.ui初始化_选择存档].childs[0]._object.GetComponent<Image>().color = new Color(58f / 255, 58f / 255, 58f / 255, 1);
     }
 
 
@@ -287,11 +289,16 @@ public class CanvasManager : MonoBehaviour
     [Header("Transforms")]
     public NighManager nightmanager;
     public FixedStack<int> UIBuffer = new FixedStack<int>(5, 0);
-
+    
     [Header("状态")]
     public bool isInitError = false;
     [HideInInspector]public float Initprogress = 0;
     public bool NotNeedBackGround = false; //游戏中暂停隐藏背景的
+    public bool isClickSaving = false;
+
+    [Header("选择存档")]
+    public GameObject NewWorld_item;
+    public Transform NewWorld_Transform;
 
     //Score
     float startTime; float endTime;
@@ -380,11 +387,27 @@ public class CanvasManager : MonoBehaviour
     //返回值，是否可以回退
     public bool UpdateCanvasState(int _TargetID)
     {
+        //选择存档
+        if (_TargetID == VoxelData.ui初始化_选择存档)
+        {
+            foreach (Transform child in NewWorld_Transform)
+            {
+                // 销毁子物体
+                GameObject.Destroy(child.gameObject);
+            }
+
+            world.LoadAllSaves(world.savingPATH);
+        }
+
 
         //新建世界
-        if (_TargetID == VoxelData.ui初始化_新建世界)
+        else if (_TargetID == VoxelData.ui初始化_新建世界)
         {
-            //同步一些数据
+            //初始化数据
+            UIManager[_TargetID].childs[0]._object.GetComponent<TMP_InputField>().text = "新的世界"; //Name
+            UIManager[_TargetID].childs[1]._object.GetComponent<TMP_InputField>().text = "留空以生成随机种子"; //Seed
+            UIManager[_TargetID].childs[2]._object.GetComponent<TextMeshProUGUI>().text = "游戏模式：生存"; //GameMode
+            UIManager[_TargetID].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：默认"; //WorldType
 
             //rendersize
             UIManager[_TargetID].childs[5]._object.GetComponent<Slider>().value = RenderSize_Value;
@@ -492,6 +515,39 @@ public class CanvasManager : MonoBehaviour
 
 
     //--------------------------------- 与玩家互动的组件 ---------------------------------------
+
+    //选择存档组件
+    public void NewWorldGenerate(String name,String date,GameMode gamemode, int worldtype, int seed)
+    {
+        //初始化item
+        GameObject instance = Instantiate(NewWorld_item);
+        instance.transform.SetParent(NewWorld_Transform, false);
+        instance.transform.Find("TMP_WorldName").GetComponent<TextMeshProUGUI>().text = name;
+        instance.transform.Find("TMP_Time").GetComponent<TextMeshProUGUI>().text = date;
+        instance.transform.Find("TMP_GameMode").GetComponent<TextMeshProUGUI>().text = world.GetGameModeString(gamemode) + "   " + world.GetWorldTypeString(worldtype) + "   种子：" + seed;
+    }
+
+    //进入选择的世界选项
+    public void LightButton()
+    {
+        isClickSaving = true;
+        UIManager[VoxelData.ui初始化_选择存档].childs[0]._object.GetComponent<Image>().color = new Color(1,1,1,1);
+    }
+
+    //进入加载地图的ui
+    public void EnderSaving()
+    {
+        if (isClickSaving)
+        {
+            //加载存档
+            //print(world.savingPATH + "\\Saves\\" + world.PointSaving);
+            world.LoadSavingData(world.savingPATH + "\\Saves\\" + world.PointSaving);
+            //print(world.TheSaving.Count);
+
+            SwitchToUI(VoxelData.ui加载世界);
+        }
+    }
+
 
     //新建世界组件
     public void Compoments_SaveWorldSettings(int _id)
@@ -610,24 +666,31 @@ public class CanvasManager : MonoBehaviour
                 switch (currentWorldType)
                 {
                     case 0:
+                        world.worldSetting.worldtype = VoxelData.Biome_Plain;
                         UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：草原群系";
                         break;
                     case 1:
+                        world.worldSetting.worldtype = VoxelData.Biome_Plateau;
                         UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：高原群系";
                         break;
                     case 2:
+                        world.worldSetting.worldtype = VoxelData.Biome_Dessert;
                         UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：沙漠群系";
                         break;
                     case 3:
+                        world.worldSetting.worldtype = VoxelData.Biome_Marsh;
                         UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：沼泽群系";
                         break;
                     case 4:
+                        world.worldSetting.worldtype = VoxelData.Biome_Forest;
                         UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：密林群系";
                         break;
                     case 5:
+                        world.worldSetting.worldtype = VoxelData.Biome_Default;
                         UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：默认";
                         break;
                     case 6:
+                        world.worldSetting.worldtype = VoxelData.Biome_SuperPlain;
                         UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：超平坦";
                         break;
                     default:
@@ -1002,27 +1065,27 @@ public class CanvasManager : MonoBehaviour
     //----------------------------------- Init_Screen ---------------------------------------
   
 
-    //选择生存模式
-    public void GamemodeToSurvival()
-    {
-        world.game_mode = GameMode.Survival;
-        gamemodeTEXT.text = "当前游戏模式：生存模式";
+    ////选择生存模式
+    //public void GamemodeToSurvival()
+    //{
+    //    world.game_mode = GameMode.Survival;
+    //    gamemodeTEXT.text = "当前游戏模式：生存模式";
 
-        //改变按钮颜色
-        SurvivalButtom.GetComponent<Image>().color = new Color(106 / 255f, 115 / 255f, 200 / 255f, 1f);
-        CreativeButtom.GetComponent<Image>().color = new Color(149 / 255f, 134 / 255f, 119 / 255f, 1f);
-    }
+    //    //改变按钮颜色
+    //    SurvivalButtom.GetComponent<Image>().color = new Color(106 / 255f, 115 / 255f, 200 / 255f, 1f);
+    //    CreativeButtom.GetComponent<Image>().color = new Color(149 / 255f, 134 / 255f, 119 / 255f, 1f);
+    //}
 
-    //选择创造模式
-    public void GamemodeToCreative()
-    {
-        world.game_mode = GameMode.Creative;
-        gamemodeTEXT.text = "当前游戏模式：创造模式";
+    ////选择创造模式
+    //public void GamemodeToCreative()
+    //{
+    //    world.game_mode = GameMode.Creative;
+    //    gamemodeTEXT.text = "当前游戏模式：创造模式";
 
-        //改变按钮颜色
-        SurvivalButtom.GetComponent<Image>().color = new Color(149 / 255f, 134 / 255f, 119 / 255f, 1f);
-        CreativeButtom.GetComponent<Image>().color = new Color(106 / 255f, 115 / 255f, 200 / 255f, 1f);
-    }
+    //    //改变按钮颜色
+    //    SurvivalButtom.GetComponent<Image>().color = new Color(149 / 255f, 134 / 255f, 119 / 255f, 1f);
+    //    CreativeButtom.GetComponent<Image>().color = new Color(106 / 255f, 115 / 255f, 200 / 255f, 1f);
+    //}
 
 
     //---------------------------------------------------------------------------------------
