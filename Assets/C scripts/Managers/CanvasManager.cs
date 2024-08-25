@@ -7,7 +7,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
-using static UnityEditor.Progress;
+//using static UnityEditor.Progress;
+using System.IO;
+
 
 public class CanvasManager : MonoBehaviour
 {
@@ -169,7 +171,7 @@ public class CanvasManager : MonoBehaviour
         eyesOpenTime = 5f;
 
         // 初始化浮动参数
-        speed = 1.0f;
+        speed = 0.15f;
         magnitude = 0.04f;
         colorSpeed = 1f;
         muacherishCoroutine = null;
@@ -207,7 +209,9 @@ public class CanvasManager : MonoBehaviour
         previous_starttoreder_mappedValue = 0;  // 开始渲染范围
 
         //恢复按钮
+        isClickSaving = false;
         UIManager[VoxelData.ui初始化_选择存档].childs[0]._object.GetComponent<Image>().color = new Color(58f / 255, 58f / 255, 58f / 255, 1);
+        UIManager[VoxelData.ui初始化_选择存档].childs[1]._object.GetComponent<Image>().color = new Color(58f / 255, 58f / 255, 58f / 255, 1);
     }
 
 
@@ -403,6 +407,8 @@ public class CanvasManager : MonoBehaviour
         //新建世界
         else if (_TargetID == VoxelData.ui初始化_新建世界)
         {
+            //InitAllManagers();
+
             //初始化数据
             UIManager[_TargetID].childs[0]._object.GetComponent<TMP_InputField>().text = "新的世界"; //Name
             UIManager[_TargetID].childs[1]._object.GetComponent<TMP_InputField>().text = "留空以生成随机种子"; //Seed
@@ -526,12 +532,43 @@ public class CanvasManager : MonoBehaviour
         instance.transform.Find("TMP_Time").GetComponent<TextMeshProUGUI>().text = date;
         instance.transform.Find("TMP_GameMode").GetComponent<TextMeshProUGUI>().text = world.GetGameModeString(gamemode) + "   " + world.GetWorldTypeString(worldtype) + "   种子：" + seed;
     }
+    //删除存档按钮
+    public void ClickToDeleteSaving()
+    {
+        // 构造完整路径
+        string fullPath = Path.Combine(world.savingPATH, "Saves", world.PointSaving);
+
+        // 确保要删除的路径存在
+        if (Directory.Exists(fullPath))
+        {
+            //Debug.Log("存档存在");
+
+            // 删除存档
+            world.DeleteSave(fullPath);
+
+            // 刷新界面
+            foreach (Transform child in NewWorld_Transform)
+            {
+                // 销毁子物体
+                GameObject.Destroy(child.gameObject);
+            }
+
+            // 重新加载存档
+            world.LoadAllSaves(world.savingPATH);
+        }
+        else
+        {
+            Debug.LogWarning($"要删除的存档路径 {fullPath} 不存在.");
+        }
+    }
+
 
     //进入选择的世界选项
     public void LightButton()
     {
         isClickSaving = true;
         UIManager[VoxelData.ui初始化_选择存档].childs[0]._object.GetComponent<Image>().color = new Color(1,1,1,1);
+        UIManager[VoxelData.ui初始化_选择存档].childs[1]._object.GetComponent<Image>().color = new Color(1, 1, 1, 1);
     }
 
     //进入加载地图的ui
@@ -840,6 +877,10 @@ public class CanvasManager : MonoBehaviour
 
     //------------------------------------- 工具 ------------------------------------------
 
+   
+
+
+
     //保存并回到标题页面
     public void SaveAndBackToMenu()
     {
@@ -848,11 +889,18 @@ public class CanvasManager : MonoBehaviour
 
         SwitchToUI(VoxelData.ui菜单);
 
+
+        InitAllManagers();
+    }
+
+
+    //全部初始化
+    public void InitAllManagers()
+    {
         InitCanvasManager();
         musicmanager.InitMusicManager();
         world.InitWorld();
         player.InitPlayerManager();
-
     }
 
 
@@ -1443,7 +1491,24 @@ public class CanvasManager : MonoBehaviour
         //music
         musicmanager.PlaySound_Click();
 
-        Application.Quit();
+        world.ClassifyWorldData();
+
+        StartCoroutine(waittoQuit());
+    }
+
+    IEnumerator waittoQuit()
+    {
+        while (true)
+        {
+            if (world.isFinishSaving)
+            {
+                Application.Quit();
+            }
+            yield return null;
+        }
+
+
+       
     }
 
     //显示Block名字

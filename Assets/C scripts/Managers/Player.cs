@@ -227,6 +227,9 @@ public class Player : MonoBehaviour
         isSwiming = false;
         new_foot_high = -100f;
 
+        isSuperMining = false;
+        isFlying = false;
+        verticalMomentum = 0;
 
     }
 

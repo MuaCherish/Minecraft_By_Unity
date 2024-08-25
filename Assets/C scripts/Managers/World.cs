@@ -56,11 +56,12 @@ public class World : MonoBehaviour
     public Player player;
 
     [Header("世界存档")]
-    public String savingPATH = "C:\\Users\\墨鱼\\Desktop"; //存档根目录
+    public bool isFinishSaving = false;
+    [HideInInspector]public String savingPATH = ""; //存档根目录
     public WorldSetting worldSetting;
     public List<SavingData> TheSaving = new List<SavingData>(); //读取的存档
     public List<EditStruct> EditNumber = new List<EditStruct>(); //玩家数据
-    public List<SavingData> savingDatas = new List<SavingData>();//最终保存数据
+    //public List<SavingData> savingDatas = new List<SavingData>();//最终保存数据
 
     [Header("游戏状态")]
     public Game_State game_state = Game_State.Start;
@@ -106,7 +107,6 @@ public class World : MonoBehaviour
     public Transform PlayerFoot;
     [HideInInspector]
     public byte ERROR_CODE_OUTOFVOXELMAP = 255;
-    [HideInInspector]
     public Vector3 Start_Position = new Vector3(1600f, 127f, 1600f);
 
 
@@ -211,11 +211,34 @@ public class World : MonoBehaviour
 
     public void InitWorld()
     {
-        
+
+        game_mode = GameMode.Survival;
+
+
+        isLoadSaving = false;
+
+
+        // 使用 persistentDataPath 作为根目录
+        savingPATH = Path.Combine(Application.persistentDataPath);
+
+        // 确保目录存在
+        if (!Directory.Exists(savingPATH))
+        {
+            Directory.CreateDirectory(savingPATH);
+        }
+
+        // 打印目录路径以确认
+        //Debug.Log("存档目录: " + savingPATH);
+
+
         //初始化
+
+        UnityEngine.Random.InitState(worldSetting.seed);
+
         game_state = Game_State.Start;
-        EditNumber = new List<EditStruct>();
-        savingDatas = new List<SavingData>();
+        TheSaving = new List<SavingData>();
+        EditNumber = new List<EditStruct>(); 
+        //savingDatas = new List<SavingData>();
         renderSize = 5;
         StartToRender = 1f;
         DestroySize = 7f;
@@ -223,7 +246,7 @@ public class World : MonoBehaviour
         Allchunks = new Dictionary<Vector3, Chunk>();
         WatingToCreate_Chunks = new List<Vector3>();
         WatingToRemove_Chunks = new List<Vector3>();
-        myThread_Render = null;
+        myThread_Render = null; 
         WaitToRender_New = new ConcurrentQueue<Chunk>();
         是否生成Chunk侧面 = false;
         Center_Now = Vector3.zero;
@@ -1657,7 +1680,7 @@ public class World : MonoBehaviour
             bool found = false;
 
             // 查找是否有相同的 ChunkLocation
-            foreach (var savingtemp in savingDatas)
+            foreach (var savingtemp in TheSaving)
             {
                 if (savingtemp.ChunkLocation == _ChunkLocation)
                 {
@@ -1677,7 +1700,7 @@ public class World : MonoBehaviour
 
                 // 创建新的 SavingData 并添加到 savingDatas
                 SavingData newSavingData = new SavingData(_ChunkLocation, newEditDataInChunk);
-                savingDatas.Add(newSavingData);
+                TheSaving.Add(newSavingData);
             }
         }
 
@@ -1693,8 +1716,8 @@ public class World : MonoBehaviour
         //}
 
         //合并上次存档内容
-        MergeSavingDataLists();
-
+        //MergeSavingDataLists();
+        //savingDatas = TheSaving;
         SAVINGDATA(savingPATH);
     }
 
@@ -1703,8 +1726,6 @@ public class World : MonoBehaviour
     public void SAVINGDATA(string savePath)
     {
         // 更新存档结构体
-        // worldSetting.gameMode = game_mode;
-        // worldSetting.worldtype = canvasManager.currentWorldType;
         worldSetting.playerposition = player.transform.position;
         worldSetting.playerrotation = player.transform.rotation;
         worldSetting.gameMode = game_mode;
@@ -1725,7 +1746,7 @@ public class World : MonoBehaviour
             Directory.CreateDirectory(folderPath);
         }
 
-        //删除Saves文件夹中名字为previouDate的文件夹，如果能找到的话
+        // 删除Saves文件夹中名字为previouDate的文件夹，如果能找到的话
         string oldFolderPath = Path.Combine(savesFolderPath, previouDate);
         if (Directory.Exists(oldFolderPath))
         {
@@ -1734,7 +1755,7 @@ public class World : MonoBehaviour
         }
 
         // 将所有的 SavingData 的字典转换为列表
-        foreach (var data in savingDatas)
+        foreach (var data in TheSaving)
         {
             data.EditDataInChunkList = new List<EditStruct>();
             foreach (var kvp in data.EditDataInChunk)
@@ -1745,22 +1766,65 @@ public class World : MonoBehaviour
 
         // 将 worldSetting 和 savingDatas 转换为 JSON 字符串
         string worldSettingJson = JsonUtility.ToJson(worldSetting, true);
-        string savingDatasJson = JsonUtility.ToJson(new Wrapper<SavingData>(savingDatas), true);
+        string savingDatasJson = JsonUtility.ToJson(new Wrapper<SavingData>(TheSaving), true);
 
         // 将 JSON 字符串保存到指定路径的文件夹中
         File.WriteAllText(Path.Combine(folderPath, "WorldSetting.json"), worldSettingJson);
         File.WriteAllText(Path.Combine(folderPath, "SavingDatas.json"), savingDatasJson);
 
-        // Debug.Log("数据已保存到: " + folderPath); 
+
+
+         Debug.Log("数据已保存到: " + folderPath);
+        isFinishSaving = true;
+
+
+        // Debug
+        //foreach (var data in TheSaving)
+        //{
+        //    Debug.Log("Chunk Location: " + data.ChunkLocation);
+        //    foreach (var editData in data.EditDataInChunkList)
+        //    {
+        //        Debug.Log("Edit Position: " + editData.editPos + ", Target Type: " + editData.targetType);
+        //    }
+        //}
     }
+
+
 
 
 
     //读取全部存档
     public void LoadAllSaves(string savingPATH)
     {
+        // 构造 Saves 目录的路径
+        string savesFolderPath = Path.Combine(savingPATH, "Saves");
+
+        // 检查 Saves 目录是否存在，如果不存在则创建它
+        if (!Directory.Exists(savesFolderPath))
+        {
+            try
+            {
+                Directory.CreateDirectory(savesFolderPath);
+                //Debug.Log($"Saves 文件夹已创建: {savesFolderPath}");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"创建 Saves 文件夹时出错: {ex.Message}");
+                return; // 创建文件夹失败时退出函数
+            }
+        }
+
         // 获取存档目录下的所有文件夹路径
-        string[] saveDirectories = Directory.GetDirectories(savingPATH + "\\Saves");
+        string[] saveDirectories;
+        try
+        {
+            saveDirectories = Directory.GetDirectories(savesFolderPath);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"获取存档目录时出错: {ex.Message}");
+            return; // 处理异常并退出函数
+        }
 
         // 遍历每个存档文件夹
         foreach (string saveDirectory in saveDirectories)
@@ -1770,12 +1834,26 @@ public class World : MonoBehaviour
             //Debug.Log($"Loading save from folder: {folderName}");
 
             // 调用 LoadData 函数读取当前存档
-            WorldSetting _worldsetting = LoadWorldSetting(saveDirectory);
-            canvasManager.NewWorldGenerate(_worldsetting.name, _worldsetting.date, _worldsetting.gameMode, _worldsetting.worldtype, _worldsetting.seed);
+            try
+            {
+                WorldSetting _worldsetting = LoadWorldSetting(saveDirectory);
+                canvasManager.NewWorldGenerate(
+                    _worldsetting.name,
+                    _worldsetting.date,
+                    _worldsetting.gameMode,
+                    _worldsetting.worldtype,
+                    _worldsetting.seed
+                );
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"加载存档 {folderName} 时出错: {ex.Message}");
+            }
         }
 
         //Debug.Log($"Total saves loaded: {saveDirectories.Length}");
     }
+
 
     //分析存档名字
     public WorldSetting LoadWorldSetting(string savePath)
@@ -1829,11 +1907,11 @@ public class World : MonoBehaviour
                     data.RestoreDictionary();
 
                     // Debug打印
-                    Debug.Log($"Chunk Location: {data.ChunkLocation}");
-                    foreach (var pair in data.EditDataInChunk)
-                    {
-                        Debug.Log($"Position: {pair.Key}, Type: {pair.Value}");
-                    }
+                    //Debug.Log($"Chunk Location: {data.ChunkLocation}");
+                    //foreach (var pair in data.EditDataInChunk)
+                    //{
+                    //    Debug.Log($"Position: {pair.Key}, Type: {pair.Value}");
+                    //}
                 }
 
                 worldSetting = LoadWorldSetting(savePath);
@@ -2001,52 +2079,89 @@ public class World : MonoBehaviour
 
     //--------------------------------------------------------------------------------------------------------------
 
-    //合并存档
-    public void MergeSavingDataLists()
+    //删除存档
+    public void DeleteSave(string savepath)
     {
-        // 创建一个字典来临时存储 `savingDatas` 中的 `SavingData` 实例
-        Dictionary<Vector3, SavingData> savingDataDict = new Dictionary<Vector3, SavingData>();
-
-        // 将 `savingDatas` 列表中的数据添加到字典中
-        foreach (var data in savingDatas)
+        if (Directory.Exists(savepath))
         {
-            savingDataDict[data.ChunkLocation] = data;
-        }
-
-        // 遍历 `TheSaving` 列表，将其数据强覆盖到字典中
-        foreach (var data in TheSaving)
-        {
-            if (savingDataDict.TryGetValue(data.ChunkLocation, out var existingData))
+            try
             {
-                // 如果字典中已存在相同 `ChunkLocation`，则强覆盖 `EditDataInChunkList`
-                var newEditDataDict = new Dictionary<Vector3, byte>();
-
-                // 将 TheSaving 中的 EditDataInChunkList 添加到新的字典
-                foreach (var editStruct in data.EditDataInChunkList)
+                // 删除所有文件
+                foreach (string file in Directory.GetFiles(savepath))
                 {
-                    newEditDataDict[editStruct.editPos] = editStruct.targetType;
+                    File.Delete(file);
+                    //Debug.Log($"Deleted file: {file}");
                 }
 
-                // 更新 existingData 的字典
-                existingData.EditDataInChunk = newEditDataDict;
-
-                // 更新 existingData 的列表
-                existingData.EditDataInChunkList = new List<EditStruct>();
-                foreach (var kvp in newEditDataDict)
+                // 递归删除所有子目录
+                foreach (string directory in Directory.GetDirectories(savepath))
                 {
-                    existingData.EditDataInChunkList.Add(new EditStruct(kvp.Key, kvp.Value));
+                    DeleteSave(directory);
                 }
+
+                // 删除空目录
+                Directory.Delete(savepath);
+                //Debug.Log("完成删除");
             }
-            else
+            catch (Exception ex)
             {
-                // 如果字典中不存在相同 `ChunkLocation`，则直接添加
-                savingDataDict[data.ChunkLocation] = data;
+                // 处理异常，如日志记录
+                Debug.LogError($"删除目录 {savepath} 时出错: {ex.Message}");
             }
         }
-
-        // 更新 `savingDatas` 列表
-        savingDatas = new List<SavingData>(savingDataDict.Values);
+        else
+        {
+            Debug.LogWarning($"指定路径 {savepath} 不存在.");
+        }
     }
+
+
+    //合并存档
+    //public void MergeSavingDataLists()
+    //{
+    //    // 创建一个新的列表用于存储合并后的数据
+    //    List<SavingData> mergedSavingData = new List<SavingData>();
+
+    //    // 将 TheSaving 中的数据加入到合并列表中
+    //    foreach (var theSavingData in TheSaving)
+    //    {
+    //        // 在 mergedSavingData 中查找是否已经存在相同的 ChunkLocation
+    //        var existingData = mergedSavingData.FirstOrDefault(sd => sd.ContainsChunkLocation(theSavingData.ChunkLocation));
+    //        if (existingData == null)
+    //        {
+    //            // 如果没有找到相同 ChunkLocation 的数据，则直接添加
+    //            mergedSavingData.Add(new SavingData(theSavingData.ChunkLocation, theSavingData.EditDataInChunk));
+    //        }
+    //        else
+    //        {
+    //            // 如果找到了，则更新已有的数据
+    //            existingData.EditDataInChunk = new Dictionary<Vector3, byte>(theSavingData.EditDataInChunk);
+    //        }
+    //    }
+
+    //    // 遍历 savingDatas，合并数据
+    //    foreach (var savingData in savingDatas)
+    //    {
+    //        // 在 mergedSavingData 中查找是否已经存在相同的 ChunkLocation
+    //        var existingData = mergedSavingData.FirstOrDefault(sd => sd.ContainsChunkLocation(savingData.ChunkLocation));
+    //        if (existingData == null)
+    //        {
+    //            // 如果没有找到相同 ChunkLocation 的数据，则直接添加
+    //            mergedSavingData.Add(new SavingData(savingData.ChunkLocation, savingData.EditDataInChunk));
+    //        }
+    //        else
+    //        {
+    //            // 如果找到了，则合并 EditDataInChunkList
+    //            foreach (var editStruct in savingData.EditDataInChunkList)
+    //            {
+    //                existingData.EditDataInChunk[editStruct.editPos] = editStruct.targetType;
+    //            }
+    //        }
+    //    }
+
+    //    // 将合并后的数据赋值回 savingDatas
+    //    savingDatas = mergedSavingData;
+    //}
 
 
 

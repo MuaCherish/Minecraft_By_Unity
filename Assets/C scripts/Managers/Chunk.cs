@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Threading;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
-using static UnityEditor.PlayerSettings;
+//using static UnityEditor.PlayerSettings;
 //using System.Diagnostics;
 
 public class Chunk : MonoBehaviour
@@ -108,6 +108,7 @@ public class Chunk : MonoBehaviour
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
         rand = new System.Random(world.worldSetting.seed);
+        //print(world.worldSetting.seed);
 
         //初始化Voxel数组
         InitVoxelStruct();
@@ -370,7 +371,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.canvasManager.currentWorldType);
+                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype);
 
 
                     //矿洞噪声
@@ -692,6 +693,11 @@ public class Chunk : MonoBehaviour
 
         }
 
+        if (isSaving)
+        {
+            EditData(EditList);
+        }
+
         //交给world来create
         world.WaitToCreateMesh.Enqueue(this);
 
@@ -753,7 +759,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.canvasManager.currentWorldType);
+                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype);
                     //矿洞噪声
                     float noise3d = GetCaveNoise(x, y, z);
 
@@ -927,6 +933,11 @@ public class Chunk : MonoBehaviour
 
         }
 
+        if (isSaving)
+        {
+            EditData(EditList);
+        }
+
         //交给world来create
         world.WaitToCreateMesh.Enqueue(this);
     }
@@ -946,7 +957,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.canvasManager.currentWorldType);
+                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype);
 
 
                     //矿洞噪声
@@ -1242,6 +1253,11 @@ public class Chunk : MonoBehaviour
 
         }
 
+        if (isSaving)
+        {
+            EditData(EditList);
+        }
+
         //交给world来create
         world.WaitToCreateMesh.Enqueue(this);
 
@@ -1269,7 +1285,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.canvasManager.currentWorldType);
+                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype);
 
 
                     //矿洞噪声
@@ -1534,7 +1550,7 @@ public class Chunk : MonoBehaviour
                             else
                             {
 
-                                voxelMap[x, y, z].voxelType = VoxelData.Stone;
+                                voxelMap[x, y, z].voxelType = VoxelData.Stone; 
 
                             }
                         }
@@ -1604,6 +1620,11 @@ public class Chunk : MonoBehaviour
         //    CreateBamboo((int)item.x, (int)item.y, (int)item.z);
 
         //}
+
+        if (isSaving)
+        {
+            EditData(EditList);
+        }
 
         //交给world来create
         world.WaitToCreateMesh.Enqueue(this);
@@ -2237,13 +2258,21 @@ public class Chunk : MonoBehaviour
     void updateSomeBlocks()
     {
 
-        //不能浮空的方块(灌木丛 + 竹子 + 细雪)
-        if (!isOutOfRange(x, y - 1, z) && voxelMap[x, y - 1, z].voxelType == VoxelData.Air)
+        //不能浮空的方块(灌木丛 + 竹子 + 细雪) 
+        if (!isOutOfRange(x, y, z) && y != 0)
         {
-            if (voxelMap[x, y, z].voxelType == VoxelData.Bush || voxelMap[x, y, z].voxelType == VoxelData.Bamboo || voxelMap[x, y, z].voxelType == VoxelData.SnowPower)
+            //如果是悬空的
+            if (voxelMap[x, y - 1, z].voxelType == VoxelData.Air)
             {
-                voxelMap[x, y, z].voxelType = VoxelData.Air;
+                ///且自己是不能悬空的方块
+                if (voxelMap[x, y, z].voxelType == VoxelData.Bush || voxelMap[x, y, z].voxelType == VoxelData.Bamboo || voxelMap[x, y, z].voxelType == VoxelData.SnowPower)
+                {
+                    
+                    voxelMap[x, y, z].voxelType = VoxelData.Air;
+                }
             }
+
+            
         }
 
 
@@ -2291,6 +2320,12 @@ public class Chunk : MonoBehaviour
 
                     //[已废弃，移动至单独的线程执行]水的流动
                     //updateWater();
+
+                    if (isOutOfRange(x,y,z))
+                    {
+                        print("");
+                    }
+
 
                     if (world.blocktypes[voxelMap[x, y, z].voxelType].DrawMode != DrawMode.Air)
                         UpdateMeshData(new Vector3(x, y, z));
@@ -2434,7 +2469,7 @@ public class Chunk : MonoBehaviour
     // 批量编辑方块
     public void EditData(List<EditStruct> _EditList)
     {
-        print($"EditData:{_EditList.Count}");
+        //print($"EditData:{_EditList.Count}");
 
         for (int i = 0; i < _EditList.Count; i++)
         {
@@ -2453,7 +2488,7 @@ public class Chunk : MonoBehaviour
         }
 
         // 更新区块网格
-        UpdateChunkMesh_WithSurround(true, false);
+        //UpdateChunkMesh_WithSurround(true, false);
 
         isSaving = false;
     }

@@ -148,6 +148,8 @@ public class MusicManager : MonoBehaviour
 
         //walking
         footstepInterval = VoxelData.walkSpeed;
+        fadetoStopenvironment = null;
+        environmentCoroutine = null;
     }
 
     private void Update()
@@ -244,7 +246,7 @@ public class MusicManager : MonoBehaviour
     {
         float backup_volume = Audio_envitonment.volume;
 
-        for (float i = backup_volume; i >= 0; i -= 0.05f)
+        for (float i = backup_volume; i >= 0; i -= 0.01f)
         {
             Audio_envitonment.volume = i;
             yield return null;
