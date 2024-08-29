@@ -580,7 +580,13 @@ public class Player : MonoBehaviour
 
         }
 
+        //E-打开背包
+        if (Input.GetKeyDown(KeyCode.E))
+        {
 
+            canvasManager.UIManager[VoxelData.ui玩家].childs[2]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[2]._object.activeSelf);
+
+        }
 
         //按住Ctrl键，摄像机将下降一定高度
         if (Input.GetKeyDown(KeyCode.LeftControl))
@@ -624,7 +630,10 @@ public class Player : MonoBehaviour
             //Debug.Log("Player Mouse0");
             //isLeftMouseDown = true;
             //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
-            Vector3 pointvector = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
+            Vector3 _raycast = RayCast_now();
+
+
+            Vector3 pointvector = new Vector3(Mathf.FloorToInt(_raycast.x), Mathf.FloorToInt(_raycast.y), Mathf.FloorToInt(_raycast.z));
 
             if (pointvector != OldPointLocation || pointvector == Vector3.zero)
             {
@@ -667,6 +676,24 @@ public class Player : MonoBehaviour
 
             isPlacing = true;
             Vector3 RayCast = RayCast_last();
+            Vector3 _raycastNow = RayCast_now();
+            byte _targettype = world.GetBlockType(_raycastNow);
+
+            //如果是工作台，则打开ui
+            if (world.blocktypes[_targettype].isinteractable)
+            {
+                print("isinteractable");
+
+                switch (_targettype)
+                {
+                    //工作台
+                    case 18:
+                        canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
+                        break;
+                }
+
+                return;
+            }
 
 
             //如果打到 && 距离大于2f && 且不是脚底下

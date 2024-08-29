@@ -15,8 +15,8 @@ public class CanvasManager : MonoBehaviour
 {
     [Header("UIMAnager")]
     public List<CanvasId> UIManager = new List<CanvasId>();
-    
 
+    public List<GameObject> CheckToCloseUI = new List<GameObject>();  //Init需要检查并关闭的页面
 
 
 
@@ -150,6 +150,12 @@ public class CanvasManager : MonoBehaviour
             muacherishCoroutine = StartCoroutine(jumpMuaCherish());
         }
         waittoFinishSaveAndBackToMenuCoroutine = null;
+
+        foreach (var obj in CheckToCloseUI)
+        {
+            obj.SetActive(false);
+        }
+
 
         // 初始化修改值参数
         isPausing = false;

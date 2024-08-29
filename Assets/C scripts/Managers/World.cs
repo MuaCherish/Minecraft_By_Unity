@@ -2367,10 +2367,10 @@ public class BlockType
     public bool isTransparent; //周边方块是否面剔除
     public bool canBeChoose;   //是否可被高亮方块捕捉到
     public bool candropBlock;  //是否掉落方块
-
+    public bool isinteractable; //互动方块
 
     [Header("碰撞")]
-    public bool isSolid;       //是否会阻挡玩家
+    public bool isSolid;       //是否会阻挡玩a家
 
     //抽象来说就是方块向内挤压的数值
     //对于Y来说，(0.5f,0,0f)，就是Y正方向的面向内挤压0.5f，Y负方向的面向内挤压0.0f，即台阶的碰撞参数
