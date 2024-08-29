@@ -40,7 +40,7 @@ public class CanvasManager : MonoBehaviour
     public TextMeshProUGUI selectblockname;
     public BackPackManager BackPackManager;
     public LifeManager LifeManager; 
-    public TextMeshProUGUI gamemodeTEXT;
+    //public TextMeshProUGUI gamemodeTEXT;
     //public GameObject CreativeButtom;
     //public GameObject SurvivalButtom;
     //public GameObject Survival_Screen;
@@ -73,11 +73,11 @@ public class CanvasManager : MonoBehaviour
     //public GameObject DeadScreen;
 
     //修改值参数
-    public Slider slider_bgm;
-    public Slider slider_sound;
-    public Slider slider_MouseSensitivity;
-    public Toggle toggle_SpaceMode;  
-    public Toggle toggle_SuperMing;
+    //public Slider slider_bgm;
+   // public Slider slider_sound;
+    //public Slider slider_MouseSensitivity;
+    //public Toggle toggle_SpaceMode;  
+    //public Toggle toggle_SuperMing;
 
 
     //游戏状态判断
@@ -110,7 +110,7 @@ public class CanvasManager : MonoBehaviour
     public float promptShowspeed = 400f;
 
     //eyestime
-    public float eyesOpenTime = 5f;
+    public float eyesOpenTime = 0.5f;
 
     //Jump_MuaCherish
     public GameObject muacherish;
@@ -149,7 +149,7 @@ public class CanvasManager : MonoBehaviour
         {
             muacherishCoroutine = StartCoroutine(jumpMuaCherish());
         }
-
+        waittoFinishSaveAndBackToMenuCoroutine = null;
 
         // 初始化修改值参数
         isPausing = false;
@@ -168,7 +168,7 @@ public class CanvasManager : MonoBehaviour
         promptShowspeed = 400f;
 
         // 初始化睁眼时间
-        eyesOpenTime = 5f;
+        eyesOpenTime = 0.5f;
 
         // 初始化浮动参数
         speed = 0.15f;
@@ -223,6 +223,7 @@ public class CanvasManager : MonoBehaviour
         //加载中
         if (world.game_state == Game_State.Loading)
         {
+            OpenYourEyes.SetActive(true);
             LoadingWorld();
 
         }
@@ -535,6 +536,11 @@ public class CanvasManager : MonoBehaviour
     //删除存档按钮
     public void ClickToDeleteSaving()
     {
+        if (world.PointSaving == "")
+        {
+            return;
+        }
+
         // 构造完整路径
         string fullPath = Path.Combine(world.savingPATH, "Saves", world.PointSaving);
 
@@ -877,20 +883,74 @@ public class CanvasManager : MonoBehaviour
 
     //------------------------------------- 工具 ------------------------------------------
 
-   
+    //保存并退出
+    public void SaveAndQuitGame()
+    {
+        //music
+        musicmanager.PlaySound_Click();
 
+        world.ClassifyWorldData();
+
+        StartCoroutine(waittoQuit());
+    }
+
+    IEnumerator waittoQuit()
+    {
+        while (true)
+        {
+            if (world.isFinishSaving)
+            {
+                Application.Quit();
+            }
+            yield return null;
+        }
+
+
+
+    }
+
+
+    //直接退出
+    public void JustQuitGame()
+    {
+        //music
+        musicmanager.PlaySound_Click();
+
+        Application.Quit();
+    }
 
 
     //保存并回到标题页面
     public void SaveAndBackToMenu()
     {
-        StopAllCoroutines();
 
+        if (waittoFinishSaveAndBackToMenuCoroutine == null)
+        {
+            waittoFinishSaveAndBackToMenuCoroutine = StartCoroutine(waittoFinishSaveAndBackToMenu());
+        }
+       
+    }
 
-        SwitchToUI(VoxelData.ui菜单);
+    public Coroutine waittoFinishSaveAndBackToMenuCoroutine;
+    IEnumerator waittoFinishSaveAndBackToMenu()
+    {
+        world.ClassifyWorldData();
 
+        SwitchToUI(VoxelData.ui正在保存中);
 
-        InitAllManagers();
+        yield return new WaitForSeconds(1f);
+
+        while (true)
+        {
+            if (world.isFinishSaving)
+            {
+                SwitchToUI(VoxelData.ui菜单);
+
+                StopAllCoroutines();
+                InitAllManagers();
+                break;
+            }
+        }
     }
 
 
@@ -899,8 +959,10 @@ public class CanvasManager : MonoBehaviour
     {
         InitCanvasManager();
         musicmanager.InitMusicManager();
-        world.InitWorld();
+        world.InitWorldManager();
         player.InitPlayerManager();
+        BackPackManager.InitBackPackManager();
+        LifeManager.InitLifeManager();
     }
 
 
@@ -1058,19 +1120,15 @@ public class CanvasManager : MonoBehaviour
     {
         if (hasExec_Playing)
         {
-            //Loading_Screen.SetActive(false);
-            //ToolBar.SetActive(true);
-            //Survival_Screen.SetActive(false);
-            //CursorCross_Screen.SetActive(true);
+
             Prompt_Screen.SetActive(true);
 
-            //toggle_SuperMing.isOn = true;
+
             player.isSuperMining = true;
+
+
             openyoureyes();
 
-            BackPackManager.CreativeMode();
-
-            //StopCoroutine(muacherishCoroutine);
 
             hasExec_Playing = false;
         }
@@ -1148,7 +1206,7 @@ public class CanvasManager : MonoBehaviour
     //Loading结束的时候加一个睁眼的动画
     void openyoureyes()
     {
-        OpenYourEyes.SetActive(true);
+        
         StartCoroutine(Animation_Openyoureyes());
     }
 
@@ -1348,86 +1406,86 @@ public class CanvasManager : MonoBehaviour
     //---------------------------------- 实时修改值 ------------------------------------------
 
     //更新值
-    void UpdatePauseScreenValue()
-    {
-        //bgm volume
-        volume_bgm = slider_bgm.value;
-        if (volume_bgm != previous_bgm)
-        {
-            //bgm
-            musicmanager.Audio_envitonment.volume = Mathf.Lerp(0f, 1f, volume_bgm);
+    //void UpdatePauseScreenValue()
+    //{
+    //    //bgm volume
+    //    volume_bgm = slider_bgm.value;
+    //    if (volume_bgm != previous_bgm)
+    //    {
+    //        //bgm
+    //        musicmanager.Audio_envitonment.volume = Mathf.Lerp(0f, 1f, volume_bgm);
 
-            //更新previous
-            previous_bgm = volume_bgm;
-        }
-
-
-        //sound volume
-        volume_sound = slider_sound.value;
-        if (volume_sound != previous_sound)
-        {
-            //sound
-            musicmanager.Audio_player_place.volume = Mathf.Lerp(0f, 1f, volume_sound);
-            musicmanager.Audio_player_broke.volume = Mathf.Lerp(0f, 1f, volume_sound);
-            musicmanager.Audio_player_moving.volume = Mathf.Lerp(0f, 1f, volume_sound);
-            musicmanager.Audio_player_falling.volume = Mathf.Lerp(0f, 1f, volume_sound);
-            musicmanager.Audio_player_diving.volume = Mathf.Lerp(0f, 1f, volume_sound);
-            musicmanager.Audio_Click.volume = Mathf.Lerp(0f, 1f, volume_sound);
-
-            //更新previous
-            previous_sound = volume_sound;
-        }
-
-        //MouseSensitivity
-        Mouse_Sensitivity = Mathf.Lerp(1f, 4f, slider_MouseSensitivity.value);
-
-        if (Mouse_Sensitivity != previous_Mouse_Sensitivity)
-        {
-            //改变鼠标灵敏度
-
-            //更新previous
-            previous_Mouse_Sensitivity = Mouse_Sensitivity;
-        }
+    //        //更新previous
+    //        previous_bgm = volume_bgm;
+    //    }
 
 
-        //space mode
-        SpaceMode_isOn = toggle_SpaceMode.isOn;
-        if (SpaceMode_isOn != previous_spaceMode_isOn)
-        {
-            if (SpaceMode_isOn)
-            {
-                player.gravity = -3f;
-                player.isSpaceMode = true;
-            }
-            else
-            {
-                player.gravity = -20f;
-                player.isSpaceMode = false;
-            }
+    //    //sound volume
+    //    volume_sound = slider_sound.value;
+    //    if (volume_sound != previous_sound)
+    //    {
+    //        //sound
+    //        musicmanager.Audio_player_place.volume = Mathf.Lerp(0f, 1f, volume_sound);
+    //        musicmanager.Audio_player_broke.volume = Mathf.Lerp(0f, 1f, volume_sound);
+    //        musicmanager.Audio_player_moving.volume = Mathf.Lerp(0f, 1f, volume_sound);
+    //        musicmanager.Audio_player_falling.volume = Mathf.Lerp(0f, 1f, volume_sound);
+    //        musicmanager.Audio_player_diving.volume = Mathf.Lerp(0f, 1f, volume_sound);
+    //        musicmanager.Audio_Click.volume = Mathf.Lerp(0f, 1f, volume_sound);
 
-            //更新previous
-            previous_spaceMode_isOn = SpaceMode_isOn;
-        }
+    //        //更新previous
+    //        previous_sound = volume_sound;
+    //    }
+
+    //    //MouseSensitivity
+    //    Mouse_Sensitivity = Mathf.Lerp(1f, 4f, slider_MouseSensitivity.value);
+
+    //    if (Mouse_Sensitivity != previous_Mouse_Sensitivity)
+    //    {
+    //        //改变鼠标灵敏度
+
+    //        //更新previous
+    //        previous_Mouse_Sensitivity = Mouse_Sensitivity;
+    //    }
 
 
-        //SuperMining
-        SuperMining_isOn = toggle_SuperMing.isOn;
-        if (SuperMining_isOn != previous_SuperMining_isOn)
-        {
-            if (SuperMining_isOn)
-            {
-                player.isSuperMining = true;
-            }
-            else
-            {
-                player.isSuperMining = false;
-            }
+    //    //space mode
+    //    SpaceMode_isOn = toggle_SpaceMode.isOn;
+    //    if (SpaceMode_isOn != previous_spaceMode_isOn)
+    //    {
+    //        if (SpaceMode_isOn)
+    //        {
+    //            player.gravity = -3f;
+    //            player.isSpaceMode = true;
+    //        }
+    //        else
+    //        {
+    //            player.gravity = -20f;
+    //            player.isSpaceMode = false;
+    //        }
 
-            //更新previous
-            previous_SuperMining_isOn = SuperMining_isOn;
-        }
+    //        //更新previous
+    //        previous_spaceMode_isOn = SpaceMode_isOn;
+    //    }
 
-    }
+
+    //    //SuperMining
+    //    SuperMining_isOn = toggle_SuperMing.isOn;
+    //    if (SuperMining_isOn != previous_SuperMining_isOn)
+    //    {
+    //        if (SuperMining_isOn)
+    //        {
+    //            player.isSuperMining = true;
+    //        }
+    //        else
+    //        {
+    //            player.isSuperMining = false;
+    //        }
+
+    //        //更新previous
+    //        previous_SuperMining_isOn = SuperMining_isOn;
+    //    }
+
+    //}
 
 
     //---------------------------------------------------------------------------------------
@@ -1486,30 +1544,7 @@ public class CanvasManager : MonoBehaviour
         Cursor.visible = false;
     }
 
-    public void QuitGame()
-    {
-        //music
-        musicmanager.PlaySound_Click();
-
-        world.ClassifyWorldData();
-
-        StartCoroutine(waittoQuit());
-    }
-
-    IEnumerator waittoQuit()
-    {
-        while (true)
-        {
-            if (world.isFinishSaving)
-            {
-                Application.Quit();
-            }
-            yield return null;
-        }
-
-
-       
-    }
+   
 
     //显示Block名字
     public void Change_text_selectBlockname(byte prokeblocktype)

@@ -39,18 +39,30 @@ public class LifeManager : MonoBehaviour
 
     //------------------------------------ 血条 ------------------------------------------
 
-    //初始化血条
-    private void Start()
-    {
-        //初始化血条
-        UpdatePlayerBlood(0, false, false);
 
-        //常驻恢复协程
-        if (RecoveryCoroutine == null)
+    private void FixedUpdate()
+    {
+        if (world.game_state == Game_State.Playing)
         {
-            RecoveryCoroutine = StartCoroutine(RecoveryBlood());
+            //初始化血条
+            UpdatePlayerBlood(0, false, false);
+
+            //常驻恢复协程
+            if (RecoveryCoroutine == null)
+            {
+                RecoveryCoroutine = StartCoroutine(RecoveryBlood());
+            }
         }
     }
+
+
+    public void InitLifeManager()
+    {
+        blood = 20;
+        UpdatePlayerBlood(0, false, false);
+        RecoveryCoroutine = null;
+    }
+
 
     //更新血条
     public void UpdatePlayerBlood(int hurt, bool isBlind, bool isShakeHead)

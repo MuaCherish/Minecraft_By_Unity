@@ -36,7 +36,7 @@ public enum GameMode
 public enum DrawMode
 {
 
-    Block,Bush,Torch,Air,Water,SnowPower,
+    Block,Bush,Torch,Air,Water,SnowPower,HalfBrick,Door,
 
 }
 
@@ -205,11 +205,11 @@ public class World : MonoBehaviour
         //帧数
         Application.targetFrameRate = 90;
 
-        InitWorld();
+        InitWorldManager();
 
     }
 
-    public void InitWorld()
+    public void InitWorldManager()
     {
 
         game_mode = GameMode.Survival;
@@ -283,8 +283,9 @@ public class World : MonoBehaviour
 
         //初始化世界
         worldSetting = new WorldSetting(terrainLayerProbabilitySystem.Seed);
-    }
 
+        PointSaving = "";
+    }
 
     private void FixedUpdate()
     {
@@ -1606,7 +1607,7 @@ public class World : MonoBehaviour
     }
 
      
-    //返回方块类型
+    //返回方块类型:绝对坐标
     public byte GetBlockType(Vector3 pos)
     {
 
@@ -1634,7 +1635,7 @@ public class World : MonoBehaviour
         //}
 
         //如果玩家在区内，但Y值太高
-        print("找不到玩家脚下的Chunk");
+        //print($"找不到该坐标的Chunk->{GetChunkLocation(pos)}");
         return ERROR_CODE_OUTOFVOXELMAP;
 
 
@@ -2248,41 +2249,73 @@ public class World : MonoBehaviour
         //    print("");
         //}
 
-        //计算相对坐标
-        Vector3 vec = GetRelalocation(new Vector3(pos.x, pos.y, pos.z));
+       
+        Vector3 realLocation = pos; //绝对坐标
+        byte targetBlock = GetBlockType(realLocation);
+
+        //出界判断(Chunk)
+        if (!Allchunks.ContainsKey(GetChunkLocation(realLocation))) 
+        {
+            return true; 
+        }
         
-        //判断XOZ上有没有出界
-        if (!Allchunks.ContainsKey(GetChunkLocation(pos))) { return true; }
+        //出界判断(Y)
+        if (realLocation.y >= VoxelData.ChunkHeight || realLocation.y < 0) 
+        {
+            return false; 
+        }
 
-        //判断Y上有没有出界
-        if (vec.y >= VoxelData.ChunkHeight) { return false; }
 
-        //小于0
-        if (vec.y < 0) { return false; }
+        //方块碰撞偏移
 
-        //识别半砖算法
-        //if (GetBlockType(pos) == VoxelData.Wood)
+        //X
+        //if (player.Facing.x != 0)
         //{
-        //    print("Wood");
-        //    Vector3 _vec = pos;
-            
-             
-        //    if (pos.y - (int)pos.y > 0.5f)
+        //    if (player.Facing.x > 0)
         //    {
-        //        _vec += new Vector3(0f,0.5f,0f);
+        //        realLocation.x -= player.Facing.x * blocktypes[targetBlock].CollisionOffset.Xoffset.y;
+        //    }
+        //    else
+        //    {
+        //        realLocation.x -= player.Facing.x * blocktypes[targetBlock].CollisionOffset.Xoffset.x;
+        //    }
                 
-        //        testPos = _vec;
-        //    } 
-
-        //    _vec = GetRelalocation(_vec);
-        //    return blocktypes[Allchunks[GetChunkLocation(pos)].voxelMap[(int)_vec.x, (int)_vec.y, (int)_vec.z].voxelType].isSolid;
-            
+        //}
+        
+        ////Y
+        //if (player.Facing.y > 0)
+        //{
+        //    realLocation.y -= player.Facing.y * blocktypes[targetBlock].CollisionOffset.Yoffset.y;
+        //}
+        //else if (player.Facing.y < 0)
+        //{
+        //    realLocation.y -= player.Facing.y * blocktypes[targetBlock].CollisionOffset.Yoffset.x;
         //}
 
+        ////Z
+        //if (player.Facing.z != 0)
+        //{
+        //    if (player.Facing.z > 0)
+        //    {
+        //        realLocation.z -= player.Facing.z * blocktypes[targetBlock].CollisionOffset.Zoffset.y;
+        //    }
+        //    else
+        //    {
+        //        realLocation.z -= player.Facing.z * blocktypes[targetBlock].CollisionOffset.Zoffset.x;
+        //    }
+                
+        //}
+
+        
+        
+
         //返回固体还是空气
-        return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z].voxelType].isSolid;
+        Vector3 relaLocation = GetRelalocation(realLocation);
+        return blocktypes[Allchunks[GetChunkLocation(realLocation)].voxelMap[(int)relaLocation.x, (int)relaLocation.y, (int)relaLocation.z].voxelType].isSolid;
 
     }
+
+
 
     //放置高亮方块的
     public bool eyesCheckForVoxel(Vector3 pos)
@@ -2319,26 +2352,6 @@ public class World : MonoBehaviour
         return new Vector2(a.x * b.x, a.y * b.y);
     }
 
-    ////接收SavedataStruct
-    //public void UpdateSaveList(Vector3 _C,Dictionary<Vector3,byte> _E)
-    //{
-    //    foreach (var temp in SaveList)
-    //    {
-    //        if (temp.ChunkLocation == _C)
-    //        {
-    //            temp.EditData.Add(_E);
-    //            print("已找到");
-    //        }
-    //    }
-
-    //    //如果找不到就载入
-    //    SavaDataStruct dataStruct = new SavaDataStruct();
-    //    dataStruct.ChunkLocation = _C;
-    //    dataStruct.EditData.Add(_E);
-    //    SaveList.Add(dataStruct);
-    //    print("未找到");
-    //}
-
 
 }
 
@@ -2348,39 +2361,42 @@ public class World : MonoBehaviour
 [System.Serializable]
 public class BlockType
 {
-
+    [Header("基本参数")]
     public string blockName;
     public float DestroyTime;
-    public bool isSolid;       //是否会阻挡玩家
     public bool isTransparent; //周边方块是否面剔除
     public bool canBeChoose;   //是否可被高亮方块捕捉到
     public bool candropBlock;  //是否掉落方块
 
 
-    [Header("Sprite")]
-    public Sprite icon;
-    public Texture texture;
-    public Sprite dropsprite;
-    public Sprite top_dropsprite;
-    public Material Particle_Material;
+    [Header("碰撞")]
+    public bool isSolid;       //是否会阻挡玩家
+
+    //抽象来说就是方块向内挤压的数值
+    //对于Y来说，(0.5f,0,0f)，就是Y正方向的面向内挤压0.5f，Y负方向的面向内挤压0.0f，即台阶的碰撞参数
+    public CollisionOffset CollisionOffset;
 
 
-    [Header("Clips")]
+    [Header("图标")]
+    public Sprite icon; //物品栏图标
+    public Sprite sprite; //掉落物
+    public Sprite top_sprit; //掉落物
+    public Sprite buttom_sprit; //掉落物
+
+
+    [Header("音乐")]
     public AudioClip[] walk_clips = new AudioClip[2]; 
     public AudioClip broking_clip;
     public AudioClip broken_clip;
 
 
-    [Header("Texture Values")]
+    [Header("绘制")]
     public int backFaceTexture;
     public int frontFaceTexture;
     public int topFaceTexture;
     public int bottomFaceTexture;
     public int leftFaceTexture;
     public int rightFaceTexture;
-
-
-    [Header("DrawMode")]
     public DrawMode DrawMode;
 
 
@@ -2417,6 +2433,7 @@ public class BlockType
         }
 
     }
+
 
 }
 
@@ -2586,3 +2603,13 @@ public class Wrapper<T>
         Items = items;
     }
 }
+
+//方块碰撞类
+[System.Serializable]
+public class CollisionOffset
+{
+    public Vector2 Xoffset;
+    public Vector2 Yoffset;
+    public Vector2 Zoffset;
+}
+

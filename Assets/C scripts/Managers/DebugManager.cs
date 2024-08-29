@@ -1,25 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEngine.Animations.AimConstraint;
 
 public class DebugManager : MonoBehaviour
 {
     //获取组件
     [Header("Transforms")]
     public GameObject DebugScreen;
-    public TextMeshProUGUI textMeshPro;
+    public Transform Content;
+    public GameObject blockitem;
+    public TextMeshProUGUI LeftText;
     public Player player;
     public World world;
 
     [Header("状态")]
     public bool isDebug = false;
 
-
+    private void Start()
+    {
+        UpdateBlockItem();
+    }
 
     void Update()
     {
+
+        if (world.game_state == Game_State.Start)
+        {
+            if (DebugScreen.activeSelf)
+            {
+                DebugScreen.SetActive(false);
+            }
+            
+
+        }
+
 
         if (world.game_state == Game_State.Playing)
         {
@@ -28,7 +47,11 @@ public class DebugManager : MonoBehaviour
                 isDebug = !isDebug;
                 DebugScreen.SetActive(!DebugScreen.activeSelf);
             }
+
+
         }
+
+        
 
     }
 
@@ -51,25 +74,54 @@ public class DebugManager : MonoBehaviour
 
 
         //update
-        //textMeshPro.text += $"\n";
-        textMeshPro.text = $"FPS: {Mathf.Ceil(fps):F2}\n";
-        textMeshPro.text += $"\n";
-        textMeshPro.text += $"[Player]\n";
-        textMeshPro.text += $"Facing: {CalculateFacing()}\n";
-        textMeshPro.text += $"Input: <{player.verticalInput}, {player.horizontalInput}>\n";
-        textMeshPro.text += $"VerticleMoment: {player.verticalMomentum}\n";
-        textMeshPro.text += $"RealPosition: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))}\n";
-        textMeshPro.text += $"RelaPosition: {world.GetRelalocation(footlocation)}\n";
-        textMeshPro.text += $"EditNumber: {world.EditNumber.Count}\n";
-        textMeshPro.text += $"\n";
-        textMeshPro.text += $"[Chunk]\n";
-        textMeshPro.text += $"Position: {world.GetChunkLocation(footlocation)}\n";
-
-
+        //LeftText.text += $"\n";
+        LeftText.text = $"FPS: {Mathf.Ceil(fps):F2}\n";
+        LeftText.text += $"\n";
+        LeftText.text += $"[Player]\n";
+        LeftText.text += $"Facing: {player.Facing}\n";
+        LeftText.text += $"Input: <{player.verticalInput}, {player.horizontalInput}>\n";
+        LeftText.text += $"VerticleMoment: {player.verticalMomentum}\n";
+        LeftText.text += $"RealPosition: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))}\n";
+        LeftText.text += $"RelaPosition: {world.GetRelalocation(footlocation)}\n";
+        LeftText.text += $"EditNumber: {world.EditNumber.Count}\n";
+        LeftText.text += $"\n";
+        LeftText.text += $"[Chunk]\n";
+        LeftText.text += $"Position: {world.GetChunkLocation(footlocation)}\n";
+         
+        
 
     }
 
 
+    public void UpdateBlockItem()
+    {
+        
+
+        for (int index = 0;index < world.blocktypes.Length; index++)
+        {
+            //初始化item
+            GameObject instance = Instantiate(blockitem);
+            instance.transform.SetParent(Content, false);
+            instance.transform.Find("TMP_index").GetComponent<TextMeshProUGUI>().text = $"{index}";
+            instance.transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
+
+            if (world.blocktypes[index].sprite != null)
+            {
+                instance.transform.Find("Image").GetComponent<Image>().sprite = world.blocktypes[index].sprite;
+            }else if (world.blocktypes[index].sprite != null)
+            {
+                instance.transform.Find("Image").GetComponent<Image>().sprite = world.blocktypes[index].top_sprit;
+            }
+            else
+            {
+                instance.transform.Find("Image").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+            }
+            
+        }
+
+    }
+     
+     
 
     //calculate FPS
     private int count;

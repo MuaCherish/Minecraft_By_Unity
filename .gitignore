@@ -73,3 +73,6 @@ crashlytics-build.properties
 
 # Ignore specific files in Assets/Font/
 Assets/Font/
+
+# Ignore Saves
+Assets/Saves/

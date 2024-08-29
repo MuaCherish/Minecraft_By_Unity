@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 //using System.Windows.Input;
 using TMPro;
 using UnityEngine;
@@ -12,6 +13,8 @@ public class CommandManager : MonoBehaviour
 {
     [Header("Transforms")]
     public World world;
+    public Player player;
+    public BackPackManager backpackmanager;
     public GameObject CommandScreen;
     public LifeManager lifemanager;
     //public GameObject 内置消息栏;
@@ -38,7 +41,7 @@ public class CommandManager : MonoBehaviour
                 ActivateConsole();
             }
             // 按下回车键时关闭控制台
-            else if (Input.GetKeyDown(KeyCode.Return) && isConsoleActive)
+            else if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && isConsoleActive)
             {
                 DeactivateConsole();
             }
@@ -174,6 +177,52 @@ public class CommandManager : MonoBehaviour
                 world.LoadAllSaves(world.savingPATH + "\\Saves");
                 return "<系统消息> " + "正在尝试读取存档";
 
+            case 4:
+                string pattern = @"\/give\s+(\d+)";
+
+                // 使用正则表达式匹配数字
+                Match match = Regex.Match(_input, pattern);
+
+                if (match.Success)
+                {
+                    string numberString = match.Groups[1].Value;
+
+                    if (byte.TryParse(numberString, out byte number))
+                    {
+                        //Debug.Log("提取并转换的数字: " + number);
+
+                        if (number < world.blocktypes.Length)
+                        {
+
+                            if (world.game_mode == GameMode.Creative)
+                            {
+
+                                backpackmanager.update_slots(0, number);
+                            }
+                            else
+                            {
+                                backpackmanager.update_slots(0, number);
+                            }
+                            
+                            return "<系统消息> " + "给与玩家方块";
+                        }
+                        else
+                        {
+                            return "<系统消息> " + "方块id不存在";
+                        }
+                    }
+                    else
+                    {
+                        return "<系统消息> " + "id转换失败";
+                    }
+                    
+                }
+                else
+                {
+                    _color = Color.red;
+                    return "<系统消息> " + "id转换失败";
+                } 
+                
 
             //在这里添加新指令----------------------------
             //没有找到

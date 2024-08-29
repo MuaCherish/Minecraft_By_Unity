@@ -61,10 +61,10 @@ public static class VoxelData
     13:白色花2号WhiteFlower_2
     14:黄色花YellowFlower
     15:火把Candle
-    16:仙人掌Cactus
+    16:Cactus
     17:TNT
     18:工作台WorkTable
-    19:南瓜Pumpkin
+    19:Pumpkin
     20:玻璃Glass
     21:青晶石Blue_Crystal
     22:钻石Diamond
@@ -72,7 +72,7 @@ public static class VoxelData
     24:金矿Gold
     25:竹子Bamboo
     26:木板WoodenPlanks
-    27:萤石Fluor
+    27:Fluor
     28:灌木Bush
     29:雪块Snow
     30:雪碎片SnowPower
@@ -92,11 +92,11 @@ public static class VoxelData
     public static readonly Byte WhiteFlower_1 = 12;
     public static readonly Byte WhiteFlower_2 = 13;
     public static readonly Byte YellowFlower = 14;
-    public static readonly Byte Candle = 15;
-    public static readonly Byte Cactus = 16;
+    public static readonly Byte Torch = 15;
+    public static readonly Byte Cactus = 16; //仙人掌
     public static readonly Byte TNT = 17;
     public static readonly Byte WorkTable = 18;
-    public static readonly Byte Pumpkin = 19;
+    public static readonly Byte Pumpkin = 19; //南瓜
     public static readonly Byte Glass = 20;
     public static readonly Byte Blue_Crystal = 21;
     public static readonly Byte Diamond = 22;
@@ -104,13 +104,20 @@ public static class VoxelData
     public static readonly Byte Gold = 24;
     public static readonly Byte Bamboo = 25;
     public static readonly Byte WoodenPlanks = 26;
-    public static readonly Byte Fluor = 27;
+    public static readonly Byte Fluor = 27; //萤石
     public static readonly Byte Bush = 28;
     public static readonly Byte Snow = 29;
     public static readonly Byte SnowPower = 30;
     public static readonly Byte Mycelium = 31;   //菌丝体
     public static readonly Byte Cobblestone = 32; //圆石
-    
+    public static readonly Byte Door_Up = 33;
+    public static readonly Byte Door_Down = 34; 
+    public static readonly Byte HalfBrick = 35;
+    public static readonly Byte Mushroom_red = 36;
+    public static readonly Byte Mushroom_brown = 37;
+    public static readonly Byte Redbrick = 38;
+    public static readonly Byte Furnace = 39;
+
     //音乐宏定义
     //宏定义
     /*
@@ -173,7 +180,8 @@ public static class VoxelData
     public static readonly int ui玩家 = 8;
     public static readonly int ui游戏中暂停 = 9;
     public static readonly int ui死亡 = 10;
-    public static readonly int ui保存游戏 = 11;
+    public static readonly int ui正在保存中 = 11;
+    public static readonly int ui项目展示内容 = 12;
 
     //ui选项细节宏定义
     public static readonly int 视频设置 = 0;
@@ -255,6 +263,53 @@ public static class VoxelData
 
     };
 
+
+    //顶点数组 - Door
+    public static readonly Vector3[] voxelVerts_Door = new Vector3[8]
+    {
+
+        new Vector3(0.0f, 0.0f, 0.7f),
+        new Vector3(1.0f, 0.0f, 0.7f),
+        new Vector3(1.0f, 1.0f, 0.7f),
+        new Vector3(0.0f, 1.0f, 0.7f),
+        new Vector3(0.0f, 0.0f, 1.0f),
+        new Vector3(1.0f, 0.0f, 1.0f),
+        new Vector3(1.0f, 1.0f, 1.0f),
+        new Vector3(0.0f, 1.0f, 1.0f),
+
+    };
+
+    //顶点数组 - HalfBrick
+    public static readonly Vector3[] voxelVerts_HalfBrick = new Vector3[8]
+    {
+
+        new Vector3(0.0f, 0.0f, 0.0f),
+        new Vector3(1.0f, 0.0f, 0.0f),
+        new Vector3(1.0f, 0.5f, 0.0f),
+        new Vector3(0.0f, 0.5f, 0.0f),
+        new Vector3(0.0f, 0.0f, 1.0f),
+        new Vector3(1.0f, 0.0f, 1.0f),
+        new Vector3(1.0f, 0.5f, 1.0f),
+        new Vector3(0.0f, 0.5f, 1.0f),
+
+    };
+
+    //顶点数组 - Torch
+    public static readonly Vector3[] voxelVerts_Torch = new Vector3[8]
+    {
+
+        new Vector3(0.4375f, 0.0f, 0.4375f),
+        new Vector3(0.5625f, 0.0f, 0.4375f),
+        new Vector3(0.5625f, 1.0f, 0.4375f),
+        new Vector3(0.4375f, 1.0f, 0.4375f),
+        new Vector3(0.4375f, 0.0f, 0.5625f),
+        new Vector3(0.5625f, 0.0f, 0.5625f),
+        new Vector3(0.5625f, 1.0f, 0.5625f),
+        new Vector3(0.4375f, 1.0f, 0.5625f),
+
+    };
+
+
     #endregion
 
     //6个指定方向
@@ -322,6 +377,8 @@ public static class VoxelData
         {1, 2, 7, 4},
 
     };
+
+    
 
     #endregion
 

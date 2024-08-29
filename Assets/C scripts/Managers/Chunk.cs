@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Threading;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
+using static UnityEngine.GraphicsBuffer;
 //using static UnityEditor.PlayerSettings;
 //using System.Diagnostics;
 
@@ -2258,13 +2259,13 @@ public class Chunk : MonoBehaviour
     void updateSomeBlocks()
     {
 
-        //不能浮空的方块(灌木丛 + 竹子 + 细雪) 
-        if (!isOutOfRange(x, y, z) && y != 0)
+        //出界判断
+        if (!isOutOfRange(x, y, z) && y != 0 && y != VoxelData.ChunkHeight - 1)
         {
-            //如果是悬空的
+            //不能浮空的方块(灌木丛 + 竹子 + 细雪) 
             if (voxelMap[x, y - 1, z].voxelType == VoxelData.Air)
             {
-                ///且自己是不能悬空的方块
+                //且自己是不能悬空的方块
                 if (voxelMap[x, y, z].voxelType == VoxelData.Bush || voxelMap[x, y, z].voxelType == VoxelData.Bamboo || voxelMap[x, y, z].voxelType == VoxelData.SnowPower)
                 {
                     
@@ -2272,7 +2273,32 @@ public class Chunk : MonoBehaviour
                 }
             }
 
-            
+            //上门
+            if (voxelMap[x, y, z].voxelType == VoxelData.Door_Up && voxelMap[x, y - 1, z].voxelType != VoxelData.Door_Down)
+            {
+                voxelMap[x, y, z].voxelType = VoxelData.Air;
+            }
+
+            //下门
+            if (voxelMap[x, y, z].voxelType == VoxelData.Door_Down && voxelMap[x, y + 1, z].voxelType == VoxelData.Air)
+            {
+
+                voxelMap[x, y + 1, z].voxelType = VoxelData.Door_Up;
+            }
+        }
+
+        
+
+
+    }
+
+    //放置或破坏时会变化的特殊方块
+    public void EditForSomeBlocks(Vector3 _pos, byte _target)
+    {
+        //如果打掉上门，则两个都会消失
+        if (_target == VoxelData.Air && voxelMap[(int)_pos.x, (int)_pos.y - 1, (int)_pos.z].voxelType == VoxelData.Door_Down)
+        {
+            voxelMap[(int)_pos.x, (int)_pos.y - 1, (int)_pos.z].voxelType = VoxelData.Air;
         }
 
 
@@ -2321,10 +2347,10 @@ public class Chunk : MonoBehaviour
                     //[已废弃，移动至单独的线程执行]水的流动
                     //updateWater();
 
-                    if (isOutOfRange(x,y,z))
-                    {
-                        print("");
-                    }
+                    //if (isOutOfRange(x,y,z))
+                    //{
+                    //    print("");
+                    //}
 
 
                     if (world.blocktypes[voxelMap[x, y, z].voxelType].DrawMode != DrawMode.Air)
@@ -2462,8 +2488,13 @@ public class Chunk : MonoBehaviour
 
         voxelMap[x, y, z].voxelType = targetBlocktype;
 
+        EditForSomeBlocks(new Vector3(x, y, z), targetBlocktype);
+
         UpdateChunkMesh_WithSurround(true, false);
     }
+
+
+
 
 
     // 批量编辑方块
@@ -3039,8 +3070,8 @@ public class Chunk : MonoBehaviour
         //方块绘制模式
         switch (world.blocktypes[blockID].DrawMode)
         {
-
-            case DrawMode.Bush:// Bush绘制模式
+            // Bush绘制模式
+            case DrawMode.Bush:
 
                 for (int faceIndex = 0; faceIndex < 4; faceIndex++) 
                 {
@@ -3068,8 +3099,8 @@ public class Chunk : MonoBehaviour
                 break;
 
 
-
-            case DrawMode.SnowPower:// SnowPower绘制模式
+            // SnowPower绘制模式
+            case DrawMode.SnowPower:
 
                 //判断六个面
                 for (int p = 0; p < 6; p++)
@@ -3108,8 +3139,8 @@ public class Chunk : MonoBehaviour
                 break;
 
 
-
-            case DrawMode.Water:  //水面绘制模式
+            //水面绘制模式
+            case DrawMode.Water: 
 
 
 
@@ -3361,8 +3392,128 @@ public class Chunk : MonoBehaviour
                 break;
 
 
+            //门绘制
+            case DrawMode.Door:
 
-            default: //默认Block绘制模式
+                //判断六个面
+                for (int p = 0; p < 6; p++)
+                {
+
+
+                    if (!CheckVoxel(pos + VoxelData.faceChecks[p], p))
+                    {
+
+                        vertices.Add(pos + VoxelData.voxelVerts_Door[VoxelData.voxelTris[p, 0]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_Door[VoxelData.voxelTris[p, 1]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_Door[VoxelData.voxelTris[p, 2]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_Door[VoxelData.voxelTris[p, 3]]);
+
+                        //uvs.Add (VoxelData.voxelUvs [0]);
+                        //uvs.Add (VoxelData.voxelUvs [1]);
+                        //uvs.Add (VoxelData.voxelUvs [2]);
+                        //uvs.Add (VoxelData.voxelUvs [3]);
+                        //AddTexture(1);
+
+                        //根据p生成对应的面，对应的UV
+                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+
+                        triangles.Add(vertexIndex);
+                        triangles.Add(vertexIndex + 1);
+                        triangles.Add(vertexIndex + 2);
+                        triangles.Add(vertexIndex + 2);
+                        triangles.Add(vertexIndex + 1);
+                        triangles.Add(vertexIndex + 3);
+                        vertexIndex += 4;
+
+                    }
+
+                }
+                break;
+
+            //半砖绘制
+            case DrawMode.HalfBrick:
+
+                //判断六个面
+                for (int p = 0; p < 6; p++)
+                {
+
+
+                    if (!CheckVoxel(pos + VoxelData.faceChecks[p], p))
+                    {
+
+                        vertices.Add(pos + VoxelData.voxelVerts_HalfBrick[VoxelData.voxelTris[p, 0]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_HalfBrick[VoxelData.voxelTris[p, 1]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_HalfBrick[VoxelData.voxelTris[p, 2]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_HalfBrick[VoxelData.voxelTris[p, 3]]);
+
+                        //uvs.Add (VoxelData.voxelUvs [0]);
+                        //uvs.Add (VoxelData.voxelUvs [1]);
+                        //uvs.Add (VoxelData.voxelUvs [2]);
+                        //uvs.Add (VoxelData.voxelUvs [3]);
+                        //AddTexture(1);
+
+                        //根据p生成对应的面，对应的UV
+                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+
+                        triangles.Add(vertexIndex);
+                        triangles.Add(vertexIndex + 1);
+                        triangles.Add(vertexIndex + 2);
+                        triangles.Add(vertexIndex + 2);
+                        triangles.Add(vertexIndex + 1);
+                        triangles.Add(vertexIndex + 3);
+                        vertexIndex += 4;
+
+                    }
+
+                }
+
+
+                break;
+
+
+
+            //火把绘制
+            case DrawMode.Torch:
+
+                //判断六个面
+                for (int p = 0; p < 6; p++)
+                {
+
+
+                    if (!CheckVoxel(pos + VoxelData.faceChecks[p], p))
+                    {
+
+                        vertices.Add(pos + VoxelData.voxelVerts_Torch[VoxelData.voxelTris[p, 0]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_Torch[VoxelData.voxelTris[p, 1]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_Torch[VoxelData.voxelTris[p, 2]]);
+                        vertices.Add(pos + VoxelData.voxelVerts_Torch[VoxelData.voxelTris[p, 3]]);
+
+                        //uvs.Add (VoxelData.voxelUvs [0]);
+                        //uvs.Add (VoxelData.voxelUvs [1]);
+                        //uvs.Add (VoxelData.voxelUvs [2]);
+                        //uvs.Add (VoxelData.voxelUvs [3]);
+                        //AddTexture(1);
+
+                        //根据p生成对应的面，对应的UV
+                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+
+                        triangles.Add(vertexIndex);
+                        triangles.Add(vertexIndex + 1);
+                        triangles.Add(vertexIndex + 2);
+                        triangles.Add(vertexIndex + 2);
+                        triangles.Add(vertexIndex + 1);
+                        triangles.Add(vertexIndex + 3);
+                        vertexIndex += 4;
+
+                    }
+
+                }
+                break;
+
+
+
+            //默认Block绘制模式
+            default: 
 
 
 

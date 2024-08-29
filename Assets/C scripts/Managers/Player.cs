@@ -148,7 +148,8 @@ public class Player : MonoBehaviour
 
     [Header("飞行模式")]
     private float lastJumpTime;
-    private float doubleTapInterval = 0.5f; // Adjust as needed
+    public float doubleTapInterval = 0.5f; // 飞行双击时间间隔
+    public float flyVelocity = 0.1f; //上下飞行速度
     public int jump_press = 0;
 
 
@@ -234,31 +235,15 @@ public class Player : MonoBehaviour
     }
 
 
-    private void FixedUpdate()
+    private void FixedUpdate()  
     {
          
         if (world.game_state == Game_State.Playing)
         {
 
-            //初始化人物位置
-            //if (hasExec)
-            //{
-
-                
-            //    hasExec = false;
-
-            //}
-            
-            //if (world.GetBlockType(foot.position) == VoxelData.Water)
-            //{
-            //    print("");
-            //}
 
             //更新玩家脚下坐标
             Update_FootBlockType();
-
-            //改变视距(如果奔跑的话)
-            change_eyesview();
 
             //计算碰撞点
             if(!isFlying)
@@ -267,29 +252,35 @@ public class Player : MonoBehaviour
             //计算玩家状态
             GetPlayerState();
 
-            //计算输入数据
-            CalculateVelocity();
+            
 
-            //实现操作
-            AchieveInput();
+            //绘制玩家身体
+            if (showBlockMesh)
+            {
+
+                drawdebug();
+
+            }
 
         }
+
+        
 
     }
 
 
-
-    //获取玩家输入
     private void Update()
     {
-
         if (world.game_state == Game_State.Playing)
         {
 
+            //改变视距(如果奔跑的话)
+            change_eyesview();
+
+
+            //游戏中暂停，暂停玩家输入
             if (canvasManager.isPausing == true || commandManager.isConsoleActive == true)
             {
-
-
                 horizontalInput = 0f;
                 verticalInput = 0f;
                 mouseHorizontal = 0f;
@@ -305,17 +296,13 @@ public class Player : MonoBehaviour
             }
 
 
-            if (showBlockMesh)
-            {
+            //计算输入数据
+            CalculateVelocity();
 
-                drawdebug();
-
-            }
+            //实现操作
+            AchieveInput();
 
         }
-
-
-
 
     }
 
@@ -325,7 +312,7 @@ public class Player : MonoBehaviour
     //---------------------------------------------------------------------------------
 
 
-    
+
 
 
 
@@ -347,14 +334,14 @@ public class Player : MonoBehaviour
         {
             //verticalMomentum += Time.fixedDeltaTime * gravity * gravity_V;
             if (verticalMomentum > gravity)
-                verticalMomentum += Time.fixedDeltaTime * gravity * gravity_V;
+                verticalMomentum += Time.deltaTime * gravity * gravity_V;
 
         }
         else
         {
 
             if (verticalMomentum > watergravity)
-                verticalMomentum += mult * Time.fixedDeltaTime * watergravity;
+                verticalMomentum += mult * Time.deltaTime * watergravity;
 
         }
 
@@ -363,36 +350,41 @@ public class Player : MonoBehaviour
         if (isSprinting)
         {
         
-            velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.fixedDeltaTime * sprintSpeed;
+            velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.deltaTime * sprintSpeed;
         
         }
         else if (isSquating)
         {
             
-            velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.fixedDeltaTime * squatWalkSpeed;
+            velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.deltaTime * squatWalkSpeed;
         
         }
         else
         {
         
-            velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.fixedDeltaTime * walkSpeed;
+            velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.deltaTime * walkSpeed;
         
         }
             
 
         // 合并数据
-        velocity += Vector3.up * verticalMomentum * Time.fixedDeltaTime;
+        velocity += Vector3.up * verticalMomentum * Time.deltaTime;
 
 
 
         //滑膜数据
         //前后
-        if ((velocity.z > 0 && front) || (velocity.z < 0 && back))
-            velocity.z = 0;
+        if (!isFlying)
+        {
+            if ((velocity.z > 0 && front) || (velocity.z < 0 && back))
+                velocity.z = 0;
 
-        //左右
-        if ((velocity.x > 0 && right) || (velocity.x < 0 && left))
-            velocity.x = 0;
+            //左右
+            if ((velocity.x > 0 && right) || (velocity.x < 0 && left))
+                velocity.x = 0;
+        }
+
+        
 
 
         //检查是否移动
@@ -430,18 +422,24 @@ public class Player : MonoBehaviour
     //改变视距
     void change_eyesview()
     {
-        if (isSprinting && isMoving && !expandview)
+
+        if (!isFlying)
         {
-            // 启动协程扩大视野
-            StartCoroutine(expandchangeview(true));
-            expandview = true;
+            if (isSprinting && isMoving && !expandview)
+            {
+                // 启动协程扩大视野
+                StartCoroutine(expandchangeview(true));
+                expandview = true;
+            }
+            else if ((!isSprinting || !isMoving) && expandview)
+            {
+                // 启动协程缩小视野
+                StartCoroutine(expandchangeview(false));
+                expandview = false;
+            }
         }
-        else if ((!isSprinting || !isMoving) && expandview)
-        {
-            // 启动协程缩小视野
-            StartCoroutine(expandchangeview(false));
-            expandview = false;
-        }
+
+        
     }
 
     IEnumerator expandchangeview(bool expand)
@@ -497,7 +495,7 @@ public class Player : MonoBehaviour
 
         }
             
-        if (Input.GetButtonUp("Sprint"))
+        if (Input.GetButtonUp("Sprint") && !isFlying)
         {
 
             isSprinting = false;
@@ -532,6 +530,18 @@ public class Player : MonoBehaviour
 
                 if (((Time.time - lastJumpTime) < doubleTapInterval) && jump_press == 1)
                 {
+    
+                   
+                    //改变视野
+                    if (!isFlying)
+                    {
+                        //扩大视野
+                        StartCoroutine(expandchangeview(true));
+                    }
+                    else
+                    {
+                        StartCoroutine(expandchangeview(false));
+                    }
 
                     isFlying = !isFlying;
                     jump_press = 0;
@@ -761,6 +771,7 @@ public class Player : MonoBehaviour
     {
 
         isDestroying = true;
+        Broking_Animation.textureSheetAnimation.SetSprite(0, world.blocktypes[point_Block_type].buttom_sprit);
         Broking_Animation.Play();
 
         // 记录协程开始执行时的时间
@@ -842,13 +853,18 @@ public class Player : MonoBehaviour
 
         //破坏粒子效果
         GameObject particleInstance = Instantiate(Particle_Broken);
+        particleInstance.GetComponent<ParticleSystem>().textureSheetAnimation.SetSprite(0, world.blocktypes[point_Block_type].buttom_sprit);
         particleInstance.transform.parent = particel_Broken_transform;
         particleInstance.transform.position = position;
-        if (world.blocktypes[point_Block_type].Particle_Material == null)
-            particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[VoxelData.Soil].Particle_Material;
-        else
-            particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[point_Block_type].Particle_Material;
-        Destroy(particleInstance, 1.0f);
+
+        
+
+        //if (world.blocktypes[point_Block_type].Particle_Material == null)
+        //    particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[VoxelData.Soil].Particle_Material;
+        //else
+        //    particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[point_Block_type].Particle_Material;
+
+        Destroy(particleInstance, 10.0f);
 
         Broking_Animation.Stop();
 
@@ -1078,7 +1094,7 @@ public class Player : MonoBehaviour
             if (Input.GetKey(KeyCode.Space) && checkUpSpeed(1) != 0)
             {
 
-                velocity.y = 0.1f;
+                velocity.y = flyVelocity;
 
             }
 
@@ -1086,7 +1102,7 @@ public class Player : MonoBehaviour
             else if (Input.GetKey(KeyCode.LeftControl) && checkDownSpeed(1) != 0)
             {
 
-                velocity.y = -0.1f;
+                velocity.y = -flyVelocity;
 
             }
 
@@ -1127,7 +1143,7 @@ public class Player : MonoBehaviour
     //----------------------------------碰撞检测---------------------------------------
 
 
-
+    
 
     //更新16个碰撞点
     void update_block()
@@ -1234,6 +1250,18 @@ public class Player : MonoBehaviour
 
     }
 
+
+    public Vector3 Facing
+    {
+        get
+        {
+            float _y = isGrounded ? -1 : 1;
+            return new Vector3(Mathf.RoundToInt(transform.forward.x), _y, Mathf.RoundToInt(transform.forward.z));
+
+        }
+    }
+
+
     //碰撞方向的检测（-Z方向为front）
     //方块的角度
     public bool front
@@ -1241,47 +1269,14 @@ public class Player : MonoBehaviour
        
         get
         {
-            ////正常情况
-            //if (!isSquating)
-            //{
-            //    if (
-            //    world.CheckForVoxel(front_左上) ||
-            //    world.CheckForVoxel(front_右上) ||
-            //    world.CheckForVoxel(front_左下) ||
-            //    world.CheckForVoxel(front_右下)
-            //    )
-            //    {
-
-            //        return true;
-            //    }
-            //    else
-            //        return false;
-            //}
-            ////蹲下情况
-            //else
-            //{
-            //    //(左下固体 && 左下延伸不是固体) || (右下固体 && 右下延伸不是固体)
-            //    if ((world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x, down_左下.y, down_左下.z + extend_delta))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x, down_右下.y, down_右下.z + extend_delta))))
-            //    {
-
-            //        return true;
-            //    }
-            //    else
-            //        return false;
-            //}
-
-
-            if (
-                world.CheckForVoxel(front_左上) ||
-                world.CheckForVoxel(front_右上) ||
-                world.CheckForVoxel(front_左下) ||
-                world.CheckForVoxel(front_右下)
-                )
+            //如果world返回true，则碰撞
+            if (world.CheckForVoxel(front_左上) || world.CheckForVoxel(front_右上) || world.CheckForVoxel(front_左下) || world.CheckForVoxel(front_右下))
             {
-
                 return true;
+            }
 
-            }else if (isSquating)
+            //如果下蹲
+            else if (isSquating)
             {
                 //(左下固体 && 左下延伸不是固体) || (右下固体 && 右下延伸不是固体)
                 if ((world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x, down_左下.y, down_左下.z + extend_delta))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x, down_右下.y, down_右下.z + extend_delta))))
@@ -1433,30 +1428,6 @@ public class Player : MonoBehaviour
 
         get
         {
-
-            //if (!isSquating)
-            //{
-            //    if (
-            //    world.CheckForVoxel(right_左上) ||
-            //    world.CheckForVoxel(right_右上) ||
-            //    world.CheckForVoxel(right_左下) ||
-            //    world.CheckForVoxel(right_右下)
-            //    )
-            //        return true;
-            //    else
-            //        return false;
-            //}
-            //else
-            //{
-            //    //(左上固体 && 左上延伸不是固体) || (左下固体 && 左下延伸不是固体)
-            //    if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x + extend_delta, down_左上.y, down_左上.z))) || (world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x + extend_delta, down_左下.y, down_左下.z))))
-            //    {
-
-            //        return true;
-            //    }
-            //    else
-            //        return false;
-            //}
 
             if (
                 world.CheckForVoxel(right_左上) ||
