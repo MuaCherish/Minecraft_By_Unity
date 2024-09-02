@@ -76,14 +76,16 @@ public class DebugManager : MonoBehaviour
         //update
         //LeftText.text += $"\n";
         LeftText.text = $"FPS: {Mathf.Ceil(fps):F2}\n";
+
         LeftText.text += $"\n";
         LeftText.text += $"[Player]\n";
         LeftText.text += $"Facing: {player.Facing}\n";
         LeftText.text += $"Input: <{player.verticalInput}, {player.horizontalInput}>\n";
         LeftText.text += $"VerticleMoment: {player.verticalMomentum}\n";
-        LeftText.text += $"RealPosition: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))}\n";
+        LeftText.text += $"RealPosition: {footlocation}\n";
         LeftText.text += $"RelaPosition: {world.GetRelalocation(footlocation)}\n";
         LeftText.text += $"EditNumber: {world.EditNumber.Count}\n";
+
         LeftText.text += $"\n";
         LeftText.text += $"[Chunk]\n";
         LeftText.text += $"Position: {world.GetChunkLocation(footlocation)}\n";

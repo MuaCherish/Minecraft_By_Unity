@@ -289,6 +289,8 @@ public class World : MonoBehaviour
 
     private void FixedUpdate()
     {
+        
+
 
         //Mesh线程常驻
         CreateMeshCoroutineManager();
@@ -2242,6 +2244,8 @@ public class World : MonoBehaviour
 
     //对玩家碰撞盒的方块判断
     //true：有碰撞
+    //public Vector3 previous_relalocation;
+    //public bool hasExec_AutoRise = true;
     public bool CheckForVoxel(Vector3 pos)
     {
         //if (GetBlockType(pos) == VoxelData.Wood)
@@ -2251,6 +2255,7 @@ public class World : MonoBehaviour
 
        
         Vector3 realLocation = pos; //绝对坐标
+        Vector3 relaLocation = GetRelalocation(realLocation);
         byte targetBlock = GetBlockType(realLocation);
 
         //出界判断(Chunk)
@@ -2265,8 +2270,50 @@ public class World : MonoBehaviour
             return false; 
         }
 
+        //自动上升
+        //if (hasExec_AutoRise)
+        //{
+        //    DrawMode _self = blocktypes[GetBlockType(player.foot.position)].DrawMode;
+        //    DrawMode _target = blocktypes[GetBlockType(pos)].DrawMode;
+            
+        //    //当自己和目标有一个为半砖时
+        //    if ((_self == DrawMode.HalfBrick && _target == DrawMode.Block) || (_self == DrawMode.Block && _target == DrawMode.HalfBrick))
+        //    {
+        //        print($"{_self}, {_target}");
+        //        player.transform.position += new Vector3(0,0.5f,0);
+        //        hasExec_AutoRise = false;
+        //        StartCoroutine(ResetFlagNextFrame());
+        //    }
+
+
+        //}
 
         //方块碰撞偏移
+        if (targetBlock == VoxelData.HalfBrick)
+        {
+            
+            if (realLocation.y - (int)realLocation.y <= 0.5f)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+        if (targetBlock == VoxelData.Door_Down || targetBlock == VoxelData.Door_Up)
+        {
+            if (realLocation.z - (int)realLocation.z >= 0.7f)
+            {
+                return true;
+            }
+            else
+            { 
+                return false;
+            }
+        }
 
         //X
         //if (player.Facing.x != 0)
@@ -2279,9 +2326,9 @@ public class World : MonoBehaviour
         //    {
         //        realLocation.x -= player.Facing.x * blocktypes[targetBlock].CollisionOffset.Xoffset.x;
         //    }
-                
+
         //}
-        
+
         ////Y
         //if (player.Facing.y > 0)
         //{
@@ -2303,17 +2350,24 @@ public class World : MonoBehaviour
         //    {
         //        realLocation.z -= player.Facing.z * blocktypes[targetBlock].CollisionOffset.Zoffset.x;
         //    }
-                
+
         //}
 
-        
-        
+
+
 
         //返回固体还是空气
-        Vector3 relaLocation = GetRelalocation(realLocation);
         return blocktypes[Allchunks[GetChunkLocation(realLocation)].voxelMap[(int)relaLocation.x, (int)relaLocation.y, (int)relaLocation.z].voxelType].isSolid;
 
     }
+
+
+    //下一帧变为true
+    //IEnumerator ResetFlagNextFrame()
+    //{
+    //    yield return null;
+    //    hasExec_AutoRise = true;
+    //}
 
 
 
@@ -2364,14 +2418,13 @@ public class BlockType
     [Header("基本参数")]
     public string blockName;
     public float DestroyTime;
+    public bool isSolid;       //是否会阻挡玩a家
     public bool isTransparent; //周边方块是否面剔除
     public bool canBeChoose;   //是否可被高亮方块捕捉到
     public bool candropBlock;  //是否掉落方块
     public bool isinteractable; //互动方块
 
     [Header("碰撞")]
-    public bool isSolid;       //是否会阻挡玩a家
-
     //抽象来说就是方块向内挤压的数值
     //对于Y来说，(0.5f,0,0f)，就是Y正方向的面向内挤压0.5f，Y负方向的面向内挤压0.0f，即台阶的碰撞参数
     public CollisionOffset CollisionOffset;

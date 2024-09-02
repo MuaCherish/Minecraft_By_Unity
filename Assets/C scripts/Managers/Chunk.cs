@@ -2271,6 +2271,14 @@ public class Chunk : MonoBehaviour
                     
                     voxelMap[x, y, z].voxelType = VoxelData.Air;
                 }
+
+                //门
+                if (voxelMap[x, y, z].voxelType == VoxelData.Door_Down)
+                {
+
+                    voxelMap[x, y, z].voxelType = VoxelData.Air;
+                    voxelMap[x, y + 1, z].voxelType = VoxelData.Air;
+                }
             }
 
             //上门
@@ -2301,7 +2309,12 @@ public class Chunk : MonoBehaviour
             voxelMap[(int)_pos.x, (int)_pos.y - 1, (int)_pos.z].voxelType = VoxelData.Air;
         }
 
-
+        //两个半砖合成一个木板
+        //if (_target == VoxelData.HalfBrick && voxelMap[(int)_pos.x, (int)_pos.y - 1, (int)_pos.z].voxelType == VoxelData.HalfBrick)
+        //{
+        //    voxelMap[(int)_pos.x, (int)_pos.y, (int)_pos.z].voxelType = VoxelData.Air;
+        //    voxelMap[(int)_pos.x, (int)_pos.y - 1, (int)_pos.z].voxelType = VoxelData.WoodenPlanks;
+        //}
     }
 
     //------------------------------------------------------------------------------------

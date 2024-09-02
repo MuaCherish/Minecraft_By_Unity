@@ -1350,7 +1350,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &22826876
 Transform:
   m_ObjectHideFlags: 0
@@ -21099,11 +21099,11 @@ MonoBehaviour:
   blocktypes:
   - blockName: BedRock
     DestroyTime: 0
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 0
     candropBlock: 0
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21126,11 +21126,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Stone
     DestroyTime: 2
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21153,11 +21153,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Grass
     DestroyTime: 1
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21180,11 +21180,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Soil
     DestroyTime: 1
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21207,11 +21207,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Air
     DestroyTime: 0
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 0
     candropBlock: 0
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21234,11 +21234,11 @@ MonoBehaviour:
     DrawMode: 3
   - blockName: Sand
     DestroyTime: 1
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21261,11 +21261,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: wood
     DestroyTime: 3.1
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21288,11 +21288,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: leave
     DestroyTime: 0.4
+    isSolid: 1
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21315,11 +21315,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: water
     DestroyTime: 0
+    isSolid: 0
     isTransparent: 0
     canBeChoose: 0
     candropBlock: 0
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21342,11 +21342,11 @@ MonoBehaviour:
     DrawMode: 4
   - blockName: Coal
     DestroyTime: 3
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21369,11 +21369,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: BirchWood
     DestroyTime: 2
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21396,11 +21396,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: BlueFlower
     DestroyTime: 0.1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21423,11 +21423,11 @@ MonoBehaviour:
     DrawMode: 1
   - blockName: whiteFlower_1
     DestroyTime: 0.1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21450,11 +21450,11 @@ MonoBehaviour:
     DrawMode: 1
   - blockName: whiteFlower_2
     DestroyTime: 0.1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21477,11 +21477,11 @@ MonoBehaviour:
     DrawMode: 1
   - blockName: yellowFlower
     DestroyTime: 0.1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21504,11 +21504,11 @@ MonoBehaviour:
     DrawMode: 1
   - blockName: torch
     DestroyTime: 0.4
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21531,11 +21531,11 @@ MonoBehaviour:
     DrawMode: 1
   - blockName: Cactus
     DestroyTime: 2
+    isSolid: 1
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21558,11 +21558,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: TNT
     DestroyTime: 0.5
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21585,11 +21585,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: WorkTable
     DestroyTime: 2
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 1
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21612,11 +21612,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Pumpkin
     DestroyTime: 2
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21639,11 +21639,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Glass
     DestroyTime: 0.2
+    isSolid: 1
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21666,11 +21666,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Blue_Crystal
     DestroyTime: 3
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21693,11 +21693,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Diamond
     DestroyTime: 5
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21720,11 +21720,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Iron
     DestroyTime: 3
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21747,11 +21747,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Gold
     DestroyTime: 3
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21774,11 +21774,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: bamboo
     DestroyTime: 0.1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21801,11 +21801,11 @@ MonoBehaviour:
     DrawMode: 1
   - blockName: WoodenPlanks
     DestroyTime: 1
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21828,11 +21828,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Fluor
     DestroyTime: 0.4
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21855,11 +21855,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Bush
     DestroyTime: 0.1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21882,11 +21882,11 @@ MonoBehaviour:
     DrawMode: 1
   - blockName: Snow
     DestroyTime: 1
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21909,11 +21909,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: SnowPower
     DestroyTime: 0.1
+    isSolid: 0
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 0
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21936,11 +21936,11 @@ MonoBehaviour:
     DrawMode: 5
   - blockName: Mycelium
     DestroyTime: 1
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21963,11 +21963,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Cobblestone
     DestroyTime: 2
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -21990,11 +21990,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Door_Up
     DestroyTime: 1
+    isSolid: 1
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -22017,11 +22017,11 @@ MonoBehaviour:
     DrawMode: 7
   - blockName: Door_Down
     DestroyTime: 1
+    isSolid: 1
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0, y: 0}
@@ -22044,11 +22044,11 @@ MonoBehaviour:
     DrawMode: 7
   - blockName: HalfBrick
     DestroyTime: 1
+    isSolid: 1
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0.5, y: 0}
@@ -22071,11 +22071,11 @@ MonoBehaviour:
     DrawMode: 6
   - blockName: Mushroom_red
     DestroyTime: 0.1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0.5, y: 0}
@@ -22098,11 +22098,11 @@ MonoBehaviour:
     DrawMode: 1
   - blockName: Mushroom_brown
     DestroyTime: 0.1
+    isSolid: 0
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 0
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0.5, y: 0}
@@ -22125,11 +22125,11 @@ MonoBehaviour:
     DrawMode: 1
   - blockName: Redbrick
     DestroyTime: 3.1
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0.5, y: 0}
@@ -22152,11 +22152,11 @@ MonoBehaviour:
     DrawMode: 0
   - blockName: Furnace
     DestroyTime: 3.1
+    isSolid: 1
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
     isinteractable: 0
-    isSolid: 1
     CollisionOffset:
       Xoffset: {x: 0, y: 0}
       Yoffset: {x: 0.5, y: 0}
