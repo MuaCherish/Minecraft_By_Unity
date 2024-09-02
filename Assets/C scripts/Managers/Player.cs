@@ -24,21 +24,25 @@ public class Player : MonoBehaviour
 
 
     [Header("Transforms")]
+    //public ManagerHub managerHub;
     public CommandManager commandManager;
+    public World world;
+    public MusicManager musicmanager;
+    public CanvasManager canvasManager;
+    public BackPackManager backpackmanager;
+    public LifeManager lifemanager;
+
     public Material HighLightMaterial;
     public Texture[] DestroyTextures = new Texture[10];
     public Transform cam;
-    public Animation camaraAnimation;
+    //public Animation camaraAnimation;
     public Transform HighlightBlock;
     //public GameObject HighlightBlockObject;
-    public World world;
-    public CanvasManager canvasManager;
-    public MusicManager musicmanager;
+    
     public Transform leg;
     public GameObject selectblock;
     public GameObject Eye_Light;
-    public BackPackManager backpackmanager;
-    public LifeManager lifemanager;
+    
     public GameObject Particle_Broken;
     public Transform particel_Broken_transform;
     public ParticleSystem Broking_Animation;
@@ -61,6 +65,7 @@ public class Player : MonoBehaviour
     [Header("碰撞参数")]
     public float playerWidth = 0.3f;
     public float playerHeight = 1.7f;
+    public float high_delta = 0.9f; // 在确定高度下，碰撞点的相对高度
     private float extend_delta = 0.1f;
     private float delta = 0.05f;
 
@@ -106,7 +111,8 @@ public class Player : MonoBehaviour
 
     //debug
     [Header("debug")]
-    public bool showBlockMesh = false;
+    public bool Show_CollisionBox = false;
+    public bool Show_HitBox = false;
     public float water_jumpforce = 3f;
     public float watergravity = -3f;
     public float mult = 2f;
@@ -241,24 +247,36 @@ public class Player : MonoBehaviour
         if (world.game_state == Game_State.Playing)
         {
 
-
             //更新玩家脚下坐标
             Update_FootBlockType();
 
             //计算碰撞点
-            if(!isFlying)
+            CollisionNumber = 0;
+            if (!isFlying)
+            {
                 update_block();
+            }
+
+
 
             //计算玩家状态
             GetPlayerState();
 
             
 
-            //绘制玩家身体
-            if (showBlockMesh)
+            //绘制碰撞盒
+            if (Show_CollisionBox)
             {
 
-                drawdebug();
+                Draw_CollisionBox();
+
+            }
+
+            //绘制判定箱
+            if (Show_HitBox)
+            {
+
+                Draw_HitBox();
 
             }
 
@@ -276,6 +294,8 @@ public class Player : MonoBehaviour
 
             //改变视距(如果奔跑的话)
             change_eyesview();
+
+            
 
 
             //游戏中暂停，暂停玩家输入
@@ -305,6 +325,7 @@ public class Player : MonoBehaviour
         }
 
     }
+
 
 
 
@@ -420,26 +441,34 @@ public class Player : MonoBehaviour
 
 
     //改变视距
+    private Coroutine currentViewChangeCoroutine; // 记录当前正在运行的协程
+
     void change_eyesview()
     {
-
-        if (!isFlying)
+        if (isSprinting && isMoving && !expandview)
         {
-            if (isSprinting && isMoving && !expandview)
+            // 如果有协程正在运行，先停止它
+            if (currentViewChangeCoroutine != null)
             {
-                // 启动协程扩大视野
-                StartCoroutine(expandchangeview(true));
-                expandview = true;
+                StopCoroutine(currentViewChangeCoroutine);
             }
-            else if ((!isSprinting || !isMoving) && expandview)
-            {
-                // 启动协程缩小视野
-                StartCoroutine(expandchangeview(false));
-                expandview = false;
-            }
-        }
 
-        
+            // 启动协程扩大视野
+            currentViewChangeCoroutine = StartCoroutine(expandchangeview(true));
+            expandview = true;
+        }
+        else if ((!isSprinting || !isMoving) && expandview)
+        {
+            // 如果有协程正在运行，先停止它
+            if (currentViewChangeCoroutine != null)
+            {
+                StopCoroutine(currentViewChangeCoroutine);
+            }
+
+            // 启动协程缩小视野
+            currentViewChangeCoroutine = StartCoroutine(expandchangeview(false));
+            expandview = false;
+        }
     }
 
     IEnumerator expandchangeview(bool expand)
@@ -456,7 +485,9 @@ public class Player : MonoBehaviour
         }
 
         eyes.fieldOfView = targetFOV; // 确保最终视野值准确
+        currentViewChangeCoroutine = null; // 协程结束后清空记录
     }
+
 
 
 
@@ -487,7 +518,7 @@ public class Player : MonoBehaviour
         }
 
 
-        if (Input.GetButtonDown("Sprint"))
+        if (Input.GetButtonDown("Sprint") && !isFlying)
         {
 
             isSprinting = true;
@@ -580,13 +611,7 @@ public class Player : MonoBehaviour
 
         }
 
-        //E-打开背包
-        if (Input.GetKeyDown(KeyCode.E))
-        {
 
-            canvasManager.UIManager[VoxelData.ui玩家].childs[2]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[2]._object.activeSelf);
-
-        }
 
         //按住Ctrl键，摄像机将下降一定高度
         if (Input.GetKeyDown(KeyCode.LeftControl))
@@ -630,10 +655,7 @@ public class Player : MonoBehaviour
             //Debug.Log("Player Mouse0");
             //isLeftMouseDown = true;
             //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
-            Vector3 _raycast = RayCast_now();
-
-
-            Vector3 pointvector = new Vector3(Mathf.FloorToInt(_raycast.x), Mathf.FloorToInt(_raycast.y), Mathf.FloorToInt(_raycast.z));
+            Vector3 pointvector = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
 
             if (pointvector != OldPointLocation || pointvector == Vector3.zero)
             {
@@ -688,13 +710,12 @@ public class Player : MonoBehaviour
                 {
                     //工作台
                     case 18:
-                        canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
+                        //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
                         break;
                 }
 
                 return;
             }
-
 
             //如果打到 && 距离大于2f && 且不是脚底下
             if (RayCast != Vector3.zero && (RayCast - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(RayCast.x, RayCast.y - 1f, RayCast.z)))
@@ -1169,52 +1190,86 @@ public class Player : MonoBehaviour
 
     //----------------------------------碰撞检测---------------------------------------
 
-
-    
+    public Vector3 front_Center = new Vector3();
+    public Vector3 back_Center = new Vector3();
+    public Vector3 left_Center = new Vector3();
+    public Vector3 right_Center = new Vector3();
+    [HideInInspector]public int CollisionNumber;
 
     //更新16个碰撞点
     void update_block()
     {
+        Vector3 _selfPos = transform.position;
 
         // 上面的四个点
-        up_左上 = new Vector3(transform.position.x - (playerWidth / 2), transform.position.y + (playerHeight / 2), transform.position.z + (playerWidth / 2));
-        up_右上 = new Vector3(transform.position.x + (playerWidth / 2), transform.position.y + (playerHeight / 2), transform.position.z + (playerWidth / 2));
-        up_右下 = new Vector3(transform.position.x + (playerWidth / 2), transform.position.y + (playerHeight / 2), transform.position.z - (playerWidth / 2));
-        up_左下 = new Vector3(transform.position.x - (playerWidth / 2), transform.position.y + (playerHeight / 2), transform.position.z - (playerWidth / 2));
+        if (FactFacing.y > 0)
+        {
+            up_左上 = new Vector3(_selfPos.x - (playerWidth / 2), _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2));
+            up_右上 = new Vector3(_selfPos.x + (playerWidth / 2), _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2));
+            up_右下 = new Vector3(_selfPos.x + (playerWidth / 2), _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2));
+            up_左下 = new Vector3(_selfPos.x - (playerWidth / 2), _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2));
+            CollisionNumber += 4;
+        }
 
         // 下面的四个点
-        down_左上 = new Vector3(transform.position.x - (playerWidth / 2), transform.position.y - (playerHeight / 2), transform.position.z + (playerWidth / 2));
-        down_右上 = new Vector3(transform.position.x + (playerWidth / 2), transform.position.y - (playerHeight / 2), transform.position.z + (playerWidth / 2));
-        down_右下 = new Vector3(transform.position.x + (playerWidth / 2), transform.position.y - (playerHeight / 2), transform.position.z - (playerWidth / 2));
-        down_左下 = new Vector3(transform.position.x - (playerWidth / 2), transform.position.y - (playerHeight / 2), transform.position.z - (playerWidth / 2));
+        down_左上 = new Vector3(_selfPos.x - (playerWidth / 2), _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2));
+        down_右上 = new Vector3(_selfPos.x + (playerWidth / 2), _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2));
+        down_右下 = new Vector3(_selfPos.x + (playerWidth / 2), _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2));
+        down_左下 = new Vector3(_selfPos.x - (playerWidth / 2), _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2));
+        CollisionNumber += 4;
 
 
         //front
-        front_左上 = new Vector3(transform.position.x - (playerWidth / 2) + delta, transform.position.y + (playerHeight / 4), transform.position.z + (playerWidth / 2) + extend_delta);
-        front_右上 = new Vector3(transform.position.x + (playerWidth / 2) - delta, transform.position.y + (playerHeight / 4), transform.position.z + (playerWidth / 2) + extend_delta);
-        front_左下 = new Vector3(transform.position.x - (playerWidth / 2) + delta, transform.position.y - (playerHeight / 4), transform.position.z + (playerWidth / 2) + extend_delta);
-        front_右下 = new Vector3(transform.position.x + (playerWidth / 2) - delta, transform.position.y - (playerHeight / 4), transform.position.z + (playerWidth / 2) + extend_delta);
+        if (ActualMoveDirection.z > 0)
+        {
+            front_Center = new Vector3(_selfPos.x, _selfPos.y, _selfPos.z + (playerWidth / 2) + extend_delta);
+            front_左上 = new Vector3(_selfPos.x - (playerWidth / 2) + delta, _selfPos.y + high_delta, _selfPos.z + (playerWidth / 2) + extend_delta);
+            front_右上 = new Vector3(_selfPos.x + (playerWidth / 2) - delta, _selfPos.y + high_delta, _selfPos.z + (playerWidth / 2) + extend_delta);
+            front_左下 = new Vector3(_selfPos.x - (playerWidth / 2) + delta, _selfPos.y - high_delta, _selfPos.z + (playerWidth / 2) + extend_delta);
+            front_右下 = new Vector3(_selfPos.x + (playerWidth / 2) - delta, _selfPos.y - high_delta, _selfPos.z + (playerWidth / 2) + extend_delta);
+            CollisionNumber += 5;
+
+        }
+
 
 
         //back
-        back_左上 = new Vector3(transform.position.x - (playerWidth / 2) + delta, transform.position.y + (playerHeight / 4), transform.position.z - (playerWidth / 2) - extend_delta);
-        back_右上 = new Vector3(transform.position.x + (playerWidth / 2) - delta, transform.position.y + (playerHeight / 4), transform.position.z - (playerWidth / 2) - extend_delta);
-        back_左下 = new Vector3(transform.position.x - (playerWidth / 2) + delta, transform.position.y - (playerHeight / 4), transform.position.z - (playerWidth / 2) - extend_delta);
-        back_右下 = new Vector3(transform.position.x + (playerWidth / 2) - delta, transform.position.y - (playerHeight / 4), transform.position.z - (playerWidth / 2) - extend_delta);
+        if (ActualMoveDirection.z < 0)
+        {
+            back_Center = new Vector3(_selfPos.x, _selfPos.y, _selfPos.z - (playerWidth / 2) - extend_delta);
+            back_左上 = new Vector3(_selfPos.x - (playerWidth / 2) + delta, _selfPos.y + high_delta, _selfPos.z - (playerWidth / 2) - extend_delta);
+            back_右上 = new Vector3(_selfPos.x + (playerWidth / 2) - delta, _selfPos.y + high_delta, _selfPos.z - (playerWidth / 2) - extend_delta);
+            back_左下 = new Vector3(_selfPos.x - (playerWidth / 2) + delta, _selfPos.y - high_delta, _selfPos.z - (playerWidth / 2) - extend_delta);
+            back_右下 = new Vector3(_selfPos.x + (playerWidth / 2) - delta, _selfPos.y - high_delta, _selfPos.z - (playerWidth / 2) - extend_delta);
+            CollisionNumber += 5;
+
+        }
 
 
         //left
-        left_左上 = new Vector3(transform.position.x - (playerWidth / 2) - extend_delta, transform.position.y + (playerHeight / 4), transform.position.z - (playerWidth / 2) + delta);
-        left_右上 = new Vector3(transform.position.x - (playerWidth / 2) - extend_delta, transform.position.y + (playerHeight / 4), transform.position.z + (playerWidth / 2) - delta);
-        left_左下 = new Vector3(transform.position.x - (playerWidth / 2) - extend_delta, transform.position.y - (playerHeight / 4), transform.position.z - (playerWidth / 2) + delta);
-        left_右下 = new Vector3(transform.position.x - (playerWidth / 2) - extend_delta, transform.position.y - (playerHeight / 4), transform.position.z + (playerWidth / 2) - delta);
+        if (ActualMoveDirection.x < 0)
+        {
+            left_Center = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y, _selfPos.z);
+            left_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + high_delta, _selfPos.z - (playerWidth / 2) + delta);
+            left_右上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + high_delta, _selfPos.z + (playerWidth / 2) - delta);
+            left_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - high_delta, _selfPos.z - (playerWidth / 2) + delta);
+            left_右下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - high_delta, _selfPos.z + (playerWidth / 2) - delta);
+            CollisionNumber += 5;
 
+
+        }
 
         //right
-        right_左上 = new Vector3(transform.position.x + (playerWidth / 2) + extend_delta, transform.position.y + (playerHeight / 4), transform.position.z + (playerWidth / 2) - delta);
-        right_右上 = new Vector3(transform.position.x + (playerWidth / 2) + extend_delta, transform.position.y + (playerHeight / 4), transform.position.z - (playerWidth / 2) + delta);
-        right_左下 = new Vector3(transform.position.x + (playerWidth / 2) + extend_delta, transform.position.y - (playerHeight / 4), transform.position.z + (playerWidth / 2) - delta);
-        right_右下 = new Vector3(transform.position.x + (playerWidth / 2) + extend_delta, transform.position.y - (playerHeight / 4), transform.position.z - (playerWidth / 2) + delta);
+        if (ActualMoveDirection.x > 0)
+        {
+            right_Center = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y, _selfPos.z);
+            right_左上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + high_delta, _selfPos.z + (playerWidth / 2) - delta);
+            right_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + high_delta, _selfPos.z - (playerWidth / 2) + delta);
+            right_左下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - high_delta, _selfPos.z + (playerWidth / 2) - delta);
+            right_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - high_delta, _selfPos.z - (playerWidth / 2) + delta);
+            CollisionNumber += 5;
+
+        }
 
 
     }
@@ -1278,6 +1333,57 @@ public class Player : MonoBehaviour
     }
 
 
+    //玩家输入
+    public Vector2 keyInput
+    {
+        get
+        {
+            return new Vector2(horizontalInput,verticalInput);
+        }
+    }
+
+
+    //返回玩家object实际运动方向
+    public Vector3 ActualMoveDirection
+    {
+        get
+        {
+            Vector3 direction = Vector3.zero;
+
+            // 获得keyInput的输入方向
+            Vector2 input = keyInput;
+
+            // 玩家面朝的方向
+            Vector3 facing = FactFacing;
+
+            // 根据Facing方向来计算玩家实际运动方向
+            if (input.y > 0) // 向前运动
+            {
+                direction += new Vector3(facing.x, 0, facing.z);
+            }
+            else if (input.y < 0) // 向后运动
+            {
+                direction -= new Vector3(facing.x, 0, facing.z);
+            }
+
+            if (input.x < 0) // 向左运动
+            {
+                // 左方向是面对方向的左侧 (-z, x)
+                direction += new Vector3(-facing.z, 0, facing.x);
+            }
+            else if (input.x > 0) // 向右运动
+            {
+                // 右方向是面对方向的右侧 (z, -x)
+                direction += new Vector3(facing.z, 0, -facing.x);
+            }
+
+            // 归一化方向向量，以确保运动方向为整数
+            return direction.normalized;
+        }
+    }
+
+
+    //返回四舍五入的面朝向量
     public Vector3 Facing
     {
         get
@@ -1288,6 +1394,88 @@ public class Player : MonoBehaviour
         }
     }
 
+    //返回实际面朝向量
+    public Vector3 FactFacing
+    {
+        get
+        {
+            float _y = isGrounded ? -1 : 1;
+            return new Vector3(transform.forward.x, _y, transform.forward.z);
+
+        }
+    }
+
+
+    //返回0 1 4 5四个方向
+    public int IntForFacing
+    {
+        get
+        {
+            // 获取玩家的前方向量
+            Vector3 forward = transform.forward;
+
+            // 获取XZ平面的方向并四舍五入到最接近的整数
+            float x = Mathf.Round(forward.x);
+            float z = Mathf.Round(forward.z);
+
+            // 判断方向并返回对应的整数值
+            if (z > 0 && Mathf.Abs(forward.x) <= Mathf.Sin(45 * Mathf.Deg2Rad))
+            {
+                return 0; // 前 (Z+)
+            }
+            else if (z < 0 && Mathf.Abs(forward.x) <= Mathf.Sin(45 * Mathf.Deg2Rad))
+            {
+                return 1; // 后 (Z-)
+            }
+            else if (x > 0 && Mathf.Abs(forward.z) <= Mathf.Sin(45 * Mathf.Deg2Rad))
+            {
+                return 5; // 右 (X+)
+            }
+            else if (x < 0 && Mathf.Abs(forward.z) <= Mathf.Sin(45 * Mathf.Deg2Rad))
+            {
+                return 4; // 左 (X-)
+            }
+
+            // 默认返回值，表示无法确定方向（通常情况下不会发生）
+            return -1;
+        }
+    }
+
+    public int RealBacking
+    {
+        get
+        {
+            // 获取玩家的前方向量
+            Vector3 forward = transform.forward;
+
+            // 获取XZ平面的方向并四舍五入到最接近的整数
+            float x = Mathf.Round(forward.x);
+            float z = Mathf.Round(forward.z);
+
+            // 判断后背方向并返回对应的整数值
+            if (z > 0 && Mathf.Abs(forward.x) <= Mathf.Sin(45 * Mathf.Deg2Rad))
+            {
+                return 1; // 背对 Z- 方向（后）
+            }
+            else if (z < 0 && Mathf.Abs(forward.x) <= Mathf.Sin(45 * Mathf.Deg2Rad))
+            {
+                return 0; // 背对 Z+ 方向（前）
+            }
+            else if (x > 0 && Mathf.Abs(forward.z) <= Mathf.Sin(45 * Mathf.Deg2Rad))
+            {
+                return 4; // 背对 X- 方向（左）
+            }
+            else if (x < 0 && Mathf.Abs(forward.z) <= Mathf.Sin(45 * Mathf.Deg2Rad))
+            {
+                return 5; // 背对 X+ 方向（右）
+            }
+
+            // 默认返回值，表示无法确定方向（通常情况下不会发生）
+            return -1;
+        }
+    }
+
+
 
     //碰撞方向的检测（-Z方向为front）
     //方块的角度
@@ -1297,7 +1485,11 @@ public class Player : MonoBehaviour
         get
         {
             //如果world返回true，则碰撞
-            if (world.CheckForVoxel(front_左上) || world.CheckForVoxel(front_右上) || world.CheckForVoxel(front_左下) || world.CheckForVoxel(front_右下))
+            if (world.CheckForVoxel(front_左上) || 
+                world.CheckForVoxel(front_右上) || 
+                world.CheckForVoxel(front_左下) || 
+                world.CheckForVoxel(front_右下) ||
+                world.CheckForVoxel(front_Center))
             {
                 return true;
             }
@@ -1355,7 +1547,8 @@ public class Player : MonoBehaviour
                 world.CheckForVoxel(back_左上) ||
                 world.CheckForVoxel(back_右上) ||
                 world.CheckForVoxel(back_左下) ||
-                world.CheckForVoxel(back_右下)
+                world.CheckForVoxel(back_右下) ||
+                world.CheckForVoxel(back_Center)
                 )
                 return true;
 
@@ -1421,7 +1614,8 @@ public class Player : MonoBehaviour
                 world.CheckForVoxel(left_左上) ||
                 world.CheckForVoxel(left_右上) ||
                 world.CheckForVoxel(left_左下) ||
-                world.CheckForVoxel(left_右下)
+                world.CheckForVoxel(left_右下) ||
+                world.CheckForVoxel(left_Center)
                 )
                 return true;
 
@@ -1460,7 +1654,8 @@ public class Player : MonoBehaviour
                 world.CheckForVoxel(right_左上) ||
                 world.CheckForVoxel(right_右上) ||
                 world.CheckForVoxel(right_左下) ||
-                world.CheckForVoxel(right_右下)
+                world.CheckForVoxel(right_右下) ||
+                world.CheckForVoxel(right_Center)
                 )
                 return true;
 
@@ -1485,7 +1680,49 @@ public class Player : MonoBehaviour
 
     }
 
+    public bool collision_foot
+    {
+        get
+        {
+            //如果world返回true，则碰撞
+            if (world.CheckForVoxel(front_左下) ||
+                world.CheckForVoxel(front_右下) ||
+                world.CheckForVoxel(back_左下)  ||
+                world.CheckForVoxel(back_右下)  ||
+                world.CheckForVoxel(left_右下)  ||
+                world.CheckForVoxel(left_右下)  ||
+                world.CheckForVoxel(right_右下) ||
+                world.CheckForVoxel(right_右下)
+                )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 
+    public bool collision_waist
+    {
+        get
+        {
+            //如果world返回true，则碰撞
+            if (world.CheckForVoxel(front_Center) ||
+                world.CheckForVoxel(back_Center) ||
+                world.CheckForVoxel(left_Center) ||
+                world.CheckForVoxel(right_Center)
+                )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 
     //更新脚下方块类型
     void Update_FootBlockType()
@@ -1621,8 +1858,9 @@ public class Player : MonoBehaviour
 
 
     //绘制碰撞
-    void drawdebug()
+    void Draw_CollisionBox()
     {
+
 
         // 上面的四条线
         Debug.DrawLine(up_左上, up_右上, Color.red); // 左上 -- 右上
@@ -1638,24 +1876,31 @@ public class Player : MonoBehaviour
 
 
         //上半圈
-        Debug.DrawLine(front_左上, front_右上, Color.red);
+        Debug.DrawLine(front_左上, front_右上, Color.yellow);
         Debug.DrawLine(front_右上, right_左上, Color.red);
-        Debug.DrawLine(right_左上, right_右上, Color.red);
+        Debug.DrawLine(right_左上, right_右上, Color.yellow);
         Debug.DrawLine(right_右上, back_右上, Color.red);
-        Debug.DrawLine(back_右上, back_左上, Color.red);
+        Debug.DrawLine(back_右上, back_左上, Color.yellow);
         Debug.DrawLine(back_左上, left_左上, Color.red);
-        Debug.DrawLine(left_左上, left_右上, Color.red);
+        Debug.DrawLine(left_左上, left_右上, Color.yellow);
         Debug.DrawLine(left_右上, front_左上, Color.red);
 
 
+        //中心碰撞点
+        Debug.DrawLine(front_Center, right_Center, Color.green);
+        Debug.DrawLine(right_Center, back_Center, Color.green);
+        Debug.DrawLine(back_Center, left_Center, Color.green);
+        Debug.DrawLine(left_Center, front_Center, Color.green);
+
+
         //下半圈
-        Debug.DrawLine(front_左下, front_右下, Color.red);
+        Debug.DrawLine(front_左下, front_右下, Color.yellow);
         Debug.DrawLine(front_右下, right_左下, Color.red);
-        Debug.DrawLine(right_左下, right_右下, Color.red);
+        Debug.DrawLine(right_左下, right_右下, Color.yellow);
         Debug.DrawLine(right_右下, back_右下, Color.red);
-        Debug.DrawLine(back_右下, back_左下, Color.red);
+        Debug.DrawLine(back_右下, back_左下, Color.yellow);
         Debug.DrawLine(back_左下, left_左下, Color.red);
-        Debug.DrawLine(left_左下, left_右下, Color.red);
+        Debug.DrawLine(left_左下, left_右下, Color.yellow);
         Debug.DrawLine(left_右下, front_左下, Color.red);
 
 
@@ -1679,17 +1924,17 @@ public class Player : MonoBehaviour
 
         //中腰线
         //front
-        Debug.DrawLine(front_左上, front_左下, Color.red);
-        Debug.DrawLine(front_右上, front_右下, Color.red);
+        Debug.DrawLine(front_左上, front_左下, Color.yellow);
+        Debug.DrawLine(front_右上, front_右下, Color.yellow);
         //back
-        Debug.DrawLine(back_左上, back_左下, Color.red);
-        Debug.DrawLine(back_右上, back_右下, Color.red);
+        Debug.DrawLine(back_左上, back_左下, Color.yellow);
+        Debug.DrawLine(back_右上, back_右下, Color.yellow);
         //left
-        Debug.DrawLine(left_左上, left_左下, Color.red);
-        Debug.DrawLine(left_右上, left_右下, Color.red);
+        Debug.DrawLine(left_左上, left_左下, Color.yellow);
+        Debug.DrawLine(left_右上, left_右下, Color.yellow);
         //right
-        Debug.DrawLine(right_左上, right_左下, Color.red);
-        Debug.DrawLine(right_右上, right_右下, Color.red);
+        Debug.DrawLine(right_左上, right_左下, Color.yellow);
+        Debug.DrawLine(right_右上, right_右下, Color.yellow);
 
         //下腰线
         //down左上
@@ -1711,6 +1956,50 @@ public class Player : MonoBehaviour
     }
 
 
+    void Draw_HitBox()
+    {
+        Vector3 _selfPos = transform.position;
+        Vector3 _eyesPos = eyes.transform.position;
+
+        Vector3 _front_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+        Vector3 _front_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+        Vector3 _front_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - high_delta, _selfPos.z + (playerWidth / 2) + extend_delta);
+        Vector3 _front_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - high_delta, _selfPos.z + (playerWidth / 2) + extend_delta);
+
+        Vector3 _back_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+        Vector3 _back_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+        Vector3 _back_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - high_delta, _selfPos.z - (playerWidth / 2) - extend_delta);
+        Vector3 _back_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - high_delta, _selfPos.z - (playerWidth / 2) - extend_delta);
+
+        Vector3 _eyes_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _eyesPos.y, _selfPos.z + (playerWidth / 2) + extend_delta);
+        Vector3 _eyes_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _eyesPos.y, _selfPos.z + (playerWidth / 2) + extend_delta);
+        Vector3 _eyes_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _eyesPos.y, _selfPos.z - (playerWidth / 2) - extend_delta);
+        Vector3 _eyes_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _eyesPos.y, _selfPos.z - (playerWidth / 2) - extend_delta);
+
+        //头顶正方形
+        Debug.DrawLine(_front_左上, _front_右上, Color.white);
+        Debug.DrawLine(_front_右上, _back_右上, Color.white); 
+        Debug.DrawLine(_back_右上, _back_左上, Color.white);
+        Debug.DrawLine(_back_左上, _front_左上, Color.white); 
+
+        //脚底正方形
+        Debug.DrawLine(_front_左下, _front_右下, Color.white);
+        Debug.DrawLine(_front_右下, _back_右下, Color.white);
+        Debug.DrawLine(_back_右下, _back_左下, Color.white);
+        Debug.DrawLine(_back_左下, _front_左下, Color.white);
+
+        //四个竖线
+        Debug.DrawLine(_front_左上, _front_左下, Color.white);
+        Debug.DrawLine(_front_右上, _front_右下, Color.white);
+        Debug.DrawLine(_back_左上, _back_左下, Color.white);
+        Debug.DrawLine(_back_右上, _back_右下, Color.white);
+
+        //眼睛
+        Debug.DrawLine(_eyes_左上, _eyes_右上, Color.red);
+        Debug.DrawLine(_eyes_右上, _eyes_右下, Color.red);
+        Debug.DrawLine(_eyes_右下, _eyes_左下, Color.red);
+        Debug.DrawLine(_eyes_左下, _eyes_左上, Color.red);
+    }
 
 
     //-------------------------------------------------------------------------------------

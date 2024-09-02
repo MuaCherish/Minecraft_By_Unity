@@ -15,8 +15,8 @@ public class CanvasManager : MonoBehaviour
 {
     [Header("UIMAnager")]
     public List<CanvasId> UIManager = new List<CanvasId>();
+    
 
-    public List<GameObject> CheckToCloseUI = new List<GameObject>();  //Init需要检查并关闭的页面
 
 
 
@@ -74,7 +74,7 @@ public class CanvasManager : MonoBehaviour
 
     //修改值参数
     //public Slider slider_bgm;
-   // public Slider slider_sound;
+    //public Slider slider_sound;
     //public Slider slider_MouseSensitivity;
     //public Toggle toggle_SpaceMode;  
     //public Toggle toggle_SuperMing;
@@ -148,12 +148,6 @@ public class CanvasManager : MonoBehaviour
         if (muacherishCoroutine == null)
         {
             muacherishCoroutine = StartCoroutine(jumpMuaCherish());
-        }
-        waittoFinishSaveAndBackToMenuCoroutine = null;
-
-        foreach (var obj in CheckToCloseUI)
-        {
-            obj.SetActive(false);
         }
 
 
@@ -934,7 +928,7 @@ public class CanvasManager : MonoBehaviour
         {
             waittoFinishSaveAndBackToMenuCoroutine = StartCoroutine(waittoFinishSaveAndBackToMenu());
         }
-       
+
     }
 
     public Coroutine waittoFinishSaveAndBackToMenuCoroutine;

@@ -2499,7 +2499,18 @@ public class Chunk : MonoBehaviour
 
         }
 
+        if (isOutOfRange(x,y,z))
+        {
+            return;
+        }
+
         voxelMap[x, y, z].voxelType = targetBlocktype;
+
+        //判断朝向
+        if (world.blocktypes[targetBlocktype].IsOriented)
+        {
+            voxelMap[x, y, z].blockOriented = world.player.RealBacking;
+        }
 
         EditForSomeBlocks(new Vector3(x, y, z), targetBlocktype);
 
@@ -3549,8 +3560,7 @@ public class Chunk : MonoBehaviour
                         //uvs.Add (VoxelData.voxelUvs [3]);
                         //AddTexture(1);
 
-                        //根据p生成对应的面，对应的UV
-                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                        
 
                         triangles.Add(vertexIndex);
                         triangles.Add(vertexIndex + 1);
@@ -3559,6 +3569,11 @@ public class Chunk : MonoBehaviour
                         triangles.Add(vertexIndex + 1);
                         triangles.Add(vertexIndex + 3);
                         vertexIndex += 4;
+
+
+                        //根据p生成对应的面，对应的UV
+                        //ChangeBlockFacing：方块面的朝向
+                        AddTexture(world.blocktypes[blockID].GetTextureID(ChangeBlockFacing(p, voxelMap[x, y, z].blockOriented)));
 
                     }
 
@@ -3569,6 +3584,31 @@ public class Chunk : MonoBehaviour
         }
 
 
+
+    }
+
+
+    public int ChangeBlockFacing(int _p, int _face)
+    {
+        // 前 - 后 - 左 - 右
+        // 0  - 1  - 4  - 5
+
+        //front
+        //_face = 0
+        // 0  - 1  - 4  - 5
+
+        //back
+        //_face = 1
+        // 1  - 0  - 5  - 4
+
+        //left
+        //_face = 4
+        // 5  - 4  - 0  - 1
+
+        //right
+        //_face = 5
+        // 4  - 5  - 1  - 0
+        return VoxelData.BlockOriented[_face, _p];
 
     }
 

@@ -54,7 +54,7 @@ public class TestWorld : MonoBehaviour
     {
 
         //Ö¡Êý
-        Application.targetFrameRate = 90;
+        //Application.targetFrameRate = 90;
 
         //Self
         Chunks = new GameObject();

@@ -84,7 +84,7 @@ public class DevelopModeWorld : MonoBehaviour
     private void Start()
     {
         //Ö¡Êý
-        Application.targetFrameRate = 90;
+        //Application.targetFrameRate = 90;
 
         //Self
         ChunkPATH = new GameObject();

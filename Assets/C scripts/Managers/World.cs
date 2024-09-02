@@ -14,6 +14,7 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using System;
 using System.Linq;
+using UnityEngine.UIElements.Experimental;
 
 
 
@@ -38,6 +39,12 @@ public enum DrawMode
 
     Block,Bush,Torch,Air,Water,SnowPower,HalfBrick,Door,
 
+}
+
+
+public enum Facing2d
+{
+    None, front,back, left, right,
 }
 
 //public enum WorldType
@@ -203,7 +210,7 @@ public class World : MonoBehaviour
     {
 
         //帧数
-        Application.targetFrameRate = 90;
+        //Application.targetFrameRate = 90;
 
         InitWorldManager();
 
@@ -289,8 +296,6 @@ public class World : MonoBehaviour
 
     private void FixedUpdate()
     {
-        
-
 
         //Mesh线程常驻
         CreateMeshCoroutineManager();
@@ -1637,7 +1642,7 @@ public class World : MonoBehaviour
         //}
 
         //如果玩家在区内，但Y值太高
-        //print($"找不到该坐标的Chunk->{GetChunkLocation(pos)}");
+        //print($"找不到玩家脚下的Chunk {pos}");
         return ERROR_CODE_OUTOFVOXELMAP;
 
 
@@ -2244,8 +2249,6 @@ public class World : MonoBehaviour
 
     //对玩家碰撞盒的方块判断
     //true：有碰撞
-    //public Vector3 previous_relalocation;
-    //public bool hasExec_AutoRise = true;
     public bool CheckForVoxel(Vector3 pos)
     {
         //if (GetBlockType(pos) == VoxelData.Wood)
@@ -2270,50 +2273,8 @@ public class World : MonoBehaviour
             return false; 
         }
 
-        //自动上升
-        //if (hasExec_AutoRise)
-        //{
-        //    DrawMode _self = blocktypes[GetBlockType(player.foot.position)].DrawMode;
-        //    DrawMode _target = blocktypes[GetBlockType(pos)].DrawMode;
-            
-        //    //当自己和目标有一个为半砖时
-        //    if ((_self == DrawMode.HalfBrick && _target == DrawMode.Block) || (_self == DrawMode.Block && _target == DrawMode.HalfBrick))
-        //    {
-        //        print($"{_self}, {_target}");
-        //        player.transform.position += new Vector3(0,0.5f,0);
-        //        hasExec_AutoRise = false;
-        //        StartCoroutine(ResetFlagNextFrame());
-        //    }
-
-
-        //}
 
         //方块碰撞偏移
-        if (targetBlock == VoxelData.HalfBrick)
-        {
-            
-            if (realLocation.y - (int)realLocation.y <= 0.5f)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-
-        if (targetBlock == VoxelData.Door_Down || targetBlock == VoxelData.Door_Up)
-        {
-            if (realLocation.z - (int)realLocation.z >= 0.7f)
-            {
-                return true;
-            }
-            else
-            { 
-                return false;
-            }
-        }
 
         //X
         //if (player.Facing.x != 0)
@@ -2353,7 +2314,22 @@ public class World : MonoBehaviour
 
         //}
 
+        //如果是自定义碰撞
+        if (blocktypes[targetBlock].isDIYCollision)
+        {
+            realLocation = CollisionOffset(realLocation, targetBlock);
+            Vector3 OffsetrelaLocation = GetRelalocation(realLocation);
 
+            if (OffsetrelaLocation != relaLocation)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        
 
 
         //返回固体还是空气
@@ -2361,14 +2337,40 @@ public class World : MonoBehaviour
 
     }
 
+    public float XOFFSET;
+    public float YOFFSET;
+    public float ZOFFSET;
 
-    //下一帧变为true
-    //IEnumerator ResetFlagNextFrame()
-    //{
-    //    yield return null;
-    //    hasExec_AutoRise = true;
-    //}
+    public Vector3 CollisionOffset(Vector3 _realPos, byte _targetType)
+    {
+        Vector3 _input = new Vector3(player.horizontalInput, player.Facing.y, player.verticalInput);
+        float _x = _realPos.x; Vector2 _xRange = blocktypes[_targetType].CollosionRange.xRange; float _xOffset = _x - (int)_x; XOFFSET = _xOffset;
+        float _y = _realPos.y; Vector2 _yRange = blocktypes[_targetType].CollosionRange.yRange; float _yOffset = _y - (int)_y; YOFFSET = _yOffset;
+        float _z = _realPos.z; Vector2 _zRange = blocktypes[_targetType].CollosionRange.zRange; float _zOffset = _z - (int)_z; ZOFFSET = _zOffset;
 
+
+        //X
+        if (_input.x >= 0 || _xOffset < _xRange.x)
+            _x -= _xRange.x;
+        else if(_input.x < 0 || _xOffset > _xRange.y)
+            _x += (1 - _xRange.y);
+
+
+        //Y
+        if (_input.y >= 0 || _yOffset < _yRange.x)
+            _y -= _yRange.x;
+        else if (_input.y < 0 || _yOffset > _yRange.y)
+            _y += (1 - _yRange.y);
+
+        //Z
+        if (_input.z >= 0 || _zOffset < _zRange.x)
+            _z -= _zRange.x;
+        else if (_input.z < 0 || _zOffset > _zRange.y)
+            _z += (1 - _zRange.y);
+
+        return new Vector3(_x, _y, _z);
+    }
+    
 
 
     //放置高亮方块的
@@ -2418,16 +2420,19 @@ public class BlockType
     [Header("基本参数")]
     public string blockName;
     public float DestroyTime;
-    public bool isSolid;       //是否会阻挡玩a家
+    public bool isSolid;       //是否会阻挡玩家
     public bool isTransparent; //周边方块是否面剔除
     public bool canBeChoose;   //是否可被高亮方块捕捉到
     public bool candropBlock;  //是否掉落方块
-    public bool isinteractable; //互动方块
+    public bool IsOriented;   //是否跟随玩家朝向
+    public bool isinteractable; //是否可被右键触发
 
-    [Header("碰撞")]
+
+    [Header("自定义碰撞")]
+    public bool isDIYCollision;
     //抽象来说就是方块向内挤压的数值
     //对于Y来说，(0.5f,0,0f)，就是Y正方向的面向内挤压0.5f，Y负方向的面向内挤压0.0f，即台阶的碰撞参数
-    public CollisionOffset CollisionOffset;
+    public CollosionRange CollosionRange;
 
 
     [Header("图标")]
@@ -2479,7 +2484,7 @@ public class BlockType
                 return rightFaceTexture;
 
             default:
-                Debug.Log("Error in GetTextureID; invalid face index");
+                Debug.Log($"Error in GetTextureID; invalid face index {faceIndex}");
                 return 0;
 
 
@@ -2495,6 +2500,7 @@ public class BlockType
 public class VoxelStruct
 {
     public byte voxelType = VoxelData.Air;
+    public int blockOriented = 0;
 
     //面生成的六个方向
     public bool up = true;
@@ -2659,10 +2665,10 @@ public class Wrapper<T>
 
 //方块碰撞类
 [System.Serializable]
-public class CollisionOffset
+public class CollosionRange
 {
-    public Vector2 Xoffset;
-    public Vector2 Yoffset;
-    public Vector2 Zoffset;
+    public Vector2 xRange = new Vector3(0 ,1f);
+    public Vector2 yRange = new Vector3(0, 1f);
+    public Vector2 zRange = new Vector3(0, 1f);
 }
 

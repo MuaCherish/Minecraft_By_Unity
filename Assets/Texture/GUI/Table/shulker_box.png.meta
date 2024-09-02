@@ -103,7 +103,7 @@ TextureImporter:
         x: 1
         y: 90
         width: 175
-        height: 165
+        height: 166
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -111,8 +111,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c0c67d1be0e75ae47ab9769ddba06d6f
-      internalID: 1854322772
+      spriteID: 4fd02c38efdb83e40abdce6a0e196c48
+      internalID: -1664581078
       vertices: []
       indices: 
       edges: []
@@ -120,7 +120,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 4ad43b18e5d833e4da0ec2c887fad9e2
+    spriteID: 01540189e3ddd5e449430f8405a1b7a0
     internalID: 0
     vertices: []
     indices: 
@@ -128,7 +128,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      shulker_box_0: 1854322772
+      shulker_box_0: -1664581078
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

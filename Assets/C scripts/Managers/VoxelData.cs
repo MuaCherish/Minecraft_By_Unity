@@ -112,7 +112,7 @@ public static class VoxelData
     public static readonly Byte Cobblestone = 32; //圆石
     public static readonly Byte Door_Up = 33;
     public static readonly Byte Door_Down = 34; 
-    public static readonly Byte HalfBrick = 35;
+    public static readonly Byte HalfBrick_Wood = 35;
     public static readonly Byte Mushroom_red = 36;
     public static readonly Byte Mushroom_brown = 37;
     public static readonly Byte Redbrick = 38;
@@ -216,6 +216,23 @@ public static class VoxelData
 
     }
 
+
+    //BlockFacing
+    public static readonly int[,] BlockOriented = new int[6, 6]
+    {
+        //只有四周四个矩阵是有用的
+        {0, 1, 2, 3, 4, 5}, //front
+        {1, 0, 2, 3, 5, 4}, //back
+        {0, 1, 2, 3, 4, 5},
+        {0, 1, 2, 3, 4, 5},
+        {4, 5, 2, 3, 1, 0}, //right
+        {5, 4, 2, 3, 0, 1}, //left
+		
+
+
+	};
+
+
     #region 顶点数组
 
     //顶点数组 - Block
@@ -268,10 +285,10 @@ public static class VoxelData
     public static readonly Vector3[] voxelVerts_Door = new Vector3[8]
     {
 
-        new Vector3(0.0f, 0.0f, 0.7f),
-        new Vector3(1.0f, 0.0f, 0.7f),
-        new Vector3(1.0f, 1.0f, 0.7f),
-        new Vector3(0.0f, 1.0f, 0.7f),
+        new Vector3(0.0f, 0.0f, 0.8125f),
+        new Vector3(1.0f, 0.0f, 0.8125f),
+        new Vector3(1.0f, 1.0f, 0.8125f),
+        new Vector3(0.0f, 1.0f, 0.8125f),
         new Vector3(0.0f, 0.0f, 1.0f),
         new Vector3(1.0f, 0.0f, 1.0f),
         new Vector3(1.0f, 1.0f, 1.0f),

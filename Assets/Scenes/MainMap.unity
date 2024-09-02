@@ -279,7 +279,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1460759}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1026571032}
+        m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
+        m_MethodName: SwitchNoBackGround
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1026571032}
+        m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
+        m_MethodName: SwitchToUI
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 5
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1460759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1009,7 +1033,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &12780966
@@ -1350,7 +1374,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &22826876
 Transform:
   m_ObjectHideFlags: 0
@@ -2036,6 +2060,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 45077094}
   m_CullTransparentMesh: 1
+--- !u!1 &47688170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 47688171}
+  - component: {fileID: 47688173}
+  - component: {fileID: 47688172}
+  m_Layer: 5
+  m_Name: "\u7BB1\u5B50"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &47688171
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47688170}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 944192295}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 256, y: 256}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &47688172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47688170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -1664581078, guid: f9aac05c7eaf13b4e9b847f35ad87cef, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &47688173
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47688170}
+  m_CullTransparentMesh: 1
 --- !u!1 &50470959
 GameObject:
   m_ObjectHideFlags: 0
@@ -2350,7 +2449,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &75738955
@@ -13038,8 +13137,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 720775110}
-  - {fileID: 1590301394}
+  - {fileID: 944192295}
+  - {fileID: 1535946429}
   m_Father: {fileID: 1186747844}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -13204,12 +13303,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ebba7d64d4969e4ba47ac6d0a2c4152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  managerHub: {fileID: 843154432}
   DebugScreen: {fileID: 1357337469}
   Content: {fileID: 928502477}
   blockitem: {fileID: 6026453003721354756, guid: a586869b70e315c43a35ba280031ade8, type: 3}
   LeftText: {fileID: 439713266}
-  player: {fileID: 1504082080}
-  world: {fileID: 699955241}
   isDebug: 0
 --- !u!1 &439713263
 GameObject:
@@ -14247,6 +14345,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 843154431}
   - {fileID: 2136429364}
   - {fileID: 1026571031}
   - {fileID: 2031280224}
@@ -16317,7 +16416,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 5959645bc625ee2408594a11c8fbdedf, type: 2}
+  m_Material: {fileID: 2100000, guid: 472fbc0c081111441899a3629e10e999, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -16794,7 +16893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 5959645bc625ee2408594a11c8fbdedf, type: 2}
+  m_Material: {fileID: 2100000, guid: 472fbc0c081111441899a3629e10e999, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -18457,7 +18556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 5959645bc625ee2408594a11c8fbdedf, type: 2}
+  m_Material: {fileID: 2100000, guid: 472fbc0c081111441899a3629e10e999, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -21094,8 +21193,8 @@ MonoBehaviour:
   game_state: 0
   game_mode: 1
   isLoadSaving: 0
-  material: {fileID: 2100000, guid: 6083a58c5541f714f8062574061486e8, type: 2}
-  material_Water: {fileID: 2100000, guid: 18ff591fa5ca6d540896b59d494aad78, type: 2}
+  material: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
+  material_Water: {fileID: 2100000, guid: e401bc414787ebc4eaf3eb598c2a55cf, type: 2}
   blocktypes:
   - blockName: BedRock
     DestroyTime: 0
@@ -21103,15 +21202,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 0
     candropBlock: 0
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -1452361369, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -1452361369, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -1452361369, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -1452361369, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1452361369, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -1452361369, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -1452361369, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -1452361369, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21130,15 +21231,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 333729440, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 333729440, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 333729440, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 333729440, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 333729440, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 333729440, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 333729440, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 333729440, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: e963f3daaa4495345b08255f3d6d3eed, type: 3}
     - {fileID: 8300000, guid: 0902d3ef50b317f42a877d8372019f63, type: 3}
@@ -21157,15 +21260,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 305990985, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 305990985, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 1827831788, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -280672338, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 305990985, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 305990985, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 1827831788, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -21184,15 +21289,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -280672338, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -280672338, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -280672338, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -280672338, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -21211,15 +21318,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 0
     candropBlock: 0
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
     icon: {fileID: 21300000, guid: 8b52399ddbd163147b71d42a68065115, type: 3}
-    sprite: {fileID: 21300000, guid: 8b52399ddbd163147b71d42a68065115, type: 3}
-    top_sprit: {fileID: 21300000, guid: 8b52399ddbd163147b71d42a68065115, type: 3}
-    buttom_sprit: {fileID: 21300000, guid: 8b52399ddbd163147b71d42a68065115, type: 3}
+    sprite: {fileID: 0}
+    top_sprit: {fileID: 0}
+    buttom_sprit: {fileID: 0}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21238,15 +21347,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -400092189, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -400092189, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -400092189, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -400092189, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -400092189, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -400092189, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -400092189, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -400092189, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: b0697e5631dae5a408849ff947463fd5, type: 3}
     - {fileID: 8300000, guid: 4f4be7ba4daf2af4081b9bbc8c69af4a, type: 3}
@@ -21265,15 +21376,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 777695519, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 777695519, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 898754996, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 898754996, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 777695519, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 777695519, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 898754996, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 898754996, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21292,15 +21405,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 57274125, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 57274125, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 57274125, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 57274125, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 57274125, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 57274125, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 57274125, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 57274125, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -21319,15 +21434,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 0
     candropBlock: 0
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
     icon: {fileID: -154138583, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
-    sprite: {fileID: 21300000, guid: 60efe7ef8dea76d42b8c5e63041ef41c, type: 3}
-    top_sprit: {fileID: 21300000, guid: 60efe7ef8dea76d42b8c5e63041ef41c, type: 3}
-    buttom_sprit: {fileID: 21300000, guid: 60efe7ef8dea76d42b8c5e63041ef41c, type: 3}
+    sprite: {fileID: 21300000, guid: 727263ee079bd0a4c8c16e579fc531e5, type: 3}
+    top_sprit: {fileID: 21300000, guid: 727263ee079bd0a4c8c16e579fc531e5, type: 3}
+    buttom_sprit: {fileID: 21300000, guid: 727263ee079bd0a4c8c16e579fc531e5, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21346,15 +21463,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 1944043365, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 1944043365, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 1944043365, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 1944043365, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 1944043365, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 1944043365, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 1944043365, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 1944043365, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21373,15 +21492,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -1652942934, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -1652942934, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -202250220, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -202250220, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1652942934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -1652942934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -202250220, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -202250220, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21400,15 +21521,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 357875596, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 357875596, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 357875596, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 357875596, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 357875596, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 357875596, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 357875596, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 357875596, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21427,15 +21550,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -1659613991, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -1659613991, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -1659613991, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -1659613991, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1659613991, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -1659613991, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -1659613991, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -1659613991, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21454,15 +21579,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 62530077, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 62530077, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 62530077, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 62530077, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 62530077, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 62530077, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 62530077, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 62530077, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21481,15 +21608,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -512954133, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -512954133, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -512954133, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -512954133, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -512954133, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -512954133, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -512954133, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -512954133, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21508,15 +21637,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -1083913025, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -1083913025, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -1083913025, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -1083913025, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1083913025, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -1083913025, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -1083913025, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -1083913025, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21535,20 +21666,22 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -900187783, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -900187783, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 1735976878, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 1735976878, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -900187783, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -900187783, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 1735976878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 1735976878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
-    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
-    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    broking_clip: {fileID: 8300000, guid: 76a8b350f474d524d9716cceed894035, type: 3}
+    broken_clip: {fileID: 8300000, guid: 5080f508bd8293a42ad2bd55adfd0cb5, type: 3}
     backFaceTexture: 30
     frontFaceTexture: 30
     topFaceTexture: 29
@@ -21562,15 +21695,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
-    isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 651666517, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 651666517, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -726523756, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -874158237, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    IsOriented: 0
+    isinteractable: 1
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 651666517, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 651666517, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -726523756, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -874158237, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21589,26 +21724,28 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 1
     isinteractable: 1
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 1764375263, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 1844614519, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -717572117, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 429198258, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 1764375263, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 1844614519, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -717572117, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 429198258, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
     broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
     backFaceTexture: 41
-    frontFaceTexture: 41
+    frontFaceTexture: 42
     topFaceTexture: 40
     bottomFaceTexture: 43
-    leftFaceTexture: 42
-    rightFaceTexture: 42
+    leftFaceTexture: 41
+    rightFaceTexture: 41
     DrawMode: 0
   - blockName: Pumpkin
     DestroyTime: 2
@@ -21616,20 +21753,22 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -1610743620, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 511761314, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 699121445, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 120298596, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1610743620, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 511761314, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 699121445, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 120298596, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
-    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
-    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    broking_clip: {fileID: 8300000, guid: 76a8b350f474d524d9716cceed894035, type: 3}
+    broken_clip: {fileID: 8300000, guid: 5080f508bd8293a42ad2bd55adfd0cb5, type: 3}
     backFaceTexture: 50
     frontFaceTexture: 49
     topFaceTexture: 48
@@ -21643,20 +21782,22 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 988205898, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 988205898, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 988205898, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 988205898, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 988205898, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 988205898, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 988205898, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 988205898, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
-    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
-    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
     backFaceTexture: 60
     frontFaceTexture: 60
     topFaceTexture: 60
@@ -21670,15 +21811,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -1996991934, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -1996991934, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -1996991934, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -1996991934, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1996991934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -1996991934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -1996991934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -1996991934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21697,15 +21840,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 1364873069, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 1364873069, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 1364873069, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 1364873069, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 1364873069, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 1364873069, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 1364873069, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 1364873069, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21724,15 +21869,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -1282353489, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -1282353489, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -1282353489, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -1282353489, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1282353489, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -1282353489, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -1282353489, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -1282353489, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21751,15 +21898,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 1313022280, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 1313022280, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 1313022280, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 1313022280, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 1313022280, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 1313022280, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 1313022280, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 1313022280, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21778,15 +21927,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 890033956, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 890033956, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 890033956, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 890033956, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 890033956, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 890033956, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 890033956, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 890033956, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21805,15 +21956,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21832,20 +21985,22 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -2051591878, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -2051591878, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -2051591878, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -2051591878, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 1
+    CollosionRange:
+      xRange: {x: 0.4, y: 0.6}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0.4, y: 0.6}
+    icon: {fileID: -2051591878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -2051591878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -2051591878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -2051591878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
-    broking_clip: {fileID: 8300000, guid: d6481a9f22fc0f749a18acdc4a33a6f2, type: 3}
-    broken_clip: {fileID: 8300000, guid: 7b57a43064dacd844b14e74b13585053, type: 3}
+    broking_clip: {fileID: 8300000, guid: 76a8b350f474d524d9716cceed894035, type: 3}
+    broken_clip: {fileID: 8300000, guid: 5080f508bd8293a42ad2bd55adfd0cb5, type: 3}
     backFaceTexture: 28
     frontFaceTexture: 28
     topFaceTexture: 28
@@ -21859,15 +22014,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 0
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -1787871284, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -1787871284, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -1787871284, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -1787871284, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1787871284, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -1787871284, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -1787871284, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -1787871284, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -21886,15 +22043,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 1900101145, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 1900101145, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 1900101145, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 1900101145, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -21913,15 +22072,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 0
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 1900101145, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 1900101145, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 1900101145, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 1900101145, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -21940,15 +22101,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 230917522, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 230917522, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -1113903611, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -280672338, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 230917522, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 230917522, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -1113903611, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -21967,15 +22130,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -357528127, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -357528127, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -357528127, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -357528127, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -357528127, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -357528127, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -357528127, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -357528127, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -21994,15 +22159,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
-    isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0.7}
-    icon: {fileID: -714097491, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
-    sprite: {fileID: 238772250, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    IsOriented: 1
+    isinteractable: 1
+    isDIYCollision: 1
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0.7, y: 1}
+    icon: {fileID: 238772250, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 238772250, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -22011,7 +22178,7 @@ MonoBehaviour:
     backFaceTexture: 44
     frontFaceTexture: 44
     topFaceTexture: 8
-    bottomFaceTexture: 255
+    bottomFaceTexture: 8
     leftFaceTexture: 8
     rightFaceTexture: 8
     DrawMode: 7
@@ -22021,15 +22188,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
-    isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0, y: 0}
-      Zoffset: {x: 0, y: 0.7}
-    icon: {fileID: -714097491, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
-    sprite: {fileID: -1212529585, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    IsOriented: 1
+    isinteractable: 1
+    isDIYCollision: 1
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0.7, y: 1}
+    icon: {fileID: -1212529585, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 238772250, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -22037,26 +22206,28 @@ MonoBehaviour:
     broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
     backFaceTexture: 52
     frontFaceTexture: 52
-    topFaceTexture: 255
+    topFaceTexture: 8
     bottomFaceTexture: 8
     leftFaceTexture: 8
     rightFaceTexture: 8
     DrawMode: 7
-  - blockName: HalfBrick
+  - blockName: HalfBrick_Wood
     DestroyTime: 1
     isSolid: 1
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0.5, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 200605058, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 1
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 0.5}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -22075,15 +22246,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0.5, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 2043863316, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 2043863316, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 2043863316, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 2043863316, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 1
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 0.5}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 2043863316, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 2043863316, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 2043863316, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 2043863316, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -22094,7 +22267,7 @@ MonoBehaviour:
     topFaceTexture: 23
     bottomFaceTexture: 23
     leftFaceTexture: 23
-    rightFaceTexture: 23
+    rightFaceTexture: 8
     DrawMode: 1
   - blockName: Mushroom_brown
     DestroyTime: 0.1
@@ -22102,15 +22275,17 @@ MonoBehaviour:
     isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0.5, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 335869697, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: 335869697, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: 335869697, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: 335869697, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 1
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 0.5}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 335869697, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 335869697, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: 335869697, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: 335869697, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -22121,7 +22296,7 @@ MonoBehaviour:
     topFaceTexture: 31
     bottomFaceTexture: 31
     leftFaceTexture: 31
-    rightFaceTexture: 31
+    rightFaceTexture: 8
     DrawMode: 1
   - blockName: Redbrick
     DestroyTime: 3.1
@@ -22129,15 +22304,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
+    IsOriented: 0
     isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0.5, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: -1115113425, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -1115113425, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -1115113425, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -1115113425, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    isDIYCollision: 1
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 0.5}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1115113425, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: -1115113425, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -1115113425, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -1115113425, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -22148,7 +22325,7 @@ MonoBehaviour:
     topFaceTexture: 19
     bottomFaceTexture: 19
     leftFaceTexture: 19
-    rightFaceTexture: 19
+    rightFaceTexture: 8
     DrawMode: 0
   - blockName: Furnace
     DestroyTime: 3.1
@@ -22156,15 +22333,17 @@ MonoBehaviour:
     isTransparent: 0
     canBeChoose: 1
     candropBlock: 1
-    isinteractable: 0
-    CollisionOffset:
-      Xoffset: {x: 0, y: 0}
-      Yoffset: {x: 0.5, y: 0}
-      Zoffset: {x: 0, y: 0}
-    icon: {fileID: 130889700, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    sprite: {fileID: -486916034, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    top_sprit: {fileID: -486916034, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
-    buttom_sprit: {fileID: -486916034, guid: 455e3fa2dc57d06498a017e828752c5c, type: 3}
+    IsOriented: 1
+    isinteractable: 1
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1293760296, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    sprite: {fileID: 651298740, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    top_sprit: {fileID: -486916034, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    buttom_sprit: {fileID: -486916034, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -22249,6 +22428,9 @@ MonoBehaviour:
   MeshLock: 0
   PointSaving: 
   recordData: []
+  XOFFSET: 0
+  YOFFSET: 0
+  ZOFFSET: 0
 --- !u!4 &699955242
 Transform:
   m_ObjectHideFlags: 0
@@ -22491,7 +22673,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 85483c382b601d84ab7abe23265023a9, type: 2}
+  - {fileID: 2100000, guid: 5644c9359bc4bab4d8c14ad6c15038c0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -23098,44 +23280,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 717379092}
   m_CullTransparentMesh: 1
---- !u!1 &720775109
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 720775110}
-  m_Layer: 5
-  m_Name: "\u6B21\u8981\u754C\u9762"
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &720775110
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 720775109}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 811817622}
-  - {fileID: 1668759423}
-  - {fileID: 1099700491}
-  m_Father: {fileID: 434629875}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 1200}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &720881543
 GameObject:
   m_ObjectHideFlags: 0
@@ -24027,7 +24171,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 85483c382b601d84ab7abe23265023a9, type: 2}
+  - {fileID: 2100000, guid: 5644c9359bc4bab4d8c14ad6c15038c0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -25359,11 +25503,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1776943870}
-  m_Father: {fileID: 720775110}
+  m_Father: {fileID: 1535946429}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 960, y: 600}
+  m_AnchoredPosition: {x: 49.999817, y: 50}
   m_SizeDelta: {x: 749, y: 468}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &812830114
@@ -25907,6 +26051,59 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &843154430
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 843154431}
+  - component: {fileID: 843154432}
+  m_Layer: 0
+  m_Name: ManagerHub
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &843154431
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 843154430}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 475922108}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &843154432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 843154430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b09df19ae3a074b478e88e79743ae01d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backpackManager: {fileID: 2136429365}
+  canvasManager: {fileID: 1026571032}
+  commandManager: {fileID: 2031280225}
+  debugManager: {fileID: 438324209}
+  lifeManager: {fileID: 1066840322}
+  musicManager: {fileID: 325552237}
+  nighManager: {fileID: 22826877}
+  worldManager: {fileID: 699955241}
+  playerManager: {fileID: 1504082080}
 --- !u!1 &844456349
 GameObject:
   m_ObjectHideFlags: 0
@@ -27209,7 +27406,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 85483c382b601d84ab7abe23265023a9, type: 2}
+  - {fileID: 2100000, guid: 5644c9359bc4bab4d8c14ad6c15038c0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29438,7 +29635,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aaf022bde2a639c4e973ed3007735f4c, type: 2}
+  - {fileID: 2100000, guid: 759847ae04fe6cf4d9173657531aeef2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29468,6 +29665,44 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 943284627}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &944192294
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 944192295}
+  m_Layer: 5
+  m_Name: "\u5176\u4ED6\u754C\u9762"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &944192295
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944192294}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1896135285}
+  - {fileID: 47688171}
+  - {fileID: 1232517833}
+  m_Father: {fileID: 434629875}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &953824657
 GameObject:
   m_ObjectHideFlags: 0
@@ -29826,7 +30061,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 5959645bc625ee2408594a11c8fbdedf, type: 2}
+  m_Material: {fileID: 2100000, guid: 472fbc0c081111441899a3629e10e999, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -30143,81 +30378,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 986494424}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &986896881
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 986896882}
-  - component: {fileID: 986896884}
-  - component: {fileID: 986896883}
-  m_Layer: 5
-  m_Name: Panel
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &986896882
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 986896881}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 1099700491}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 256, y: 256}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &986896883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 986896881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: -213985248, guid: 9551ff53019856245ac4dfe80310f678, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &986896884
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 986896881}
-  m_CullTransparentMesh: 1
 --- !u!1 &991474390
 GameObject:
   m_ObjectHideFlags: 0
@@ -31208,10 +31368,12 @@ MonoBehaviour:
     childs:
     - name: "\u751F\u5B58\u8981\u7D20"
       _object: {fileID: 314824850}
-    - name: "\u5DE5\u4F5C\u53F0"
-      _object: {fileID: 1099700490}
     - name: "\u80CC\u5305"
-      _object: {fileID: 1668759422}
+      _object: {fileID: 1896135284}
+    - name: "\u7BB1\u5B50"
+      _object: {fileID: 47688170}
+    - name: "\u5DE5\u4F5C\u53F0"
+      _object: {fileID: 1232517832}
   - name: "\u6E38\u620F\u4E2D\u6682\u505C"
     canvas: {fileID: 1841242336}
     childs: []
@@ -31222,13 +31384,12 @@ MonoBehaviour:
       _object: {fileID: 135187531}
   - name: "\u6B63\u5728\u4FDD\u5B58\u4E2D"
     canvas: {fileID: 1503090619}
-    childs: []
+    childs:
+    - name: "\u5206\u6570"
+      _object: {fileID: 135187531}
   - name: "\u9879\u76EE\u5C55\u793A\u5185\u5BB9"
     canvas: {fileID: 2108838674}
     childs: []
-  CheckToCloseUI:
-  - {fileID: 1668759422}
-  - {fileID: 1099700490}
   partSystem: {fileID: 1727421512}
   world: {fileID: 699955241}
   Camera: {fileID: 1727421507}
@@ -31818,7 +31979,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 233ca2427e995c14ba30306c403994d8, type: 2}
+  m_Material: {fileID: 2100000, guid: 5e951416ba44b614e9c556d39d468a27, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 0.68235296}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -32222,82 +32383,6 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1095286700}
-  m_CullTransparentMesh: 1
---- !u!1 &1099700490
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1099700491}
-  - component: {fileID: 1099700493}
-  - component: {fileID: 1099700492}
-  m_Layer: 5
-  m_Name: "\u5DE5\u4F5C\u53F0"
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &1099700491
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1099700490}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 986896882}
-  m_Father: {fileID: 720775110}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 1200}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1099700492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1099700490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1099700493
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1099700490}
   m_CullTransparentMesh: 1
 --- !u!1 &1103709364
 GameObject:
@@ -40048,7 +40133,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1203865586
@@ -40680,7 +40765,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 85483c382b601d84ab7abe23265023a9, type: 2}
+  - {fileID: 2100000, guid: 5644c9359bc4bab4d8c14ad6c15038c0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -40994,6 +41079,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1231263559}
+  m_CullTransparentMesh: 1
+--- !u!1 &1232517832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1232517833}
+  - component: {fileID: 1232517835}
+  - component: {fileID: 1232517834}
+  m_Layer: 5
+  m_Name: "\u5DE5\u4F5C\u53F0"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1232517833
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232517832}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 944192295}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 256, y: 256}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1232517834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232517832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -772588262, guid: 9551ff53019856245ac4dfe80310f678, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1232517835
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232517832}
   m_CullTransparentMesh: 1
 --- !u!1 &1232828275
 GameObject:
@@ -42391,7 +42551,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 85483c382b601d84ab7abe23265023a9, type: 2}
+  - {fileID: 2100000, guid: 5644c9359bc4bab4d8c14ad6c15038c0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -46104,7 +46264,7 @@ Transform:
   m_GameObject: {fileID: 1443460309}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.184}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.01, y: 1.01, z: 1.01}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -46976,7 +47136,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1483585793
@@ -47810,7 +47970,12 @@ MonoBehaviour:
   isFlying: 0
   isCatchBlock: 0
   commandManager: {fileID: 2031280225}
-  HighLightMaterial: {fileID: 2100000, guid: 85483c382b601d84ab7abe23265023a9, type: 2}
+  world: {fileID: 699955241}
+  musicmanager: {fileID: 325552237}
+  canvasManager: {fileID: 1026571032}
+  backpackmanager: {fileID: 2136429365}
+  lifemanager: {fileID: 1066840322}
+  HighLightMaterial: {fileID: 2100000, guid: 5644c9359bc4bab4d8c14ad6c15038c0, type: 2}
   DestroyTextures:
   - {fileID: 2800000, guid: 05255f971e269e549b20dea94431a300, type: 3}
   - {fileID: 2800000, guid: 72c8272285e1e124bbe4fb4e00dcaec3, type: 3}
@@ -47823,16 +47988,10 @@ MonoBehaviour:
   - {fileID: 2800000, guid: f8c62e8f671063243b08c452e7de7009, type: 3}
   - {fileID: 2800000, guid: 6403749708575e54a94f62f018ae3f29, type: 3}
   cam: {fileID: 1727421507}
-  camaraAnimation: {fileID: 0}
   HighlightBlock: {fileID: 1443460313}
-  world: {fileID: 699955241}
-  canvasManager: {fileID: 1026571032}
-  musicmanager: {fileID: 325552237}
   leg: {fileID: 1232828276}
   selectblock: {fileID: 2076927748}
   Eye_Light: {fileID: 508673659}
-  backpackmanager: {fileID: 2136429365}
-  lifemanager: {fileID: 1066840322}
   Particle_Broken: {fileID: 5841185346547105760, guid: 0aad6a6c9153d4d44ada88b14132cdf4, type: 3}
   particel_Broken_transform: {fileID: 903731372}
   Broking_Animation: {fileID: 1128515732}
@@ -47845,8 +48004,9 @@ MonoBehaviour:
   gravity: -9.8
   MaxHurtHigh: 4
   gravity_V: 3.8
-  playerWidth: 0.5
+  playerWidth: 0.3
   playerHeight: 1.8
+  high_delta: 0.7
   isChangeBlock: 0
   horizontalInput: 0
   verticalInput: 0
@@ -47855,7 +48015,8 @@ MonoBehaviour:
   reach: 8
   ray_length: 0
   isPlacing: 0
-  showBlockMesh: 0
+  Show_CollisionBox: 0
+  Show_HitBox: 0
   water_jumpforce: 2
   watergravity: -2
   mult: 3
@@ -47876,6 +48037,11 @@ MonoBehaviour:
   jump_press: 0
   foot_BlockType: 4
   foot_BlockType_temp: 4
+  front_Center: {x: 0, y: 0, z: 0}
+  back_Center: {x: 0, y: 0, z: 0}
+  left_Center: {x: 0, y: 0, z: 0}
+  right_Center: {x: 0, y: 0, z: 0}
+  CollisionNumber: 0
 --- !u!4 &1504082081
 Transform:
   m_ObjectHideFlags: 0
@@ -48140,7 +48306,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1521278312
@@ -48570,7 +48736,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 5959645bc625ee2408594a11c8fbdedf, type: 2}
+  m_Material: {fileID: 2100000, guid: 472fbc0c081111441899a3629e10e999, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -48631,6 +48797,43 @@ RectTransform:
   m_AnchorMax: {x: 1, y: 0.75}
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1535946428
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1535946429}
+  m_Layer: 5
+  m_Name: "\u7F6E\u9876\u754C\u9762"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1535946429
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1535946428}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 811817622}
+  - {fileID: 1748391381}
+  m_Father: {fileID: 434629875}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1538115726
 GameObject:
@@ -49482,7 +49685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 5959645bc625ee2408594a11c8fbdedf, type: 2}
+  m_Material: {fileID: 2100000, guid: 472fbc0c081111441899a3629e10e999, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -49810,42 +50013,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1590162285}
   m_CullTransparentMesh: 1
---- !u!1 &1590301393
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1590301394}
-  m_Layer: 5
-  m_Name: "\u4E3B\u8981\u754C\u9762"
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1590301394
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1590301393}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1748391381}
-  m_Father: {fileID: 434629875}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1592192893
 GameObject:
   m_ObjectHideFlags: 0
@@ -52497,82 +52664,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1667370197}
   m_CullTransparentMesh: 1
---- !u!1 &1668759422
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1668759423}
-  - component: {fileID: 1668759425}
-  - component: {fileID: 1668759424}
-  m_Layer: 5
-  m_Name: "\u80CC\u5305"
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &1668759423
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1668759422}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1820668348}
-  m_Father: {fileID: 720775110}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 1200}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1668759424
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1668759422}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1668759425
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1668759422}
-  m_CullTransparentMesh: 1
 --- !u!1 &1672355758
 GameObject:
   m_ObjectHideFlags: 0
@@ -52999,7 +53090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 5959645bc625ee2408594a11c8fbdedf, type: 2}
+  m_Material: {fileID: 2100000, guid: 472fbc0c081111441899a3629e10e999, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -53181,7 +53272,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1708541543
@@ -58746,7 +58837,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f578774c8f0339f499ed9c1149b1de09, type: 2}
+  - {fileID: 2100000, guid: 9e39a6e5f887a5e4a95326e4852b24c3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -59446,11 +59537,11 @@ RectTransform:
   - {fileID: 533269266}
   - {fileID: 545760218}
   - {fileID: 2076927749}
-  m_Father: {fileID: 1590301394}
+  m_Father: {fileID: 1535946429}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -502.35822}
+  m_AnchoredPosition: {x: 0, y: -502.35828}
   m_SizeDelta: {x: 732, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1748391382
@@ -61804,81 +61895,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1813452166}
   m_CullTransparentMesh: 1
---- !u!1 &1820668347
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1820668348}
-  - component: {fileID: 1820668350}
-  - component: {fileID: 1820668349}
-  m_Layer: 5
-  m_Name: Panel
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1820668348
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1820668347}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 1668759423}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 256, y: 256}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1820668349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1820668347}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: -211674783, guid: c225f4daad7781942a469f7c60acbb6e, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1820668350
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1820668347}
-  m_CullTransparentMesh: 1
 --- !u!1 &1823691733
 GameObject:
   m_ObjectHideFlags: 0
@@ -63711,7 +63727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 5959645bc625ee2408594a11c8fbdedf, type: 2}
+  m_Material: {fileID: 2100000, guid: 472fbc0c081111441899a3629e10e999, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -63888,6 +63904,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1892142875}
+  m_CullTransparentMesh: 1
+--- !u!1 &1896135284
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1896135285}
+  - component: {fileID: 1896135287}
+  - component: {fileID: 1896135286}
+  m_Layer: 5
+  m_Name: "\u80CC\u5305"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1896135285
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896135284}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 944192295}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 256, y: 256}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1896135286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896135284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 1489763402, guid: c225f4daad7781942a469f7c60acbb6e, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1896135287
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896135284}
   m_CullTransparentMesh: 1
 --- !u!1 &1909080679
 GameObject:
@@ -66230,7 +66321,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 5959645bc625ee2408594a11c8fbdedf, type: 2}
+  m_Material: {fileID: 2100000, guid: 472fbc0c081111441899a3629e10e999, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -69885,7 +69976,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 85483c382b601d84ab7abe23265023a9, type: 2}
+  - {fileID: 2100000, guid: 5644c9359bc4bab4d8c14ad6c15038c0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -70496,7 +70587,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2141680807}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1026571032}
+        m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
+        m_MethodName: SwitchNoBackGround
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1026571032}
+        m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
+        m_MethodName: SwitchToUI
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 5
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2141680807
 MonoBehaviour:
   m_ObjectHideFlags: 0
