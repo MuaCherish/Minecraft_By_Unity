@@ -80,20 +80,11 @@ public class CommandManager : MonoBehaviour
     public FixedList<Amessage> AliveMessages = new FixedList<Amessage>(13);
     public float messageLife = 3f;
 
-    //回调函数
-    public void FinishInput()
+
+    public void PrintMessage(String _Info, float _time, Color _color)
     {
-        //print(inputField.text); // 打印输入内容
-
-        //输入为空不执行
-        if (string.IsNullOrEmpty(inputField.text))
-        {
-            return;
-        }
-
-
         //填充指令
-        AliveMessages.Add(new Amessage(CheckCommand(inputField.text, out Color messagecolor), messageLife, messagecolor));
+        AliveMessages.Add(new Amessage(_Info, _time, _color));
 
 
         //启动协程
@@ -105,6 +96,23 @@ public class CommandManager : MonoBehaviour
 
         // 更新外置消息栏的显示
         UpdateMessageScreen();
+    }
+
+
+    //回调函数
+    public void FinishInput()
+    {
+        //print(inputField.text); // 打印输入内容
+
+        //输入为空不执行
+        if (string.IsNullOrEmpty(inputField.text))
+        {
+            return;
+        }
+
+        PrintMessage(CheckCommand(inputField.text,out Color messagecolor), messageLife, messagecolor);
+
+
     }
 
 

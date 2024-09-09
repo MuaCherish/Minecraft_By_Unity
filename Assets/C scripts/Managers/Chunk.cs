@@ -696,7 +696,7 @@ public class Chunk : MonoBehaviour
 
         if (isSaving)
         {
-            EditData(EditList);
+            LoadData(EditList);
         }
 
         //交给world来create
@@ -736,7 +736,7 @@ public class Chunk : MonoBehaviour
 
         if (isSaving)
         {
-            EditData(EditList);
+            LoadData(EditList);
         }
 
 
@@ -936,7 +936,7 @@ public class Chunk : MonoBehaviour
 
         if (isSaving)
         {
-            EditData(EditList);
+            LoadData(EditList);
         }
 
         //交给world来create
@@ -1256,7 +1256,7 @@ public class Chunk : MonoBehaviour
 
         if (isSaving)
         {
-            EditData(EditList);
+            LoadData(EditList);
         }
 
         //交给world来create
@@ -1624,7 +1624,7 @@ public class Chunk : MonoBehaviour
 
         if (isSaving)
         {
-            EditData(EditList);
+            LoadData(EditList);
         }
 
         //交给world来create
@@ -2518,16 +2518,15 @@ public class Chunk : MonoBehaviour
     }
 
 
-
-
-
     // 批量编辑方块
-    public void EditData(List<EditStruct> _EditList)
+    public void LoadData(List<EditStruct> _EditList)
     {
         //print($"EditData:{_EditList.Count}");
 
         for (int i = 0; i < _EditList.Count; i++)
         {
+
+
             int x = Mathf.FloorToInt(_EditList[i].editPos.x);
             int y = Mathf.FloorToInt(_EditList[i].editPos.y);
             int z = Mathf.FloorToInt(_EditList[i].editPos.z);
@@ -2543,9 +2542,71 @@ public class Chunk : MonoBehaviour
         }
 
         // 更新区块网格
-        //UpdateChunkMesh_WithSurround(true, false);
+       //UpdateChunkMesh_WithSurround(true, false);
 
         isSaving = false;
+    }
+
+
+    // 算法创造方块
+    public void EditBlocks(Vector3 pos, byte targetBlocktype)
+    {
+        //ClearFInd_Direvtion();
+        Vector3 relaposition = world.GetRelalocation(pos);
+
+        int x = Mathf.FloorToInt(relaposition.x);
+        int y = Mathf.FloorToInt(relaposition.y);
+        int z = Mathf.FloorToInt(relaposition.z);
+
+        //防止过高
+        if (y >= VoxelData.ChunkHeight - 2)
+        {
+
+            return;
+
+        }
+
+        if (isOutOfRange(x, y, z))
+        {
+            return;
+        }
+
+        voxelMap[x, y, z].voxelType = targetBlocktype;
+
+        UpdateChunkMesh_WithSurround(true, false);
+    }
+    // 算法创造方块
+    public void EditBlocks(List<EditStruct> _EditList)
+    {
+        //print($"EditData:{_EditList.Count}");
+
+        for (int i = 0; i < _EditList.Count; i++)
+        {
+            Vector3 relaposition = world.GetRelalocation(_EditList[i].editPos);
+
+            int x = Mathf.FloorToInt(relaposition.x);
+            int y = Mathf.FloorToInt(relaposition.y);
+            int z = Mathf.FloorToInt(relaposition.z);
+
+            // 出界就跳过
+            if (isOutOfRange(x, y, z))
+            {
+                continue;
+            }
+
+            if (world.GetChunkLocation(_EditList[i].editPos) != world.GetChunkLocation(myposition))
+            {
+                //Debug.Log($"edit:{world.GetChunkLocation(_EditList[i].editPos)}, myposition:{world.GetChunkLocation(myposition)}");
+                continue;
+            }
+
+            // 设置方块类型
+            voxelMap[x, y, z].voxelType = _EditList[i].targetType;
+        }
+
+        // 更新区块网格
+        UpdateChunkMesh_WithSurround(true, false);
+
     }
 
 

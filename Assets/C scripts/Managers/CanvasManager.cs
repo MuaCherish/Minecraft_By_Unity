@@ -13,6 +13,7 @@ using System.IO;
 
 public class CanvasManager : MonoBehaviour
 {
+    public ManagerHub managerhub;
     [Header("UIMAnager")]
     public List<CanvasId> UIManager = new List<CanvasId>();
     
@@ -55,7 +56,7 @@ public class CanvasManager : MonoBehaviour
     public GameObject Swimming_Screen;
     //public GameObject Pause_Screen;
     //public GameObject HowToPlay_Screen;
-    public GameObject Prompt_Screen;
+    //public GameObject Prompt_Screen;
     public GameObject prompt;
     public TextMeshProUGUI prompt_Text;
     //public GameObject DeadScreen;
@@ -1037,7 +1038,7 @@ public class CanvasManager : MonoBehaviour
         {
             //ToolBar.SetActive(true);
             //CursorCross_Screen.SetActive(true);
-            Prompt_Screen.SetActive(true);
+            //Prompt_Screen.SetActive(true);
 
             openyoureyes();
 
@@ -1109,7 +1110,7 @@ public class CanvasManager : MonoBehaviour
         if (hasExec_Playing)
         {
 
-            Prompt_Screen.SetActive(true);
+            //Prompt_Screen.SetActive(true);
 
 
             player.isSuperMining = true;
@@ -1320,28 +1321,31 @@ public class CanvasManager : MonoBehaviour
         {
             if (hasExec_PromptScreen_isShow == false)
             {
-                First_Prompt_PlayerThe_Flashlight();
+                //First_Prompt_PlayerThe_Flashlight();
+                managerhub.commandManager.PrintMessage("<系统消息> 尝试按[F]打开手电筒", 10f,Color.white);
+                hasExec_PromptScreen_isShow = true;
             }
             
         }
 
-        if (Input.GetKeyDown(KeyCode.F) && hasExec_PromptScreen_isShow)
-        {
-            if (hasExec_PromptScreen_isHide)
-            {
-                StartCoroutine(Hide_Animation_PromptScreen());
+        //if (Input.GetKeyDown(KeyCode.F) && hasExec_PromptScreen_isShow)
+        //{
+        //    if (hasExec_PromptScreen_isHide)
+        //    {
+        //        StartCoroutine(Hide_Animation_PromptScreen());
 
-                hasExec_PromptScreen_isHide = false;
-            }
-        }
+        //        hasExec_PromptScreen_isHide = false;
+        //    }
+        //}
 
     }
 
     public void First_Prompt_PlayerThe_Flashlight()
     {
-        prompt_Text.text = "You can press <F> \r\nto open \"FlashLight\"";
-        StartCoroutine(Show_Animation_PromptScreen());
-        hasExec_PromptScreen_isShow = true;
+        //prompt_Text.text = "You can press <F> \r\nto open \"FlashLight\"";
+        //StartCoroutine(Show_Animation_PromptScreen());
+        //hasExec_PromptScreen_isShow = true;
+        //managerhub.commandManager.PrintMessage("You can press <F> \r\nto open \"FlashLight\"",Color.yellow);
     }
 
     IEnumerator Show_Animation_PromptScreen()

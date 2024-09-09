@@ -76,13 +76,13 @@ public class DebugManager : MonoBehaviour
 
         //update
         //LeftText.text += $"\n";
-        LeftText.text = $"帧数: {Mathf.Ceil(fps):F2}\n";
+        LeftText.text = $"帧数: {fps:F2}\n";
         LeftText.text += $"\n";
         LeftText.text += $"[Player]\n";
         LeftText.text += $"朝向: {CalculateFacing()}\n";
         LeftText.text += $"实际朝向: {managerHub.playerManager.FactFacing}\n";
         LeftText.text += $"实际运动方向: {managerHub.playerManager.ActualMoveDirection}\n";
-        LeftText.text += $"输入: <{managerHub.playerManager.keyInput}>\n";
+        LeftText.text += $"输入: {managerHub.playerManager.keyInput}\n";
         LeftText.text += $"实时重力: {managerHub.playerManager.verticalMomentum}\n";
         LeftText.text += $"绝对坐标: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))}\n";
         LeftText.text += $"相对坐标: {managerHub.worldManager.GetRelalocation(footlocation)}\n";
@@ -128,24 +128,32 @@ public class DebugManager : MonoBehaviour
 
 
 
-    //calculate FPS
-    private int count;
-    private float deltaTime;
-    private float fps;
+    // FPS计数器
+    private int frameCount;
+    private float elapsedTime;
+    public float fps;
 
+    // 更新并计算FPS
     void CalculateFPS()
     {
-        count++;
-        deltaTime += Time.deltaTime;
+        // 每帧累加时间
+        elapsedTime += Time.deltaTime;
+        frameCount++;
 
-        if (count >= 60)
+        // 每秒计算一次FPS
+        if (elapsedTime >= 1.0f)
         {
-            fps = 60f / deltaTime;
-            //Debug.Log($"FPS: {fps:F1}"); // 输出FPS值并精确到小数点后一位
-            deltaTime = 0;
-            count = 0;
+            // 计算FPS
+            fps = frameCount / elapsedTime;
+
+            // 重置计数器和 elapsedTime
+            frameCount = 0;
+            elapsedTime = 0f;
         }
     }
+
+
+
 
 
 

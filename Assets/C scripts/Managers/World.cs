@@ -15,6 +15,7 @@ using UnityEngine.UIElements;
 using System;
 using System.Linq;
 using UnityEngine.UIElements.Experimental;
+using static UnityEngine.GraphicsBuffer;
 
 
 
@@ -2083,6 +2084,73 @@ public class World : MonoBehaviour
 
             }
         }
+    }
+
+    //外界修改方块
+    public void EditBlock(Vector3 _pos, byte _target)
+    {
+        Allchunks[GetChunkLocation(_pos)].EditData(_pos,_target);
+    }
+
+    public void EditBlock(List<EditStruct> _editStructs)
+    {
+        List<Vector3> _ChunkLocations = new List<Vector3>();
+
+        // 遍历_editStructs并存储ChunkLocations
+        foreach (var item in _editStructs)
+        {
+
+            // 如果allchunks里没有pos.则_ChunkLocations添加
+            if (Allchunks.ContainsKey(GetChunkLocation(item.editPos)))
+            {
+                if (!_ChunkLocations.Contains(GetChunkLocation(item.editPos)))
+                {
+                    _ChunkLocations.Add(GetChunkLocation(item.editPos));
+                }
+
+
+            }
+            else
+            {
+                print($"区块不存在:{GetChunkLocation(item.editPos)}");
+
+            }
+
+
+        }
+
+        // 遍历_ChunkLocations，将allchunk里的_ChunkLocations执行EditData
+        foreach (var chunkLocation in _ChunkLocations)
+        {
+            Allchunks[chunkLocation].EditBlocks(_editStructs);
+        }
+
+        // 打印找到的区块数量
+        //print($"找到{_ChunkLocations.Count}个");
+    }
+
+
+    Coroutine editBlockCoroutine;
+    public void EditBlock(List<EditStruct> _editStructs, float _time)
+    {
+        if (editBlockCoroutine == null)
+        {
+            editBlockCoroutine = StartCoroutine(Coroutine_editBlock(_editStructs,_time));
+        }
+        
+
+    }
+
+    IEnumerator Coroutine_editBlock(List<EditStruct> _editStructs, float _time)
+    {
+        foreach (var item in _editStructs)
+        {
+            print("执行EditBlocks");
+            Allchunks[GetChunkLocation(item.editPos)].EditBlocks(item.editPos, item.targetType);
+
+            yield return new WaitForSeconds(_time);
+        }
+        editBlockCoroutine = null;
     }
 
     //--------------------------------------------------------------------------------------------------------------

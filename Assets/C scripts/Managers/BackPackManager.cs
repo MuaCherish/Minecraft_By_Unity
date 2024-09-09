@@ -102,6 +102,11 @@ public class BackPackManager : MonoBehaviour
                     slots[_index].number++;
                     slots[_index].TMP_number.text = $"{slots[_index].number}";
 
+
+                }
+
+                if (_index == -1)
+                {
                     isfull = true;
                 }
             }
@@ -114,6 +119,7 @@ public class BackPackManager : MonoBehaviour
         {
             if (slots[player.selectindex].number - 1 <= 0)
             {
+                isfull = false;
                 slots[player.selectindex].ResetSlot();
             }
             else
@@ -122,10 +128,6 @@ public class BackPackManager : MonoBehaviour
                 slots[player.selectindex].TMP_number.text = $"{slots[player.selectindex].number}";
             }
 
-            if (isfull)
-            {
-                isfull = false;
-            }
         }
     }
 
@@ -454,6 +456,7 @@ public class Slot
 
     public void ResetSlot()
     {
+
         //parameter
         ishave = false;
         blockId = 255;

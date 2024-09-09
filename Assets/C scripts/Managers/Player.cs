@@ -24,7 +24,7 @@ public class Player : MonoBehaviour
 
 
     [Header("Transforms")]
-    //public ManagerHub managerHub;
+    public ManagerHub managerhub;
     public CommandManager commandManager;
     public World world;
     public MusicManager musicmanager;
@@ -251,7 +251,7 @@ public class Player : MonoBehaviour
             Update_FootBlockType();
 
             //计算碰撞点
-            CollisionNumber = 0;
+            CollisionNumber = 4;
             if (!isFlying)
             {
                 update_block();
@@ -294,8 +294,6 @@ public class Player : MonoBehaviour
 
             //改变视距(如果奔跑的话)
             change_eyesview();
-
-            
 
 
             //游戏中暂停，暂停玩家输入
@@ -824,7 +822,7 @@ public class Player : MonoBehaviour
     // 等待2秒后执行销毁泥土的方法
     IEnumerator DestroySoilWithDelay(Vector3 position)
     {
-
+        print("开启了破坏协程");
         isDestroying = true;
         Broking_Animation.textureSheetAnimation.SetSprite(0, world.blocktypes[point_Block_type].buttom_sprit);
         Broking_Animation.Play();
@@ -854,7 +852,25 @@ public class Player : MonoBehaviour
             {
 
                 HighLightMaterial.color = new Color(0, 0, 0, 1);
-                HighLightMaterial.mainTexture = DestroyTextures[Mathf.FloorToInt(t * 10)];
+
+                //if (Mathf.FloorToInt(t * 10) >= 10)
+                //{
+                //    print("DestroyTextures下标越界");
+                //}
+
+
+                int index = Mathf.FloorToInt(t * 10);
+                if (index < DestroyTextures.Length)
+                {
+                    HighLightMaterial.mainTexture = DestroyTextures[index];
+                }
+                else
+                {
+                    // 处理越界情况，例如使用默认材质或跳过该操作
+                    print("DestroyTextures下标越界");
+                    HighLightMaterial.mainTexture = DestroyTextures[DestroyTextures.Length - 1];
+                }
+
 
             }
 
@@ -901,7 +917,7 @@ public class Player : MonoBehaviour
 
             backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type, false, backpackmanager.ColdTime_Absorb);
 
-        } 
+        }
 
         //放进背包由掉落物执行
         //canvasManager.Change_text_selectBlockname(point_Block_type);
@@ -912,7 +928,7 @@ public class Player : MonoBehaviour
         particleInstance.transform.parent = particel_Broken_transform;
         particleInstance.transform.position = position;
 
-        
+
 
         //if (world.blocktypes[point_Block_type].Particle_Material == null)
         //    particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[VoxelData.Soil].Particle_Material;
@@ -924,11 +940,14 @@ public class Player : MonoBehaviour
         Broking_Animation.Stop();
 
         //World
-        world.GetChunkObject(position).EditData(world.GetRelalocation(position), VoxelData.Air);
+        var chunkObject = world.GetChunkObject(position);
+        chunkObject.EditData(world.GetRelalocation(position), VoxelData.Air);
+        chunkObject.UpdateEditNumber(position, VoxelData.Air);
 
+        //BlocksFunction.Boom(managerhub, position,2);
 
         //EditNumber
-        world.GetChunkObject(position).UpdateEditNumber(position, VoxelData.Air);
+
 
         //print($"绝对坐标为：{position}");
         //print($"相对坐标为：{world.GetRelalocation(position)}");
@@ -1227,7 +1246,7 @@ public class Player : MonoBehaviour
     public Vector3 back_Center = new Vector3();
     public Vector3 left_Center = new Vector3();
     public Vector3 right_Center = new Vector3();
-    [HideInInspector]public int CollisionNumber;
+    [HideInInspector]public int CollisionNumber = 4;
 
     //更新16个碰撞点
     void update_block()
@@ -1249,7 +1268,6 @@ public class Player : MonoBehaviour
         down_右上 = new Vector3(_selfPos.x + (playerWidth / 2), _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2));
         down_右下 = new Vector3(_selfPos.x + (playerWidth / 2), _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2));
         down_左下 = new Vector3(_selfPos.x - (playerWidth / 2), _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2));
-        CollisionNumber += 4;
 
 
         //front
@@ -1996,13 +2014,13 @@ public class Player : MonoBehaviour
 
         Vector3 _front_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
         Vector3 _front_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
-        Vector3 _front_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - high_delta, _selfPos.z + (playerWidth / 2) + extend_delta);
-        Vector3 _front_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - high_delta, _selfPos.z + (playerWidth / 2) + extend_delta);
+        Vector3 _front_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+        Vector3 _front_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
 
         Vector3 _back_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
         Vector3 _back_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
-        Vector3 _back_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - high_delta, _selfPos.z - (playerWidth / 2) - extend_delta);
-        Vector3 _back_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - high_delta, _selfPos.z - (playerWidth / 2) - extend_delta);
+        Vector3 _back_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+        Vector3 _back_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
 
         Vector3 _eyes_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _eyesPos.y, _selfPos.z + (playerWidth / 2) + extend_delta);
         Vector3 _eyes_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _eyesPos.y, _selfPos.z + (playerWidth / 2) + extend_delta);

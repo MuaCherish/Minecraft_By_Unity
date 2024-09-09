@@ -158,7 +158,7 @@ public class FloatingCube : MonoBehaviour
         //是否可被吸收
         while (true)
         {
-            if ((transform.position - Eyes.transform.position).magnitude < absorbDistance && backpackmanager.isfull == false)
+            if (((transform.position - Eyes.transform.position).magnitude < absorbDistance) && backpackmanager.isfull == false)
             {
                 Absorbable();
             }

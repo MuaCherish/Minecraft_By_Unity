@@ -6954,7 +6954,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 15
-  distance: 650
+  distance: 450
 --- !u!1 &206242504
 GameObject:
   m_ObjectHideFlags: 0
@@ -31264,6 +31264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49ac7649e39f1914ba03353ce8b42f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  managerhub: {fileID: 843154432}
   UIManager:
   - name: "\u83DC\u5355"
     canvas: {fileID: 1362257022}
@@ -31400,7 +31401,6 @@ MonoBehaviour:
   LifeManager: {fileID: 1066840322}
   OpenYourEyes: {fileID: 1103709364}
   Swimming_Screen: {fileID: 1081291213}
-  Prompt_Screen: {fileID: 495969009}
   prompt: {fileID: 2061621896}
   prompt_Text: {fileID: 224716488}
   isPausing: 0
@@ -48061,6 +48061,7 @@ MonoBehaviour:
   isSquating: 0
   isFlying: 0
   isCatchBlock: 0
+  managerhub: {fileID: 843154432}
   commandManager: {fileID: 2031280225}
   world: {fileID: 699955241}
   musicmanager: {fileID: 325552237}
