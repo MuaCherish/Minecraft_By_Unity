@@ -533,7 +533,14 @@ public class Player : MonoBehaviour
             musicmanager.footstepInterval = VoxelData.walkSpeed;
 
         }
-            
+
+
+        //第三人称
+        //if (Input.GetKeyDown(KeyCode.F5))
+        //{
+        //    SwitchThridPersonMode();
+        //}
+
 
         if (isGrounded && Input.GetKey(KeyCode.Space))
         {
@@ -1179,6 +1186,32 @@ public class Player : MonoBehaviour
 
     }
 
+    
+    public GameObject MainBody;
+    public GameObject FirstPersonCamera;
+    public GameObject ThridPersonCamera;
+
+    //ture是显示
+    public void SwitchThridPersonMode()
+    {
+        // 切换显示HitBox的状态 
+        Show_HitBox = !Show_HitBox;
+
+        // 切换玩家身体显示状态（用于第三人称模式）
+        MainBody.SetActive(!MainBody.activeSelf);
+
+        // 切换第一人称和第三人称摄像机
+        if (FirstPersonCamera.activeSelf)
+        {
+            FirstPersonCamera.SetActive(false); 
+            ThridPersonCamera.SetActive(true);
+        }
+        else
+        {
+            FirstPersonCamera.SetActive(true);
+            ThridPersonCamera.SetActive(false);
+        }
+    }
 
 
 

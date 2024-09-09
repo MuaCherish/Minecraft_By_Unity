@@ -2434,7 +2434,6 @@ public class BlockType
     //对于Y来说，(0.5f,0,0f)，就是Y正方向的面向内挤压0.5f，Y负方向的面向内挤压0.0f，即台阶的碰撞参数
     public CollosionRange CollosionRange;
 
-
     [Header("图标")]
     public Sprite icon; //物品栏图标
     public Sprite sprite; //掉落物

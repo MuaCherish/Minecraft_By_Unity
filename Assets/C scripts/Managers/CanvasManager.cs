@@ -16,18 +16,6 @@ public class CanvasManager : MonoBehaviour
     [Header("UIMAnager")]
     public List<CanvasId> UIManager = new List<CanvasId>();
     
-
-
-
-
-
-
-
-
-
-
-
-
     [Header("Transforms")]
     //场景对象
     public ParticleSystem partSystem;
@@ -149,7 +137,7 @@ public class CanvasManager : MonoBehaviour
         {
             muacherishCoroutine = StartCoroutine(jumpMuaCherish());
         }
-
+        waittoFinishSaveAndBackToMenuCoroutine = null;
 
         // 初始化修改值参数
         isPausing = false;

@@ -194,16 +194,8 @@ public class CommandManager : MonoBehaviour
                         if (number < world.blocktypes.Length)
                         {
 
-                            if (world.game_mode == GameMode.Creative)
-                            {
+                            backpackmanager.update_slots(0, number);
 
-                                backpackmanager.update_slots(0, number);
-                            }
-                            else
-                            {
-                                backpackmanager.update_slots(0, number);
-                            }
-                            
                             return "<系统消息> " + "给与玩家方块";
                         }
                         else
