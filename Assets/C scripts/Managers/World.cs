@@ -211,7 +211,7 @@ public class World : MonoBehaviour
     {
 
         //Ö¡Êý
-        //Application.targetFrameRate = 90;
+        Application.targetFrameRate = -1;
 
         InitWorldManager();
 

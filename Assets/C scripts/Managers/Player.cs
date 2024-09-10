@@ -80,7 +80,7 @@ public class Player : MonoBehaviour
     private Color initialColor; // 初始颜色
     private bool isDestroying;
     public bool isChangeBlock = false;
-    private Vector3 OldPointLocation;
+    public Vector3 OldPointLocation;
 
 
     //输入
@@ -250,12 +250,7 @@ public class Player : MonoBehaviour
             //更新玩家脚下坐标
             Update_FootBlockType();
 
-            //计算碰撞点
-            CollisionNumber = 4;
-            if (!isFlying)
-            {
-                update_block();
-            }
+            
 
 
 
@@ -295,6 +290,12 @@ public class Player : MonoBehaviour
             //改变视距(如果奔跑的话)
             change_eyesview();
 
+            //计算碰撞点
+            CollisionNumber = 0;
+            if (!isFlying)
+            {
+                update_block();
+            }
 
             //游戏中暂停，暂停玩家输入
             if (canvasManager.isPausing == true || commandManager.isConsoleActive == true)
@@ -639,8 +640,8 @@ public class Player : MonoBehaviour
         //如果点击鼠标左键,记录OldPointLocation
         if (Input.GetMouseButtonDown(0))
         {
-
-            OldPointLocation = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
+            Vector3 _raycastNow = RayCast_now();
+            OldPointLocation = new Vector3(Mathf.FloorToInt(_raycastNow.x), Mathf.FloorToInt(_raycastNow.y), Mathf.FloorToInt(_raycastNow.z));
         
         }
 
@@ -660,9 +661,11 @@ public class Player : MonoBehaviour
             //Debug.Log("Player Mouse0");
             //isLeftMouseDown = true;
             //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
-            Vector3 pointvector = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
+            Vector3 _raycastNow = RayCast_now();
 
-            if (pointvector != OldPointLocation || pointvector == Vector3.zero)
+            Vector3 pointvector = new Vector3(Mathf.FloorToInt(_raycastNow.x), Mathf.FloorToInt(_raycastNow.y), Mathf.FloorToInt(_raycastNow.z));
+
+            if (pointvector != OldPointLocation && OldPointLocation != Vector3.zero)
             {
 
                 isChangeBlock = true;
@@ -672,7 +675,7 @@ public class Player : MonoBehaviour
             }
 
             //如果打到
-            if (RayCast_now() != Vector3.zero)
+            if (_raycastNow != Vector3.zero)
             {
 
                 //如果正在销毁则不执行
@@ -681,7 +684,11 @@ public class Player : MonoBehaviour
 
                     //Debug.Log("执行销毁");
                     elapsedTime = 0.0f;
-                    StartCoroutine(DestroySoilWithDelay(RayCast_now()));
+                    if (DestroyCoroutine == null)
+                    {
+                        DestroyCoroutine = StartCoroutine(DestroySoilWithDelay(_raycastNow));
+                    }
+                    
 
                 }
 
@@ -820,11 +827,16 @@ public class Player : MonoBehaviour
     }
 
     // 等待2秒后执行销毁泥土的方法
+    public Coroutine DestroyCoroutine;
     IEnumerator DestroySoilWithDelay(Vector3 position)
     {
-        print("开启了破坏协程");
+        //print("开启了破坏协程");
         isDestroying = true;
-        Broking_Animation.textureSheetAnimation.SetSprite(0, world.blocktypes[point_Block_type].buttom_sprit);
+        if (point_Block_type != 255)
+        {
+            Broking_Animation.textureSheetAnimation.SetSprite(0, world.blocktypes[point_Block_type].buttom_sprit);
+        }
+        
         Broking_Animation.Play();
 
         // 记录协程开始执行时的时间
@@ -892,6 +904,7 @@ public class Player : MonoBehaviour
 
                 Broking_Animation.Stop();
 
+                DestroyCoroutine = null;
                 yield break;
 
             }
@@ -945,6 +958,7 @@ public class Player : MonoBehaviour
         chunkObject.UpdateEditNumber(position, VoxelData.Air);
 
         //BlocksFunction.Boom(managerhub, position,2);
+        //BlocksFunction.Smoke(managerhub, position, 3);
 
         //EditNumber
 
@@ -1268,7 +1282,7 @@ public class Player : MonoBehaviour
         down_右上 = new Vector3(_selfPos.x + (playerWidth / 2), _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2));
         down_右下 = new Vector3(_selfPos.x + (playerWidth / 2), _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2));
         down_左下 = new Vector3(_selfPos.x - (playerWidth / 2), _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2));
-
+        CollisionNumber += 4;
 
         //front
         if (ActualMoveDirection.z > 0)
@@ -1850,7 +1864,7 @@ public class Player : MonoBehaviour
         }
 
         point_Block_type = 255;
-        return new Vector3(0f, 0f, 0f);
+        return Vector3.zero;
 
     }
 
