@@ -44,7 +44,7 @@ public static class BlocksFunction
         //Debug.Log($"Boom:{_editNumber.Count}");
     }
 
-
+    //烟雾算法
     public static void Smoke(ManagerHub managerhub, Vector3 _originPos, float _r)
     {
         _originPos = new Vector3((int)_originPos.x, (int)_originPos.y, (int)_originPos.z);
@@ -74,22 +74,35 @@ public static class BlocksFunction
             {
                 _editNumber.Add(new EditStruct(currentPos, VoxelData.Snow)); // 你可以用适当的烟雾体素替换 VoxelData.Smoke
 
+                bool hasExpandableNeighbor = false;
                 foreach (Vector3 direction in directions)
                 {
                     Vector3 neighborPos = currentPos + direction;
+                    // 如果相邻方块未访问过并且在半径范围内
                     if (!visited.Contains(neighborPos) && Vector3.Distance(_originPos, neighborPos) <= _r)
                     {
-                        visited.Add(neighborPos);
-                        queue.Enqueue(neighborPos);
+                        if (!managerhub.worldManager.blocktypes[managerhub.worldManager.GetBlockType(neighborPos)].isSolid)
+                        {
+                            hasExpandableNeighbor = true; // 有可扩展的邻居
+                            visited.Add(neighborPos);
+                            queue.Enqueue(neighborPos);
+                        }
                     }
+                }
+
+                // 如果当前方块没有可扩展的邻居，不再继续扩展
+                if (!hasExpandableNeighbor)
+                {
+                    continue;
                 }
             }
         }
 
         // 调用 EditBlock 函数，将空气方块替换为烟雾方块
         //Debug.Log($"{_editNumber.Count}");
-        managerhub.worldManager.EditBlock(_editNumber,0.1f);
+        managerhub.worldManager.EditBlock(_editNumber, 0.1f);
     }
+
 
 
 

@@ -120,6 +120,7 @@ public class Player : MonoBehaviour
 
     //摔落伤害
     [Header("摔落参数")]
+    private float groundTime; public float minGroundedTime = 0.1f; // 最小的落地时间
     Coroutine falldownCoroutine;
     public float hurtCooldownTime = 0.5f;  //摔落冷却时间
     public float new_foot_high = -100f;
@@ -286,6 +287,15 @@ public class Player : MonoBehaviour
     {
         if (world.game_state == Game_State.Playing)
         {
+
+            if (isGrounded)
+            {
+                groundTime += Time.deltaTime; // 玩家在地面上的时间
+            }
+            else
+            {
+                groundTime = 0;
+            }
 
             //改变视距(如果奔跑的话)
             change_eyesview();
@@ -492,6 +502,7 @@ public class Player : MonoBehaviour
 
 
     //接收操作
+    public bool hasExec_isChangedBlock = true;
     private void GetPlayerInputs()
     {
 
@@ -541,11 +552,11 @@ public class Player : MonoBehaviour
         //}
 
 
-        if (isGrounded && Input.GetKey(KeyCode.Space))
+        if (isGrounded && Input.GetKey(KeyCode.Space) && groundTime >= minGroundedTime)
         {
-        
+            //print("正常跳跃");
             jumpRequest = true;
-        
+            groundTime = 0; // 跳跃后重置计时
         }
             
 
@@ -638,34 +649,43 @@ public class Player : MonoBehaviour
 
 
         //如果点击鼠标左键,记录OldPointLocation
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 _raycastNow = RayCast_now();
-            OldPointLocation = new Vector3(Mathf.FloorToInt(_raycastNow.x), Mathf.FloorToInt(_raycastNow.y), Mathf.FloorToInt(_raycastNow.z));
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    Vector3 _raycastNow = RayCast_now();
+            
         
-        }
+        //}
 
         //如果松开鼠标左键，isChanger还原
         if (Input.GetMouseButtonUp(0))
         {
 
             isChangeBlock = false;
+            hasExec_isChangedBlock = true;
             musicmanager.isbroking = false;
             musicmanager.Audio_player_broke.Stop();
 
         }
 
         //左键销毁泥土
+
         if (Input.GetKey(KeyCode.Mouse0))
         {
             //Debug.Log("Player Mouse0");
             //isLeftMouseDown = true;
             //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
-            Vector3 _raycastNow = RayCast_now();
+            //Vector3 _raycastNow = RayCast_now();
 
-            Vector3 pointvector = new Vector3(Mathf.FloorToInt(_raycastNow.x), Mathf.FloorToInt(_raycastNow.y), Mathf.FloorToInt(_raycastNow.z));
+            if(RayCast_now()!= Vector3.zero && hasExec_isChangedBlock && world.blocktypes[world.GetBlockType(RayCast_now())].canBeChoose)
+            {
+                OldPointLocation = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
+                hasExec_isChangedBlock = false;
+            }
 
-            if (pointvector != OldPointLocation && OldPointLocation != Vector3.zero)
+
+            Vector3 pointvector = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
+
+            if (pointvector != OldPointLocation && OldPointLocation != Vector3.zero && pointvector != Vector3.zero)
             {
 
                 isChangeBlock = true;
@@ -675,7 +695,7 @@ public class Player : MonoBehaviour
             }
 
             //如果打到
-            if (_raycastNow != Vector3.zero)
+            if (RayCast_now() != Vector3.zero)
             {
 
                 //如果正在销毁则不执行
@@ -684,11 +704,8 @@ public class Player : MonoBehaviour
 
                     //Debug.Log("执行销毁");
                     elapsedTime = 0.0f;
-                    if (DestroyCoroutine == null)
-                    {
-                        DestroyCoroutine = StartCoroutine(DestroySoilWithDelay(_raycastNow));
-                    }
-                    
+                    StartCoroutine(DestroySoilWithDelay(RayCast_now()));
+
 
                 }
 
@@ -827,7 +844,6 @@ public class Player : MonoBehaviour
     }
 
     // 等待2秒后执行销毁泥土的方法
-    public Coroutine DestroyCoroutine;
     IEnumerator DestroySoilWithDelay(Vector3 position)
     {
         //print("开启了破坏协程");
@@ -904,7 +920,6 @@ public class Player : MonoBehaviour
 
                 Broking_Animation.Stop();
 
-                DestroyCoroutine = null;
                 yield break;
 
             }
@@ -958,7 +973,7 @@ public class Player : MonoBehaviour
         chunkObject.UpdateEditNumber(position, VoxelData.Air);
 
         //BlocksFunction.Boom(managerhub, position,2);
-        //BlocksFunction.Smoke(managerhub, position, 3);
+        BlocksFunction.Smoke(managerhub, position, 4);
 
         //EditNumber
 

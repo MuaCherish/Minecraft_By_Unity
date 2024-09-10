@@ -2145,7 +2145,7 @@ public class World : MonoBehaviour
     {
         foreach (var item in _editStructs)
         {
-            print("Ö´ÐÐEditBlocks");
+            //print("Ö´ÐÐEditBlocks");
             Allchunks[GetChunkLocation(item.editPos)].EditBlocks(item.editPos, item.targetType);
 
             yield return new WaitForSeconds(_time);
