@@ -737,9 +737,16 @@ public class Player : MonoBehaviour
 
                 switch (_targettype)
                 {
-                    //工作台
-                    case 18:
+                    //熔炉
+                    case 39:
                         //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
+                        world.Allchunks[world.GetChunkLocation(_raycastNow)].EditData(world.GetRelalocation(_raycastNow), VoxelData.Air);
+                        BlocksFunction.Smoke(managerhub, _raycastNow, 4);
+                        
+                        break;
+                    //TNT
+                    case 17:
+                        BlocksFunction.Boom(managerhub, _raycastNow, 3);
                         break;
                 }
 
@@ -972,9 +979,8 @@ public class Player : MonoBehaviour
         chunkObject.EditData(world.GetRelalocation(position), VoxelData.Air);
         chunkObject.UpdateEditNumber(position, VoxelData.Air);
 
-        //BlocksFunction.Boom(managerhub, position,2);
-        BlocksFunction.Smoke(managerhub, position, 4);
 
+        
         //EditNumber
 
 
