@@ -47,6 +47,11 @@ public class Player : MonoBehaviour
     public Transform particel_Broken_transform;
     public ParticleSystem Broking_Animation;
 
+    //Hand
+    public GameObject hand_Hold;
+    public GameObject hand;
+    public GameObject handBlock;
+
 
     [Header("角色参数")]
     public Transform foot;
@@ -2225,7 +2230,26 @@ public class Player : MonoBehaviour
 
     //---------------------------------- 工具类 ---------------------------------------------
 
+    public Transform GetEyesPosition()
+    {
+        return cam;
+    }
 
+    
+    public GameObject GetHand_Hold()
+    {
+        return hand_Hold;
+    }
+
+    public GameObject GetHand()
+    {
+        return hand;
+    }
+
+    public GameObject GetHandBlock()
+    {
+        return handBlock;
+    }
 
 
     //检查给定的坐标是否和foot的四个点有相同，只要有一个相同则返回true

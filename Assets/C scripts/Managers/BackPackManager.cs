@@ -13,37 +13,26 @@ public class BackPackManager : MonoBehaviour
 {
     [Header("状态")]
     public bool isfull = false;
+    public bool isChanging = false;  //切换方块的冷却锁，但是好像没有用上
 
-    //Transforms
-    [Header("Transforms")]
-    public Player player;
-    public GameObject Eyes;
-    public World world;
-    public MusicManager musicmanager;
-    
     //数据部分
-    [Header("Slots")]
+    [Header("引用")]
+    public ManagerHub managerhub;
     public Slot[] slots = new Slot[9];
 
-    [Header("DropBlock")]
-    public float dropblock_destroyTime = 10f;
-    public float absorb_Distance = 2f;
-    public float drop_gravity = 1f;
-    public float moveToplayer_duation = 1f;
-
-    //切换手中物品的
-    [Header("ChangingBlock")]
-    public byte previous_HandBlock = 255;   //255代表手本身
-    public GameObject Hand_Hold;
-    public GameObject Hand;
-    public GameObject HandBlock;
-    public bool isChanging = false;
-    public float ChangeColdTime = 1f;
-
+    [Header("掉落物参数")]
+    public float dropblock_destroyTime = 100f;
+    public float absorb_Distance = 2.3f;
+    public float drop_gravity = 4f;
+    public float moveToplayer_duation = 0.2f;
     public float throwForce = 3f;
     public float ColdTime_Absorb = 1f;
 
-
+    //切换手中物品的
+    [Header("改变手中物品")]
+    private byte previous_HandBlock = 255;   //255代表手本身
+    public float ChangeColdTime = 1f;
+    
 
     //------------------------------------------------ 核心功能 ---------------------------------------------------------------
 
@@ -85,16 +74,16 @@ public class BackPackManager : MonoBehaviour
 
                     //icon
                     //判断是用3d还是2d
-                    if (world.blocktypes[blocktype].DrawMode == DrawMode.Block) //3d
+                    if (managerhub.worldManager.blocktypes[blocktype].DrawMode == DrawMode.Block) //3d
                     {
                         slots[_index].Icon3Dobject.SetActive(true);
-                        slots[_index].TopFace.sprite = world.blocktypes[blocktype].top_sprit;
-                        slots[_index].LeftFace.sprite = world.blocktypes[blocktype].sprite;
-                        slots[_index].RightFace.sprite = world.blocktypes[blocktype].sprite;
+                        slots[_index].TopFace.sprite = managerhub.worldManager.blocktypes[blocktype].top_sprit;
+                        slots[_index].LeftFace.sprite = managerhub.worldManager.blocktypes[blocktype].sprite;
+                        slots[_index].RightFace.sprite = managerhub.worldManager.blocktypes[blocktype].sprite;
                     }
                     else
                     {
-                        slots[_index].icon.sprite = world.blocktypes[blocktype].icon;
+                        slots[_index].icon.sprite = managerhub.worldManager.blocktypes[blocktype].icon;
                         slots[_index].icon.color = new Color(1f, 1f, 1f, 1f);
                     }
 
@@ -117,15 +106,15 @@ public class BackPackManager : MonoBehaviour
         //place，方块--
         else if (brokeOrplace == 1)
         {
-            if (slots[player.selectindex].number - 1 <= 0)
+            if (slots[managerhub.playerManager.selectindex].number - 1 <= 0)
             {
                 isfull = false;
-                slots[player.selectindex].ResetSlot();
+                slots[managerhub.playerManager.selectindex].ResetSlot();
             }
             else
             {
-                slots[player.selectindex].number--;
-                slots[player.selectindex].TMP_number.text = $"{slots[player.selectindex].number}";
+                slots[managerhub.playerManager.selectindex].number--;
+                slots[managerhub.playerManager.selectindex].TMP_number.text = $"{slots[managerhub.playerManager.selectindex].number}";
             }
 
         }
@@ -139,11 +128,13 @@ public class BackPackManager : MonoBehaviour
     /// </summary>
     public void ThrowDropBox()
     {
+        Transform Eyes = managerhub.playerManager.GetEyesPosition();
+
         //判断是否能扔掉落物
-        if (slots[player.selectindex].blockId != 255 && slots[player.selectindex].number > 0)
+        if (slots[managerhub.playerManager.selectindex].blockId != 255 && slots[managerhub.playerManager.selectindex].number > 0)
         {
             //创造掉落物
-            CreateDropBox(Eyes.transform.forward * 0.3f + new Vector3(Eyes.transform.position.x, Eyes.transform.position.y - 0.3f, Eyes.transform.position.z), slots[player.selectindex].blockId, true, ColdTime_Absorb);
+            CreateDropBox(Eyes.transform.forward * 0.3f + new Vector3(Eyes.transform.position.x, Eyes.transform.position.y - 0.3f, Eyes.transform.position.z), slots[managerhub.playerManager.selectindex].blockId, true, ColdTime_Absorb);
 
             //物品栏减一
             update_slots(1, 0);
@@ -182,14 +173,17 @@ public class BackPackManager : MonoBehaviour
     //创造掉落物(坐标,类型)
     public void CreateDropBox(Vector3 _pos, byte _blocktype, bool _needThrow, float _ColdTimeTiabsorb)
     {
+        World worldManager = managerhub.worldManager;
+        Transform Eyes = managerhub.playerManager.GetEyesPosition();
+
         //刷新偏移
         float x_offset = UnityEngine.Random.Range(2, 8) / 10f;
         float y_offset = UnityEngine.Random.Range(5, 8) / 10f;
         float z_offset = UnityEngine.Random.Range(2, 8) / 10f;
 
         //创建父类
-        GameObject DropBlock = new GameObject(world.blocktypes[_blocktype].blockName);
-        DropBlock.AddComponent<FloatingCube>().InitWorld(world, dropblock_destroyTime, absorb_Distance, drop_gravity, moveToplayer_duation, _blocktype, this, musicmanager, _ColdTimeTiabsorb);
+        GameObject DropBlock = new GameObject(managerhub.worldManager.blocktypes[_blocktype].blockName);
+        DropBlock.AddComponent<FloatingCube>().InitWorld(managerhub.worldManager, dropblock_destroyTime, absorb_Distance, drop_gravity, moveToplayer_duation, _blocktype, this, managerhub.musicManager, _ColdTimeTiabsorb);
         DropBlock.transform.SetParent(GameObject.Find("Environment/DropBlocks").transform);
 
         if (_needThrow)
@@ -204,46 +198,48 @@ public class BackPackManager : MonoBehaviour
         }
 
         //有贴图用贴图，没贴图用icon
-        if (world.blocktypes[_blocktype].sprite != null)
+        if (managerhub.worldManager.blocktypes[_blocktype].sprite != null)
         {
+           
+
             //Top
             GameObject _Top = new GameObject("Top");
-            _Top.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].top_sprit;
+            _Top.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].top_sprit;
             _Top.transform.SetParent(DropBlock.transform);
             _Top.transform.localPosition = new Vector3(0, 0.16f, 0);
             _Top.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
 
             //Buttom
             GameObject _Buttom = new GameObject("Buttom");
-            _Buttom.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].buttom_sprit;
+            _Buttom.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].buttom_sprit;
             _Buttom.transform.SetParent(DropBlock.transform);
             _Buttom.transform.localPosition = new Vector3(0, 0, 0);
             _Buttom.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
 
             //Left
             GameObject _Left = new GameObject("Left");
-            _Left.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Left.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].sprite;
             _Left.transform.SetParent(DropBlock.transform);
             _Left.transform.localPosition = new Vector3(-0.08f, 0.08f, 0);
             _Left.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
 
             //Right
             GameObject _Right = new GameObject("Right");
-            _Right.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Right.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].sprite;
             _Right.transform.SetParent(DropBlock.transform);
             _Right.transform.localPosition = new Vector3(0.08f, 0.08f, 0);
             _Right.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
 
             //Forward
             GameObject _Forward = new GameObject("Forward");
-            _Forward.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Forward.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].sprite;
             _Forward.transform.SetParent(DropBlock.transform);
             _Forward.transform.localPosition = new Vector3(0, 0.08f, 0.08f);
             _Forward.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
             //Back
             GameObject _Back = new GameObject("Back");
-            _Back.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Back.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].sprite;
             _Back.transform.SetParent(DropBlock.transform);
             _Back.transform.localPosition = new Vector3(0, 0.08f, -0.08f);
             _Back.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
@@ -252,42 +248,42 @@ public class BackPackManager : MonoBehaviour
         {
             //Top
             GameObject _Top = new GameObject("Top");
-            _Top.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Top.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].sprite;
             _Top.transform.SetParent(DropBlock.transform);
             _Top.transform.localPosition = new Vector3(0, 0.16f, 0);
             _Top.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
 
             //Buttom
             GameObject _Buttom = new GameObject("Buttom");
-            _Buttom.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Buttom.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].sprite;
             _Buttom.transform.SetParent(DropBlock.transform);
             _Buttom.transform.localPosition = new Vector3(0, 0, 0);
             _Buttom.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
 
             //Left
             GameObject _Left = new GameObject("Left");
-            _Left.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Left.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].sprite;
             _Left.transform.SetParent(DropBlock.transform);
             _Left.transform.localPosition = new Vector3(-0.08f, 0.08f, 0);
             _Left.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
 
             //Right
             GameObject _Right = new GameObject("Right");
-            _Right.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Right.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].sprite;
             _Right.transform.SetParent(DropBlock.transform);
             _Right.transform.localPosition = new Vector3(0.08f, 0.08f, 0);
             _Right.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
 
             //Forward
             GameObject _Forward = new GameObject("Forward");
-            _Forward.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Forward.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].sprite;
             _Forward.transform.SetParent(DropBlock.transform);
             _Forward.transform.localPosition = new Vector3(0, 0.08f, 0.08f);
             _Forward.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
             //Back
             GameObject _Back = new GameObject("Back");
-            _Back.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Back.AddComponent<SpriteRenderer>().sprite = worldManager.blocktypes[_blocktype].sprite;
             _Back.transform.SetParent(DropBlock.transform);
             _Back.transform.localPosition = new Vector3(0, 0.08f, -0.08f);
             _Back.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
@@ -311,10 +307,14 @@ public class BackPackManager : MonoBehaviour
     //切换物品
     public void ChangeBlockInHand()
     {
-        byte now_HandBlock = slots[player.selectindex].blockId;
+        GameObject Hand_Hold = managerhub.playerManager.GetHand_Hold();
+        GameObject Hand = managerhub.playerManager.GetHand();
+        GameObject HandBlock = managerhub.playerManager.GetHandBlock();
+
+        byte now_HandBlock = slots[managerhub.playerManager.selectindex].blockId;
 
         //如果不一样，就要切换方块 或者 方块槽里有方块但是isCatchBloch = false 或者 方块槽里无方块但是却是isCatchBloch = true
-        if (now_HandBlock != previous_HandBlock || (now_HandBlock != 255 && player.isCatchBlock == false) || (now_HandBlock == 255 && player.isCatchBlock == true))
+        if (now_HandBlock != previous_HandBlock || (now_HandBlock != 255 && managerhub.playerManager.isCatchBlock == false) || (now_HandBlock == 255 && managerhub.playerManager.isCatchBlock == true))
         {
             //切换手
             if (now_HandBlock == 255)
@@ -333,7 +333,7 @@ public class BackPackManager : MonoBehaviour
                 Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Up");
 
                 //状态
-                player.isCatchBlock = false;
+                managerhub.playerManager.isCatchBlock = false;
 
             }
             //切换方块
@@ -357,11 +357,11 @@ public class BackPackManager : MonoBehaviour
                     //顶面
                     if (index >= 4)
                     {
-                        child.gameObject.GetComponent<SpriteRenderer>().sprite = world.blocktypes[slots[player.selectindex].blockId].top_sprit;
+                        child.gameObject.GetComponent<SpriteRenderer>().sprite = managerhub.worldManager.blocktypes[slots[managerhub.playerManager.selectindex].blockId].top_sprit;
                     }
                     else
                     {
-                        child.gameObject.GetComponent<SpriteRenderer>().sprite = world.blocktypes[slots[player.selectindex].blockId].sprite;
+                        child.gameObject.GetComponent<SpriteRenderer>().sprite = managerhub.worldManager.blocktypes[slots[managerhub.playerManager.selectindex].blockId].sprite;
                     }
                     
                     index++;
@@ -372,7 +372,7 @@ public class BackPackManager : MonoBehaviour
                 Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Up");
 
                 //状态
-                player.isCatchBlock = true;
+                managerhub.playerManager.isCatchBlock = true;
 
             }
 
