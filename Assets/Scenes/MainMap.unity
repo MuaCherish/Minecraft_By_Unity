@@ -15,18 +15,18 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 1
-  m_FogColor: {r: 0.40784314, g: 0.627451, b: 0.78823537, a: 1}
-  m_FogMode: 3
+  m_FogColor: {r: 0.48235294, g: 0.63529414, b: 1, a: 1}
+  m_FogMode: 1
   m_FogDensity: 0.01
-  m_LinearFogStart: 0
-  m_LinearFogEnd: 300
+  m_LinearFogStart: 30
+  m_LinearFogEnd: 160
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: b5c5b3e3b64a9264fa5cae60b27a8fbf, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
   m_HaloStrength: 0.226
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1368,6 +1368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 22826876}
   - component: {fileID: 22826877}
+  - component: {fileID: 22826878}
   m_Layer: 0
   m_Name: Night Manager
   m_TagString: Untagged
@@ -1397,7 +1398,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 22826875}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79e9a05d6a37cf44da226256b5b6ffdc, type: 3}
   m_Name: 
@@ -1416,6 +1417,35 @@ MonoBehaviour:
   maxDistance: 1500
   DaylightColor: {r: 0.6666667, g: 0.6666667, b: 0.6666667, a: 1}
   NightColor: {r: 0.6666667, g: 0.6666667, b: 0.6666667, a: 0.078431375}
+--- !u!114 &22826878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22826875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edde10e4b15a4bd4a92b3028af0feaa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isInCave: 0
+  managerhub: {fileID: 843154432}
+  CurrentTime: 16.8
+  value: 0
+  second_GameOneHour: 30
+  checkInterval: 10
+  fogTransitionTime: 2
+  FogDayDistance: {x: 30, y: 160}
+  FogCaveDistance: {x: 0, y: 20}
+  SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
+  SkyboxRange: {x: 0, y: 1}
+  eyes: {fileID: 0}
+  FogDayColor: {r: 0.48235294, g: 0.63529414, b: 1, a: 0}
+  FogNightColor: {r: 0, g: 0, b: 0, a: 0}
+  BlocksMaterial: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
+  BlocksDayColor: {r: 0.56078434, g: 0.4392157, b: 0.1764706, a: 1}
+  BlocksNightColor: {r: 0.101960786, g: 0.078431375, b: 0.05490196, a: 1}
 --- !u!1 &23726926
 GameObject:
   m_ObjectHideFlags: 0
@@ -70565,7 +70595,6 @@ MonoBehaviour:
   moveToplayer_duation: 0.2
   throwForce: 7
   ColdTime_Absorb: 1
-  previous_HandBlock: 255
   ChangeColdTime: 1
 --- !u!1 &2139160011
 GameObject:

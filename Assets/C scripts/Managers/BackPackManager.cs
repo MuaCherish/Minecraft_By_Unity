@@ -129,12 +129,13 @@ public class BackPackManager : MonoBehaviour
     public void ThrowDropBox()
     {
         Transform Eyes = managerhub.playerManager.GetEyesPosition();
+        Vector3 _ThrowOrigin = Eyes.transform.forward * 0.3f + new Vector3(Eyes.transform.position.x, Eyes.transform.position.y - 0.3f, Eyes.transform.position.z);
 
         //判断是否能扔掉落物
         if (slots[managerhub.playerManager.selectindex].blockId != 255 && slots[managerhub.playerManager.selectindex].number > 0)
         {
             //创造掉落物
-            CreateDropBox(Eyes.transform.forward * 0.3f + new Vector3(Eyes.transform.position.x, Eyes.transform.position.y - 0.3f, Eyes.transform.position.z), slots[managerhub.playerManager.selectindex].blockId, true, ColdTime_Absorb);
+            CreateDropBox(_ThrowOrigin, slots[managerhub.playerManager.selectindex].blockId, true, ColdTime_Absorb);
 
             //物品栏减一
             update_slots(1, 0);
@@ -183,7 +184,7 @@ public class BackPackManager : MonoBehaviour
 
         //创建父类
         GameObject DropBlock = new GameObject(managerhub.worldManager.blocktypes[_blocktype].blockName);
-        DropBlock.AddComponent<FloatingCube>().InitWorld(managerhub.worldManager, dropblock_destroyTime, absorb_Distance, drop_gravity, moveToplayer_duation, _blocktype, this, managerhub.musicManager, _ColdTimeTiabsorb);
+        DropBlock.AddComponent<FloatingCube>().InitWorld(managerhub, _blocktype, _ColdTimeTiabsorb);
         DropBlock.transform.SetParent(GameObject.Find("Environment/DropBlocks").transform);
 
         if (_needThrow)

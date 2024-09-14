@@ -388,7 +388,7 @@ public class World : MonoBehaviour
         game_state = Game_State.Ending;
 
         //print("Quit");
-        RenderSettings.skybox.SetFloat("_Exposure", 0.69f);
+        //RenderSettings.skybox.SetFloat("_Exposure", 1f);
 
         //µÈ´ýWaterÏß³Ì
         if (myThread_Water != null && myThread_Water.IsAlive)

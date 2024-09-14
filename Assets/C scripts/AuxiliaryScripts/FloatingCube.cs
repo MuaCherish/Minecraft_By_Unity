@@ -22,17 +22,20 @@ public class FloatingCube : MonoBehaviour
     //材质
     public bool isGround; // 是否在地面上
 
-    public void InitWorld(World _world, float _destroytime, float _absorbDistance, float _gravity, float _moveDuration, byte _point_Block_type, BackPackManager _backpackmanager, MusicManager _musicmanager, float _ColdTimeToAbsorb)
+    public void InitWorld(ManagerHub _managerhub,byte _point_Block_type, float _ColdTimeToAbsorb)
     {
-        world = _world;
-        destroyTime = _destroytime;
-        absorbDistance = _absorbDistance;
-        gravity = _gravity;
-        moveDuration = _moveDuration;
+        world = _managerhub.worldManager;
+        destroyTime = _managerhub.backpackManager.dropblock_destroyTime;
+        absorbDistance = _managerhub.backpackManager.absorb_Distance;
+        gravity = _managerhub.backpackManager.drop_gravity;
+        moveDuration = _managerhub.backpackManager.moveToplayer_duation;
+
         point_Block_type = _point_Block_type;
-        backpackmanager = _backpackmanager;
-        musicmanager = _musicmanager;
         ColdTimeToAbsorb = _ColdTimeToAbsorb;
+
+        backpackmanager = _managerhub.backpackManager;
+        musicmanager = _managerhub.musicManager;
+        
     }
 
 
