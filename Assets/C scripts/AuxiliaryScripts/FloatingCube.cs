@@ -24,7 +24,7 @@ public class FloatingCube : MonoBehaviour
 
     public void InitWorld(ManagerHub _managerhub,byte _point_Block_type, float _ColdTimeToAbsorb)
     {
-        world = _managerhub.worldManager;
+        world = _managerhub.world;
         destroyTime = _managerhub.backpackManager.dropblock_destroyTime;
         absorbDistance = _managerhub.backpackManager.absorb_Distance;
         gravity = _managerhub.backpackManager.drop_gravity;

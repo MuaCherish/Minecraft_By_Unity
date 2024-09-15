@@ -9,8 +9,11 @@ using static UnityEngine.Animations.AimConstraint;
 
 public class DebugManager : MonoBehaviour
 {
+    [Header("状态")]
+    [ReadOnly] public bool isDebug = false;
+
     //获取组件
-    [Header("Transforms")]
+    [Header("引用")]
     public ManagerHub managerHub;
     public GameObject DebugScreen;
     public Transform Content;
@@ -19,8 +22,7 @@ public class DebugManager : MonoBehaviour
     //public Player player;
     //public World world;
 
-    [Header("状态")]
-    public bool isDebug = false;
+    
 
     private void Start()
     {
@@ -30,7 +32,7 @@ public class DebugManager : MonoBehaviour
     void Update()
     {
 
-        if (managerHub.worldManager.game_state == Game_State.Start)
+        if (managerHub.world.game_state == Game_State.Start)
         {
             if (DebugScreen.activeSelf)
             {
@@ -41,7 +43,7 @@ public class DebugManager : MonoBehaviour
         }
 
 
-        if (managerHub.worldManager.game_state == Game_State.Playing)
+        if (managerHub.world.game_state == Game_State.Playing)
         {
             if (Input.GetKeyDown(KeyCode.F3))
             {
@@ -68,7 +70,7 @@ public class DebugManager : MonoBehaviour
 
     void UpdateScreen()
     {
-        Vector3 footlocation = managerHub.worldManager.PlayerFoot.position;
+        Vector3 footlocation = managerHub.world.PlayerFoot.position;
 
         //FPS
         CalculateFPS();
@@ -80,17 +82,18 @@ public class DebugManager : MonoBehaviour
         LeftText.text += $"\n";
         LeftText.text += $"[Player]\n";
         LeftText.text += $"朝向: {CalculateFacing()}\n";
-        LeftText.text += $"实际朝向: {managerHub.playerManager.FactFacing}\n";
-        LeftText.text += $"实际运动方向: {managerHub.playerManager.ActualMoveDirection}\n";
-        LeftText.text += $"输入: {managerHub.playerManager.keyInput}\n";
-        LeftText.text += $"实时重力: {managerHub.playerManager.verticalMomentum}\n";
+        LeftText.text += $"实际朝向: {managerHub.player.FactFacing}\n";
+        LeftText.text += $"实际运动方向: {managerHub.player.ActualMoveDirection}\n";
+        LeftText.text += $"输入: {managerHub.player.keyInput}\n";
+        LeftText.text += $"眼睛坐标: {managerHub.player.cam.position}\n";
+        LeftText.text += $"实时重力: {managerHub.player.verticalMomentum}\n";
         LeftText.text += $"绝对坐标: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))}\n";
-        LeftText.text += $"相对坐标: {managerHub.worldManager.GetRelalocation(footlocation)}\n";
-        LeftText.text += $"已保存方块数量: {managerHub.worldManager.EditNumber.Count}\n";
-        LeftText.text += $"碰撞点检测个数:{managerHub.playerManager.CollisionNumber}\n";
+        LeftText.text += $"相对坐标: {managerHub.world.GetRelalocation(footlocation)}\n";
+        LeftText.text += $"已保存方块数量: {managerHub.world.EditNumber.Count}\n";
+        LeftText.text += $"碰撞点检测个数:{managerHub.player.CollisionNumber}\n";
         LeftText.text += $"\n";
         LeftText.text += $"[Chunk]\n";
-        LeftText.text += $"区块坐标: {managerHub.worldManager.GetChunkLocation(footlocation)}\n";
+        LeftText.text += $"区块坐标: {managerHub.world.GetChunkLocation(footlocation)}\n";
         LeftText.text += $"\n";
         //LeftText.text += $"[Noise]\n";
 
@@ -102,7 +105,7 @@ public class DebugManager : MonoBehaviour
     {
         
 
-        for (int index = 0;index < managerHub.worldManager.blocktypes.Length; index++)
+        for (int index = 0;index < managerHub.world.blocktypes.Length; index++)
         {
             //初始化item
             GameObject instance = Instantiate(blockitem);
@@ -110,12 +113,12 @@ public class DebugManager : MonoBehaviour
             instance.transform.Find("TMP_index").GetComponent<TextMeshProUGUI>().text = $"{index}";
             instance.transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
 
-            if (managerHub.worldManager.blocktypes[index].sprite != null)
+            if (managerHub.world.blocktypes[index].sprite != null)
             {
-                instance.transform.Find("Image").GetComponent<Image>().sprite = managerHub.worldManager.blocktypes[index].sprite;
-            }else if (managerHub.worldManager.blocktypes[index].sprite != null)
+                instance.transform.Find("Image").GetComponent<Image>().sprite = managerHub.world.blocktypes[index].sprite;
+            }else if (managerHub.world.blocktypes[index].sprite != null)
             {
-                instance.transform.Find("Image").GetComponent<Image>().sprite = managerHub.worldManager.blocktypes[index].top_sprit;
+                instance.transform.Find("Image").GetComponent<Image>().sprite = managerHub.world.blocktypes[index].top_sprit;
             }
             else
             {
@@ -131,7 +134,7 @@ public class DebugManager : MonoBehaviour
     // FPS计数器
     private int frameCount;
     private float elapsedTime;
-    public float fps;
+    private float fps;
 
     // 更新并计算FPS
     void CalculateFPS()
@@ -161,7 +164,7 @@ public class DebugManager : MonoBehaviour
     //facing
     string CalculateFacing()
     {
-        Vector3 forward = managerHub.playerManager.transform.forward;
+        Vector3 forward = managerHub.player.transform.forward;
         float angle = Mathf.Atan2(forward.z, forward.x) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360;
 

@@ -191,7 +191,7 @@ public class CanvasManager : MonoBehaviour
         numberofWorldType = 7; // 总量
 
         // 初始化需要内部共享的变量
-        RenderSize_Value = 0.3f;
+        RenderSize_Value = previous_RenderSize_Value;
 
         // 初始化缓存数据
         previous_mappedValue = 0;  // 渲染范围
@@ -281,7 +281,7 @@ public class CanvasManager : MonoBehaviour
 
     //建立ui缓冲栈
     [Header("Transforms")]
-    public NighManager nightmanager;
+    //public NighManager nightmanager;
     public FixedStack<int> UIBuffer = new FixedStack<int>(5, 0);
     
     [Header("状态")]
@@ -298,11 +298,11 @@ public class CanvasManager : MonoBehaviour
     float startTime; float endTime;
 
     // 当前世界类型
-    public int currentWorldType = VoxelData.Biome_Default;
+    private int currentWorldType = VoxelData.Biome_Default;
     private int numberofWorldType = 7; // 总量-这个不能乱加了
 
     //需要内部共享的变量
-    public float RenderSize_Value = 0.3f;
+    private float RenderSize_Value = 0.4f; private float previous_RenderSize_Value = 0.4f;
 
     //缓存数据
     private int previous_mappedValue;  //渲染范围 
@@ -1317,7 +1317,7 @@ public class CanvasManager : MonoBehaviour
     //手电筒的提示
     void Prompt_FlashLight()
     { 
-        if (player.transform.position.y <= 50f + 5f)
+        if (managerhub.player.isInCave)
         {
             if (hasExec_PromptScreen_isShow == false)
             {
@@ -1340,13 +1340,13 @@ public class CanvasManager : MonoBehaviour
 
     }
 
-    public void First_Prompt_PlayerThe_Flashlight()
-    {
-        //prompt_Text.text = "You can press <F> \r\nto open \"FlashLight\"";
-        //StartCoroutine(Show_Animation_PromptScreen());
-        //hasExec_PromptScreen_isShow = true;
-        //managerhub.commandManager.PrintMessage("You can press <F> \r\nto open \"FlashLight\"",Color.yellow);
-    }
+    //public void First_Prompt_PlayerThe_Flashlight()
+    //{
+    //    //prompt_Text.text = "You can press <F> \r\nto open \"FlashLight\"";
+    //    //StartCoroutine(Show_Animation_PromptScreen());
+    //    //hasExec_PromptScreen_isShow = true;
+    //    //managerhub.commandManager.PrintMessage("You can press <F> \r\nto open \"FlashLight\"",Color.yellow);
+    //}
 
     IEnumerator Show_Animation_PromptScreen()
     {

@@ -47,24 +47,21 @@ public class MusicManager : MonoBehaviour
     private bool isPausing = false;
 
     //place and broke
-    public bool isbroking = false;
+    [ReadOnly]public bool isbroking = false;
 
     //moving
     [Header("玩家/leg/foot状态")]
-    public bool hasExec_isGround = true;
-    public bool hasExec_isSwiming = true;
-    public byte leg_blocktype;
-    [HideInInspector]
-    public byte previous_leg_blocktype = VoxelData.Air;
+    [HideInInspector] public bool hasExec_isGround = true;
+    [HideInInspector] public bool hasExec_isSwiming = true;
+    [HideInInspector] public byte leg_blocktype;
+    [HideInInspector] public byte previous_leg_blocktype = VoxelData.Air;
 
 
     //walk
     int item = 0;   //用来区分左右脚的
-    public byte footBlocktype = VoxelData.Grass;
-    [HideInInspector]
-    public byte previous_foot_blocktype = VoxelData.Grass;
-    [HideInInspector]
-    public float footstepInterval; // 走路音效播放间隔
+    [HideInInspector] public byte footBlocktype = VoxelData.Grass;
+    [HideInInspector] public byte previous_foot_blocktype = VoxelData.Grass;
+    [HideInInspector] public float footstepInterval; // 走路音效播放间隔
     private float nextFoot; 
 
 

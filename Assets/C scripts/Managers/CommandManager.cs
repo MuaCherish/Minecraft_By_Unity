@@ -11,6 +11,9 @@ using UnityEngine.UI;
 
 public class CommandManager : MonoBehaviour
 {
+    [Header("状态")]
+    [ReadOnly]public bool isConsoleActive = false; // 标志位，跟踪控制台的激活状态
+
     [Header("Transforms")]
     public World world;
     public Player player;
@@ -20,9 +23,6 @@ public class CommandManager : MonoBehaviour
     //public GameObject 内置消息栏;
     public TMP_InputField inputField; // 用于输入命令的InputField
     
-
-    [Header("状态")]
-    public bool isConsoleActive = false; // 标志位，跟踪控制台的激活状态
 
     [Header("参数")]
     public List<CommandSystem> commands = new List<CommandSystem>();

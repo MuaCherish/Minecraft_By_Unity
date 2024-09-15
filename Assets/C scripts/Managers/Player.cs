@@ -14,13 +14,16 @@ public class Player : MonoBehaviour
 
     //玩家状态
     [Header("玩家状态")]
-    public bool isGrounded;
-    public bool isSprinting;
-    public bool isSwiming;
-    public bool isMoving;
-    public bool isSquating;
-    public bool isFlying;
-    public bool isCatchBlock;
+    [ReadOnly] public bool isGrounded;
+    [ReadOnly] public bool isSprinting;
+    [ReadOnly] public bool isSwiming;
+    [ReadOnly] public bool isMoving;
+    [ReadOnly] public bool isSquating;
+    [ReadOnly] public bool isFlying;
+    [ReadOnly] public bool isCatchBlock;
+    [ReadOnly] public bool isInCave; // 玩家是否在矿洞内
+    [ReadOnly] public bool isPause;
+    [ReadOnly] public bool isBroking;
 
 
     [Header("Transforms")]
@@ -212,7 +215,8 @@ public class Player : MonoBehaviour
     public byte foot_BlockType = VoxelData.Air;
     public byte foot_BlockType_temp = VoxelData.Air;
 
-
+    //用来检查isInCave
+    public float isInCave_checkInterval = 10f; private float isInCave_nextCheckTime = 10f;// 每0.5秒检查一次
 
 
     //--------------------------------- 周期函数 --------------------------------------
@@ -336,12 +340,55 @@ public class Player : MonoBehaviour
             //实现操作
             AchieveInput();
 
+
+            // 每隔一段时间检查一次
+            //if (Time.time >= isInCave_nextCheckTime)
+            //{
+            //    //print($"{Time.time}");
+            //    CheckisInCave();
+            //    isInCave_nextCheckTime = Time.time + isInCave_checkInterval; // 设置下一次检查的时间
+            //}
         }
 
     }
 
 
+    //更新isInCave状态
+    public void CheckisInCave()
+    {
+        //print("");
+        float playerY = cam.position.y + 4;
+        Vector3 RelaPosition = managerhub.world.GetRelalocation(cam.position);
+        Vector3 _ChunkLocation = managerhub.world.GetChunkLocation(cam.position);
+        //print(RelaPosition);
+        float NoiseY = managerhub.world.GetTotalNoiseHigh_Biome((int)RelaPosition.x, (int)RelaPosition.z, new Vector3((int)_ChunkLocation.x * 16f, 0f, (int)_ChunkLocation.z * 16f), managerhub.world.worldSetting.worldtype);
 
+        
+
+        //print($"PlayerY：{playerY} , NoiseY：{NoiseY} , 差: {NoiseY - playerY}");
+
+        // 检查眼睛所在位置是否处于地表以下，将Fog改为近距离黑色迷雾
+        if (playerY < NoiseY)
+        {
+            if (!isInCave)
+            {
+                //print("迷雾开启");
+                // 开始迷雾过渡到洞穴状态
+                //Buff_CaveFog(true);
+                isInCave = true;
+            }
+        }
+        else
+        {
+            if (isInCave)
+            {
+                //print("迷雾关闭");
+                // 开始迷雾过渡到白天状态
+                //Buff_CaveFog(false);
+                isInCave = false;
+            }
+        }
+    }
 
 
     //---------------------------------------------------------------------------------

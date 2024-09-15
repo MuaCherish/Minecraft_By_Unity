@@ -8,8 +8,6 @@ using static UnityEditor.Progress;
 
 public class TimeManager : MonoBehaviour
 {
-    [Header("状态")]
-    public bool isInCave = false;
 
     [Header("引用")]
     public ManagerHub managerhub;
@@ -43,7 +41,7 @@ public class TimeManager : MonoBehaviour
 
     private void Start()
     {
-        eyes = managerhub.playerManager.GetEyesPosition();
+        eyes = managerhub.player.GetEyesPosition();
     }
 
 
@@ -52,7 +50,7 @@ public class TimeManager : MonoBehaviour
     private void Update()
     {
         // 启动条件
-        if (managerhub.worldManager.game_state == Game_State.Playing)
+        if (managerhub.world.game_state == Game_State.Playing)
         {
             if (TimeCoroutine == null)
             {
@@ -65,31 +63,16 @@ public class TimeManager : MonoBehaviour
             //    CheckCaveFog();
             //    nextCheckTime = Time.time + checkInterval; // 设置下一次检查的时间
             //}
-        }
-    }
 
-    public void CheckCaveFog()
-    {
-        // 检查眼睛所在位置是否处于地表以下，将Fog改为近距离黑色迷雾
-        if (eyes.position.y + 1 < managerhub.worldManager.GetTotalNoiseHigh_Biome((int)eyes.position.x, (int)eyes.position.z, managerhub.worldManager.GetChunkLocation(eyes.position), managerhub.worldManager.worldSetting.worldtype))
-        {
-            if (!isInCave)
+            if (managerhub.player.isInCave)
             {
-                print("迷雾开启");
-                // 开始迷雾过渡到洞穴状态
                 Buff_CaveFog(true);
-                isInCave = true;
             }
-        }
-        else
-        {
-            if (isInCave)
+            else
             {
-                print("迷雾关闭");
-                // 开始迷雾过渡到白天状态
                 Buff_CaveFog(false);
-                isInCave = false;
             }
+
         }
     }
 
@@ -166,7 +149,7 @@ public class TimeManager : MonoBehaviour
                 //改变
                 SkyboxMaterial.SetFloat("_Exposure", value);
 
-                if (isInCave == false)
+                if (managerhub.player.isInCave == false)
                 {
                     RenderSettings.fogColor = Color.Lerp(FogNightColor, FogDayColor, value);
                 }
@@ -175,7 +158,7 @@ public class TimeManager : MonoBehaviour
             }
 
             // 关闭条件
-            if (managerhub.worldManager.game_state != Game_State.Playing)
+            if (managerhub.world.game_state != Game_State.Playing)
             {
                 TimeCoroutine = null;
                 InitTimeManager();

@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class LifeManager : MonoBehaviour
 {
-    [Header("Player State")]
-    public int blood = 20;
-    private int maxblood = 20;
+    [Header("状态")]
+    [ReadOnly]public int blood = 20;   private int maxblood = 20;  //当前血量和最高血量
 
-    [Header("Transforms")]
+
+    [Header("引用")]
     public World world;
     public MusicManager musicmanager;
     public Player player;
@@ -22,13 +22,13 @@ public class LifeManager : MonoBehaviour
     public Sprite oxygen_brust;
 
     //Container闪烁参数
-    [Header("Blink container")]
+    [Header("血条闪烁")]
     public int blink_numbet = 3;
     public float blink_time = 0.2f;
     public float duretime = 0.3f;
 
     //血量恢复
-    [Header("Recover")]
+    [Header("血量恢复")]
     public float recoverTime = 5f;
     public int recoverBlood = 1;
     Coroutine RecoveryCoroutine;

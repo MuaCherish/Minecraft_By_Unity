@@ -10,7 +10,7 @@ public class ManagerHub : MonoBehaviour
     public DebugManager debugManager;
     public LifeManager lifeManager;
     public MusicManager musicManager;
-    public NighManager nighManager;
-    public World worldManager;
-    public Player playerManager;
+    public TimeManager timeManager;
+    public World world;
+    public Player player;
 }

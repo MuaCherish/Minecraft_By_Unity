@@ -18,12 +18,12 @@ RenderSettings:
   m_FogColor: {r: 0.48235294, g: 0.63529414, b: 1, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.01
-  m_LinearFogStart: 30
-  m_LinearFogEnd: 160
+  m_LinearFogStart: 40
+  m_LinearFogEnd: 80
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 0
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
@@ -1367,10 +1367,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 22826876}
-  - component: {fileID: 22826877}
   - component: {fileID: 22826878}
   m_Layer: 0
-  m_Name: Night Manager
+  m_Name: Time Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1391,32 +1390,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 475922108}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &22826877
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 22826875}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79e9a05d6a37cf44da226256b5b6ffdc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  world: {fileID: 699955241}
-  canvasManager: {fileID: 1026571032}
-  directionalLight_1: {fileID: 593827499}
-  directionalLight_2: {fileID: 1151379208}
-  DayTime: 120
-  NightTime: 120
-  switchTime: 40
-  DelayTime: 0.1
-  clouds: {fileID: 477460491}
-  playerLocation: {fileID: 1504082081}
-  speed: 3
-  maxDistance: 1500
-  DaylightColor: {r: 0.6666667, g: 0.6666667, b: 0.6666667, a: 1}
-  NightColor: {r: 0.6666667, g: 0.6666667, b: 0.6666667, a: 0.078431375}
 --- !u!114 &22826878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1429,14 +1402,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edde10e4b15a4bd4a92b3028af0feaa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isInCave: 0
   managerhub: {fileID: 843154432}
   CurrentTime: 16.8
   value: 0
   second_GameOneHour: 30
   checkInterval: 10
   fogTransitionTime: 2
-  FogDayDistance: {x: 30, y: 160}
+  FogDayDistance: {x: 40, y: 80}
   FogCaveDistance: {x: 0, y: 20}
   SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
   SkyboxRange: {x: 0, y: 1}
@@ -1541,7 +1513,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u6E32\u67D3\u8DDD\u79BB\uFF1A8 \u533A\u5757"
+  m_text: "\u6E32\u67D3\u8DDD\u79BB\uFF1A10 \u533A\u5757"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9f63ed49d2860954984e19b4fe97fef1, type: 2}
   m_sharedMaterial: {fileID: -488709357521393366, guid: 9f63ed49d2860954984e19b4fe97fef1, type: 2}
@@ -3167,7 +3139,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.3
+  m_Value: 0.4
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -13333,13 +13305,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ebba7d64d4969e4ba47ac6d0a2c4152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isDebug: 0
   managerHub: {fileID: 843154432}
   DebugScreen: {fileID: 1357337469}
   Content: {fileID: 928502477}
   blockitem: {fileID: 6026453003721354756, guid: a586869b70e315c43a35ba280031ade8, type: 3}
   LeftText: {fileID: 439713266}
-  isDebug: 0
-  fps: 0
 --- !u!1 &439713263
 GameObject:
   m_ObjectHideFlags: 0
@@ -22459,9 +22430,6 @@ MonoBehaviour:
   MeshLock: 0
   PointSaving: 
   recordData: []
-  XOFFSET: 0
-  YOFFSET: 0
-  ZOFFSET: 0
 --- !u!4 &699955242
 Transform:
   m_ObjectHideFlags: 0
@@ -26132,9 +26100,9 @@ MonoBehaviour:
   debugManager: {fileID: 438324209}
   lifeManager: {fileID: 1066840322}
   musicManager: {fileID: 325552237}
-  nighManager: {fileID: 22826877}
-  worldManager: {fileID: 699955241}
-  playerManager: {fileID: 1504082080}
+  timeManager: {fileID: 22826878}
+  world: {fileID: 699955241}
+  player: {fileID: 1504082080}
 --- !u!1 &844456349
 GameObject:
   m_ObjectHideFlags: 0
@@ -31447,15 +31415,12 @@ MonoBehaviour:
   magnitude: 0.1
   colorSpeed: 1
   hasExec_PromptScreen_isShow: 0
-  nightmanager: {fileID: 22826877}
   isInitError: 0
   Initprogress: 0
   NotNeedBackGround: 0
   isClickSaving: 0
   NewWorld_item: {fileID: 6958870829849265505, guid: 8ff678e07c9ec6b448ba25c07e16af14, type: 3}
   NewWorld_Transform: {fileID: 1618477843}
-  currentWorldType: 5
-  RenderSize_Value: 0.3
 --- !u!1 &1032736498
 GameObject:
   m_ObjectHideFlags: 0
@@ -48092,6 +48057,9 @@ MonoBehaviour:
   isSquating: 0
   isFlying: 0
   isCatchBlock: 0
+  isInCave: 0
+  isPause: 0
+  isBroking: 0
   managerhub: {fileID: 843154432}
   commandManager: {fileID: 2031280225}
   world: {fileID: 699955241}
@@ -48166,6 +48134,7 @@ MonoBehaviour:
   jump_press: 0
   foot_BlockType: 4
   foot_BlockType_temp: 4
+  isInCave_checkInterval: 10
   hasExec_isChangedBlock: 1
   MainBody: {fileID: 473442143}
   FirstPersonCamera: {fileID: 1727421506}
@@ -67446,13 +67415,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae1cc76c42ea59a4693ed13be013cadc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isConsoleActive: 0
   world: {fileID: 699955241}
   player: {fileID: 1504082080}
   backpackmanager: {fileID: 2136429365}
   CommandScreen: {fileID: 720881543}
   lifemanager: {fileID: 1066840322}
   inputField: {fileID: 163696392}
-  isConsoleActive: 0
   commands:
   - name: print
     command: /print

@@ -40,7 +40,7 @@ public static class BlocksFunction
         }
 
         // 调用EditBlock函数，将坐标设置为Air
-        managerhub.worldManager.EditBlock(_editNumber);
+        managerhub.world.EditBlock(_editNumber);
         //Debug.Log($"Boom:{_editNumber.Count}");
     }
 
@@ -70,7 +70,7 @@ public static class BlocksFunction
             Vector3 currentPos = queue.Dequeue();
 
             // 检查当前方块是否为空气
-            if (!managerhub.worldManager.blocktypes[managerhub.worldManager.GetBlockType(currentPos)].isSolid)
+            if (!managerhub.world.blocktypes[managerhub.world.GetBlockType(currentPos)].isSolid)
             {
                 _editNumber.Add(new EditStruct(currentPos, VoxelData.Snow)); // 你可以用适当的烟雾体素替换 VoxelData.Smoke
 
@@ -81,7 +81,7 @@ public static class BlocksFunction
                     // 如果相邻方块未访问过并且在半径范围内
                     if (!visited.Contains(neighborPos) && Vector3.Distance(_originPos, neighborPos) <= _r)
                     {
-                        if (!managerhub.worldManager.blocktypes[managerhub.worldManager.GetBlockType(neighborPos)].isSolid)
+                        if (!managerhub.world.blocktypes[managerhub.world.GetBlockType(neighborPos)].isSolid)
                         {
                             hasExpandableNeighbor = true; // 有可扩展的邻居
                             visited.Add(neighborPos);
@@ -100,7 +100,7 @@ public static class BlocksFunction
 
         // 调用 EditBlock 函数，将空气方块替换为烟雾方块
         //Debug.Log($"{_editNumber.Count}");
-        managerhub.worldManager.EditBlock(_editNumber, 0.1f);
+        managerhub.world.EditBlock(_editNumber, 0.1f);
     }
 
 

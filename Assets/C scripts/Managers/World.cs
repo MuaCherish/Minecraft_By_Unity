@@ -64,8 +64,8 @@ public class World : MonoBehaviour
     public Player player;
 
     [Header("世界存档")]
-    public bool isFinishSaving = false;
-    [HideInInspector]public String savingPATH = ""; //存档根目录
+    [HideInInspector] public bool isFinishSaving = false;
+    [HideInInspector] public String savingPATH = ""; //存档根目录
     public WorldSetting worldSetting;
     public List<SavingData> TheSaving = new List<SavingData>(); //读取的存档
     public List<EditStruct> EditNumber = new List<EditStruct>(); //玩家数据
@@ -74,7 +74,7 @@ public class World : MonoBehaviour
     [Header("游戏状态")]
     public Game_State game_state = Game_State.Start;
     public GameMode game_mode = GameMode.Survival;
-    public bool isLoadSaving = false;
+    [HideInInspector] public bool isLoadSaving = false;
     //public bool SuperPlainMode = false; 
 
 
@@ -82,7 +82,7 @@ public class World : MonoBehaviour
     public Material material;
     public Material material_Water;
     public BlockType[] blocktypes;
-     
+
 
     [Header("World-渲染设置")]
     [Tooltip("4就是边长为4*16的正方形")] public int renderSize = 5;        //渲染区块半径,即renderSize*16f
@@ -191,7 +191,7 @@ public class World : MonoBehaviour
 
 
     //Threading
-    [HideInInspector]public bool MeshLock = false;
+    [HideInInspector] public bool MeshLock = false;
     public ConcurrentQueue<Chunk> WaitToCreateMesh = new ConcurrentQueue<Chunk>();
     Coroutine Mesh_Coroutine;
 
@@ -241,11 +241,11 @@ public class World : MonoBehaviour
 
         //初始化
 
-        UnityEngine.Random.InitState(worldSetting.seed);
+
 
         game_state = Game_State.Start;
         TheSaving = new List<SavingData>();
-        EditNumber = new List<EditStruct>(); 
+        EditNumber = new List<EditStruct>();
         //savingDatas = new List<SavingData>();
         renderSize = 5;
         StartToRender = 1f;
@@ -254,7 +254,7 @@ public class World : MonoBehaviour
         Allchunks = new Dictionary<Vector3, Chunk>();
         WatingToCreate_Chunks = new List<Vector3>();
         WatingToRemove_Chunks = new List<Vector3>();
-        myThread_Render = null; 
+        myThread_Render = null;
         WaitToRender_New = new ConcurrentQueue<Chunk>();
         是否生成Chunk侧面 = false;
         Center_Now = Vector3.zero;
@@ -286,11 +286,11 @@ public class World : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        //设置种子
-        terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 10000);
-
-        //初始化世界
+        //-------顺序不能变化------------------
+        terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 100000000);
         worldSetting = new WorldSetting(terrainLayerProbabilitySystem.Seed);
+        UnityEngine.Random.InitState(worldSetting.seed);
+        //-------------------------------------
 
         PointSaving = "";
     }
@@ -506,7 +506,7 @@ public class World : MonoBehaviour
 
         //游戏开始
         yield return new WaitForSeconds(0.5f);
-        canvasManager.Initprogress = 1f; 
+        canvasManager.Initprogress = 1f;
 
         //开启面优化协程
         StartCoroutine(Chunk_Optimization());
@@ -570,8 +570,8 @@ public class World : MonoBehaviour
         {
             Init_MapCoroutine = StartCoroutine(Init_Map_Thread());
         }
-       
-    
+
+
     }
 
 
@@ -674,7 +674,7 @@ public class World : MonoBehaviour
 
             }
 
-            
+
 
 
 
@@ -688,7 +688,7 @@ public class World : MonoBehaviour
         }
 
         Debug.LogError("Water线程中止");
-        
+
     }
 
 
@@ -737,8 +737,8 @@ public class World : MonoBehaviour
                         WaitToCreateMesh.Enqueue(chunktemp);
 
                 }
-                 
-                    
+
+
 
 
 
@@ -772,7 +772,7 @@ public class World : MonoBehaviour
 
                 }
 
-                    
+
 
 
             }
@@ -805,7 +805,7 @@ public class World : MonoBehaviour
                         WaitToCreateMesh.Enqueue(chunktemp);
 
                 }
-                    
+
 
 
             }
@@ -841,7 +841,7 @@ public class World : MonoBehaviour
                         WaitToCreateMesh.Enqueue(chunktemp);
 
                 }
-                    
+
 
 
             }
@@ -882,7 +882,7 @@ public class World : MonoBehaviour
 
                 //如果查到的chunk已经存在，则唤醒
                 //不存在则生成
-                if (Allchunks.TryGetValue(WatingToCreate_Chunks[0], out obj)) 
+                if (Allchunks.TryGetValue(WatingToCreate_Chunks[0], out obj))
                 {
 
                     if (obj.isShow == false)
@@ -891,7 +891,7 @@ public class World : MonoBehaviour
                         obj.ShowChunk();
 
                     }
-                    
+
                 }
                 else
                 {
@@ -988,7 +988,7 @@ public class World : MonoBehaviour
         {
             _chunk_temp = new Chunk(_ChunkLocation, this, false);
         }
-        
+
 
         //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
         //Chunk chunktemp = chunkGameObject.AddComponent<Chunk>();
@@ -1114,7 +1114,7 @@ public class World : MonoBehaviour
                 {
 
                     Chunk_HideOrRemove(WatingToRemove_Chunks[0]);
-                    
+
                     WatingToRemove_Chunks.RemoveAt(0);
 
                 }
@@ -1263,7 +1263,7 @@ public class World : MonoBehaviour
     IEnumerator Mesh_0()
     {
 
-        while(true)
+        while (true)
         {
 
             if (MeshLock == false)
@@ -1288,7 +1288,7 @@ public class World : MonoBehaviour
                 }
 
 
-                
+
 
             }
 
@@ -1301,10 +1301,10 @@ public class World : MonoBehaviour
 
 
 
-       
-        
 
-        
+
+
+
     }
 
 
@@ -1462,6 +1462,13 @@ public class World : MonoBehaviour
     //变成给定的群系噪声
     public float GetTotalNoiseHigh_Biome(int _x, int _z, Vector3 _myposition, int _WorldType)
     {
+        if (_x < 0 || _x > VoxelData.ChunkWidth || _z < 0 || _z > VoxelData.ChunkWidth)
+        {
+            print($"GetTotalNoiseHigh_Biome出界,{_x},{_z}");
+            return 128f;
+        }
+
+
         //默认
         if (_WorldType == VoxelData.Biome_Default)
         {
@@ -1664,7 +1671,7 @@ public class World : MonoBehaviour
     //------------------------------------工具------------------------------------------------
 
     //给定日期，将pointsaving修改为给定参数
-    public String PointSaving = "";
+    [HideInInspector] public String PointSaving = "";
     public void SelectSaving(String _PointSaving)
     {
         PointSaving = _PointSaving;
@@ -2405,16 +2412,16 @@ public class World : MonoBehaviour
 
     }
 
-    public float XOFFSET;
-    public float YOFFSET;
-    public float ZOFFSET;
+    //public float XOFFSET;
+    //public float YOFFSET;
+    //public float ZOFFSET;
 
     public Vector3 CollisionOffset(Vector3 _realPos, byte _targetType)
     {
         Vector3 _input = new Vector3(player.horizontalInput, player.Facing.y, player.verticalInput);
-        float _x = _realPos.x; Vector2 _xRange = blocktypes[_targetType].CollosionRange.xRange; float _xOffset = _x - (int)_x; XOFFSET = _xOffset;
-        float _y = _realPos.y; Vector2 _yRange = blocktypes[_targetType].CollosionRange.yRange; float _yOffset = _y - (int)_y; YOFFSET = _yOffset;
-        float _z = _realPos.z; Vector2 _zRange = blocktypes[_targetType].CollosionRange.zRange; float _zOffset = _z - (int)_z; ZOFFSET = _zOffset;
+        float _x = _realPos.x; Vector2 _xRange = blocktypes[_targetType].CollosionRange.xRange; float _xOffset = _x - (int)_x; 
+        float _y = _realPos.y; Vector2 _yRange = blocktypes[_targetType].CollosionRange.yRange; float _yOffset = _y - (int)_y; 
+        float _z = _realPos.z; Vector2 _zRange = blocktypes[_targetType].CollosionRange.zRange; float _zOffset = _z - (int)_z;
 
 
         //X
