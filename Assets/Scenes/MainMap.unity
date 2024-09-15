@@ -35,7 +35,7 @@ RenderSettings:
   m_DefaultReflectionMode: 0
   m_DefaultReflectionResolution: 128
   m_ReflectionBounces: 1
-  m_ReflectionIntensity: 1
+  m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
   m_UseRadianceAmbientProbe: 0
@@ -1402,17 +1402,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edde10e4b15a4bd4a92b3028af0feaa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isNight: 0
   managerhub: {fileID: 843154432}
-  CurrentTime: 16.8
+  CurrentTime: 12
   value: 0
   second_GameOneHour: 30
-  checkInterval: 10
-  fogTransitionTime: 2
+  "\u5929\u5F00\u59CB\u53D8\u9ED1": {x: 15, y: 19}
+  "\u5929\u5F00\u59CB\u53D8\u4EAE": {x: 4, y: 8}
+  fogTransitionTime: 5
   FogDayDistance: {x: 40, y: 80}
   FogCaveDistance: {x: 0, y: 20}
   SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
   SkyboxRange: {x: 0, y: 1}
-  eyes: {fileID: 0}
   FogDayColor: {r: 0.48235294, g: 0.63529414, b: 1, a: 0}
   FogNightColor: {r: 0, g: 0, b: 0, a: 0}
   BlocksMaterial: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
@@ -3639,7 +3640,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: "\u4FDD\u5B58\u5E76\u8FD4\u56DE\u5230\u6807\u9898\u754C\u9762"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9f63ed49d2860954984e19b4fe97fef1, type: 2}
   m_sharedMaterial: {fileID: -488709357521393366, guid: 9f63ed49d2860954984e19b4fe97fef1, type: 2}
@@ -13271,6 +13272,7 @@ GameObject:
   m_Component:
   - component: {fileID: 438324208}
   - component: {fileID: 438324209}
+  - component: {fileID: 438324210}
   m_Layer: 0
   m_Name: Debug Manager
   m_TagString: Untagged
@@ -13311,6 +13313,18 @@ MonoBehaviour:
   Content: {fileID: 928502477}
   blockitem: {fileID: 6026453003721354756, guid: a586869b70e315c43a35ba280031ade8, type: 3}
   LeftText: {fileID: 439713266}
+--- !u!114 &438324210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 438324207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9668efa270903f49b2a2fe9fecfae2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &439713263
 GameObject:
   m_ObjectHideFlags: 0
@@ -15773,7 +15787,7 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 0.9764151, g: 0.9764151, b: 0.69085974, a: 1}
-  m_Intensity: 3
+  m_Intensity: 5
   m_Range: 15
   m_SpotAngle: 80
   m_InnerSpotAngle: 1
@@ -19906,9 +19920,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1026571032}
         m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
-        m_MethodName: 
+        m_MethodName: SaveAndBackToMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19917,7 +19931,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 0
+        m_CallState: 2
 --- !u!114 &650041215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21178,6 +21192,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5a2505646a31148878c810f0e06954, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
+  "\u65E0\u9ED1\u591C\u6A21\u5F0F": 1
+  managerhub: {fileID: 843154432}
   canvasManager: {fileID: 1026571032}
   player: {fileID: 1504082080}
   isFinishSaving: 0
@@ -26103,6 +26120,7 @@ MonoBehaviour:
   timeManager: {fileID: 22826878}
   world: {fileID: 699955241}
   player: {fileID: 1504082080}
+  fpsmManaer: {fileID: 438324210}
 --- !u!1 &844456349
 GameObject:
   m_ObjectHideFlags: 0
@@ -67416,6 +67434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isConsoleActive: 0
+  managerhub: {fileID: 843154432}
   world: {fileID: 699955241}
   player: {fileID: 1504082080}
   backpackmanager: {fileID: 2136429365}
@@ -67433,6 +67452,10 @@ MonoBehaviour:
     command: /load
   - name: "\u7ED9\u4E0E\u624B\u4E2D\u65B9\u5757"
     command: /give
+  - name: "\u66F4\u65B0\u663C\u591C"
+    command: /time
+  - name: "\u6539\u53D8\u5E27\u6570"
+    command: /fps
   "\u5916\u7F6E\u6D88\u606F\u680F":
   - {fileID: 1634312355473790388}
   - {fileID: 1634312355615600238}

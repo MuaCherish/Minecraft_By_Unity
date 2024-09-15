@@ -78,7 +78,7 @@ public class DebugManager : MonoBehaviour
 
         //update
         //LeftText.text += $"\n";
-        LeftText.text = $"Ö¡Êý: {fps:F2}\n";
+        LeftText.text = $"Ö¡Êý: {managerHub.fpsmManaer.fps:F2}\n";
         LeftText.text += $"\n";
         LeftText.text += $"[Player]\n";
         LeftText.text += $"³¯Ïò: {CalculateFacing()}\n";

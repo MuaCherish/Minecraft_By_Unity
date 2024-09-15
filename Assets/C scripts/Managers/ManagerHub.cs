@@ -13,4 +13,5 @@ public class ManagerHub : MonoBehaviour
     public TimeManager timeManager;
     public World world;
     public Player player;
+    public FPS fpsmManaer;
 }

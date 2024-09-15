@@ -285,10 +285,16 @@ public class Player : MonoBehaviour
 
             }
 
+
+            if (transform.position.y < -20f)
+            {
+                lifemanager.UpdatePlayerBlood(100, true, true);
+            }
+
         }
 
         
-
+         
     }
 
 
@@ -342,16 +348,17 @@ public class Player : MonoBehaviour
 
 
             // 每隔一段时间检查一次
-            //if (Time.time >= isInCave_nextCheckTime)
-            //{
-            //    //print($"{Time.time}");
-            //    CheckisInCave();
-            //    isInCave_nextCheckTime = Time.time + isInCave_checkInterval; // 设置下一次检查的时间
-            //}
+            if (Time.time >= isInCave_nextCheckTime)
+            {
+                //print($"{Time.time}");
+                CheckisInCave();
+                isInCave_nextCheckTime = Time.time + isInCave_checkInterval; // 设置下一次检查的时间
+            }
+
+
         }
 
     }
-
 
     //更新isInCave状态
     public void CheckisInCave()
@@ -360,12 +367,13 @@ public class Player : MonoBehaviour
         float playerY = cam.position.y + 4;
         Vector3 RelaPosition = managerhub.world.GetRelalocation(cam.position);
         Vector3 _ChunkLocation = managerhub.world.GetChunkLocation(cam.position);
-        //print(RelaPosition);
+
+        //print($"RelaPosition: {RelaPosition} , ChunkLocation = {_ChunkLocation}");
         float NoiseY = managerhub.world.GetTotalNoiseHigh_Biome((int)RelaPosition.x, (int)RelaPosition.z, new Vector3((int)_ChunkLocation.x * 16f, 0f, (int)_ChunkLocation.z * 16f), managerhub.world.worldSetting.worldtype);
 
-        
-
         //print($"PlayerY：{playerY} , NoiseY：{NoiseY} , 差: {NoiseY - playerY}");
+
+
 
         // 检查眼睛所在位置是否处于地表以下，将Fog改为近距离黑色迷雾
         if (playerY < NoiseY)
@@ -374,7 +382,7 @@ public class Player : MonoBehaviour
             {
                 //print("迷雾开启");
                 // 开始迷雾过渡到洞穴状态
-                //Buff_CaveFog(true);
+                managerhub.timeManager.Buff_CaveFog(true);
                 isInCave = true;
             }
         }
@@ -384,7 +392,11 @@ public class Player : MonoBehaviour
             {
                 //print("迷雾关闭");
                 // 开始迷雾过渡到白天状态
-                //Buff_CaveFog(false);
+                if (!managerhub.timeManager.isNight)
+                {
+                    managerhub.timeManager.Buff_CaveFog(false);
+                }
+                
                 isInCave = false;
             }
         }
@@ -518,7 +530,7 @@ public class Player : MonoBehaviour
             currentViewChangeCoroutine = StartCoroutine(expandchangeview(true));
             expandview = true;
         }
-        else if ((!isSprinting || !isMoving) && expandview)
+        else if ((!isSprinting || !isMoving) && expandview && !isFlying)
         {
             // 如果有协程正在运行，先停止它
             if (currentViewChangeCoroutine != null)
@@ -630,7 +642,10 @@ public class Player : MonoBehaviour
 
                 if (((Time.time - lastJumpTime) < doubleTapInterval) && jump_press == 1)
                 {
-    
+                    if (isSprinting)
+                    {
+                        isSprinting = false;
+                    }
                    
                     //改变视野
                     if (!isFlying)
@@ -782,8 +797,8 @@ public class Player : MonoBehaviour
             Vector3 _raycastNow = RayCast_now();
             byte _targettype = world.GetBlockType(_raycastNow);
 
-            //如果是工作台，则打开ui
-            if (world.blocktypes[_targettype].isinteractable)
+            //如果是可互动方块
+            if (_targettype < world.blocktypes.Length && world.blocktypes[_targettype].isinteractable)
             {
                 print("isinteractable");
 

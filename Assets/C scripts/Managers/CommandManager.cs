@@ -15,6 +15,7 @@ public class CommandManager : MonoBehaviour
     [ReadOnly]public bool isConsoleActive = false; // 标志位，跟踪控制台的激活状态
 
     [Header("Transforms")]
+    public ManagerHub managerhub;
     public World world;
     public Player player;
     public BackPackManager backpackmanager;
@@ -163,28 +164,33 @@ public class CommandManager : MonoBehaviour
         //执行指令
         switch (index)
         {
-            //打印
+            
+
+            //print
             case 0:
 
             // 提取参数
             return "<系统消息> " + _input.Substring(6).Trim(); // 提取 "/print " 后面的内容并去除首尾空格
 
-
+            //save
             case 1:
                 //world.ClassifyWorldData();
                 _color = Color.red;
                 return "<系统消息> " + "该指令已停用"; 
 
-
+            //dead
             case 2:
                 lifemanager.UpdatePlayerBlood(30, true, true);
                 DeactivateConsole();
                 return "<系统消息> " + "玩家已死亡";
                  
+            //load
             case 3:
-                world.LoadAllSaves(world.savingPATH + "\\Saves");
-                return "<系统消息> " + "正在尝试读取存档";
+                //world.LoadAllSaves(world.savingPATH + "\\Saves");
+                _color = Color.red;
+                return "<系统消息> " + "该指令已停用";
 
+            //give
             case 4:
                 string pattern = @"\/give\s+(\d+)";
 
@@ -221,9 +227,92 @@ public class CommandManager : MonoBehaviour
                 {
                     _color = Color.red;
                     return "<系统消息> " + "id转换失败";
-                } 
-                
+                }
 
+            //time
+            case 5:
+                string pattern5 = @"\/time\s+(\d+)";
+
+                // 使用正则表达式匹配数字
+                Match match5 = Regex.Match(_input, pattern5);
+
+                if (match5.Success)
+                {
+                    string numberString = match5.Groups[1].Value;
+
+                    if (byte.TryParse(numberString, out byte number))
+                    {
+                        //Debug.Log("提取并转换的数字: " + number);
+
+                        if (number >= 0 && number <= 24)
+                        {
+
+                            managerhub.timeManager.SetTime(number);
+
+                            return "<系统消息> " + $"已将时间更新至{number}时";
+                        }
+                        else
+                        {
+                            return "<系统消息> " + "时间必须为24小时制";
+                        }
+                    }
+                    else
+                    {
+                        return "<系统消息> " + "time转换失败";
+                    }
+
+                }
+                else
+                {
+                    _color = Color.red;
+                    return "<系统消息> " + "time转换失败";
+                }
+
+            //fps
+            case 6:
+                string pattern6 = @"\/fps\s+(\d+)";
+
+                // 使用正则表达式匹配数字
+                Match match6 = Regex.Match(_input, pattern6);
+
+                if (match6.Success)
+                {
+                    string numberString = match6.Groups[1].Value;
+
+                    if (byte.TryParse(numberString, out byte number))
+                    {
+                        //Debug.Log("提取并转换的数字: " + number);
+
+                        if (number >= 0)
+                        {
+                            if (number == 0)
+                            {
+                                Application.targetFrameRate = -1;
+                            }
+                            else
+                            {
+                                Application.targetFrameRate = number;
+                            }
+                            
+
+                            return "<系统消息> " + $"已将帧数更新至{number}时";
+                        }
+                        else
+                        {
+                            return "<系统消息> " + "帧数不可为负数, 0为解除帧数限制";
+                        }
+                    }
+                    else
+                    {
+                        return "<系统消息> " + "fps转换失败";
+                    }
+
+                }
+                else
+                {
+                    _color = Color.red;
+                    return "<系统消息> " + "fps转换失败";
+                }
             //在这里添加新指令----------------------------
             //没有找到
             default:

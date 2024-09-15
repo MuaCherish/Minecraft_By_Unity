@@ -2584,12 +2584,12 @@ public class Chunk : MonoBehaviour
         {
             Vector3 relaposition = world.GetRelalocation(_EditList[i].editPos);
 
-            int x = Mathf.FloorToInt(relaposition.x);
-            int y = Mathf.FloorToInt(relaposition.y);
-            int z = Mathf.FloorToInt(relaposition.z);
+            int _x = Mathf.FloorToInt(relaposition.x);
+            int _y = Mathf.FloorToInt(relaposition.y);
+            int _z = Mathf.FloorToInt(relaposition.z);
 
             // 出界就跳过
-            if (isOutOfRange(x, y, z))
+            if (isOutOfRange(_x, _y, _z))
             {
                 continue;
             }
@@ -2600,8 +2600,14 @@ public class Chunk : MonoBehaviour
                 continue;
             }
 
+            //基岩也跳过
+            if (voxelMap[_x, _y, _z].voxelType == VoxelData.BedRock)
+            {
+                continue;
+            }
+
             // 设置方块类型
-            voxelMap[x, y, z].voxelType = _EditList[i].targetType;
+            voxelMap[_x, _y, _z].voxelType = _EditList[i].targetType;
         }
 
         // 更新区块网格

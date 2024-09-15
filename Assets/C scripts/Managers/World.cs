@@ -58,8 +58,12 @@ public enum Facing2d
 
 public class World : MonoBehaviour
 {
-
-    [Header("Transforms")]
+    [Header("状态")]
+    public bool 低区块模式; private bool hasExec_低区块模式 = true;
+    public bool 无黑夜模式; private bool hasExec_无黑夜模式 = true;
+     
+    [Header("引用")]
+    public ManagerHub managerhub;
     public CanvasManager canvasManager;
     public Player player;
 
@@ -210,9 +214,6 @@ public class World : MonoBehaviour
     private void Start()
     {
 
-        //帧数
-        Application.targetFrameRate = -1;
-
         InitWorldManager();
 
     }
@@ -247,7 +248,7 @@ public class World : MonoBehaviour
         TheSaving = new List<SavingData>();
         EditNumber = new List<EditStruct>();
         //savingDatas = new List<SavingData>();
-        renderSize = 5;
+        renderSize = 10;
         StartToRender = 1f;
         DestroySize = 7f;
         Start_Position = new Vector3(1600f, 127f, 1600f);
@@ -408,7 +409,24 @@ public class World : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if (低区块模式 && hasExec_低区块模式)
+        {
+            renderSize = 2;
 
+            hasExec_低区块模式 = false;
+        }
+
+        if (无黑夜模式 && hasExec_无黑夜模式)
+        {
+
+            managerhub.timeManager.gameObject.SetActive(false);
+
+            hasExec_无黑夜模式 = false;
+        }
+
+    }
 
 
     //---------------------------------------------------------------------------------------
@@ -531,8 +549,10 @@ public class World : MonoBehaviour
     {
         if (Init_Map_Thread_NoInit_Coroutine == null)
         {
-            print("玩家移动太快！Center_Now已更新");
+            //print("玩家移动太快！Center_Now已更新");
             Init_Map_Thread_NoInit_Coroutine = StartCoroutine(Init_Map_Thread_NoInit());
+
+            managerhub.timeManager.UpdateDayFogDistance();
             HideFarChunks();
         }
     }
@@ -1466,6 +1486,11 @@ public class World : MonoBehaviour
         {
             print($"GetTotalNoiseHigh_Biome出界,{_x},{_z}");
             return 128f;
+        }
+
+        if (_WorldType == VoxelData.Biome_SuperPlain)
+        {
+            return 0f;
         }
 
 

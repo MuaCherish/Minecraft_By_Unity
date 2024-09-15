@@ -1201,6 +1201,7 @@ public class CanvasManager : MonoBehaviour
 
     IEnumerator Animation_Openyoureyes()
     {
+        OpenYourEyes.SetActive(true);
         Image image = OpenYourEyes.GetComponent<Image>();
 
         // 记录渐变开始的时间
