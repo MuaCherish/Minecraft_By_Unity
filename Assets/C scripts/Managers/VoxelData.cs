@@ -117,6 +117,14 @@ public static class VoxelData
     public static readonly Byte Mushroom_brown = 37;
     public static readonly Byte Redbrick = 38;
     public static readonly Byte Furnace = 39;
+    public static readonly Byte JukeBox = 40; //唱片机
+    public static readonly Byte Wool_Green = 41;
+    public static readonly Byte Wool_White = 42;
+    public static readonly Byte Wool_Red = 43;
+    public static readonly Byte Wool_Pink = 44;
+    public static readonly Byte Chest = 45;
+    public static readonly Byte Gravel = 46; //沙砾
+    public static readonly Byte Glass_Plane = 47;
 
     //音乐宏定义
     //宏定义
@@ -207,7 +215,7 @@ public static class VoxelData
     public static readonly int ChunkWidth = 16;
     public static readonly int ChunkHeight = 128;
 
-    public static readonly int TextureAtlasSizeInBlocks = 8;
+    public static readonly int TextureAtlasSizeInBlocks = 16;
 
     public static float NormalizedBlockTextureSize
     {

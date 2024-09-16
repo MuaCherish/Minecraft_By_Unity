@@ -15,7 +15,7 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 1
-  m_FogColor: {r: 0.48235294, g: 0.63529414, b: 1, a: 1}
+  m_FogColor: {r: 0.70980394, g: 0.81960785, b: 1, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.01
   m_LinearFogStart: 40
@@ -23,9 +23,9 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 0
+  m_AmbientIntensity: 2
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SubtractiveShadowColor: {r: 0.70980394, g: 0.81960785, b: 1, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
   m_HaloStrength: 0.226
   m_FlareStrength: 1
@@ -1033,7 +1033,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &12780966
@@ -1368,6 +1368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 22826876}
   - component: {fileID: 22826878}
+  - component: {fileID: 22826879}
   m_Layer: 0
   m_Name: Time Manager
   m_TagString: Untagged
@@ -1406,19 +1407,35 @@ MonoBehaviour:
   managerhub: {fileID: 843154432}
   CurrentTime: 12
   value: 0
-  second_GameOneHour: 30
+  second_GameOneHour: 0.1
   "\u5929\u5F00\u59CB\u53D8\u9ED1": {x: 15, y: 19}
   "\u5929\u5F00\u59CB\u53D8\u4EAE": {x: 4, y: 8}
   fogTransitionTime: 5
   FogDayDistance: {x: 40, y: 80}
   FogCaveDistance: {x: 0, y: 20}
   SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
-  SkyboxRange: {x: 0, y: 1}
-  FogDayColor: {r: 0.48235294, g: 0.63529414, b: 1, a: 0}
-  FogNightColor: {r: 0, g: 0, b: 0, a: 0}
+  SkyboxRange: {x: 0.2, y: 1}
+  FogDayColor: {r: 0.70980394, g: 0.81960785, b: 1, a: 0}
+  FogNightColor: {r: 0.14117648, g: 0.16470589, b: 0.2, a: 0}
   BlocksMaterial: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
   BlocksDayColor: {r: 0.56078434, g: 0.4392157, b: 0.1764706, a: 1}
   BlocksNightColor: {r: 0.101960786, g: 0.078431375, b: 0.05490196, a: 1}
+--- !u!114 &22826879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22826875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f4b1715f8df71d46876fc88e8ccb9b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  managerhub: {fileID: 843154432}
+  Sun: {fileID: 721510844}
+  Moon: {fileID: 1599086483}
+  radius: 320
 --- !u!1 &23726926
 GameObject:
   m_ObjectHideFlags: 0
@@ -2452,7 +2469,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &75738955
@@ -14455,7 +14472,7 @@ Transform:
   m_LocalScale: {x: 1000, y: 1000, z: 1000}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 849052400}
+  m_Father: {fileID: 660013532}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &478917743
 GameObject:
@@ -20269,6 +20286,40 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1504082081}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &660013531
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 660013532}
+  m_Layer: 0
+  m_Name: Sky
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &660013532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 660013531}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 721510844}
+  - {fileID: 1599086483}
+  - {fileID: 477460493}
+  m_Father: {fileID: 849052400}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &660519806
 GameObject:
   m_ObjectHideFlags: 0
@@ -21193,7 +21244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
-  "\u65E0\u9ED1\u591C\u6A21\u5F0F": 1
+  "\u65E0\u9ED1\u591C\u6A21\u5F0F": 0
   managerhub: {fileID: 843154432}
   canvasManager: {fileID: 1026571032}
   player: {fileID: 1504082080}
@@ -21228,21 +21279,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -1452361369, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -1452361369, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -1452361369, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -1452361369, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 1511832494, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 1511832494, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 1511832494, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 1511832494, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
     broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
-    backFaceTexture: 17
-    frontFaceTexture: 17
-    topFaceTexture: 17
-    bottomFaceTexture: 17
-    leftFaceTexture: 17
-    rightFaceTexture: 17
+    backFaceTexture: 33
+    frontFaceTexture: 33
+    topFaceTexture: 33
+    bottomFaceTexture: 33
+    leftFaceTexture: 33
+    rightFaceTexture: 33
     DrawMode: 0
   - blockName: Stone
     DestroyTime: 2
@@ -21257,10 +21308,10 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 333729440, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 333729440, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 333729440, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 333729440, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 75776795, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 75776795, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 75776795, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 75776795, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: e963f3daaa4495345b08255f3d6d3eed, type: 3}
     - {fileID: 8300000, guid: 0902d3ef50b317f42a877d8372019f63, type: 3}
@@ -21286,10 +21337,10 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 305990985, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 305990985, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 1827831788, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 479296534, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 479296534, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -1488969610, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -21297,7 +21348,7 @@ MonoBehaviour:
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
     backFaceTexture: 2
     frontFaceTexture: 2
-    topFaceTexture: 11
+    topFaceTexture: 19
     bottomFaceTexture: 1
     leftFaceTexture: 2
     rightFaceTexture: 2
@@ -21315,10 +21366,10 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -21373,21 +21424,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -400092189, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -400092189, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -400092189, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -400092189, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 2137020597, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 2137020597, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 2137020597, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 2137020597, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: b0697e5631dae5a408849ff947463fd5, type: 3}
     - {fileID: 8300000, guid: 4f4be7ba4daf2af4081b9bbc8c69af4a, type: 3}
     broking_clip: {fileID: 8300000, guid: d6481a9f22fc0f749a18acdc4a33a6f2, type: 3}
     broken_clip: {fileID: 8300000, guid: 7b57a43064dacd844b14e74b13585053, type: 3}
-    backFaceTexture: 18
-    frontFaceTexture: 18
-    topFaceTexture: 18
-    bottomFaceTexture: 18
-    leftFaceTexture: 18
-    rightFaceTexture: 18
+    backFaceTexture: 34
+    frontFaceTexture: 34
+    topFaceTexture: 34
+    bottomFaceTexture: 34
+    leftFaceTexture: 34
+    rightFaceTexture: 34
     DrawMode: 0
   - blockName: wood
     DestroyTime: 3.1
@@ -21402,21 +21453,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 777695519, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 777695519, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 898754996, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 898754996, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -2032363236, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -870017175, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -2032363236, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -2032363236, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
     broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
-    backFaceTexture: 9
-    frontFaceTexture: 9
-    topFaceTexture: 10
-    bottomFaceTexture: 10
-    leftFaceTexture: 9
-    rightFaceTexture: 9
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 18
+    bottomFaceTexture: 18
+    leftFaceTexture: 17
+    rightFaceTexture: 17
     DrawMode: 0
   - blockName: leave
     DestroyTime: 0.4
@@ -21431,21 +21482,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 57274125, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 57274125, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 57274125, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 57274125, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -937306073, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -937306073, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -937306073, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -937306073, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: 55338325c6ae6ff47887ffaf54a2fcad, type: 3}
-    backFaceTexture: 12
-    frontFaceTexture: 12
-    topFaceTexture: 12
-    bottomFaceTexture: 12
-    leftFaceTexture: 12
-    rightFaceTexture: 12
+    backFaceTexture: 20
+    frontFaceTexture: 20
+    topFaceTexture: 20
+    bottomFaceTexture: 20
+    leftFaceTexture: 20
+    rightFaceTexture: 20
     DrawMode: 0
   - blockName: water
     DestroyTime: 0
@@ -21469,12 +21520,12 @@ MonoBehaviour:
     - {fileID: 0}
     broking_clip: {fileID: 0}
     broken_clip: {fileID: 0}
-    backFaceTexture: 4
-    frontFaceTexture: 4
-    topFaceTexture: 4
-    bottomFaceTexture: 4
-    leftFaceTexture: 4
-    rightFaceTexture: 4
+    backFaceTexture: 255
+    frontFaceTexture: 255
+    topFaceTexture: 255
+    bottomFaceTexture: 255
+    leftFaceTexture: 255
+    rightFaceTexture: 255
     DrawMode: 4
   - blockName: Coal
     DestroyTime: 3
@@ -21489,10 +21540,10 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 1944043365, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 1944043365, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 1944043365, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 1944043365, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -1076829975, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -1076829975, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -1076829975, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -1076829975, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21518,10 +21569,10 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -1652942934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -1652942934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -202250220, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -202250220, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 1513870991, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 1513870991, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -134501385, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -134501385, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
@@ -21556,12 +21607,12 @@ MonoBehaviour:
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 14
-    frontFaceTexture: 14
-    topFaceTexture: 14
-    bottomFaceTexture: 14
-    leftFaceTexture: 14
-    rightFaceTexture: 14
+    backFaceTexture: 22
+    frontFaceTexture: 22
+    topFaceTexture: 22
+    bottomFaceTexture: 22
+    leftFaceTexture: 22
+    rightFaceTexture: 22
     DrawMode: 1
   - blockName: whiteFlower_1
     DestroyTime: 0.1
@@ -21576,21 +21627,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -1659613991, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -1659613991, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -1659613991, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -1659613991, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -1995264521, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -1995264521, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -1995264521, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -1995264521, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 15
-    frontFaceTexture: 15
-    topFaceTexture: 15
-    bottomFaceTexture: 15
-    leftFaceTexture: 15
-    rightFaceTexture: 15
+    backFaceTexture: 23
+    frontFaceTexture: 23
+    topFaceTexture: 23
+    bottomFaceTexture: 23
+    leftFaceTexture: 23
+    rightFaceTexture: 23
     DrawMode: 1
   - blockName: whiteFlower_2
     DestroyTime: 0.1
@@ -21605,21 +21656,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 62530077, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 62530077, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 62530077, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 62530077, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 294878490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 294878490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 294878490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 294878490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 22
-    frontFaceTexture: 22
-    topFaceTexture: 22
-    bottomFaceTexture: 22
-    leftFaceTexture: 22
-    rightFaceTexture: 22
+    backFaceTexture: 38
+    frontFaceTexture: 38
+    topFaceTexture: 38
+    bottomFaceTexture: 38
+    leftFaceTexture: 38
+    rightFaceTexture: 38
     DrawMode: 1
   - blockName: yellowFlower
     DestroyTime: 0.1
@@ -21634,21 +21685,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -512954133, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -512954133, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -512954133, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -512954133, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 20
-    frontFaceTexture: 20
-    topFaceTexture: 20
-    bottomFaceTexture: 20
-    leftFaceTexture: 20
-    rightFaceTexture: 20
+    backFaceTexture: 36
+    frontFaceTexture: 36
+    topFaceTexture: 36
+    bottomFaceTexture: 36
+    leftFaceTexture: 36
+    rightFaceTexture: 36
     DrawMode: 1
   - blockName: torch
     DestroyTime: 0.4
@@ -21663,21 +21714,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -1083913025, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -1083913025, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -1083913025, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -1083913025, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -1617832153, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -1617832153, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -1617832153, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -1617832153, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
     broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
-    backFaceTexture: 21
-    frontFaceTexture: 21
-    topFaceTexture: 28
-    bottomFaceTexture: 28
-    leftFaceTexture: 21
-    rightFaceTexture: 21
+    backFaceTexture: 37
+    frontFaceTexture: 37
+    topFaceTexture: 37
+    bottomFaceTexture: 37
+    leftFaceTexture: 37
+    rightFaceTexture: 37
     DrawMode: 1
   - blockName: Cactus
     DestroyTime: 2
@@ -21692,21 +21743,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -900187783, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -900187783, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 1735976878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 1735976878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 1270823066, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 1270823066, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 1757426451, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 1757426451, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 76a8b350f474d524d9716cceed894035, type: 3}
     broken_clip: {fileID: 8300000, guid: 5080f508bd8293a42ad2bd55adfd0cb5, type: 3}
-    backFaceTexture: 30
-    frontFaceTexture: 30
-    topFaceTexture: 29
-    bottomFaceTexture: 29
-    leftFaceTexture: 30
-    rightFaceTexture: 30
+    backFaceTexture: 54
+    frontFaceTexture: 54
+    topFaceTexture: 53
+    bottomFaceTexture: 53
+    leftFaceTexture: 54
+    rightFaceTexture: 54
     DrawMode: 0
   - blockName: TNT
     DestroyTime: 0.5
@@ -21721,21 +21772,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 651666517, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 651666517, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -726523756, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -874158237, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -234706480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -234706480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -1648070132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -1828174737, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: d6481a9f22fc0f749a18acdc4a33a6f2, type: 3}
     broken_clip: {fileID: 8300000, guid: 7b57a43064dacd844b14e74b13585053, type: 3}
-    backFaceTexture: 33
-    frontFaceTexture: 33
-    topFaceTexture: 32
-    bottomFaceTexture: 34
-    leftFaceTexture: 33
-    rightFaceTexture: 33
+    backFaceTexture: 65
+    frontFaceTexture: 65
+    topFaceTexture: 64
+    bottomFaceTexture: 66
+    leftFaceTexture: 65
+    rightFaceTexture: 5
     DrawMode: 0
   - blockName: WorkTable
     DestroyTime: 2
@@ -21750,21 +21801,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 1764375263, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 1844614519, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -717572117, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 429198258, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -1876818674, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 1837824407, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -1248260401, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -274910487, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
     broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
-    backFaceTexture: 41
-    frontFaceTexture: 42
-    topFaceTexture: 40
-    bottomFaceTexture: 43
-    leftFaceTexture: 41
-    rightFaceTexture: 41
+    backFaceTexture: 81
+    frontFaceTexture: 82
+    topFaceTexture: 80
+    bottomFaceTexture: 83
+    leftFaceTexture: 81
+    rightFaceTexture: 81
     DrawMode: 0
   - blockName: Pumpkin
     DestroyTime: 2
@@ -21779,21 +21830,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -1610743620, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 511761314, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 699121445, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 120298596, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 1643297714, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 752758839, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 632610796, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -533544242, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 76a8b350f474d524d9716cceed894035, type: 3}
     broken_clip: {fileID: 8300000, guid: 5080f508bd8293a42ad2bd55adfd0cb5, type: 3}
-    backFaceTexture: 50
-    frontFaceTexture: 49
-    topFaceTexture: 48
-    bottomFaceTexture: 51
-    leftFaceTexture: 50
-    rightFaceTexture: 50
+    backFaceTexture: 98
+    frontFaceTexture: 97
+    topFaceTexture: 96
+    bottomFaceTexture: 99
+    leftFaceTexture: 98
+    rightFaceTexture: 98
     DrawMode: 0
   - blockName: Glass
     DestroyTime: 0.2
@@ -21808,21 +21859,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 988205898, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 988205898, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 988205898, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 988205898, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 60
-    frontFaceTexture: 60
-    topFaceTexture: 60
-    bottomFaceTexture: 60
-    leftFaceTexture: 60
-    rightFaceTexture: 60
+    backFaceTexture: 116
+    frontFaceTexture: 116
+    topFaceTexture: 116
+    bottomFaceTexture: 116
+    leftFaceTexture: 116
+    rightFaceTexture: 116
     DrawMode: 0
   - blockName: Blue_Crystal
     DestroyTime: 3
@@ -21837,21 +21888,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -1996991934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -1996991934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -1996991934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -1996991934, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -804561095, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -804561095, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -804561095, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -804561095, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
     broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
-    backFaceTexture: 56
-    frontFaceTexture: 56
-    topFaceTexture: 56
-    bottomFaceTexture: 56
-    leftFaceTexture: 56
-    rightFaceTexture: 56
+    backFaceTexture: 112
+    frontFaceTexture: 112
+    topFaceTexture: 112
+    bottomFaceTexture: 112
+    leftFaceTexture: 112
+    rightFaceTexture: 112
     DrawMode: 0
   - blockName: Diamond
     DestroyTime: 5
@@ -21866,21 +21917,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 1364873069, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 1364873069, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 1364873069, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 1364873069, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
     broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
-    backFaceTexture: 57
-    frontFaceTexture: 57
-    topFaceTexture: 57
-    bottomFaceTexture: 57
-    leftFaceTexture: 57
-    rightFaceTexture: 57
+    backFaceTexture: 113
+    frontFaceTexture: 113
+    topFaceTexture: 113
+    bottomFaceTexture: 113
+    leftFaceTexture: 113
+    rightFaceTexture: 113
     DrawMode: 0
   - blockName: Iron
     DestroyTime: 3
@@ -21895,21 +21946,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -1282353489, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -1282353489, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -1282353489, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -1282353489, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -749339295, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -749339295, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -749339295, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -749339295, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
     broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
-    backFaceTexture: 58
-    frontFaceTexture: 58
-    topFaceTexture: 58
-    bottomFaceTexture: 58
-    leftFaceTexture: 58
-    rightFaceTexture: 58
+    backFaceTexture: 114
+    frontFaceTexture: 114
+    topFaceTexture: 114
+    bottomFaceTexture: 114
+    leftFaceTexture: 114
+    rightFaceTexture: 114
     DrawMode: 0
   - blockName: Gold
     DestroyTime: 3
@@ -21924,21 +21975,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 1313022280, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 1313022280, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 1313022280, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 1313022280, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 223001660, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 223001660, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 223001660, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 223001660, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
     broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
-    backFaceTexture: 59
-    frontFaceTexture: 59
-    topFaceTexture: 59
-    bottomFaceTexture: 59
-    leftFaceTexture: 59
-    rightFaceTexture: 59
+    backFaceTexture: 115
+    frontFaceTexture: 115
+    topFaceTexture: 115
+    bottomFaceTexture: 115
+    leftFaceTexture: 115
+    rightFaceTexture: 115
     DrawMode: 0
   - blockName: bamboo
     DestroyTime: 0.1
@@ -21953,21 +22004,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 890033956, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 890033956, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 890033956, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 890033956, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 1398765871, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 1398765871, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 1398765871, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 1398765871, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 13
-    frontFaceTexture: 13
-    topFaceTexture: 13
-    bottomFaceTexture: 13
-    leftFaceTexture: 13
-    rightFaceTexture: 13
+    backFaceTexture: 21
+    frontFaceTexture: 21
+    topFaceTexture: 21
+    bottomFaceTexture: 21
+    leftFaceTexture: 21
+    rightFaceTexture: 21
     DrawMode: 1
   - blockName: WoodenPlanks
     DestroyTime: 1
@@ -21982,21 +22033,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
     broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
-    backFaceTexture: 8
-    frontFaceTexture: 8
-    topFaceTexture: 8
-    bottomFaceTexture: 8
-    leftFaceTexture: 8
-    rightFaceTexture: 8
+    backFaceTexture: 16
+    frontFaceTexture: 16
+    topFaceTexture: 16
+    bottomFaceTexture: 16
+    leftFaceTexture: 16
+    rightFaceTexture: 16
     DrawMode: 0
   - blockName: Fluor
     DestroyTime: 0.4
@@ -22011,21 +22062,21 @@ MonoBehaviour:
       xRange: {x: 0.4, y: 0.6}
       yRange: {x: 0, y: 1}
       zRange: {x: 0.4, y: 0.6}
-    icon: {fileID: -2051591878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -2051591878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -2051591878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -2051591878, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 984198818, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 984198818, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 984198818, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 984198818, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
     broking_clip: {fileID: 8300000, guid: 76a8b350f474d524d9716cceed894035, type: 3}
     broken_clip: {fileID: 8300000, guid: 5080f508bd8293a42ad2bd55adfd0cb5, type: 3}
-    backFaceTexture: 28
-    frontFaceTexture: 28
-    topFaceTexture: 28
-    bottomFaceTexture: 28
-    leftFaceTexture: 28
-    rightFaceTexture: 28
+    backFaceTexture: 52
+    frontFaceTexture: 52
+    topFaceTexture: 52
+    bottomFaceTexture: 52
+    leftFaceTexture: 52
+    rightFaceTexture: 52
     DrawMode: 0
   - blockName: Bush
     DestroyTime: 0.1
@@ -22040,21 +22091,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -1787871284, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -1787871284, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -1787871284, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -1787871284, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -436829475, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -436829475, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -436829475, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -436829475, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 35
-    frontFaceTexture: 35
-    topFaceTexture: 35
-    bottomFaceTexture: 35
-    leftFaceTexture: 35
-    rightFaceTexture: 35
+    backFaceTexture: 67
+    frontFaceTexture: 67
+    topFaceTexture: 67
+    bottomFaceTexture: 67
+    leftFaceTexture: 67
+    rightFaceTexture: 67
     DrawMode: 1
   - blockName: Snow
     DestroyTime: 1
@@ -22069,10 +22120,10 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -22098,10 +22149,10 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 1900101145, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
@@ -22127,21 +22178,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 230917522, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 230917522, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -1113903611, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -280672338, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 922800950, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 922800950, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 1337056831, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 37
-    frontFaceTexture: 37
-    topFaceTexture: 36
+    backFaceTexture: 69
+    frontFaceTexture: 69
+    topFaceTexture: 68
     bottomFaceTexture: 1
-    leftFaceTexture: 37
-    rightFaceTexture: 37
+    leftFaceTexture: 69
+    rightFaceTexture: 69
     DrawMode: 0
   - blockName: Cobblestone
     DestroyTime: 2
@@ -22156,21 +22207,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -357528127, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -357528127, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -357528127, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -357528127, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 1643857855, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 1643857855, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 1643857855, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 1643857855, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
     broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
-    backFaceTexture: 16
-    frontFaceTexture: 16
-    topFaceTexture: 16
-    bottomFaceTexture: 16
-    leftFaceTexture: 16
-    rightFaceTexture: 16
+    backFaceTexture: 32
+    frontFaceTexture: 32
+    topFaceTexture: 32
+    bottomFaceTexture: 32
+    leftFaceTexture: 32
+    rightFaceTexture: 32
     DrawMode: 0
   - blockName: Door_Up
     DestroyTime: 1
@@ -22185,21 +22236,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0.7, y: 1}
-    icon: {fileID: 238772250, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 238772250, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -1419666490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -1419666490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
     broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
-    backFaceTexture: 44
-    frontFaceTexture: 44
-    topFaceTexture: 8
-    bottomFaceTexture: 8
-    leftFaceTexture: 8
-    rightFaceTexture: 8
+    backFaceTexture: 84
+    frontFaceTexture: 84
+    topFaceTexture: 16
+    bottomFaceTexture: 16
+    leftFaceTexture: 16
+    rightFaceTexture: 16
     DrawMode: 7
   - blockName: Door_Down
     DestroyTime: 1
@@ -22214,21 +22265,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0.7, y: 1}
-    icon: {fileID: -1212529585, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 238772250, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 1565114373, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 1565114373, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
     broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
-    backFaceTexture: 52
-    frontFaceTexture: 52
-    topFaceTexture: 8
-    bottomFaceTexture: 8
-    leftFaceTexture: 8
-    rightFaceTexture: 8
+    backFaceTexture: 100
+    frontFaceTexture: 100
+    topFaceTexture: 16
+    bottomFaceTexture: 16
+    leftFaceTexture: 16
+    rightFaceTexture: 16
     DrawMode: 7
   - blockName: HalfBrick_Wood
     DestroyTime: 1
@@ -22243,21 +22294,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 0.5}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 200605058, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
     broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
-    backFaceTexture: 8
-    frontFaceTexture: 8
-    topFaceTexture: 8
-    bottomFaceTexture: 8
-    leftFaceTexture: 8
-    rightFaceTexture: 8
+    backFaceTexture: 16
+    frontFaceTexture: 16
+    topFaceTexture: 16
+    bottomFaceTexture: 16
+    leftFaceTexture: 16
+    rightFaceTexture: 16
     DrawMode: 6
   - blockName: Mushroom_red
     DestroyTime: 0.1
@@ -22272,21 +22323,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 0.5}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 2043863316, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 2043863316, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 2043863316, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 2043863316, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -1992469322, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -1992469322, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -1992469322, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -1992469322, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 23
-    frontFaceTexture: 23
-    topFaceTexture: 23
-    bottomFaceTexture: 23
-    leftFaceTexture: 23
-    rightFaceTexture: 8
+    backFaceTexture: 39
+    frontFaceTexture: 39
+    topFaceTexture: 39
+    bottomFaceTexture: 39
+    leftFaceTexture: 39
+    rightFaceTexture: 39
     DrawMode: 1
   - blockName: Mushroom_brown
     DestroyTime: 0.1
@@ -22301,21 +22352,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 0.5}
       zRange: {x: 0, y: 1}
-    icon: {fileID: 335869697, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 335869697, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: 335869697, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: 335869697, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 1845019132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 1845019132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 1845019132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 1845019132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
     broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
-    backFaceTexture: 31
-    frontFaceTexture: 31
-    topFaceTexture: 31
-    bottomFaceTexture: 31
-    leftFaceTexture: 31
-    rightFaceTexture: 8
+    backFaceTexture: 55
+    frontFaceTexture: 55
+    topFaceTexture: 55
+    bottomFaceTexture: 55
+    leftFaceTexture: 55
+    rightFaceTexture: 55
     DrawMode: 1
   - blockName: Redbrick
     DestroyTime: 3.1
@@ -22330,21 +22381,21 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 0.5}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -1115113425, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: -1115113425, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -1115113425, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -1115113425, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: 596971128, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 596971128, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 596971128, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 596971128, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
     broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
-    backFaceTexture: 19
-    frontFaceTexture: 19
-    topFaceTexture: 19
-    bottomFaceTexture: 19
-    leftFaceTexture: 19
-    rightFaceTexture: 8
+    backFaceTexture: 35
+    frontFaceTexture: 35
+    topFaceTexture: 35
+    bottomFaceTexture: 35
+    leftFaceTexture: 35
+    rightFaceTexture: 35
     DrawMode: 0
   - blockName: Furnace
     DestroyTime: 3.1
@@ -22359,21 +22410,253 @@ MonoBehaviour:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
-    icon: {fileID: -1293760296, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    sprite: {fileID: 651298740, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    top_sprit: {fileID: -486916034, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
-    buttom_sprit: {fileID: -486916034, guid: 57fb6d871dbaeaf4e882d1bf952bb6ec, type: 3}
+    icon: {fileID: -1348348521, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 2095931267, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -263868062, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -263868062, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     walk_clips:
     - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
     - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
     broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
     broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
-    backFaceTexture: 25
-    frontFaceTexture: 24
-    topFaceTexture: 27
-    bottomFaceTexture: 27
-    leftFaceTexture: 25
-    rightFaceTexture: 25
+    backFaceTexture: 49
+    frontFaceTexture: 48
+    topFaceTexture: 51
+    bottomFaceTexture: 51
+    leftFaceTexture: 49
+    rightFaceTexture: 49
+    DrawMode: 0
+  - blockName: JukeBox
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 1
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 67690352, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 67690352, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 1681274038, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 67690352, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 71
+    frontFaceTexture: 71
+    topFaceTexture: 70
+    bottomFaceTexture: 71
+    leftFaceTexture: 71
+    rightFaceTexture: 71
+    DrawMode: 0
+  - blockName: Wool_Green
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 13249902, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 13249902, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 13249902, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 13249902, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 101
+    frontFaceTexture: 101
+    topFaceTexture: 101
+    bottomFaceTexture: 101
+    leftFaceTexture: 101
+    rightFaceTexture: 101
+    DrawMode: 0
+  - blockName: Wool_White
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -214719595, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -214719595, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -214719595, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -214719595, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 102
+    frontFaceTexture: 102
+    topFaceTexture: 102
+    bottomFaceTexture: 102
+    leftFaceTexture: 102
+    rightFaceTexture: 102
+    DrawMode: 0
+  - blockName: Wool_Red
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1445223779, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -1445223779, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -1445223779, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -1445223779, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 117
+    frontFaceTexture: 117
+    topFaceTexture: 117
+    bottomFaceTexture: 117
+    leftFaceTexture: 117
+    rightFaceTexture: 117
+    DrawMode: 0
+  - blockName: Wool_Pink
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 804032010, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 804032010, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 804032010, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 804032010, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 118
+    frontFaceTexture: 118
+    topFaceTexture: 118
+    bottomFaceTexture: 118
+    leftFaceTexture: 118
+    rightFaceTexture: 118
+    DrawMode: 0
+  - blockName: Chest
+    DestroyTime: 2
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 1
+    isinteractable: 1
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 784903220, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: 116696860, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: 1717838658, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: 1717838658, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 86
+    frontFaceTexture: 87
+    topFaceTexture: 85
+    bottomFaceTexture: 85
+    leftFaceTexture: 86
+    rightFaceTexture: 86
+    DrawMode: 0
+  - blockName: Gravel
+    DestroyTime: 1
+    isSolid: 1
+    isTransparent: 0
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 5
+    frontFaceTexture: 5
+    topFaceTexture: 5
+    bottomFaceTexture: 5
+    leftFaceTexture: 5
+    rightFaceTexture: 5
+    DrawMode: 0
+  - blockName: Glass_Plane
+    DestroyTime: 0.2
+    isSolid: 1
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 116
+    frontFaceTexture: 116
+    topFaceTexture: 116
+    bottomFaceTexture: 116
+    leftFaceTexture: 116
+    rightFaceTexture: 116
     DrawMode: 0
   renderSize: 6
   StartToRender: 1
@@ -23449,6 +23732,90 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 721405054}
   m_CullTransparentMesh: 1
+--- !u!1 &721510842
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 721510844}
+  - component: {fileID: 721510843}
+  m_Layer: 0
+  m_Name: Sun
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!212 &721510843
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 721510842}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: 91b12b50ebe2c1a40b8cf023ffdc4d96, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.08, y: 0.08}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!4 &721510844
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 721510842}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1605.1772, y: 147.07722, z: 804.7155}
+  m_LocalScale: {x: 700, y: 700, z: 700}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 660013532}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &723531004
 GameObject:
   m_ObjectHideFlags: 0
@@ -26443,7 +26810,7 @@ Transform:
   - {fileID: 508673660}
   - {fileID: 2066847385}
   - {fileID: 903731372}
-  - {fileID: 477460493}
+  - {fileID: 660013532}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &849139296
@@ -40239,7 +40606,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1203865586
@@ -47242,7 +47609,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1483585793
@@ -48427,7 +48794,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1521278312
@@ -50357,6 +50724,90 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1598235988}
   m_CullTransparentMesh: 1
+--- !u!1 &1599086482
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1599086483}
+  - component: {fileID: 1599086484}
+  m_Layer: 0
+  m_Name: Moon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1599086483
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599086482}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1605.1772, y: 147.07722, z: 804.7155}
+  m_LocalScale: {x: 700, y: 700, z: 700}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 660013532}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &1599086484
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599086482}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: 2a94a3f613c21274598d2250cf14789f, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.08, y: 0.08}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &1600629439
 GameObject:
   m_ObjectHideFlags: 0
@@ -53393,7 +53844,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1708541543

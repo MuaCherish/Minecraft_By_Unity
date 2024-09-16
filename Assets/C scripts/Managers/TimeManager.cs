@@ -29,7 +29,7 @@ public class TimeManager : MonoBehaviour
 
     [Header("Skybox")]
     public Material SkyboxMaterial;
-    public Vector2 SkyboxRange = new Vector2(0f, 1f);
+    public Vector2 SkyboxRange = new Vector2(0.2f, 1f);
 
     [Header("Fog")]
     public Color FogDayColor;
@@ -80,6 +80,12 @@ public class TimeManager : MonoBehaviour
 
         RenderSettings.fogStartDistance = FogDayDistance.x;
         RenderSettings.fogEndDistance = FogDayDistance.y;
+    }
+
+
+    public float GetCurrentTime()
+    {
+        return CurrentTime;
     }
 
 
@@ -215,7 +221,7 @@ public class TimeManager : MonoBehaviour
                     value = 0;
                 }
 
-                SkyboxMaterial.SetFloat("_Exposure", value);
+                SkyboxMaterial.SetFloat("_Exposure", Mathf.Lerp(SkyboxRange.x, SkyboxRange.y, value));
 
                 if (managerhub.player.isInCave == false)
                 {
@@ -232,7 +238,7 @@ public class TimeManager : MonoBehaviour
             if ((CurrentTime >= 天开始变亮.x && CurrentTime <= 天开始变亮.y) || (CurrentTime >= 天开始变黑.x && CurrentTime <= 天开始变黑.y))
             {
                 //Value百分值
-                if (CurrentTime < 12)
+                if (CurrentTime < 12) 
                 {
                     value = Mathf.InverseLerp(天开始变亮.x, 天开始变亮.y, CurrentTime);
                 }
@@ -242,7 +248,7 @@ public class TimeManager : MonoBehaviour
                 }
 
                 //改变 
-                SkyboxMaterial.SetFloat("_Exposure", value);
+                SkyboxMaterial.SetFloat("_Exposure", Mathf.Lerp(SkyboxRange.x, SkyboxRange.y, value));
 
                 if (managerhub.player.isInCave == false)
                 {
