@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEditor.Progress;
+//using static UnityEditor.Progress;
 
 public class TimeManager : MonoBehaviour
 {

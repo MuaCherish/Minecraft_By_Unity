@@ -1407,7 +1407,7 @@ MonoBehaviour:
   managerhub: {fileID: 843154432}
   CurrentTime: 12
   value: 0
-  second_GameOneHour: 0.1
+  second_GameOneHour: 60
   "\u5929\u5F00\u59CB\u53D8\u9ED1": {x: 15, y: 19}
   "\u5929\u5F00\u59CB\u53D8\u4EAE": {x: 4, y: 8}
   fogTransitionTime: 5
@@ -1418,7 +1418,7 @@ MonoBehaviour:
   FogDayColor: {r: 0.70980394, g: 0.81960785, b: 1, a: 0}
   FogNightColor: {r: 0.14117648, g: 0.16470589, b: 0.2, a: 0}
   BlocksMaterial: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
-  BlocksDayColor: {r: 0.56078434, g: 0.4392157, b: 0.1764706, a: 1}
+  BlocksDayColor: {r: 0.5647059, g: 0.5647059, b: 0.5647059, a: 1}
   BlocksNightColor: {r: 0.101960786, g: 0.078431375, b: 0.05490196, a: 1}
 --- !u!114 &22826879
 MonoBehaviour:
@@ -21243,7 +21243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5a2505646a31148878c810f0e06954, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
+  "\u4F4E\u533A\u5757\u6A21\u5F0F": 0
   "\u65E0\u9ED1\u591C\u6A21\u5F0F": 0
   managerhub: {fileID: 843154432}
   canvasManager: {fileID: 1026571032}
@@ -44058,7 +44058,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1357337470}
-  - component: {fileID: 1357337471}
   m_Layer: 5
   m_Name: "\u8C03\u8BD5"
   m_TagString: Untagged
@@ -44088,18 +44087,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1200}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1357337471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1357337469}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d85c01cba3c50b74fb9510e247a973a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1358774064
 GameObject:
   m_ObjectHideFlags: 0

@@ -3779,15 +3779,16 @@ public class Chunk : MonoBehaviour
     void AddTexture_Bush(int textureID)
     {
 
-        float x = (float)(textureID % 8) / 8;
-        float y = (float)(7 - textureID / 8) / 8;
+
+        float x = (float)(textureID % 16) / 16;
+        float y = (float)(15 - textureID / 16) / 16;
 
         //if (textureID == 35)
         //{
         //    print($"Bush: x = {x},y = {y}");
         //}
 
-        float temp = 1f / 8;
+        float temp = 1f / 16;
         uvs.Add(new Vector2(x, y));
         uvs.Add(new Vector2(x, y + temp));
         uvs.Add(new Vector2(x + temp, y + temp));
