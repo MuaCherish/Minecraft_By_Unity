@@ -10,6 +10,7 @@ public class LifeManager : MonoBehaviour
 
 
     [Header("引用")]
+    public ManagerHub managerhub;
     public World world;
     public MusicManager musicmanager;
     public Player player;
@@ -62,7 +63,6 @@ public class LifeManager : MonoBehaviour
         UpdatePlayerBlood(0, false, false);
         RecoveryCoroutine = null;
     }
-
 
     //更新血条
     public void UpdatePlayerBlood(int hurt, bool isBlind, bool isShakeHead)
@@ -140,6 +140,7 @@ public class LifeManager : MonoBehaviour
         }
         
     }
+
 
     //血条闪烁
     IEnumerator Blink_container()

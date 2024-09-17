@@ -465,7 +465,8 @@ public class CanvasManager : MonoBehaviour
                 //MainCamera.SetActive(false);
 
                 //其他
-                HideCursor();
+                //HideCursor();
+                ToggleMouseVisibilityAndLock(true);
             }
             
 
@@ -475,9 +476,12 @@ public class CanvasManager : MonoBehaviour
         else if (_TargetID == VoxelData.ui玩家)
         {
             // 将鼠标锁定在屏幕中心
-            Cursor.lockState = CursorLockMode.Locked;
-            //鼠标不可视
-            Cursor.visible = false;
+            //Cursor.lockState = CursorLockMode.Locked;
+            ////鼠标不可视
+            //Cursor.visible = false;
+            ToggleMouseVisibilityAndLock(true);
+
+
 
             if (world.game_mode == GameMode.Survival)
             {
@@ -493,15 +497,19 @@ public class CanvasManager : MonoBehaviour
         //从游戏中暂停
         else if (_TargetID == VoxelData.ui游戏中暂停)
         {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            //Cursor.lockState = CursorLockMode.None;
+            //Cursor.visible = true;
+            ToggleMouseVisibilityAndLock(false);
         }
 
         //死亡
         else if (_TargetID == VoxelData.ui死亡)
         {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            //Cursor.lockState = CursorLockMode.None;
+            //Cursor.visible = true;
+            ToggleMouseVisibilityAndLock(false);
+
+
             UIManager[_TargetID].childs[0]._object.GetComponent<TextMeshProUGUI>().text = $"分数：{(int)(endTime - startTime)}";
         }
 
@@ -510,7 +518,31 @@ public class CanvasManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// 根据传入的布尔值隐藏并固定鼠标，或者恢复鼠标的可见性和自由移动
+    /// </summary>
+    /// <param name="isLocked">如果为 true，则隐藏并固定鼠标；如果为 false，则显示并解锁鼠标</param>
+    public void ToggleMouseVisibilityAndLock(bool isLocked)
+    {
+        if (isLocked)
+        {
+            // 隐藏鼠标光标并将其锁定在屏幕中心
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            // 显示鼠标光标并解除锁定
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+    }
+
+
+
     //--------------------------------- 与玩家互动的组件 ---------------------------------------
+
+
 
     //选择存档组件
     public void NewWorldGenerate(String name,String date,GameMode gamemode, int worldtype, int seed)
@@ -1266,8 +1298,12 @@ public class CanvasManager : MonoBehaviour
     {
 
         isPausing = !isPausing;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+
+
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
+        ToggleMouseVisibilityAndLock(true);
+
         SwitchToUI(VoxelData.ui玩家);
         world.game_state = Game_State.Playing;
     }
@@ -1529,13 +1565,15 @@ public class CanvasManager : MonoBehaviour
 
 
     //------------------------------------ 工具类 -------------------------------------------
-    void HideCursor()
-    {
-        // 将鼠标锁定在屏幕中心
-        Cursor.lockState = CursorLockMode.Locked;
-        //鼠标不可视
-        Cursor.visible = false;
-    }
+    //void HideCursor()
+    //{
+    //    // 将鼠标锁定在屏幕中心
+    //    Cursor.lockState = CursorLockMode.Locked;
+    //    //鼠标不可视
+    //    Cursor.visible = false;
+
+    //    ToggleMouseVisibilityAndLock(true);
+    //}
 
    
 

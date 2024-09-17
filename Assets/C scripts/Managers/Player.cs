@@ -5,7 +5,7 @@ using System.ComponentModel;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+//using UnityEngine.UIElements;
 using UnityEngine.XR;
 
 
@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     public CanvasManager canvasManager;
     public BackPackManager backpackmanager;
     public LifeManager lifemanager;
+    public GameObject particle_explosion;
 
     public Material HighLightMaterial;
     public Texture[] DestroyTextures = new Texture[10];
@@ -800,7 +801,7 @@ public class Player : MonoBehaviour
             //如果是可互动方块
             if (_targettype < world.blocktypes.Length && world.blocktypes[_targettype].isinteractable)
             {
-                print("isinteractable");
+                //print("isinteractable");
 
                 switch (_targettype)
                 {
@@ -814,6 +815,7 @@ public class Player : MonoBehaviour
                     //TNT
                     case 17:
                         BlocksFunction.Boom(managerhub, _raycastNow, 3);
+                        GameObject.Instantiate(particle_explosion, RayCast, Quaternion.identity);
                         break;
                 }
 
@@ -2164,6 +2166,41 @@ public class Player : MonoBehaviour
 
     //----------------------------------- 玩家状态 -------------------------------------------
 
+    //[未实装]返回指定方向上是否有碰撞
+    //public bool CheckDirectionCollision(Vector3 _Direction)
+    //{
+    //    if (ActualMoveDirection.z > 0)
+    //    {
+    //        return front;
+    //    }
+    //    if (ActualMoveDirection.z < 0)
+    //    {
+    //        return back;
+    //    }
+    //    if (ActualMoveDirection.x < 0)
+    //    {
+    //        return left;
+    //    }
+    //    if (ActualMoveDirection.x > 0)
+    //    {
+    //        return right;
+    //    }
+    //    return false;
+    //}
+
+
+    ///// <summary>
+    ///// 玩家强制移动
+    ///// </summary>
+    ///// <param name="_MoveDirection"></param> 强制移动方向
+    ///// <param name="_MoveDistance"></param> 强制移动距离
+    ///// <param name="_MoveDuration"></param> 移动时间
+    ///// 用协程完成，如果执行期间再次调用了ForceMoving函数，则结束上一次的强制位移转为新的强制位移
+    //public void ForceMoving(Vector3 _MoveDirection,float _MoveDistance,float _MoveDuration)
+    //{
+    //    //终止条件
+        
+    //}
 
 
 

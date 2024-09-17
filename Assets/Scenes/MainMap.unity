@@ -21243,7 +21243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5a2505646a31148878c810f0e06954, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  "\u4F4E\u533A\u5757\u6A21\u5F0F": 0
+  "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
   "\u65E0\u9ED1\u591C\u6A21\u5F0F": 0
   managerhub: {fileID: 843154432}
   canvasManager: {fileID: 1026571032}
@@ -21786,7 +21786,7 @@ MonoBehaviour:
     topFaceTexture: 64
     bottomFaceTexture: 66
     leftFaceTexture: 65
-    rightFaceTexture: 5
+    rightFaceTexture: 65
     DrawMode: 0
   - blockName: WorkTable
     DestroyTime: 2
@@ -23791,7 +23791,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 91b12b50ebe2c1a40b8cf023ffdc4d96, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.47058824}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -32199,6 +32199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blood: 20
+  managerhub: {fileID: 843154432}
   world: {fileID: 699955241}
   musicmanager: {fileID: 325552237}
   player: {fileID: 1504082080}
@@ -48439,6 +48440,7 @@ MonoBehaviour:
   canvasManager: {fileID: 1026571032}
   backpackmanager: {fileID: 2136429365}
   lifemanager: {fileID: 1066840322}
+  particle_explosion: {fileID: 2895232346133327969, guid: 83c43639f81e51441ba9eb22ff444316, type: 3}
   HighLightMaterial: {fileID: 2100000, guid: 5644c9359bc4bab4d8c14ad6c15038c0, type: 2}
   DestroyTextures:
   - {fileID: 2800000, guid: 05255f971e269e549b20dea94431a300, type: 3}
@@ -50785,7 +50787,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 2a94a3f613c21274598d2250cf14789f, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.47058824}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
