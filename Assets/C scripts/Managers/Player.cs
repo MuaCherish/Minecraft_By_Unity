@@ -105,6 +105,7 @@ public class Player : MonoBehaviour
     private Vector3 velocity;
     //public float Max_verticalMomentum;
     public float verticalMomentum = 0;
+    private Vector3 momentum = Vector3.zero; // 三维动量变量
     private bool jumpRequest;
 
 
@@ -365,7 +366,7 @@ public class Player : MonoBehaviour
     public void CheckisInCave()
     {
         //print("");
-        float playerY = cam.position.y + 4;
+        float playerY = cam.position.y + 10f;
         Vector3 RelaPosition = managerhub.world.GetRelalocation(cam.position);
         Vector3 _ChunkLocation = managerhub.world.GetChunkLocation(cam.position);
 
@@ -460,9 +461,10 @@ public class Player : MonoBehaviour
             velocity = ((transform.forward * verticalInput) + (transform.right * horizontalInput)) * Time.deltaTime * walkSpeed;
         
         }
-            
+
 
         // 合并数据
+        velocity += momentum * Time.deltaTime;
         velocity += Vector3.up * verticalMomentum * Time.deltaTime;
 
 
@@ -798,6 +800,8 @@ public class Player : MonoBehaviour
             Vector3 _raycastNow = RayCast_now();
             byte _targettype = world.GetBlockType(_raycastNow);
 
+            
+
             //如果是可互动方块
             if (_targettype < world.blocktypes.Length && world.blocktypes[_targettype].isinteractable)
             {
@@ -810,12 +814,30 @@ public class Player : MonoBehaviour
                         //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
                         world.Allchunks[world.GetChunkLocation(_raycastNow)].EditData(world.GetRelalocation(_raycastNow), VoxelData.Air);
                         BlocksFunction.Smoke(managerhub, _raycastNow, 4);
-                        
+
                         break;
                     //TNT
                     case 17:
                         BlocksFunction.Boom(managerhub, _raycastNow, 3);
                         GameObject.Instantiate(particle_explosion, RayCast, Quaternion.identity);
+
+                        // 玩家被炸飞
+                        Vector3 _Direction = cam.transform.position - _raycastNow;  //炸飞方向
+                        float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
+
+                        //计算炸飞距离
+                        _Direction.y = Mathf.Lerp(0, 1, _value);
+                        float Distance = Mathf.Lerp(3, 0, _value);
+
+                        ForceMoving(_Direction, Distance, 0.1f);
+
+                        if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 3)
+                        {
+                            managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
+                        }
+
+                        //print($"_Direction:{_Direction}, _distance: {_distance}");
+
                         break;
                 }
 
@@ -918,6 +940,8 @@ public class Player : MonoBehaviour
 
 
     }
+
+    public float DEbug_DIstance;
 
     // 等待2秒后执行销毁泥土的方法
     IEnumerator DestroySoilWithDelay(Vector3 position)
@@ -1999,6 +2023,35 @@ public class Player : MonoBehaviour
     }
 
 
+    // 射线检测——返回从起始点到打中前一帧点的距离
+    float RayCast_last(Vector3 originPos, Vector3 direction, float distance)
+    {
+        float step = checkIncrement;
+        Vector3 lastPos = originPos;
+
+        while (step < distance)
+        {
+            Vector3 pos = originPos + (direction.normalized * step);
+
+            // 绘制射线以便调试，使用绿色
+            //Debug.DrawLine(lastPos, pos, Color.green);
+
+            // 检测
+            if (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.Water)
+            {
+                // 返回从起始点到打中前一帧点的距离
+                return (lastPos - originPos).magnitude;
+            }
+
+            // 保存当前帧的位置作为最后的有效位置
+            lastPos = pos;
+
+            step += checkIncrement;
+        }
+
+        // 如果没有检测到任何有效的块，返回零
+        return 0f;
+    }
 
 
     //-------------------------------------------------------------------------------------
@@ -2166,43 +2219,131 @@ public class Player : MonoBehaviour
 
     //----------------------------------- 玩家状态 -------------------------------------------
 
-    //[未实装]返回指定方向上是否有碰撞
-    //public bool CheckDirectionCollision(Vector3 _Direction)
-    //{
-    //    if (ActualMoveDirection.z > 0)
-    //    {
-    //        return front;
-    //    }
-    //    if (ActualMoveDirection.z < 0)
-    //    {
-    //        return back;
-    //    }
-    //    if (ActualMoveDirection.x < 0)
-    //    {
-    //        return left;
-    //    }
-    //    if (ActualMoveDirection.x > 0)
-    //    {
-    //        return right;
-    //    }
-    //    return false;
-    //}
+    //玩家强制移动
+    public void ForceMoving(Vector3 moveDirection, float moveDistance, float moveTime)
+    {
+        // 计算初始动量
+        momentum = moveDirection.normalized * (moveDistance / moveTime);
 
+        //降低瞬时重力
+        verticalMomentum = 0f;
 
-    ///// <summary>
-    ///// 玩家强制移动
-    ///// </summary>
-    ///// <param name="_MoveDirection"></param> 强制移动方向
-    ///// <param name="_MoveDistance"></param> 强制移动距离
-    ///// <param name="_MoveDuration"></param> 移动时间
-    ///// 用协程完成，如果执行期间再次调用了ForceMoving函数，则结束上一次的强制位移转为新的强制位移
-    //public void ForceMoving(Vector3 _MoveDirection,float _MoveDistance,float _MoveDuration)
-    //{
-    //    //终止条件
-        
-    //}
+        //射线检测确定最短movetime
+        Vector3 _selfPos = transform.position;
+        float _MinDistnce = 3f;
+        //左前
+        if (moveDirection.z > 0 && moveDirection.x < 0)
+        {
+            Vector3 _front_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+            Vector3 _front_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+            float _MinDistnce_1 = RayCast_last(_front_左上, moveDirection, 3);
+            float _MinDistnce_2 = RayCast_last(_front_左下, moveDirection, 3);
 
+            if (_MinDistnce_1 < _MinDistnce)
+            {
+                _MinDistnce = _MinDistnce_1;
+            }
 
+            if (_MinDistnce_2 < _MinDistnce)
+            {
+                _MinDistnce = _MinDistnce_2;
+            }
+
+        }
+
+        //右前
+        if (moveDirection.z > 0 && moveDirection.x > 0)
+        {
+            Vector3 _front_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+            Vector3 _front_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+            float _MinDistnce_1 = RayCast_last(_front_右上, moveDirection, 3);
+            float _MinDistnce_2 = RayCast_last(_front_右下, moveDirection, 3);
+
+            if (_MinDistnce_1 < _MinDistnce)
+            {
+                _MinDistnce = _MinDistnce_1;
+            }
+
+            if (_MinDistnce_2 < _MinDistnce)
+            {
+                _MinDistnce = _MinDistnce_2;
+            }
+        }
+
+        //左后
+        if (moveDirection.z < 0 && moveDirection.x < 0)
+        {
+            Vector3 _back_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+            Vector3 _back_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+            float _MinDistnce_1 = RayCast_last(_back_左上, moveDirection, 3);
+            float _MinDistnce_2 = RayCast_last(_back_左下, moveDirection, 3);
+
+            if (_MinDistnce_1 < _MinDistnce)
+            {
+                _MinDistnce = _MinDistnce_1;
+            }
+
+            if (_MinDistnce_2 < _MinDistnce)
+            {
+                _MinDistnce = _MinDistnce_2;
+            }
+        }   
+
+        //右后
+        if (moveDirection.z < 0 && moveDirection.x > 0)
+        {
+            Vector3 _back_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+            Vector3 _back_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+            float _MinDistnce_1 = RayCast_last(_back_右上, moveDirection, 3);
+            float _MinDistnce_2 = RayCast_last(_back_右下, moveDirection, 3);
+
+            if (_MinDistnce_1 < _MinDistnce)
+            {
+                _MinDistnce = _MinDistnce_1;
+            }
+
+            if (_MinDistnce_2 < _MinDistnce)
+            {
+                _MinDistnce = _MinDistnce_2;
+            }
+        }
+
+        //print(_MinDistnce);
+
+        //防止除以0
+        if (momentum.magnitude > 0)
+        {
+            moveTime = _MinDistnce / momentum.magnitude;
+        }
+        else
+        {
+            moveTime = 0.01f; // 设置一个最小移动时间，以防止 NaN 传递
+        }
+
+        // 启动一个协程，在移动时间结束后逐渐停止动量
+        StartCoroutine(StopForceMovingAfterTime(moveTime));
+    }
+
+    // 协程：在指定的时间后逐渐停止动量
+    private IEnumerator StopForceMovingAfterTime(float moveTime)
+    {
+        // 等待指定的移动时间
+        yield return new WaitForSeconds(moveTime);
+
+        // 在一段时间内逐渐减少动量
+        float elapsed = 0f;
+        float decayDuration = 0.5f; // 动量逐渐消失的时间
+
+        while (elapsed < decayDuration)
+        {
+            momentum = Vector3.Lerp(momentum, Vector3.zero, elapsed / decayDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // 确保动量归零
+        momentum = Vector3.zero;
+    }
 
 
     //记录玩家状态
@@ -2370,6 +2511,8 @@ public class Player : MonoBehaviour
             return true;
 
         }
+
+
         else if (world.GetRelalocation(pos) == world.GetRelalocation(down_右上))
         {
 

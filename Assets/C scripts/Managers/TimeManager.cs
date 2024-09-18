@@ -62,9 +62,11 @@ public class TimeManager : MonoBehaviour
     //玩家视野变黑
     public void Buff_CaveFog(bool _Open)
     {
-        if (TransitionFogCoroutine == null && isNight)
+        if (TransitionFogCoroutine == null)
         {
             TransitionFogCoroutine = StartCoroutine(TransitionFog(_Open));
+
+
         }
 
     }
@@ -124,16 +126,18 @@ public class TimeManager : MonoBehaviour
             {
                 isNight = false;
             }
-            
 
-            //if (managerhub.player.isInCave) 
-            //{
-            //    Buff_CaveFog(true);
-            //}
-            //else
-            //{
-            //    Buff_CaveFog(false);
-            //}
+
+            if (isOpenBlackFog == false && managerhub.player.isInCave)
+            {
+                Buff_CaveFog(true);
+                isOpenBlackFog = true;
+            }
+            else if(!isNight && isOpenBlackFog == true && !managerhub.player.isInCave)
+            {
+                Buff_CaveFog(false);
+                isOpenBlackFog = false;
+            }
 
         }
     }
@@ -155,6 +159,7 @@ public class TimeManager : MonoBehaviour
     //---------------------------------协程-------------------------------------
 
     //黑色迷雾协程
+    private bool isOpenBlackFog = false;
     private Coroutine TransitionFogCoroutine;
     private IEnumerator TransitionFog(bool enterCave)
     {
@@ -164,6 +169,10 @@ public class TimeManager : MonoBehaviour
 
         Color targetColor = enterCave ? FogNightColor : FogDayColor;
         Vector2 targetDistance = enterCave ? FogCaveDistance : FogDayDistance;
+
+        // 获取 BlocksMaterial 的初始颜色和目标颜色
+        Color startBlockColor = enterCave ? BlocksDayColor : BlocksNightColor;
+        Color targetBlockColor = enterCave ? BlocksNightColor : BlocksDayColor;
 
         while (elapsedTime < fogTransitionTime)
         {
@@ -175,6 +184,9 @@ public class TimeManager : MonoBehaviour
             RenderSettings.fogStartDistance = Mathf.Lerp(startDistance.x, targetDistance.x, t);
             RenderSettings.fogEndDistance = Mathf.Lerp(startDistance.y, targetDistance.y, t);
 
+            // Lerp BlocksMaterial 的颜色
+            BlocksMaterial.color = Color.Lerp(startBlockColor, targetBlockColor, t);
+
             yield return null;
         }
 
@@ -182,6 +194,7 @@ public class TimeManager : MonoBehaviour
         RenderSettings.fogColor = targetColor;
         RenderSettings.fogStartDistance = targetDistance.x;
         RenderSettings.fogEndDistance = targetDistance.y;
+        BlocksMaterial.color = targetBlockColor; // 确保最终颜色正确
         TransitionFogCoroutine = null;
     }
 

@@ -1410,7 +1410,7 @@ MonoBehaviour:
   second_GameOneHour: 60
   "\u5929\u5F00\u59CB\u53D8\u9ED1": {x: 15, y: 19}
   "\u5929\u5F00\u59CB\u53D8\u4EAE": {x: 4, y: 8}
-  fogTransitionTime: 5
+  fogTransitionTime: 1.5
   FogDayDistance: {x: 40, y: 80}
   FogCaveDistance: {x: 0, y: 20}
   SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
@@ -48510,6 +48510,7 @@ MonoBehaviour:
   foot_BlockType_temp: 4
   isInCave_checkInterval: 10
   hasExec_isChangedBlock: 1
+  DEbug_DIstance: 0
   MainBody: {fileID: 473442143}
   FirstPersonCamera: {fileID: 1727421506}
   ThridPersonCamera: {fileID: 1039204585}

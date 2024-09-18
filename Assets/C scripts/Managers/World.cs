@@ -76,8 +76,8 @@ public class World : MonoBehaviour
     //public List<SavingData> savingDatas = new List<SavingData>();//最终保存数据
 
     [Header("游戏状态")]
-    public Game_State game_state = Game_State.Start;
-    public GameMode game_mode = GameMode.Survival;
+    [ReadOnly]public Game_State game_state = Game_State.Start;
+    [ReadOnly] public GameMode game_mode = GameMode.Survival;
     [HideInInspector] public bool isLoadSaving = false;
     //public bool SuperPlainMode = false; 
 

@@ -255,6 +255,14 @@ public static class VoxelData
         new Vector3(1.0f, 0.0f, 1.0f),
         new Vector3(1.0f, 1.0f, 1.0f),
         new Vector3(0.0f, 1.0f, 1.0f),
+        //new Vector3(-0.01f, -0.01f, -0.01f),
+        //new Vector3(1.01f, -0.01f, -0.01f),
+        //new Vector3(1.01f, 1.01f, -0.01f),
+        //new Vector3(-0.01f, 1.01f, -0.01f),
+        //new Vector3(-0.01f, -0.01f, 1.01f),
+        //new Vector3(1.01f, -0.01f, 1.01f),
+        //new Vector3(1.01f, 1.01f, 1.01f),
+        //new Vector3(-0.01f, 1.01f, 1.01f),
 
     };
 
