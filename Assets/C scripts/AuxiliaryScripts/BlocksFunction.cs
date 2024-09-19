@@ -6,7 +6,6 @@ using UnityEngine;
 public static class BlocksFunction
 {
 
-
     //±¨’®À„∑®
     public static void Boom(ManagerHub managerhub, Vector3 _originPos, float _r)
     {

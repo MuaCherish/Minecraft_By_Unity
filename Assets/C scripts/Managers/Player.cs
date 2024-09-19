@@ -2034,13 +2034,15 @@ public class Player : MonoBehaviour
             Vector3 pos = originPos + (direction.normalized * step);
 
             // 绘制射线以便调试，使用绿色
-            //Debug.DrawLine(lastPos, pos, Color.green);
+            //Debug.DrawLine(lastPos, pos, Color.red);
 
             // 检测
             if (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.Water)
             {
                 // 返回从起始点到打中前一帧点的距离
+                print((lastPos - originPos).magnitude);
                 return (lastPos - originPos).magnitude;
+                
             }
 
             // 保存当前帧的位置作为最后的有效位置
@@ -2050,7 +2052,7 @@ public class Player : MonoBehaviour
         }
 
         // 如果没有检测到任何有效的块，返回零
-        return 0f;
+        return distance;
     }
 
 
@@ -2287,7 +2289,7 @@ public class Player : MonoBehaviour
             {
                 _MinDistnce = _MinDistnce_2;
             }
-        }   
+        }
 
         //右后
         if (moveDirection.z < 0 && moveDirection.x > 0)
@@ -2311,14 +2313,18 @@ public class Player : MonoBehaviour
         //print(_MinDistnce);
 
         //防止除以0
+        float _v = Mathf.Lerp(3,0, (momentum.magnitude - 20f) / 20f);
+
         if (momentum.magnitude > 0)
         {
-            moveTime = _MinDistnce / momentum.magnitude;
+            moveTime = _MinDistnce / _v;
         }
         else
         {
             moveTime = 0.01f; // 设置一个最小移动时间，以防止 NaN 传递
         }
+
+        print(moveTime);
 
         // 启动一个协程，在移动时间结束后逐渐停止动量
         StartCoroutine(StopForceMovingAfterTime(moveTime));
@@ -2327,12 +2333,20 @@ public class Player : MonoBehaviour
     // 协程：在指定的时间后逐渐停止动量
     private IEnumerator StopForceMovingAfterTime(float moveTime)
     {
+        // 如果 moveTime 非常小，立即停止动量
+        //if (moveTime <= 0.01f)
+        //{
+        //    momentum = Vector3.zero;
+        //    yield break;
+        //}
+        //print(moveTime);
+
         // 等待指定的移动时间
-        yield return new WaitForSeconds(moveTime);
+        //yield return new WaitForSeconds(moveTime);
 
         // 在一段时间内逐渐减少动量
         float elapsed = 0f;
-        float decayDuration = 0.5f; // 动量逐渐消失的时间
+        float decayDuration = moveTime; // 动量逐渐消失的时间
 
         while (elapsed < decayDuration)
         {
@@ -2344,6 +2358,7 @@ public class Player : MonoBehaviour
         // 确保动量归零
         momentum = Vector3.zero;
     }
+
 
 
     //记录玩家状态

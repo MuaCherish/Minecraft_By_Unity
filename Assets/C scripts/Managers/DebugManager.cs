@@ -79,6 +79,7 @@ public class DebugManager : MonoBehaviour
         //update
         //LeftText.text += $"\n";
         LeftText.text = $"帧数: {managerHub.fpsmManaer.fps:F2}\n";
+        LeftText.text += $"当前时间: {managerHub.timeManager.GetCurrentTime():F2}时\n";
         LeftText.text += $"\n";
         LeftText.text += $"[Player]\n";
         LeftText.text += $"朝向: {CalculateFacing()}\n";
