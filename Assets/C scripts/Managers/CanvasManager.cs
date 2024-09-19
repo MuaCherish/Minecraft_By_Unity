@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using UnityEngine.XR;
 //using static UnityEditor.Progress;
 using System.IO;
+using System.Diagnostics;
 
 
 public class CanvasManager : MonoBehaviour
@@ -316,7 +317,7 @@ public class CanvasManager : MonoBehaviour
         //异常检查
         if (_TargetID < 0 || _TargetID >= UIManager.Count)
         {
-            Debug.LogError("非法ID");
+            UnityEngine.Debug.LogError("非法ID");
             return;
         }
         
@@ -372,7 +373,7 @@ public class CanvasManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("没有上一级UI可返回");
+            UnityEngine.Debug.Log("没有上一级UI可返回");
         }
     }
 
@@ -585,7 +586,7 @@ public class CanvasManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"要删除的存档路径 {fullPath} 不存在.");
+            UnityEngine.Debug.LogWarning($"要删除的存档路径 {fullPath} 不存在.");
         }
     }
 
@@ -903,6 +904,22 @@ public class CanvasManager : MonoBehaviour
     //选项细节 - 辅助设置
 
     //------------------------------------- 工具 ------------------------------------------
+
+    //打开存档目录
+    public void OpenPersistentDataDirectory()
+    {
+        string savesFolderPath = Path.Combine(managerhub.world.savingPATH, "Saves");
+
+        // 将路径中的所有正斜杠替换为反斜杠
+        string formattedPath = savesFolderPath.Replace("/", "\\");
+
+        //print(formattedPath);
+
+        // 打开 Windows 资源管理器并导航到 persistentDataPath
+        Process.Start("explorer.exe", formattedPath);
+    }
+
+
 
     //保存并退出
     public void SaveAndQuitGame()

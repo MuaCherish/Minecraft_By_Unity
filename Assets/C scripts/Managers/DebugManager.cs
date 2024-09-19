@@ -85,6 +85,7 @@ public class DebugManager : MonoBehaviour
         LeftText.text += $"朝向: {CalculateFacing()}\n";
         LeftText.text += $"实际朝向: {managerHub.player.FactFacing}\n";
         LeftText.text += $"实际运动方向: {managerHub.player.ActualMoveDirection}\n";
+        //LeftText.text += $"新的运动方向: {managerHub.player.momentum}\n";
         LeftText.text += $"输入: {managerHub.player.keyInput}\n";
         LeftText.text += $"眼睛坐标: {managerHub.player.cam.position}\n";
         LeftText.text += $"实时重力: {managerHub.player.verticalMomentum}\n";

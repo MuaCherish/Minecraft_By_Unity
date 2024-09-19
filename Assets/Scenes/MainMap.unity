@@ -6407,7 +6407,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u7F16\u8F91"
+  m_text: "\u6253\u5F00\u76EE\u5F55"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9f63ed49d2860954984e19b4fe97fef1, type: 2}
   m_sharedMaterial: {fileID: -488709357521393366, guid: 9f63ed49d2860954984e19b4fe97fef1, type: 2}
@@ -6473,7 +6473,7 @@ MonoBehaviour:
   m_margin: {x: -103.76614, y: 0, z: -103.60985, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &174459445
@@ -7083,15 +7083,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.43529415, g: 0.43529415, b: 0.43529415, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 898970f90ea8a284aa80632294327f20, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -21243,7 +21243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5a2505646a31148878c810f0e06954, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  "\u4F4E\u533A\u5757\u6A21\u5F0F": 0
+  "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
   "\u65E0\u9ED1\u591C\u6A21\u5F0F": 0
   managerhub: {fileID: 843154432}
   canvasManager: {fileID: 1026571032}
@@ -45727,9 +45727,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1026571032}
         m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
-        m_MethodName: 
+        m_MethodName: OpenPersistentDataDirectory
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -45738,7 +45738,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 0
+        m_CallState: 2
 --- !u!114 &1403050271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45752,7 +45752,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.34591186, g: 0.34591186, b: 0.34591186, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -46827,7 +46827,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 158164551}
   m_HandleRect: {fileID: 158164550}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 1
   m_OnValueChanged:
@@ -48482,6 +48482,7 @@ MonoBehaviour:
   verticalInput: 0
   scrollWheelInput: 0
   verticalMomentum: 0
+  momentum: {x: 0, y: 0, z: 0}
   reach: 8
   ray_length: 0
   isPlacing: 0
@@ -51439,7 +51440,7 @@ GameObject:
   - component: {fileID: 1616615915}
   - component: {fileID: 1616615914}
   m_Layer: 5
-  m_Name: "\u7F16\u8F91"
+  m_Name: "\u6253\u5F00\u76EE\u5F55"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61519,7 +61520,7 @@ MonoBehaviour:
   m_margin: {x: -103.76614, y: 0, z: -103.60985, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1779051371

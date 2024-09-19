@@ -104,8 +104,8 @@ public class Player : MonoBehaviour
     private float Camera_verticalInput;
     private Vector3 velocity;
     //public float Max_verticalMomentum;
-    public float verticalMomentum = 0;
-    private Vector3 momentum = Vector3.zero; // 三维动量变量
+    public float verticalMomentum = 0;  
+    public Vector3 momentum = Vector3.zero; // 玩家瞬时动量
     private bool jumpRequest;
 
 
@@ -248,8 +248,8 @@ public class Player : MonoBehaviour
 
         isSuperMining = false;
         isFlying = false;
-        verticalMomentum = 0;
-
+        momentum = Vector3.zero;
+        managerhub.backpackManager.ChangeBlockInHand();
     }
 
 
@@ -300,10 +300,12 @@ public class Player : MonoBehaviour
     }
 
 
+
     private void Update()
     {
         if (world.game_state == Game_State.Playing)
         {
+
 
             if (isGrounded)
             {
@@ -1556,11 +1558,13 @@ public class Player : MonoBehaviour
                 direction += new Vector3(facing.z, 0, -facing.x);
             }
 
-            // 归一化方向向量，以确保运动方向为整数
+            // 将 momentum 添加到实际运动方向
+            direction += momentum;
+
+            // 归一化方向向量，以确保运动方向为单位向量
             return direction.normalized;
         }
     }
-
 
     //返回四舍五入的面朝向量
     public Vector3 Facing
@@ -1923,7 +1927,6 @@ public class Player : MonoBehaviour
 
 
 
-
     //-------------------------------------------------------------------------------------
 
 
@@ -2040,7 +2043,7 @@ public class Player : MonoBehaviour
             if (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.Water)
             {
                 // 返回从起始点到打中前一帧点的距离
-                print((lastPos - originPos).magnitude);
+                //print((lastPos - originPos).magnitude);
                 return (lastPos - originPos).magnitude;
                 
             }
@@ -2231,100 +2234,100 @@ public class Player : MonoBehaviour
         verticalMomentum = 0f;
 
         //射线检测确定最短movetime
-        Vector3 _selfPos = transform.position;
-        float _MinDistnce = 3f;
-        //左前
-        if (moveDirection.z > 0 && moveDirection.x < 0)
-        {
-            Vector3 _front_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
-            Vector3 _front_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
-            float _MinDistnce_1 = RayCast_last(_front_左上, moveDirection, 3);
-            float _MinDistnce_2 = RayCast_last(_front_左下, moveDirection, 3);
+        //Vector3 _selfPos = transform.position;
+        //float _MinDistnce = 3f;
+        ////左前
+        //if (moveDirection.z > 0 && moveDirection.x < 0)
+        //{
+        //    Vector3 _front_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+        //    Vector3 _front_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+        //    float _MinDistnce_1 = RayCast_last(_front_左上, moveDirection, 3);
+        //    float _MinDistnce_2 = RayCast_last(_front_左下, moveDirection, 3);
 
-            if (_MinDistnce_1 < _MinDistnce)
-            {
-                _MinDistnce = _MinDistnce_1;
-            }
+        //    if (_MinDistnce_1 < _MinDistnce)
+        //    {
+        //        _MinDistnce = _MinDistnce_1;
+        //    }
 
-            if (_MinDistnce_2 < _MinDistnce)
-            {
-                _MinDistnce = _MinDistnce_2;
-            }
+        //    if (_MinDistnce_2 < _MinDistnce)
+        //    {
+        //        _MinDistnce = _MinDistnce_2;
+        //    }
 
-        }
+        //}
 
-        //右前
-        if (moveDirection.z > 0 && moveDirection.x > 0)
-        {
-            Vector3 _front_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
-            Vector3 _front_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
-            float _MinDistnce_1 = RayCast_last(_front_右上, moveDirection, 3);
-            float _MinDistnce_2 = RayCast_last(_front_右下, moveDirection, 3);
+        ////右前
+        //if (moveDirection.z > 0 && moveDirection.x > 0)
+        //{
+        //    Vector3 _front_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+        //    Vector3 _front_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+        //    float _MinDistnce_1 = RayCast_last(_front_右上, moveDirection, 3);
+        //    float _MinDistnce_2 = RayCast_last(_front_右下, moveDirection, 3);
 
-            if (_MinDistnce_1 < _MinDistnce)
-            {
-                _MinDistnce = _MinDistnce_1;
-            }
+        //    if (_MinDistnce_1 < _MinDistnce)
+        //    {
+        //        _MinDistnce = _MinDistnce_1;
+        //    }
 
-            if (_MinDistnce_2 < _MinDistnce)
-            {
-                _MinDistnce = _MinDistnce_2;
-            }
-        }
+        //    if (_MinDistnce_2 < _MinDistnce)
+        //    {
+        //        _MinDistnce = _MinDistnce_2;
+        //    }
+        //}
 
-        //左后
-        if (moveDirection.z < 0 && moveDirection.x < 0)
-        {
-            Vector3 _back_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
-            Vector3 _back_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
-            float _MinDistnce_1 = RayCast_last(_back_左上, moveDirection, 3);
-            float _MinDistnce_2 = RayCast_last(_back_左下, moveDirection, 3);
+        ////左后
+        //if (moveDirection.z < 0 && moveDirection.x < 0)
+        //{
+        //    Vector3 _back_左上 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+        //    Vector3 _back_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+        //    float _MinDistnce_1 = RayCast_last(_back_左上, moveDirection, 3);
+        //    float _MinDistnce_2 = RayCast_last(_back_左下, moveDirection, 3);
 
-            if (_MinDistnce_1 < _MinDistnce)
-            {
-                _MinDistnce = _MinDistnce_1;
-            }
+        //    if (_MinDistnce_1 < _MinDistnce)
+        //    {
+        //        _MinDistnce = _MinDistnce_1;
+        //    }
 
-            if (_MinDistnce_2 < _MinDistnce)
-            {
-                _MinDistnce = _MinDistnce_2;
-            }
-        }
+        //    if (_MinDistnce_2 < _MinDistnce)
+        //    {
+        //        _MinDistnce = _MinDistnce_2;
+        //    }
+        //}
 
-        //右后
-        if (moveDirection.z < 0 && moveDirection.x > 0)
-        {
-            Vector3 _back_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
-            Vector3 _back_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
-            float _MinDistnce_1 = RayCast_last(_back_右上, moveDirection, 3);
-            float _MinDistnce_2 = RayCast_last(_back_右下, moveDirection, 3);
+        ////右后
+        //if (moveDirection.z < 0 && moveDirection.x > 0)
+        //{
+        //    Vector3 _back_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+        //    Vector3 _back_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+        //    float _MinDistnce_1 = RayCast_last(_back_右上, moveDirection, 3);
+        //    float _MinDistnce_2 = RayCast_last(_back_右下, moveDirection, 3);
 
-            if (_MinDistnce_1 < _MinDistnce)
-            {
-                _MinDistnce = _MinDistnce_1;
-            }
+        //    if (_MinDistnce_1 < _MinDistnce)
+        //    {
+        //        _MinDistnce = _MinDistnce_1;
+        //    }
 
-            if (_MinDistnce_2 < _MinDistnce)
-            {
-                _MinDistnce = _MinDistnce_2;
-            }
-        }
+        //    if (_MinDistnce_2 < _MinDistnce)
+        //    {
+        //        _MinDistnce = _MinDistnce_2;
+        //    }
+        //}
 
-        //print(_MinDistnce);
+        ////print(_MinDistnce);
 
-        //防止除以0
-        float _v = Mathf.Lerp(3,0, (momentum.magnitude - 20f) / 20f);
+        ////防止除以0
+        //float _v = Mathf.Lerp(3,0, (momentum.magnitude - 20f) / 20f);
 
-        if (momentum.magnitude > 0)
-        {
-            moveTime = _MinDistnce / _v;
-        }
-        else
-        {
-            moveTime = 0.01f; // 设置一个最小移动时间，以防止 NaN 传递
-        }
+        //if (momentum.magnitude > 0)
+        //{
+        //    moveTime = _MinDistnce / _v;
+        //}
+        //else
+        //{
+        //    moveTime = 0.01f; // 设置一个最小移动时间，以防止 NaN 传递
+        //}
 
-        print(moveTime);
+        //print(moveTime);
 
         // 启动一个协程，在移动时间结束后逐渐停止动量
         StartCoroutine(StopForceMovingAfterTime(moveTime));
@@ -2342,11 +2345,11 @@ public class Player : MonoBehaviour
         //print(moveTime);
 
         // 等待指定的移动时间
-        //yield return new WaitForSeconds(moveTime);
+        yield return new WaitForSeconds(moveTime);
 
         // 在一段时间内逐渐减少动量
         float elapsed = 0f;
-        float decayDuration = moveTime; // 动量逐渐消失的时间
+        float decayDuration = 0.5f; // 动量逐渐消失的时间
 
         while (elapsed < decayDuration)
         {
