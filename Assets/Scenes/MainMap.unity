@@ -33487,7 +33487,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b89836e8c7785a941a00c8dc3a0b5bf3, type: 2}
+  - {fileID: 2100000, guid: 3d8337e60a5cfd44491f998b6c0d4adf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -48458,7 +48458,7 @@ MonoBehaviour:
   leg: {fileID: 1232828276}
   selectblock: {fileID: 2076927748}
   Eye_Light: {fileID: 508673659}
-  Particle_Broken: {fileID: 5841185346547105760, guid: 0aad6a6c9153d4d44ada88b14132cdf4, type: 3}
+  Particle_Broken: {fileID: 1431696989781515372, guid: 7833ced07bdcf34448f4fd4ffce806ac, type: 3}
   particel_Broken_transform: {fileID: 903731372}
   Broking_Animation: {fileID: 1128515732}
   hand_Hold: {fileID: 2047085374}

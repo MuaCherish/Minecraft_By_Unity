@@ -5,13 +5,19 @@ using UnityEngine;
 public class ParticleCollision : MonoBehaviour
 {
     private ParticleSystem _particleSystem;
-    public Vector3 gravity = new Vector3(0, -9.81f, 0); // 自定义重力
-    public float DEBUGY;
+    public ManagerHub managerhub;
+    public Vector3 gravity = new Vector3(0, -50f, 0); // 自定义重力
+    public float Y_Offset = 0.2f;
 
-    void Start()
+
+    public void StartPatticle_Broken(ManagerHub _managerhub)
     {
         // 获取粒子系统组件
         _particleSystem = GetComponent<ParticleSystem>();
+
+        managerhub = _managerhub;
+
+        _particleSystem.Play();
     }
 
     void Update()
@@ -27,7 +33,7 @@ public class ParticleCollision : MonoBehaviour
             Vector3 particlePosition = particles[i].position;
 
             // 判断该位置是否有碰撞
-            if (isSolid(particlePosition))
+            if (managerhub.world.blocktypes[managerhub.world.GetBlockType(new Vector3(particlePosition.x, particlePosition.y + Y_Offset, particlePosition.z))].isSolid)
             {
                 // 设置粒子的速度为零
                 particles[i].velocity = Vector3.zero;
@@ -43,9 +49,9 @@ public class ParticleCollision : MonoBehaviour
         _particleSystem.SetParticles(particles, particleCount);
     }
 
-    public bool isSolid(Vector3 pos)
-    {
-        // 检查给定位置是否为碰撞区域
-        return pos.y <= DEBUGY;
-    }
+    //public bool isSolid(Vector3 pos)
+    //{
+    //    // 检查给定位置是否为碰撞区域
+    //    return pos.y <= DEBUGY;
+    //}
 }

@@ -1057,6 +1057,7 @@ public class Player : MonoBehaviour
         particleInstance.GetComponent<ParticleSystem>().textureSheetAnimation.SetSprite(0, world.blocktypes[point_Block_type].buttom_sprit);
         particleInstance.transform.parent = particel_Broken_transform;
         particleInstance.transform.position = position;
+        particleInstance.GetComponent<ParticleCollision>().StartPatticle_Broken(managerhub);
 
 
 
@@ -1065,7 +1066,7 @@ public class Player : MonoBehaviour
         //else
         //    particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[point_Block_type].Particle_Material;
 
-        Destroy(particleInstance, 10.0f);
+        //Destroy(particleInstance, 10.0f);
 
         Broking_Animation.Stop();
 

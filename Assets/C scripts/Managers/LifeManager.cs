@@ -7,20 +7,11 @@ public class LifeManager : MonoBehaviour
 {
     [Header("状态")]
     [ReadOnly]public int blood = 20;   private int maxblood = 20;  //当前血量和最高血量
-
+    [ReadOnly] public int food = 20; private int maxfood = 20; 
 
     [Header("引用")]
     public ManagerHub managerhub;
-    public World world;
-    public MusicManager musicmanager;
-    public Player player;
-    public CanvasManager canvasManager;
-    public Image[] Bloods = new Image[10];
-    public Image[] BloodContainer = new Image[10];
-    public Sprite heart_full;
-    public Sprite heart_half;
-    public Sprite oxygen_full;
-    public Sprite oxygen_brust;
+    
 
     //Container闪烁参数
     [Header("血条闪烁")]
@@ -36,14 +27,21 @@ public class LifeManager : MonoBehaviour
 
     //一次性代码
     //bool hasExec_PlaySound = true;
-    
 
-    //------------------------------------ 血条 ------------------------------------------
 
+    public void InitLifeManager()
+    {
+        blood = 20;
+        UpdatePlayerBlood(0, false, false);
+
+        food = 20;
+
+        RecoveryCoroutine = null;
+    }
 
     private void FixedUpdate()
     {
-        if (world.game_state == Game_State.Playing)
+        if (managerhub.world.game_state == Game_State.Playing)
         {
             //初始化血条
             UpdatePlayerBlood(0, false, false);
@@ -51,18 +49,37 @@ public class LifeManager : MonoBehaviour
             //常驻恢复协程
             if (RecoveryCoroutine == null)
             {
-                RecoveryCoroutine = StartCoroutine(RecoveryBlood());
+                RecoveryCoroutine = StartCoroutine(Recovery());
             }
         }
     }
 
-
-    public void InitLifeManager()
+    //自动恢复
+    IEnumerator Recovery()
     {
-        blood = 20;
-        UpdatePlayerBlood(0, false, false);
-        RecoveryCoroutine = null;
+
+        while (true)
+        {
+            if (blood != maxblood && managerhub.world.game_state == Game_State.Playing)
+            {
+                UpdatePlayerBlood(-recoverBlood, true, false);
+
+            }
+            yield return new WaitForSeconds(recoverTime);
+        }
+
+
     }
+
+
+    #region 生命值系统
+
+    public Image[] Bloods = new Image[10];
+    public Image[] BloodContainer = new Image[10];
+    public Sprite heart_full;
+    public Sprite heart_half;
+    public Sprite oxygen_full;
+    public Sprite oxygen_brust;
 
     //更新血条
     public void UpdatePlayerBlood(int hurt, bool isBlind, bool isShakeHead)
@@ -73,8 +90,8 @@ public class LifeManager : MonoBehaviour
         //受伤效果
         if (isShakeHead)   //解决初始化尖叫的问题
         {
-            musicmanager.PlaySound_fallGround();
-            StartCoroutine(player.Animation_Behurt());
+            managerhub.musicManager.PlaySound_fallGround();
+            StartCoroutine(managerhub.player.Animation_Behurt());
         }
 
         
@@ -89,7 +106,7 @@ public class LifeManager : MonoBehaviour
                 Bloods[i].color = Color.black;
             }
 
-            canvasManager.PlayerDead();
+            managerhub.canvasManager.PlayerDead();
             return;
         }
 
@@ -165,27 +182,18 @@ public class LifeManager : MonoBehaviour
         }
     }
     
-    //自动恢复血量
-    IEnumerator RecoveryBlood() 
-    {
-
-        while (true)
-        {
-            if (blood != maxblood && world.game_state == Game_State.Playing)
-            {
-                UpdatePlayerBlood(-recoverBlood, true, false);
-
-            }
-            yield return new WaitForSeconds(recoverTime);
-        }
-        
-
-    }
-
-    //-------------------------------------------------------------------------------------
 
 
+    #endregion
 
+
+    #region 饥饿值系统
+
+
+    #endregion
+
+
+    #region 氧气系统
 
     public int oxygen = 10;
     private int oxygen_max = 10;
@@ -199,7 +207,6 @@ public class LifeManager : MonoBehaviour
 
     public float addTime = 0.2f;
 
-    //------------------------------------ 氧气 -------------------------------------------
     //入水
     public void Oxy_IntoWater()
     {
@@ -246,7 +253,7 @@ public class LifeManager : MonoBehaviour
         while (true)
         {
 
-            if (world.game_state != Game_State.Playing && world.game_state != Game_State.Pause)
+            if (managerhub.world.game_state != Game_State.Playing && managerhub.world.game_state != Game_State.Pause)
             {
                 break;
             }
@@ -293,8 +300,7 @@ public class LifeManager : MonoBehaviour
         }
     }
 
-    //-------------------------------------------------------------------------------------
-
+    #endregion
 
 
 }
