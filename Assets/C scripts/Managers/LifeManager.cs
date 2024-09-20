@@ -13,21 +13,9 @@ public class LifeManager : MonoBehaviour
     public ManagerHub managerhub;
     
 
-    //Container闪烁参数
-    [Header("血条闪烁")]
-    public int blink_numbet = 3;
-    public float blink_time = 0.2f;
-    public float duretime = 0.3f;
 
-    //血量恢复
-    [Header("血量恢复")]
-    public float recoverTime = 5f;
-    public int recoverBlood = 1;
-    Coroutine RecoveryCoroutine;
 
-    //一次性代码
-    //bool hasExec_PlaySound = true;
-
+    #region 周期函数
 
     public void InitLifeManager()
     {
@@ -71,15 +59,31 @@ public class LifeManager : MonoBehaviour
 
     }
 
+    #endregion
+
 
     #region 生命值系统
 
+    [Header("生命值系统引用")]
     public Image[] Bloods = new Image[10];
     public Image[] BloodContainer = new Image[10];
     public Sprite heart_full;
     public Sprite heart_half;
     public Sprite oxygen_full;
     public Sprite oxygen_brust;
+
+
+    //Container闪烁参数
+    [Header("血条闪烁")]
+    public int blink_numbet = 3;
+    public float blink_time = 0.2f;
+    public float duretime = 0.3f;
+
+    //血量恢复
+    [Header("血量恢复")]
+    public float recoverTime = 5f;
+    public int recoverBlood = 1;
+    Coroutine RecoveryCoroutine;
 
     //更新血条
     public void UpdatePlayerBlood(int hurt, bool isBlind, bool isShakeHead)

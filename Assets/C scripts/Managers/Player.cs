@@ -24,6 +24,7 @@ public class Player : MonoBehaviour
     [ReadOnly] public bool isInCave; // 玩家是否在矿洞内
     [ReadOnly] public bool isPause;
     [ReadOnly] public bool isBroking;
+    [ReadOnly] public bool isFirstBrokeBlock;  //创造模式点击可以瞬间销毁方块
 
 
     [Header("Transforms")]
@@ -720,13 +721,13 @@ public class Player : MonoBehaviour
         }
 
 
-        //如果点击鼠标左键,记录OldPointLocation
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    Vector3 _raycastNow = RayCast_now();
-            
-        
-        //}
+        //如果点击鼠标左键
+        if (Input.GetMouseButtonDown(0))
+        {
+            isFirstBrokeBlock = true;
+
+
+        }
 
         //如果松开鼠标左键，isChanger还原
         if (Input.GetMouseButtonUp(0))
@@ -736,19 +737,20 @@ public class Player : MonoBehaviour
             hasExec_isChangedBlock = true;
             musicmanager.isbroking = false;
             musicmanager.Audio_player_broke.Stop();
-
+            isFirstBrokeBlock = false;
         }
 
         //左键销毁泥土
 
         if (Input.GetKey(KeyCode.Mouse0))
         {
+            
             //Debug.Log("Player Mouse0");
             //isLeftMouseDown = true;
             //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
             //Vector3 _raycastNow = RayCast_now();
 
-            if(RayCast_now()!= Vector3.zero && hasExec_isChangedBlock && world.blocktypes[world.GetBlockType(RayCast_now())].canBeChoose)
+            if (RayCast_now()!= Vector3.zero && hasExec_isChangedBlock && world.blocktypes[world.GetBlockType(RayCast_now())].canBeChoose)
             {
                 OldPointLocation = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
                 hasExec_isChangedBlock = false;
@@ -833,7 +835,7 @@ public class Player : MonoBehaviour
 
                         ForceMoving(_Direction, Distance, 0.1f);
 
-                        if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 3)
+                        if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
                         {
                             managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
                         }
@@ -943,7 +945,7 @@ public class Player : MonoBehaviour
 
     }
 
-    public float DEbug_DIstance;
+    //public float DEbug_DIstance;
 
     // 等待2秒后执行销毁泥土的方法
     IEnumerator DestroySoilWithDelay(Vector3 position)
@@ -964,14 +966,19 @@ public class Player : MonoBehaviour
         //是否开启快速挖掘
         if (isSuperMining)
         {
-
             destroy_time = 0.25f;
-
         }
 
         // 等待
         while (Time.time - startTime < destroy_time)
         {
+
+            if (isFirstBrokeBlock && managerhub.world.game_mode == GameMode.Creative)
+            {
+                isFirstBrokeBlock = false;
+                break;
+                
+            }
 
             // 计算材质插值
             elapsedTime += Time.deltaTime;
