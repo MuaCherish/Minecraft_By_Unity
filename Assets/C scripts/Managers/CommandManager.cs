@@ -192,42 +192,46 @@ public class CommandManager : MonoBehaviour
 
             //give
             case 4:
-                string pattern = @"\/give\s+(\d+)";
+                string pattern = @"\/give\s+(\d+)\s+(\d+)";
 
-                // 使用正则表达式匹配数字
+                // 使用正则表达式匹配两个参数
                 Match match = Regex.Match(_input, pattern);
 
                 if (match.Success)
                 {
-                    string numberString = match.Groups[1].Value;
+                    // 提取 type 和 number
+                    string typeString = match.Groups[1].Value;
+                    string numberString = match.Groups[2].Value;
 
-                    if (byte.TryParse(numberString, out byte number))
+                    // 尝试将 type 转换为 byte 类型
+                    if (byte.TryParse(typeString, out byte type) && int.TryParse(numberString, out int number))
                     {
-                        //Debug.Log("提取并转换的数字: " + number);
+                        //Debug.Log("提取并转换的类型和数量: " + type + ", " + number);
 
-                        if (number < world.blocktypes.Length)
+                        // 判断 type 是否在 blocktypes 范围内
+                        if (type < world.blocktypes.Length)
                         {
-
-                            backpackmanager.update_slots(0, number);
+                            // 更新背包内容，例如插入 type 数量为 number 的物品
+                            backpackmanager.update_slots(0, type, number);
 
                             return "<系统消息> " + "给与玩家方块";
                         }
                         else
                         {
-                            return "<系统消息> " + "方块id不存在";
+                            return "<系统消息> " + "方块 id 不存在";
                         }
                     }
                     else
                     {
-                        return "<系统消息> " + "id转换失败";
+                        return "<系统消息> " + "类型或数量转换失败";
                     }
-                    
                 }
                 else
                 {
                     _color = Color.red;
-                    return "<系统消息> " + "id转换失败";
+                    return "<系统消息> " + "指令格式错误";
                 }
+
 
             //time
             case 5:

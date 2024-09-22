@@ -1572,6 +1572,10 @@ public class CanvasManager : MonoBehaviour
 
         world.HideFarChunks();
 
+        managerhub.timeManager.Buff_CaveFog(false);
+
+
+
         openyoureyes();
     }
     //--------------------------------------------------------------------------------------

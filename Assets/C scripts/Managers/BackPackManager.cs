@@ -120,6 +120,94 @@ public class BackPackManager : MonoBehaviour
         }
     }
 
+    public void update_slots(int brokeOrplace, byte blocktype, int _number)
+    {
+        //broke,方块++
+        if (brokeOrplace == 0)
+        {
+            bool isfind = false;
+
+            //先寻找是否有该方块
+            foreach (Slot _slot in slots)
+            {
+
+                //如果找到
+                if (_slot.blockId == blocktype)
+                {
+                    isfind = true;
+
+                    _slot.number += _number;
+                    _slot.TMP_number.text = $"{_slot.number}";
+                }
+            }
+
+            //如果没有该方块，则新加
+            if (!isfind)
+            {
+                int _index = find_empty_index();
+                if (_index != -1)
+                {
+                    //parameter
+                    slots[_index].ishave = true;
+                    slots[_index].blockId = blocktype;
+
+                    //icon
+                    //判断是用3d还是2d
+                    if (managerhub.world.blocktypes[blocktype].DrawMode == DrawMode.Block) //3d
+                    {
+                        slots[_index].Icon3Dobject.SetActive(true);
+                        slots[_index].TopFace.sprite = managerhub.world.blocktypes[blocktype].top_sprit;
+                        slots[_index].LeftFace.sprite = managerhub.world.blocktypes[blocktype].sprite;
+                        slots[_index].RightFace.sprite = managerhub.world.blocktypes[blocktype].sprite;
+                    }
+                    else
+                    {
+                        slots[_index].icon.sprite = managerhub.world.blocktypes[blocktype].icon;
+                        slots[_index].icon.color = new Color(1f, 1f, 1f, 1f);
+                    }
+
+                    //number
+                    slots[_index].number += _number;
+                    slots[_index].TMP_number.text = $"{slots[_index].number}";
+
+
+                }
+
+                if (_index == -1)
+                {
+                    isfull = true;
+                }
+            }
+
+        }
+
+
+        //place，方块--
+        else if (brokeOrplace == 1)
+        {
+            if (slots[managerhub.player.selectindex].number - 1 <= 0)
+            {
+                isfull = false;
+                slots[managerhub.player.selectindex].ResetSlot();
+            }
+            else
+            {
+                if (slots[managerhub.player.selectindex].number > _number)
+                {
+                    slots[managerhub.player.selectindex].number -= _number;
+                    slots[managerhub.player.selectindex].TMP_number.text = $"{slots[managerhub.player.selectindex].number}";
+                }
+                else
+                {
+                    slots[managerhub.player.selectindex].number = 0;
+                    slots[managerhub.player.selectindex].TMP_number.text = $"{slots[managerhub.player.selectindex].number}";
+                }
+                
+            }
+
+        }
+    }
+
 
 
 
