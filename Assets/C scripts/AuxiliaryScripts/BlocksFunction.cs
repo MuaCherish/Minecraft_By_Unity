@@ -5,22 +5,22 @@ using UnityEngine;
 
 public static class BlocksFunction
 {
-
     //爆炸算法
     public static void Boom(ManagerHub managerhub, Vector3 _originPos, float _r)
     {
-        _originPos = new Vector3((int)_originPos.x, (int)_originPos.y,(int)_originPos.z);
+        // 将原始位置转换为整数
+        _originPos = new Vector3((int)_originPos.x, (int)_originPos.y, (int)_originPos.z);
+
+        List<EditStruct> _editNumber = new List<EditStruct>();
+
         // 计算范围内的起始和结束坐标
         int startX = Mathf.FloorToInt(_originPos.x - _r);
         int endX = Mathf.FloorToInt(_originPos.x + _r);
-        int startY = Mathf.FloorToInt(_originPos.y - _r);
+        int startY = Mathf.FloorToInt(_originPos.y - _r + 1);
         int endY = Mathf.FloorToInt(_originPos.y + _r);
         int startZ = Mathf.FloorToInt(_originPos.z - _r);
         int endZ = Mathf.FloorToInt(_originPos.z + _r);
 
-        List<EditStruct> _editNumber = new List<EditStruct>();
-
-        // 遍历范围内的所有坐标
         for (int x = startX; x <= endX; x++)
         {
             for (int y = startY; y <= endY; y++)
@@ -32,16 +32,30 @@ public static class BlocksFunction
                     // 检查该坐标是否在球形半径范围内
                     if (Vector3.Distance(_originPos, currentPos) <= _r)
                     {
-                        _editNumber.Add(new EditStruct(currentPos,VoxelData.Air));
+                        // 如果该坐标属于爆炸边缘位置
+                        if (Vector3.Distance(_originPos, currentPos) >= (_r - 0.5f))
+                        {
+                            // 只有 40% 几率添加空气
+                            if (Random.value <= 0.4f)
+                            {
+                                _editNumber.Add(new EditStruct(currentPos, VoxelData.Air));
+                            }
+                        }
+                        else
+                        {
+                            // 非边缘位置，直接添加空气
+                            _editNumber.Add(new EditStruct(currentPos, VoxelData.Air));
+                        }
                     }
                 }
             }
         }
 
-        // 调用EditBlock函数，将坐标设置为Air
+        // 调用 EditBlock 函数，将坐标设置为 Air
         managerhub.world.EditBlock(_editNumber);
         //Debug.Log($"Boom:{_editNumber.Count}");
     }
+
 
     //烟雾算法
     public static void Smoke(ManagerHub managerhub, Vector3 _originPos, float _r)

@@ -9,15 +9,18 @@ public class ParticleCollision : MonoBehaviour
     public Vector3 gravity = new Vector3(0, -50f, 0); // 自定义重力
     public float Y_Offset = 0.2f;
 
-
-    public void StartPatticle_Broken(ManagerHub _managerhub)
+    private void Awake()
     {
         // 获取粒子系统组件
         _particleSystem = GetComponent<ParticleSystem>();
 
-        managerhub = _managerhub;
+        managerhub = GameObject.Find("Manager/ManagerHub").GetComponent<ManagerHub>();
+    }
 
+    public void Particle_PLay(byte _targetType)
+    {
         _particleSystem.Play();
+        _particleSystem.textureSheetAnimation.SetSprite(0, managerhub.world.blocktypes[_targetType].buttom_sprit);
     }
 
     void Update()

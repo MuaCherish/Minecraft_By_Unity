@@ -50,7 +50,8 @@ public class Player : MonoBehaviour
     
     public GameObject Particle_Broken;
     public Transform particel_Broken_transform;
-    public ParticleSystem Broking_Animation;
+    //public ParticleSystem Broking_Animation;
+    public GameObject Particle_Broking;
 
     //Hand
     public GameObject hand_Hold;
@@ -822,7 +823,7 @@ public class Player : MonoBehaviour
                         break;
                     //TNT
                     case 17:
-                        BlocksFunction.Boom(managerhub, _raycastNow, 3);
+                        BlocksFunction.Boom(managerhub, _raycastNow, 4);
                         GameObject.Instantiate(particle_explosion, RayCast, Quaternion.identity);
 
                         // 玩家被炸飞
@@ -952,12 +953,28 @@ public class Player : MonoBehaviour
     {
         //print("开启了破坏协程");
         isDestroying = true;
-        if (point_Block_type != 255)
+
+        //if (point_Block_type == 255)
+        //{
+        //    print("point_Block_type == 255");
+        //    yield break;
+        //}
+        byte theBlockwhichBeBrokenType = point_Block_type;
+
+        if (theBlockwhichBeBrokenType == 255)
         {
-            Broking_Animation.textureSheetAnimation.SetSprite(0, world.blocktypes[point_Block_type].buttom_sprit);
+            theBlockwhichBeBrokenType = 2;
         }
-        
-        Broking_Animation.Play();
+
+
+        //破坏中粒子系统
+        GameObject BrokingparticleInstance = Instantiate(Particle_Broking);
+        BrokingparticleInstance.transform.parent = particel_Broken_transform;
+        BrokingparticleInstance.transform.position = position;
+        BrokingparticleInstance.GetComponent<ParticleCollision>().Particle_PLay(theBlockwhichBeBrokenType);
+        //Broking_Animation.textureSheetAnimation.SetSprite(0, world.blocktypes[theBlockwhichBeBrokenType].buttom_sprit);
+
+        //Broking_Animation.Play();
 
         // 记录协程开始执行时的时间
         float startTime = Time.time;
@@ -1027,7 +1044,8 @@ public class Player : MonoBehaviour
                 //音效暂停
                 musicmanager.Audio_player_broke.Stop();
 
-                Broking_Animation.Stop();
+                BrokingparticleInstance.GetComponent<ParticleSystem>().Stop();
+                //Broking_Animation.Stop();
 
                 yield break;
 
@@ -1037,10 +1055,21 @@ public class Player : MonoBehaviour
 
         }
 
+
+
         //如果成功过了两秒
         // 执行销毁泥土的逻辑
         isDestroying = false;
-        musicmanager.PlaySound_Broken(point_Block_type);
+
+        BrokingparticleInstance.GetComponent<ParticleSystem>().Stop();
+        musicmanager.PlaySound_Broken(theBlockwhichBeBrokenType);
+
+        //破坏粒子效果
+        GameObject particleInstance = Instantiate(Particle_Broken);
+        particleInstance.transform.parent = particel_Broken_transform;
+        particleInstance.transform.position = position;
+        particleInstance.GetComponent<ParticleCollision>().Particle_PLay(theBlockwhichBeBrokenType);
+
         elapsedTime = 0.0f;
         musicmanager.isbroking = false;
 
@@ -1049,22 +1078,20 @@ public class Player : MonoBehaviour
         HighLightMaterial.mainTexture = DestroyTextures[0];
 
         //只有生存模式才会掉掉落物
-        if (world.game_mode == GameMode.Survival && world.blocktypes[point_Block_type].candropBlock)
+        if (world.game_mode == GameMode.Survival && world.blocktypes[theBlockwhichBeBrokenType].candropBlock)
         {
 
             backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type, false, backpackmanager.ColdTime_Absorb);
 
         }
 
+
+
+
         //放进背包由掉落物执行
         //canvasManager.Change_text_selectBlockname(point_Block_type);
 
-        //破坏粒子效果
-        GameObject particleInstance = Instantiate(Particle_Broken);
-        particleInstance.GetComponent<ParticleSystem>().textureSheetAnimation.SetSprite(0, world.blocktypes[point_Block_type].buttom_sprit);
-        particleInstance.transform.parent = particel_Broken_transform;
-        particleInstance.transform.position = position;
-        particleInstance.GetComponent<ParticleCollision>().StartPatticle_Broken(managerhub);
+
 
 
 
@@ -1075,7 +1102,7 @@ public class Player : MonoBehaviour
 
         //Destroy(particleInstance, 10.0f);
 
-        Broking_Animation.Stop();
+        //Broking_Animation.Stop();
 
         //World
         var chunkObject = world.GetChunkObject(position);
