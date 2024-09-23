@@ -38,7 +38,7 @@ public enum GameMode
 public enum DrawMode
 {
 
-    Block,Bush,Torch,Air,Water,SnowPower,HalfBrick,Door,
+    Block,Bush,Torch,Air,Water,SnowPower,HalfBrick,Door,Tool,
 
 }
 
@@ -58,10 +58,11 @@ public enum Facing2d
 
 public class World : MonoBehaviour
 {
-    [Header("状态")]
+    [Header("Debug")]
     public bool 低区块模式; private bool hasExec_低区块模式 = true;
     public bool 无黑夜模式; private bool hasExec_无黑夜模式 = true;
-     
+    public bool 是否生成Chunk侧面 = false;
+
     [Header("引用")]
     public ManagerHub managerhub;
     public CanvasManager canvasManager;
@@ -70,9 +71,9 @@ public class World : MonoBehaviour
     [Header("世界存档")]
     [HideInInspector] public bool isFinishSaving = false;
     [HideInInspector] public String savingPATH = ""; //存档根目录
-    public WorldSetting worldSetting;
-    public List<SavingData> TheSaving = new List<SavingData>(); //读取的存档
-    public List<EditStruct> EditNumber = new List<EditStruct>(); //玩家数据
+    [HideInInspector] public WorldSetting worldSetting;
+    [HideInInspector] public List<SavingData> TheSaving = new List<SavingData>(); //读取的存档
+    [HideInInspector] public List<EditStruct> EditNumber = new List<EditStruct>(); //玩家数据
     //public List<SavingData> savingDatas = new List<SavingData>();//最终保存数据
 
     [Header("游戏状态")]
@@ -82,11 +83,10 @@ public class World : MonoBehaviour
     //public bool SuperPlainMode = false; 
 
 
-    [Header("Material-方块类型")]
+    [Header("Material-方块类型 + 工具类型")]
     public Material material;
     public Material material_Water;
     public BlockType[] blocktypes;
-
 
     [Header("World-渲染设置")]
     [Tooltip("4就是边长为4*16的正方形")] public int renderSize = 5;        //渲染区块半径,即renderSize*16f
@@ -158,9 +158,6 @@ public class World : MonoBehaviour
     public ConcurrentQueue<Chunk> WaitToRender_New = new ConcurrentQueue<Chunk>();
 
 
-    [Header("Debug")]
-    public bool 是否生成Chunk侧面 = false;
-
 
     //生成方向
     private Vector3 Center_Now;
@@ -173,8 +170,7 @@ public class World : MonoBehaviour
 
 
     //Chunks父级
-    [HideInInspector]
-    public GameObject Chunks;
+    [HideInInspector] public GameObject Chunks;
 
 
     //一次性代码
@@ -2084,7 +2080,7 @@ public class World : MonoBehaviour
 
     //用于记录建筑
     //recordData.pos存的是绝对坐标
-    public List<EditStruct> recordData = new List<EditStruct>();
+    private List<EditStruct> recordData = new List<EditStruct>();
 
     //记录建筑
     public void RecordBuilding(Vector3 _Start, Vector3 _End)
@@ -2556,6 +2552,11 @@ public class BlockType
     public int rightFaceTexture;
     public DrawMode DrawMode;
 
+    [Header("工具类")]
+    public bool isTool;
+    public Sprite Toolsprite;
+
+
 
     //贴图中的面的坐标
     public int GetTextureID(int faceIndex)
@@ -2594,6 +2595,14 @@ public class BlockType
 
 }
 
+
+//工具类
+//[System.Serializable]
+//public class ToolType
+//{
+//    public string name;
+//    public Sprite sprite;
+//}
 
 //方块种类结构体
 public class VoxelStruct

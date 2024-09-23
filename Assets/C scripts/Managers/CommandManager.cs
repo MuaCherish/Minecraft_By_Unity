@@ -16,11 +16,7 @@ public class CommandManager : MonoBehaviour
 
     [Header("Transforms")]
     public ManagerHub managerhub;
-    public World world;
-    public Player player;
-    public BackPackManager backpackmanager;
     public GameObject CommandScreen;
-    public LifeManager lifemanager;
     //public GameObject 内置消息栏;
     public TMP_InputField inputField; // 用于输入命令的InputField
     
@@ -34,7 +30,7 @@ public class CommandManager : MonoBehaviour
 
     private void Update()
     {
-        if (world.game_state == Game_State.Playing)
+        if (managerhub.world.game_state == Game_State.Playing)
         {
             // 按下T键且控制台未激活时才激活控制台
             if (Input.GetKeyDown(KeyCode.T) && !isConsoleActive)
@@ -180,7 +176,7 @@ public class CommandManager : MonoBehaviour
 
             //dead
             case 2:
-                lifemanager.UpdatePlayerBlood(30, true, true);
+                managerhub.lifeManager.UpdatePlayerBlood(30, true, true);
                 DeactivateConsole();
                 return "<系统消息> " + "玩家已死亡";
                  
@@ -192,16 +188,19 @@ public class CommandManager : MonoBehaviour
 
             //give
             case 4:
-                string pattern = @"\/give\s+(\d+)\s+(\d+)";
+                // 修改正则表达式，使第二个参数可选
+                string pattern = @"\/give\s+(\d+)(?:\s+(\d+))?";
 
-                // 使用正则表达式匹配两个参数
+                // 使用正则表达式匹配
                 Match match = Regex.Match(_input, pattern);
 
                 if (match.Success)
                 {
-                    // 提取 type 和 number
+                    // 提取 type 参数
                     string typeString = match.Groups[1].Value;
-                    string numberString = match.Groups[2].Value;
+
+                    // 如果第二个参数不存在，则默认值为 1
+                    string numberString = match.Groups[2].Success ? match.Groups[2].Value : "1";
 
                     // 尝试将 type 转换为 byte 类型
                     if (byte.TryParse(typeString, out byte type) && int.TryParse(numberString, out int number))
@@ -209,11 +208,11 @@ public class CommandManager : MonoBehaviour
                         //Debug.Log("提取并转换的类型和数量: " + type + ", " + number);
 
                         // 判断 type 是否在 blocktypes 范围内
-                        if (type < world.blocktypes.Length)
+                        if (type < managerhub.world.blocktypes.Length)
                         {
                             // 更新背包内容，例如插入 type 数量为 number 的物品
-                            backpackmanager.update_slots(0, type, number);
-
+                            managerhub.backpackManager.update_slots(0, type, number);
+                            managerhub.backpackManager.ChangeBlockInHand();
                             return "<系统消息> " + "给与玩家方块";
                         }
                         else

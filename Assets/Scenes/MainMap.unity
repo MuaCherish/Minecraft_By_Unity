@@ -21278,6 +21278,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   "\u4F4E\u533A\u5757\u6A21\u5F0F": 0
   "\u65E0\u9ED1\u591C\u6A21\u5F0F": 0
+  "\u662F\u5426\u751F\u6210Chunk\u4FA7\u9762": 0
   managerhub: {fileID: 843154432}
   canvasManager: {fileID: 1026571032}
   player: {fileID: 1504082080}
@@ -21328,6 +21329,8 @@ MonoBehaviour:
     leftFaceTexture: 33
     rightFaceTexture: 33
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Stone
     DestroyTime: 2
     isSolid: 1
@@ -21357,6 +21360,8 @@ MonoBehaviour:
     leftFaceTexture: 0
     rightFaceTexture: 0
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Grass
     DestroyTime: 1
     isSolid: 1
@@ -21386,6 +21391,8 @@ MonoBehaviour:
     leftFaceTexture: 2
     rightFaceTexture: 2
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Soil
     DestroyTime: 1
     isSolid: 1
@@ -21415,6 +21422,8 @@ MonoBehaviour:
     leftFaceTexture: 1
     rightFaceTexture: 1
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Air
     DestroyTime: 0
     isSolid: 0
@@ -21444,6 +21453,8 @@ MonoBehaviour:
     leftFaceTexture: 255
     rightFaceTexture: 255
     DrawMode: 3
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Sand
     DestroyTime: 1
     isSolid: 1
@@ -21473,6 +21484,8 @@ MonoBehaviour:
     leftFaceTexture: 34
     rightFaceTexture: 34
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: wood
     DestroyTime: 3.1
     isSolid: 1
@@ -21502,6 +21515,8 @@ MonoBehaviour:
     leftFaceTexture: 17
     rightFaceTexture: 17
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: leave
     DestroyTime: 0.4
     isSolid: 1
@@ -21531,6 +21546,8 @@ MonoBehaviour:
     leftFaceTexture: 20
     rightFaceTexture: 20
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: water
     DestroyTime: 0
     isSolid: 0
@@ -21560,6 +21577,8 @@ MonoBehaviour:
     leftFaceTexture: 255
     rightFaceTexture: 255
     DrawMode: 4
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Coal
     DestroyTime: 3
     isSolid: 1
@@ -21589,6 +21608,8 @@ MonoBehaviour:
     leftFaceTexture: 3
     rightFaceTexture: 3
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: BirchWood
     DestroyTime: 2
     isSolid: 1
@@ -21618,6 +21639,8 @@ MonoBehaviour:
     leftFaceTexture: 7
     rightFaceTexture: 7
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: BlueFlower
     DestroyTime: 0.1
     isSolid: 0
@@ -21647,6 +21670,8 @@ MonoBehaviour:
     leftFaceTexture: 22
     rightFaceTexture: 22
     DrawMode: 1
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: whiteFlower_1
     DestroyTime: 0.1
     isSolid: 0
@@ -21676,6 +21701,8 @@ MonoBehaviour:
     leftFaceTexture: 23
     rightFaceTexture: 23
     DrawMode: 1
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: whiteFlower_2
     DestroyTime: 0.1
     isSolid: 0
@@ -21705,6 +21732,8 @@ MonoBehaviour:
     leftFaceTexture: 38
     rightFaceTexture: 38
     DrawMode: 1
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: yellowFlower
     DestroyTime: 0.1
     isSolid: 0
@@ -21734,6 +21763,8 @@ MonoBehaviour:
     leftFaceTexture: 36
     rightFaceTexture: 36
     DrawMode: 1
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: torch
     DestroyTime: 0.4
     isSolid: 0
@@ -21763,6 +21794,8 @@ MonoBehaviour:
     leftFaceTexture: 37
     rightFaceTexture: 37
     DrawMode: 1
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Cactus
     DestroyTime: 2
     isSolid: 1
@@ -21792,6 +21825,8 @@ MonoBehaviour:
     leftFaceTexture: 54
     rightFaceTexture: 54
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: TNT
     DestroyTime: 0.5
     isSolid: 1
@@ -21821,6 +21856,8 @@ MonoBehaviour:
     leftFaceTexture: 65
     rightFaceTexture: 65
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: WorkTable
     DestroyTime: 2
     isSolid: 1
@@ -21850,6 +21887,8 @@ MonoBehaviour:
     leftFaceTexture: 81
     rightFaceTexture: 81
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Pumpkin
     DestroyTime: 2
     isSolid: 1
@@ -21879,6 +21918,8 @@ MonoBehaviour:
     leftFaceTexture: 98
     rightFaceTexture: 98
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Glass
     DestroyTime: 0.2
     isSolid: 1
@@ -21908,6 +21949,8 @@ MonoBehaviour:
     leftFaceTexture: 116
     rightFaceTexture: 116
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Blue_Crystal
     DestroyTime: 3
     isSolid: 1
@@ -21937,6 +21980,8 @@ MonoBehaviour:
     leftFaceTexture: 112
     rightFaceTexture: 112
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Diamond
     DestroyTime: 5
     isSolid: 1
@@ -21966,6 +22011,8 @@ MonoBehaviour:
     leftFaceTexture: 113
     rightFaceTexture: 113
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Iron
     DestroyTime: 3
     isSolid: 1
@@ -21995,6 +22042,8 @@ MonoBehaviour:
     leftFaceTexture: 114
     rightFaceTexture: 114
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Gold
     DestroyTime: 3
     isSolid: 1
@@ -22024,6 +22073,8 @@ MonoBehaviour:
     leftFaceTexture: 115
     rightFaceTexture: 115
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: bamboo
     DestroyTime: 0.1
     isSolid: 0
@@ -22053,6 +22104,8 @@ MonoBehaviour:
     leftFaceTexture: 21
     rightFaceTexture: 21
     DrawMode: 1
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: WoodenPlanks
     DestroyTime: 1
     isSolid: 1
@@ -22082,6 +22135,8 @@ MonoBehaviour:
     leftFaceTexture: 16
     rightFaceTexture: 16
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Fluor
     DestroyTime: 0.4
     isSolid: 1
@@ -22111,6 +22166,8 @@ MonoBehaviour:
     leftFaceTexture: 52
     rightFaceTexture: 52
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Bush
     DestroyTime: 0.1
     isSolid: 0
@@ -22140,6 +22197,8 @@ MonoBehaviour:
     leftFaceTexture: 67
     rightFaceTexture: 67
     DrawMode: 1
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Snow
     DestroyTime: 1
     isSolid: 1
@@ -22169,6 +22228,8 @@ MonoBehaviour:
     leftFaceTexture: 4
     rightFaceTexture: 4
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: SnowPower
     DestroyTime: 0.1
     isSolid: 0
@@ -22198,6 +22259,8 @@ MonoBehaviour:
     leftFaceTexture: 4
     rightFaceTexture: 4
     DrawMode: 5
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Mycelium
     DestroyTime: 1
     isSolid: 1
@@ -22227,6 +22290,8 @@ MonoBehaviour:
     leftFaceTexture: 69
     rightFaceTexture: 69
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Cobblestone
     DestroyTime: 2
     isSolid: 1
@@ -22256,6 +22321,8 @@ MonoBehaviour:
     leftFaceTexture: 32
     rightFaceTexture: 32
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Door_Up
     DestroyTime: 1
     isSolid: 1
@@ -22285,6 +22352,8 @@ MonoBehaviour:
     leftFaceTexture: 16
     rightFaceTexture: 16
     DrawMode: 7
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Door_Down
     DestroyTime: 1
     isSolid: 1
@@ -22314,6 +22383,8 @@ MonoBehaviour:
     leftFaceTexture: 16
     rightFaceTexture: 16
     DrawMode: 7
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: HalfBrick_Wood
     DestroyTime: 1
     isSolid: 1
@@ -22343,6 +22414,8 @@ MonoBehaviour:
     leftFaceTexture: 16
     rightFaceTexture: 16
     DrawMode: 6
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Mushroom_red
     DestroyTime: 0.1
     isSolid: 0
@@ -22372,6 +22445,8 @@ MonoBehaviour:
     leftFaceTexture: 39
     rightFaceTexture: 39
     DrawMode: 1
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Mushroom_brown
     DestroyTime: 0.1
     isSolid: 0
@@ -22401,6 +22476,8 @@ MonoBehaviour:
     leftFaceTexture: 55
     rightFaceTexture: 55
     DrawMode: 1
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Redbrick
     DestroyTime: 3.1
     isSolid: 1
@@ -22430,6 +22507,8 @@ MonoBehaviour:
     leftFaceTexture: 35
     rightFaceTexture: 35
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Furnace
     DestroyTime: 3.1
     isSolid: 1
@@ -22459,6 +22538,8 @@ MonoBehaviour:
     leftFaceTexture: 49
     rightFaceTexture: 49
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: JukeBox
     DestroyTime: 2
     isSolid: 1
@@ -22488,6 +22569,8 @@ MonoBehaviour:
     leftFaceTexture: 71
     rightFaceTexture: 71
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Wool_Green
     DestroyTime: 1
     isSolid: 1
@@ -22517,6 +22600,8 @@ MonoBehaviour:
     leftFaceTexture: 101
     rightFaceTexture: 101
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Wool_White
     DestroyTime: 1
     isSolid: 1
@@ -22546,6 +22631,8 @@ MonoBehaviour:
     leftFaceTexture: 102
     rightFaceTexture: 102
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Wool_Red
     DestroyTime: 1
     isSolid: 1
@@ -22575,6 +22662,8 @@ MonoBehaviour:
     leftFaceTexture: 117
     rightFaceTexture: 117
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Wool_Pink
     DestroyTime: 1
     isSolid: 1
@@ -22604,6 +22693,8 @@ MonoBehaviour:
     leftFaceTexture: 118
     rightFaceTexture: 118
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Chest
     DestroyTime: 2
     isSolid: 1
@@ -22633,6 +22724,8 @@ MonoBehaviour:
     leftFaceTexture: 86
     rightFaceTexture: 86
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Gravel
     DestroyTime: 1
     isSolid: 1
@@ -22662,6 +22755,8 @@ MonoBehaviour:
     leftFaceTexture: 5
     rightFaceTexture: 5
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
   - blockName: Glass_Plane
     DestroyTime: 0.2
     isSolid: 1
@@ -22691,6 +22786,163 @@ MonoBehaviour:
     leftFaceTexture: 116
     rightFaceTexture: 116
     DrawMode: 0
+    isTool: 0
+    Toolsprite: {fileID: 0}
+  - blockName: Tool_Sword
+    DestroyTime: 0.2
+    isSolid: 1
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -938338414, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    sprite: {fileID: -938338414, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    top_sprit: {fileID: -938338414, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    buttom_sprit: {fileID: -938338414, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 116
+    frontFaceTexture: 116
+    topFaceTexture: 116
+    bottomFaceTexture: 116
+    leftFaceTexture: 116
+    rightFaceTexture: 116
+    DrawMode: 8
+    isTool: 1
+    Toolsprite: {fileID: -938338414, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  - blockName: Tool_Pork
+    DestroyTime: 0.2
+    isSolid: 1
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1530299636, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    sprite: {fileID: -1530299636, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    top_sprit: {fileID: -1530299636, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    buttom_sprit: {fileID: -1530299636, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 116
+    frontFaceTexture: 116
+    topFaceTexture: 116
+    bottomFaceTexture: 116
+    leftFaceTexture: 116
+    rightFaceTexture: 116
+    DrawMode: 8
+    isTool: 1
+    Toolsprite: {fileID: -1530299636, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  - blockName: Tool_MusicDiscs
+    DestroyTime: 0.2
+    isSolid: 1
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1361506380, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    sprite: {fileID: -1361506380, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    top_sprit: {fileID: -1361506380, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    buttom_sprit: {fileID: -1361506380, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 116
+    frontFaceTexture: 116
+    topFaceTexture: 116
+    bottomFaceTexture: 116
+    leftFaceTexture: 116
+    rightFaceTexture: 116
+    DrawMode: 8
+    isTool: 1
+    Toolsprite: {fileID: -1361506380, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  - blockName: Tool_Flint
+    DestroyTime: 0.2
+    isSolid: 1
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1945274408, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    sprite: {fileID: -1945274408, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    top_sprit: {fileID: -1945274408, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    buttom_sprit: {fileID: -1945274408, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 116
+    frontFaceTexture: 116
+    topFaceTexture: 116
+    bottomFaceTexture: 116
+    leftFaceTexture: 116
+    rightFaceTexture: 116
+    DrawMode: 8
+    isTool: 1
+    Toolsprite: {fileID: -1945274408, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  - blockName: Tool_Pickaxe
+    DestroyTime: 0.2
+    isSolid: 1
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 1
+    IsOriented: 0
+    isinteractable: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -1700271542, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    sprite: {fileID: -1700271542, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    top_sprit: {fileID: -1700271542, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    buttom_sprit: {fileID: -1700271542, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+    backFaceTexture: 116
+    frontFaceTexture: 116
+    topFaceTexture: 116
+    bottomFaceTexture: 116
+    leftFaceTexture: 116
+    rightFaceTexture: 116
+    DrawMode: 8
+    isTool: 1
+    Toolsprite: {fileID: -1700271542, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
   renderSize: 6
   StartToRender: 1
   DestroySize: 7
@@ -22757,12 +23009,10 @@ MonoBehaviour:
   Delay_RenderFlowWater: 3
   MaxDistant_RenderFlowWater: 5
   Delay_RenderMesh: 1000
-  "\u662F\u5426\u751F\u6210Chunk\u4FA7\u9762": 0
   Chunks: {fileID: 0}
   RenderLock: 0
   MeshLock: 0
   PointSaving: 
-  recordData: []
 --- !u!4 &699955242
 Transform:
   m_ObjectHideFlags: 0
@@ -26267,6 +26517,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 821221947}
   m_CullTransparentMesh: 1
+--- !u!1 &821689787
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 821689788}
+  m_Layer: 7
+  m_Name: HandTool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &821689788
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 821689787}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.40849364, y: -0.6054685, z: 0.38201427, w: 0.5662208}
+  m_LocalPosition: {x: 0.547, y: -0.123, z: 0.696}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 2047085375}
+  m_LocalEulerAnglesHint: {x: 0, y: -93.837, z: 68.013}
 --- !u!1 &825183540
 GameObject:
   m_ObjectHideFlags: 0
@@ -26477,6 +26758,7 @@ GameObject:
   m_Component:
   - component: {fileID: 843154431}
   - component: {fileID: 843154432}
+  - component: {fileID: 843154433}
   m_Layer: 0
   m_Name: ManagerHub
   m_TagString: Untagged
@@ -26521,6 +26803,20 @@ MonoBehaviour:
   world: {fileID: 699955241}
   player: {fileID: 1504082080}
   fpsmManaer: {fileID: 438324210}
+  textureTo3D: {fileID: 843154433}
+--- !u!114 &843154433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 843154430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dc743ec80ce41547a6e806b8ab3c5cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 3b3c9545d49361d498dee797d4195d02, type: 2}
 --- !u!1 &844456349
 GameObject:
   m_ObjectHideFlags: 0
@@ -43829,6 +44125,7 @@ MonoBehaviour:
   hand_Hold: {fileID: 2047085374}
   hand: {fileID: 943284627}
   handBlock: {fileID: 307136111}
+  handTool: {fileID: 821689787}
   foot: {fileID: 656216633}
   walkSpeed: 4.317
   sprintSpeed: 5.612
@@ -43893,7 +44190,7 @@ Transform:
   m_GameObject: {fileID: 1504082079}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1600, y: 127, z: 800}
+  m_LocalPosition: {x: 1600, y: 127, z: 808.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -63241,11 +63538,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isConsoleActive: 0
   managerhub: {fileID: 843154432}
-  world: {fileID: 699955241}
-  player: {fileID: 1504082080}
-  backpackmanager: {fileID: 2136429365}
   CommandScreen: {fileID: 720881543}
-  lifemanager: {fileID: 1066840322}
   inputField: {fileID: 163696392}
   commands:
   - name: print
@@ -64069,6 +64362,7 @@ Transform:
   m_Children:
   - {fileID: 943284628}
   - {fileID: 307136112}
+  - {fileID: 821689788}
   m_Father: {fileID: 1727421507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2047085376

@@ -125,6 +125,15 @@ public static class VoxelData
     public static readonly Byte Chest = 45;
     public static readonly Byte Gravel = 46; //沙砾
     public static readonly Byte Glass_Plane = 47;
+    public static readonly Byte Tool_Sword = 48;
+    public static readonly Byte Tool_Pork = 49;
+    public static readonly Byte Tool_MusicDiscs = 50;
+    public static readonly Byte Tool_Flint = 51; //打火石
+    public static readonly Byte Tool_Pickaxe = 52; //稿子
+    //public static readonly Byte Tool_Pork = 48;
+    //public static readonly Byte Tool_Pork = 48;
+    //public static readonly Byte Tool_Pork = 48;
+
 
     //音乐宏定义
     //宏定义

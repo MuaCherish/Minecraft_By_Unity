@@ -394,13 +394,17 @@ public class BackPackManager : MonoBehaviour
     }
 
     //切换物品
+    bool ToolAlive = false;
     public void ChangeBlockInHand()
     {
-        GameObject Hand_Hold = managerhub.player.GetHand_Hold();
-        GameObject Hand = managerhub.player.GetHand();
-        GameObject HandBlock = managerhub.player.GetHandBlock();
+        
+        GameObject Hand_Hold = managerhub.player.hand_Hold;
+        GameObject Hand = managerhub.player.hand;
+        GameObject HandBlock = managerhub.player.handBlock;
+        GameObject HanTool = managerhub.player.handTool;
 
         byte now_HandBlock = slots[managerhub.player.selectindex].blockId;
+
 
         //如果不一样，就要切换方块 或者 方块槽里有方块但是isCatchBloch = false 或者 方块槽里无方块但是却是isCatchBloch = true
         if (now_HandBlock != previous_HandBlock || (now_HandBlock != 255 && managerhub.player.isCatchBlock == false) || (now_HandBlock == 255 && managerhub.player.isCatchBlock == true))
@@ -408,6 +412,17 @@ public class BackPackManager : MonoBehaviour
             //切换手
             if (now_HandBlock == 255)
             {
+
+                //销毁挤压物品
+                if (ToolAlive)
+                {
+                    foreach (Transform item in HanTool.transform)
+                    {
+                        Destroy(item.gameObject);
+                    }
+                    ToolAlive = false;
+                }
+
                 //开启冷却时间
                 StartCoroutine(ChangeBlockColdTime());
 
@@ -425,43 +440,98 @@ public class BackPackManager : MonoBehaviour
                 managerhub.player.isCatchBlock = false;
 
             }
-            //切换方块
+            //切换方块或者工具
             else
             {
-
-                //开启冷却时间
-                StartCoroutine(ChangeBlockColdTime());
-
-                //放下Hand_Hold
-                Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Down");
-
-                //显方块，隐藏手
-                HandBlock.SetActive(true);
-                Hand.SetActive(false);
-
-                //更新材质
-                int index = 0;
-                foreach (Transform child in HandBlock.transform)
+                //如果是方块
+                if (!managerhub.world.blocktypes[now_HandBlock].isTool)
                 {
-                    //顶面
-                    if (index >= 4)
+                    //销毁挤压物品
+                    if (ToolAlive)
                     {
-                        child.gameObject.GetComponent<SpriteRenderer>().sprite = managerhub.world.blocktypes[slots[managerhub.player.selectindex].blockId].top_sprit;
+                        foreach (Transform item in HanTool.transform)
+                        {
+                            Destroy(item.gameObject);
+                        }
+                        ToolAlive = false;
                     }
-                    else
+
+                    //开启冷却时间
+                    StartCoroutine(ChangeBlockColdTime());
+
+                    //放下Hand_Hold
+                    Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Down");
+
+                    //显方块，隐藏手
+                    HandBlock.SetActive(true);
+                    Hand.SetActive(false);
+
+                    //更新材质
+                    int index = 0;
+                    foreach (Transform child in HandBlock.transform)
                     {
-                        child.gameObject.GetComponent<SpriteRenderer>().sprite = managerhub.world.blocktypes[slots[managerhub.player.selectindex].blockId].sprite;
+                        //顶面
+                        if (index >= 4)
+                        {
+                            child.gameObject.GetComponent<SpriteRenderer>().sprite = managerhub.world.blocktypes[slots[managerhub.player.selectindex].blockId].top_sprit;
+                        }
+                        else
+                        {
+                            child.gameObject.GetComponent<SpriteRenderer>().sprite = managerhub.world.blocktypes[slots[managerhub.player.selectindex].blockId].sprite;
+                        }
+
+                        index++;
                     }
-                    
-                    index++;
+
+
+                    //拿出Hand_Hold
+                    Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Up");
+
+                    //状态
+                    managerhub.player.isCatchBlock = true;
                 }
+                else //如果是工具
+                {
+                    ToolAlive = true;
+
+                    //改变父物体Transform
+                    //HanTool.transform.localPosition = new Vector3(0.542f, -0.098f, 0.774f);
+                    //HanTool.transform.rotation = Quaternion.Euler(0f, -93.837f, 68.013f);
 
 
-                //拿出Hand_Hold
-                Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Up");
 
-                //状态
-                managerhub.player.isCatchBlock = true;
+                    //开启冷却时间
+                    StartCoroutine(ChangeBlockColdTime());
+
+                    //放下Hand_Hold
+                    Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Down");
+
+                    //显方块，隐藏手
+                    if (HandBlock.activeSelf)
+                    {
+                        HandBlock.SetActive(false);
+                    }
+
+                    HanTool.SetActive(true);
+                    Hand.SetActive(false);
+
+                    //更新材质
+                    foreach (Transform item in HanTool.transform)
+                    {
+                        Destroy(item.gameObject);
+                    }
+
+                    //print(managerhub.world.blocktypes[now_HandBlock].blockName);
+                    //print($"index: {now_HandBlock} , sprite:{managerhub.world.blocktypes[now_HandBlock].sprite}");
+                    managerhub.textureTo3D.ProcessSprite(managerhub.world.blocktypes[now_HandBlock].Toolsprite, HanTool.transform, 4);
+
+
+                    //拿出Hand_Hold
+                    Hand_Hold.GetComponent<Animation>().Play("ChangeBlock_Up");
+
+                    //状态
+                    managerhub.player.isCatchBlock = true;
+                }
 
             }
 

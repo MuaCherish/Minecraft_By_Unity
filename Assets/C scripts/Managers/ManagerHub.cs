@@ -14,4 +14,5 @@ public class ManagerHub : MonoBehaviour
     public World world;
     public Player player;
     public FPS fpsmManaer;
+    public TextureTo3D textureTo3D;
 }

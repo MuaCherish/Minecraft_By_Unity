@@ -57,6 +57,7 @@ public class Player : MonoBehaviour
     public GameObject hand_Hold;
     public GameObject hand;
     public GameObject handBlock;
+    public GameObject handTool;
 
 
     [Header("角色参数")]
@@ -804,8 +805,7 @@ public class Player : MonoBehaviour
             Vector3 RayCast = RayCast_last();
             Vector3 _raycastNow = RayCast_now();
             byte _targettype = world.GetBlockType(_raycastNow);
-
-            
+            byte _selecttype = managerhub.backpackManager.slots[selectindex].blockId;
 
             //如果是可互动方块
             if (_targettype < world.blocktypes.Length && world.blocktypes[_targettype].isinteractable)
@@ -823,72 +823,93 @@ public class Player : MonoBehaviour
                         break;
                     //TNT
                     case 17:
-                        BlocksFunction.Boom(managerhub, _raycastNow, 4);
-                        GameObject.Instantiate(particle_explosion, RayCast, Quaternion.identity);
 
-                        // 玩家被炸飞
-                        Vector3 _Direction = cam.transform.position - _raycastNow;  //炸飞方向
-                        float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
-
-                        //计算炸飞距离
-                        _Direction.y = Mathf.Lerp(0, 1, _value);
-                        float Distance = Mathf.Lerp(3, 0, _value);
-
-                        ForceMoving(_Direction, Distance, 0.1f);
-
-                        if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
+                        if (_selecttype == VoxelData.Tool_Flint)
                         {
-                            managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
+                            BlocksFunction.Boom(managerhub, _raycastNow, 4);
+                            GameObject.Instantiate(particle_explosion, RayCast, Quaternion.identity);
+
+                            // 玩家被炸飞
+                            Vector3 _Direction = cam.transform.position - _raycastNow;  //炸飞方向
+                            float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
+
+                            //计算炸飞距离
+                            _Direction.y = Mathf.Lerp(0, 1, _value);
+                            float Distance = Mathf.Lerp(3, 0, _value);
+
+                            ForceMoving(_Direction, Distance, 0.1f);
+
+                            if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
+                            {
+                                managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
+                            }
                         }
+
+                        
 
                         //print($"_Direction:{_Direction}, _distance: {_distance}");
 
+                        break;
+                    //唱片机
+                    case 40:
+                        if (_selecttype == VoxelData.Tool_MusicDiscs)
+                        {
+                            managerhub.musicManager.Audio_envitonment.clip = managerhub.musicManager.audioclips[4];
+                            managerhub.musicManager.Audio_envitonment.Play();
+                        }
                         break;
                 }
 
                 return;
             }
 
-            //如果打到 && 距离大于2f && 且不是脚底下
-            if (RayCast != Vector3.zero && (RayCast - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(RayCast.x, RayCast.y - 1f, RayCast.z)))
+            //如果是工具方块，则不进行方块的放置
+            if (!managerhub.world.blocktypes[_selecttype].isTool)
             {
-
-                //music
-                musicmanager.PlaySoung_Place();
-
-                if (backpackmanager.istheindexHaveBlock(selectindex))
+                //如果打到 && 距离大于2f && 且不是脚底下
+                if (RayCast != Vector3.zero && (RayCast - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(RayCast.x, RayCast.y - 1f, RayCast.z)))
                 {
 
-                    
+                    //music
+                    musicmanager.PlaySoung_Place();
 
-
-                    //Edit
-                    world.GetChunkObject(RayCast).EditData(world.GetRelalocation(RayCast), backpackmanager.slots[selectindex].blockId);
-
-
-                    //EditNumber
-                    world.GetChunkObject(RayCast).UpdateEditNumber(RayCast, backpackmanager.slots[selectindex].blockId);
-
-
-                    if (world.game_mode == GameMode.Survival)
+                    if (backpackmanager.istheindexHaveBlock(selectindex))
                     {
 
-                        backpackmanager.update_slots(1, point_Block_type);
-                        backpackmanager.ChangeBlockInHand();
+
+
+
+                        //Edit
+                        world.GetChunkObject(RayCast).EditData(world.GetRelalocation(RayCast), backpackmanager.slots[selectindex].blockId);
+
+
+                        //EditNumber
+                        world.GetChunkObject(RayCast).UpdateEditNumber(RayCast, backpackmanager.slots[selectindex].blockId);
+
+
+                        if (world.game_mode == GameMode.Survival)
+                        {
+
+                            backpackmanager.update_slots(1, point_Block_type);
+                            backpackmanager.ChangeBlockInHand();
+
+                        }
 
                     }
-                    
+
+                    //print($"绝对坐标为：{RayCast_last()}");
+                    //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
+                    //print($"方块类型为：{world.GetBlockType(RayCast())}");
+
+
+
                 }
 
-                //print($"绝对坐标为：{RayCast_last()}");
-                //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
-                //print($"方块类型为：{world.GetBlockType(RayCast())}");
-
-                
-                
             }
 
-        
+
+
+
 
 
         }
@@ -953,7 +974,7 @@ public class Player : MonoBehaviour
     {
         //print("开启了破坏协程");
         isDestroying = true;
-
+        byte _selecttype = managerhub.backpackManager.slots[selectindex].blockId;
         //if (point_Block_type == 255)
         //{
         //    print("point_Block_type == 255");
@@ -981,7 +1002,7 @@ public class Player : MonoBehaviour
         float destroy_time = world.blocktypes[world.GetBlockType(position)].DestroyTime;
 
         //是否开启快速挖掘
-        if (isSuperMining)
+        if (isSuperMining || _selecttype == VoxelData.Tool_Pickaxe)
         {
             destroy_time = 0.25f;
         }
