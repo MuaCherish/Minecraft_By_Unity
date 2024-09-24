@@ -174,7 +174,7 @@ public class CommandManager : MonoBehaviour
                 _color = Color.red;
                 return "<系统消息> " + "该指令已停用"; 
 
-            //dead
+            //kill
             case 2:
                 managerhub.lifeManager.UpdatePlayerBlood(30, true, true);
                 DeactivateConsole();
@@ -213,6 +213,7 @@ public class CommandManager : MonoBehaviour
                             // 更新背包内容，例如插入 type 数量为 number 的物品
                             managerhub.backpackManager.update_slots(0, type, number);
                             managerhub.backpackManager.ChangeBlockInHand();
+                            managerhub.musicManager.PlaySound_Absorb();
                             return "<系统消息> " + "给与玩家方块";
                         }
                         else

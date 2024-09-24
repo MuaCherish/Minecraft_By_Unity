@@ -1649,12 +1649,24 @@ public class World : MonoBehaviour
 
         if(Allchunks.TryGetValue(GetChunkLocation(pos), out Chunk chunktemp))
         {
-            if ((int)GetRelalocation(pos).y >= VoxelData.ChunkHeight || (int)GetRelalocation(pos).y < 0)
+            if ((int)GetRelalocation(pos).y < 0)
+            {
+                //if (!managerhub.player.isInCave)
+                //{
+                //    managerhub.player.CheckisInCave();
+                //}
+               
+
+                return ERROR_CODE_OUTOFVOXELMAP;
+            }
+
+
+            if ((int)GetRelalocation(pos).y >= VoxelData.ChunkHeight)
             {
 
                 //isBlock = false;
                 //isnearblock = false;
-                print("玩家坐标异常！");
+                //print("玩家坐标异常！");
                 return ERROR_CODE_OUTOFVOXELMAP;
 
             }

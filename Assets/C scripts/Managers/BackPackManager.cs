@@ -118,6 +118,9 @@ public class BackPackManager : MonoBehaviour
             }
 
         }
+
+
+        ChangeBlockInHand();
     }
 
     public void update_slots(int brokeOrplace, byte blocktype, int _number)
@@ -178,6 +181,8 @@ public class BackPackManager : MonoBehaviour
                     isfull = true;
                 }
             }
+
+            ChangeBlockInHand();
 
         }
 
@@ -257,6 +262,8 @@ public class BackPackManager : MonoBehaviour
         {
             _slot.ResetSlot();
         }
+
+        ChangeBlockInHand();
     }
 
     //创造掉落物(坐标,类型)

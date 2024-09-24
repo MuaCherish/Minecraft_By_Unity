@@ -43,11 +43,11 @@ public class Player : MonoBehaviour
     //public Animation camaraAnimation;
     public Transform HighlightBlock;
     //public GameObject HighlightBlockObject;
-    
+
     public Transform leg;
     public GameObject selectblock;
     public GameObject Eye_Light;
-    
+
     public GameObject Particle_Broken;
     public Transform particel_Broken_transform;
     //public ParticleSystem Broking_Animation;
@@ -107,7 +107,7 @@ public class Player : MonoBehaviour
     private float Camera_verticalInput;
     private Vector3 velocity;
     //public float Max_verticalMomentum;
-    public float verticalMomentum = 0;  
+    public float verticalMomentum = 0;
     public Vector3 momentum = Vector3.zero; // 玩家瞬时动量
     private bool jumpRequest;
 
@@ -252,27 +252,27 @@ public class Player : MonoBehaviour
         isSuperMining = false;
         isFlying = false;
         momentum = Vector3.zero;
-        managerhub.backpackManager.ChangeBlockInHand();
+        //managerhub.backpackManager.ChangeBlockInHand();
     }
 
 
-    private void FixedUpdate()  
+    private void FixedUpdate()
     {
-         
+
         if (world.game_state == Game_State.Playing)
         {
 
             //更新玩家脚下坐标
             Update_FootBlockType();
 
-            
+
 
 
 
             //计算玩家状态
             GetPlayerState();
 
-            
+
 
             //绘制碰撞盒
             if (Show_CollisionBox)
@@ -298,8 +298,8 @@ public class Player : MonoBehaviour
 
         }
 
-        
-         
+
+
     }
 
 
@@ -381,16 +381,15 @@ public class Player : MonoBehaviour
         //print($"PlayerY：{playerY} , NoiseY：{NoiseY} , 差: {NoiseY - playerY}");
 
 
-
         // 检查眼睛所在位置是否处于地表以下，将Fog改为近距离黑色迷雾
-        if (playerY < NoiseY)
+        if (playerY < NoiseY || playerY < 0)
         {
             if (!isInCave)
             {
                 //print("迷雾开启");
                 // 开始迷雾过渡到洞穴状态
                 managerhub.timeManager.Buff_CaveFog(true);
-                isInCave = true;
+                isInCave = true; 
             }
         }
         else
@@ -504,6 +503,7 @@ public class Player : MonoBehaviour
         }
 
         //跳跃顶墙判断
+
         if (velocity.y < 0)
         {
 
@@ -517,6 +517,7 @@ public class Player : MonoBehaviour
             velocity.y = checkUpSpeed(velocity.y);
 
         }
+
 
     }
 
@@ -856,6 +857,7 @@ public class Player : MonoBehaviour
                         {
                             managerhub.musicManager.Audio_envitonment.clip = managerhub.musicManager.audioclips[4];
                             managerhub.musicManager.Audio_envitonment.Play();
+                            managerhub.backpackManager.update_slots(1, 50);
                         }
                         break;
                 }
@@ -891,7 +893,7 @@ public class Player : MonoBehaviour
                         {
 
                             backpackmanager.update_slots(1, point_Block_type);
-                            backpackmanager.ChangeBlockInHand();
+                            //backpackmanager.ChangeBlockInHand();
 
                         }
 
@@ -1351,7 +1353,7 @@ public class Player : MonoBehaviour
         {
 
             //上升
-            if (Input.GetKey(KeyCode.Space) && checkUpSpeed(1) != 0)
+            if (Input.GetKey(KeyCode.Space))
             {
 
                 velocity.y = flyVelocity;
@@ -1359,7 +1361,7 @@ public class Player : MonoBehaviour
             }
 
             //下降
-            else if (Input.GetKey(KeyCode.LeftControl) && checkDownSpeed(1) != 0)
+            else if (Input.GetKey(KeyCode.LeftControl))
             {
 
                 velocity.y = -flyVelocity;
