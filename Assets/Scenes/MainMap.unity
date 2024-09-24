@@ -44167,11 +44167,13 @@ MonoBehaviour:
   viewduration: 0.2
   CurrentFOV: 70
   doubleTapInterval: 0.2
-  flyVelocity: 0.08
+  flyVelocity: 5
   jump_press: 0
   foot_BlockType: 4
   foot_BlockType_temp: 4
   isInCave_checkInterval: 3
+  inputInertia: 0.1
+  Flying_inputInertia: 0.3
   hasExec_isChangedBlock: 1
   MainBody: {fileID: 473442143}
   FirstPersonCamera: {fileID: 1727421506}

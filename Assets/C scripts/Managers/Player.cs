@@ -430,20 +430,29 @@ public class Player : MonoBehaviour
         Camera_verticalInput = Mathf.Clamp(Camera_verticalInput, -90f, 90f);
 
         // 计算重力
-        if (!isSwiming)
-        {
-            //verticalMomentum += Time.fixedDeltaTime * gravity * gravity_V;
-            if (verticalMomentum > gravity)
-                verticalMomentum += Time.deltaTime * gravity * gravity_V;
 
+        if (!isFlying)
+        {
+            if (!isSwiming)
+            {
+                //verticalMomentum += Time.fixedDeltaTime * gravity * gravity_V;
+                if (verticalMomentum > gravity)
+                    verticalMomentum += Time.deltaTime * gravity * gravity_V;
+
+            }
+            else
+            {
+
+                if (verticalMomentum > watergravity)
+                    verticalMomentum += mult * Time.deltaTime * watergravity;
+
+            }
         }
         else
         {
-
-            if (verticalMomentum > watergravity)
-                verticalMomentum += mult * Time.deltaTime * watergravity;
-
+            verticalMomentum = 0f;
         }
+        
 
 
         // 计算速度
@@ -571,20 +580,47 @@ public class Player : MonoBehaviour
     }
 
 
+    // 惯性系数，越大惯性越明显
+    [Header("输入惯性")]
+    public float inputInertia = 0.1f;
+    public float Flying_inputInertia = 0.3f;
 
+    // 用于存储上一次的输入值
+    private float horizontalInputSmooth;
+    private float verticalInputSmooth;
 
 
     //接收操作
-    public bool hasExec_isChangedBlock = true;
+    [HideInInspector] public bool hasExec_isChangedBlock = true;
     private void GetPlayerInputs()
     {
 
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        // 获取当前的输入值
+        float currentHorizontalInput = Input.GetAxis("Horizontal");
+        float currentVerticalInput = Input.GetAxis("Vertical");
+
+        // 使用 Mathf.Lerp 进行输入惯性平滑处理
+        if (!isFlying)
+        {
+            horizontalInputSmooth = Mathf.Lerp(horizontalInputSmooth, currentHorizontalInput, Time.deltaTime / inputInertia);
+            verticalInputSmooth = Mathf.Lerp(verticalInputSmooth, currentVerticalInput, Time.deltaTime / inputInertia);
+        }
+        else
+        {
+            horizontalInputSmooth = Mathf.Lerp(horizontalInputSmooth, currentHorizontalInput, Time.deltaTime / Flying_inputInertia);
+            verticalInputSmooth = Mathf.Lerp(verticalInputSmooth, currentVerticalInput, Time.deltaTime / Flying_inputInertia);
+        }
+        
+
+        // 这里使用平滑处理后的输入值
+        horizontalInput = horizontalInputSmooth;
+        verticalInput = verticalInputSmooth;
+
+        // 获取鼠标输入（无惯性）
         mouseHorizontal = Input.GetAxis("Mouse X") * canvasManager.Mouse_Sensitivity;
         mouseVerticalspeed = Input.GetAxis("Mouse Y") * canvasManager.Mouse_Sensitivity;
-        scrollWheelInput = Input.GetAxis("Mouse ScrollWheel");
 
+        scrollWheelInput = Input.GetAxis("Mouse ScrollWheel");
 
         //玩家按一下R，随机切换一下手中的物品
         //if (Input.GetKeyDown(KeyCode.R))
@@ -866,7 +902,7 @@ public class Player : MonoBehaviour
             }
 
             //如果是工具方块，则不进行方块的放置
-            if (!managerhub.world.blocktypes[_selecttype].isTool)
+            if (_selecttype < managerhub.world.blocktypes .Length && !managerhub.world.blocktypes[_selecttype].isTool)
             {
                 //如果打到 && 距离大于2f && 且不是脚底下
                 if (RayCast != Vector3.zero && (RayCast - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(RayCast.x, RayCast.y - 1f, RayCast.z)))
@@ -1300,7 +1336,7 @@ public class Player : MonoBehaviour
 
         //下蹲实现
         //0.81~0.388
-        if (isSquating)
+        if (isSquating && !isFlying)
         {
 
             float high = cam.localPosition.y - squatSpeed * Time.deltaTime;
@@ -1351,34 +1387,22 @@ public class Player : MonoBehaviour
 
         if (isFlying)
         {
-
-            //上升
+            // 上升
             if (Input.GetKey(KeyCode.Space))
             {
-
-                velocity.y = flyVelocity;
-
+                velocity.y = flyVelocity * Time.deltaTime;
             }
-
-            //下降
+            // 下降
             else if (Input.GetKey(KeyCode.LeftControl))
             {
-
-                velocity.y = -flyVelocity;
-
+                velocity.y = -flyVelocity * Time.deltaTime;
             }
-
-
-
-            //松开
+            // 松开按键，逐渐减速
             else
             {
-
-                velocity.y = 0;
-
+                // 通过插值函数逐渐减小速度
+                velocity.y = Mathf.Lerp(velocity.y, 0, Time.deltaTime * 0.3f);
             }
-
-            
         }
 
         transform.Translate(velocity, Space.World);

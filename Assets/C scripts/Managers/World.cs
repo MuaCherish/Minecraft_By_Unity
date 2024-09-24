@@ -1608,6 +1608,32 @@ public class World : MonoBehaviour
     }
 
 
+    //给定一个初始坐标和初始方向，朝着这个方向遍历ChunkHeight，返回一个非空气坐标
+    public Vector3 LoopAndFindABestLocation(Vector3 _start, Vector3 _direct)
+    {
+        _direct.x = _direct.x > 0 ? 1 : 0;
+        _direct.y = _direct.y > 0 ? 1 : 0;
+        _direct.z = _direct.z > 0 ? 1 : 0;
+
+        Vector3 _next = _start;
+
+        //Loop
+        for (int i = 0; i < VoxelData.ChunkHeight; i++)
+        {
+            // Check，如果当前位置的方块类型不是空气，返回该坐标
+            if (GetBlockType(_next) != VoxelData.Air)
+            {
+                return _next;
+            }
+
+            // 累积移动位置
+            _next += _direct; // 使用归一化的方向向量逐步移动
+        }
+
+        return _start; 
+    }
+
+
     //Vector3 --> 大区块坐标
     public Vector3 GetChunkLocation(Vector3 vec)
     {
