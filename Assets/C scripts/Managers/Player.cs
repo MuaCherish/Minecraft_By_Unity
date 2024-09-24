@@ -1286,7 +1286,27 @@ public class Player : MonoBehaviour
             {
                 point_Block_type = world.GetBlockType(pos);
 
-                HighlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x) + 0.5f, Mathf.FloorToInt(pos.y) + 0.5f, Mathf.FloorToInt(pos.z) + 0.5f);
+                int posX = Mathf.FloorToInt(pos.x);
+                int posY = Mathf.FloorToInt(pos.y);
+                int posZ = Mathf.FloorToInt(pos.z);
+
+                HighlightBlock.position = new Vector3(posX + 0.5f, posY + 0.5f, posZ + 0.5f);
+                HighlightBlock.localScale = new Vector3(1f,1f,1f);
+
+                if (managerhub.world.blocktypes[point_Block_type].isDIYCollision)
+                {
+                    CollosionRange _collisionRange = managerhub.world.blocktypes[point_Block_type].CollosionRange;
+                    float offsetX = _collisionRange.xRange.y - _collisionRange.xRange.x;
+                    float offsetY = _collisionRange.yRange.y - _collisionRange.yRange.x;
+                    float offsetZ = _collisionRange.zRange.y - _collisionRange.zRange.x;
+                    HighlightBlock.position = new Vector3(posX + _collisionRange.xRange.y - offsetX / 2f, posY + _collisionRange.yRange.y - offsetY / 2f, posZ + (_collisionRange.zRange.y - offsetZ / 2f));
+                    HighlightBlock.localScale = new Vector3(offsetX, offsetY, offsetZ);;
+
+                }
+                
+
+
+
                 HighlightBlock.gameObject.SetActive(true);
 
 

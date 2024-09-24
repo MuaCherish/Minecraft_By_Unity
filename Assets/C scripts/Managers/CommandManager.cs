@@ -317,6 +317,46 @@ public class CommandManager : MonoBehaviour
                     _color = Color.red;
                     return "<系统消息> " + "fps转换失败";
                 }
+
+            // Fog 控制
+            case 7:
+                string pattern7 = @"\/fog\s+(\d)";
+
+                Match match7 = Regex.Match(_input, pattern7);
+
+                if (match7.Success)
+                {
+                    string fogSetting = match7.Groups[1].Value;
+
+                    if (int.TryParse(fogSetting, out int fogValue))
+                    {
+                        if (fogValue == 0)
+                        {
+                            RenderSettings.fog = false;
+                            return "<系统消息> " + "雾效已关闭";
+                        }
+                        else if (fogValue == 1)
+                        {
+                            RenderSettings.fog = true;
+                            return "<系统消息> " + "雾效已开启";
+                        }
+                        else
+                        {
+                            return "<系统消息> " + "无效的雾效设置";
+                        }
+                    }
+                    else
+                    {
+                        return "<系统消息> " + "雾效转换失败";
+                    }
+                }
+                else
+                {
+                    _color = Color.red;
+                    return "<系统消息> " + "雾效转换失败";
+                }
+
+
             //在这里添加新指令----------------------------
             //没有找到
             default:

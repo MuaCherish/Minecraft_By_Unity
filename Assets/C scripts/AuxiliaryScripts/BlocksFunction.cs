@@ -85,7 +85,7 @@ public static class BlocksFunction
             // 检查当前方块是否为空气
             if (!managerhub.world.blocktypes[managerhub.world.GetBlockType(currentPos)].isSolid)
             {
-                _editNumber.Add(new EditStruct(currentPos, VoxelData.Snow)); // 你可以用适当的烟雾体素替换 VoxelData.Smoke
+                _editNumber.Add(new EditStruct(currentPos, VoxelData.Wool_White)); // 你可以用适当的烟雾体素替换 VoxelData.Smoke
 
                 bool hasExpandableNeighbor = false;
                 foreach (Vector3 direction in directions)

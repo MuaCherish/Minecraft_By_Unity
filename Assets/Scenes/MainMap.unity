@@ -21329,6 +21329,8 @@ MonoBehaviour:
     leftFaceTexture: 33
     rightFaceTexture: 33
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Stone
@@ -21360,6 +21362,8 @@ MonoBehaviour:
     leftFaceTexture: 0
     rightFaceTexture: 0
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Grass
@@ -21391,6 +21395,8 @@ MonoBehaviour:
     leftFaceTexture: 2
     rightFaceTexture: 2
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Soil
@@ -21422,6 +21428,8 @@ MonoBehaviour:
     leftFaceTexture: 1
     rightFaceTexture: 1
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Air
@@ -21453,6 +21461,8 @@ MonoBehaviour:
     leftFaceTexture: 255
     rightFaceTexture: 255
     DrawMode: 3
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Sand
@@ -21484,6 +21494,8 @@ MonoBehaviour:
     leftFaceTexture: 34
     rightFaceTexture: 34
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: wood
@@ -21515,6 +21527,8 @@ MonoBehaviour:
     leftFaceTexture: 17
     rightFaceTexture: 17
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: leave
@@ -21546,6 +21560,8 @@ MonoBehaviour:
     leftFaceTexture: 20
     rightFaceTexture: 20
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: water
@@ -21577,6 +21593,8 @@ MonoBehaviour:
     leftFaceTexture: 255
     rightFaceTexture: 255
     DrawMode: 4
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Coal
@@ -21608,6 +21626,8 @@ MonoBehaviour:
     leftFaceTexture: 3
     rightFaceTexture: 3
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: BirchWood
@@ -21639,6 +21659,8 @@ MonoBehaviour:
     leftFaceTexture: 7
     rightFaceTexture: 7
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: BlueFlower
@@ -21670,6 +21692,8 @@ MonoBehaviour:
     leftFaceTexture: 22
     rightFaceTexture: 22
     DrawMode: 1
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: whiteFlower_1
@@ -21701,6 +21725,8 @@ MonoBehaviour:
     leftFaceTexture: 23
     rightFaceTexture: 23
     DrawMode: 1
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: whiteFlower_2
@@ -21732,6 +21758,8 @@ MonoBehaviour:
     leftFaceTexture: 38
     rightFaceTexture: 38
     DrawMode: 1
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: yellowFlower
@@ -21763,6 +21791,8 @@ MonoBehaviour:
     leftFaceTexture: 36
     rightFaceTexture: 36
     DrawMode: 1
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: torch
@@ -21794,6 +21824,8 @@ MonoBehaviour:
     leftFaceTexture: 37
     rightFaceTexture: 37
     DrawMode: 1
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Cactus
@@ -21825,6 +21857,8 @@ MonoBehaviour:
     leftFaceTexture: 54
     rightFaceTexture: 54
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: TNT
@@ -21856,6 +21890,8 @@ MonoBehaviour:
     leftFaceTexture: 65
     rightFaceTexture: 65
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: WorkTable
@@ -21887,6 +21923,8 @@ MonoBehaviour:
     leftFaceTexture: 81
     rightFaceTexture: 81
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Pumpkin
@@ -21918,6 +21956,8 @@ MonoBehaviour:
     leftFaceTexture: 98
     rightFaceTexture: 98
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Glass
@@ -21949,6 +21989,8 @@ MonoBehaviour:
     leftFaceTexture: 116
     rightFaceTexture: 116
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Blue_Crystal
@@ -21980,6 +22022,8 @@ MonoBehaviour:
     leftFaceTexture: 112
     rightFaceTexture: 112
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Diamond
@@ -22011,6 +22055,8 @@ MonoBehaviour:
     leftFaceTexture: 113
     rightFaceTexture: 113
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Iron
@@ -22042,6 +22088,8 @@ MonoBehaviour:
     leftFaceTexture: 114
     rightFaceTexture: 114
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Gold
@@ -22073,6 +22121,8 @@ MonoBehaviour:
     leftFaceTexture: 115
     rightFaceTexture: 115
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: bamboo
@@ -22104,6 +22154,8 @@ MonoBehaviour:
     leftFaceTexture: 21
     rightFaceTexture: 21
     DrawMode: 1
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: WoodenPlanks
@@ -22135,6 +22187,8 @@ MonoBehaviour:
     leftFaceTexture: 16
     rightFaceTexture: 16
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Fluor
@@ -22166,6 +22220,8 @@ MonoBehaviour:
     leftFaceTexture: 52
     rightFaceTexture: 52
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Bush
@@ -22197,6 +22253,8 @@ MonoBehaviour:
     leftFaceTexture: 67
     rightFaceTexture: 67
     DrawMode: 1
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Snow
@@ -22228,6 +22286,8 @@ MonoBehaviour:
     leftFaceTexture: 4
     rightFaceTexture: 4
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: SnowPower
@@ -22259,6 +22319,13 @@ MonoBehaviour:
     leftFaceTexture: 4
     rightFaceTexture: 4
     DrawMode: 5
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck:
+    - FaceDirect: 3
+      checktype: 0
+      appointType: 0
+      appointDrawmode: 0
+      isCreateFace: 0
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Mycelium
@@ -22290,6 +22357,8 @@ MonoBehaviour:
     leftFaceTexture: 69
     rightFaceTexture: 69
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Cobblestone
@@ -22321,6 +22390,8 @@ MonoBehaviour:
     leftFaceTexture: 32
     rightFaceTexture: 32
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Door_Up
@@ -22352,6 +22423,23 @@ MonoBehaviour:
     leftFaceTexture: 16
     rightFaceTexture: 16
     DrawMode: 7
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck:
+    - FaceDirect: 0
+      checktype: 0
+      appointType: 0
+      appointDrawmode: 0
+      isCreateFace: 1
+    - FaceDirect: 0
+      checktype: 2
+      appointType: 34
+      appointDrawmode: 7
+      isCreateFace: 1
+    - FaceDirect: 1
+      checktype: 2
+      appointType: 34
+      appointDrawmode: 7
+      isCreateFace: 1
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Door_Down
@@ -22383,6 +22471,23 @@ MonoBehaviour:
     leftFaceTexture: 16
     rightFaceTexture: 16
     DrawMode: 7
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck:
+    - FaceDirect: 0
+      checktype: 0
+      appointType: 0
+      appointDrawmode: 0
+      isCreateFace: 1
+    - FaceDirect: 0
+      checktype: 2
+      appointType: 0
+      appointDrawmode: 7
+      isCreateFace: 1
+    - FaceDirect: 1
+      checktype: 2
+      appointType: 0
+      appointDrawmode: 7
+      isCreateFace: 1
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: HalfBrick_Wood
@@ -22414,6 +22519,8 @@ MonoBehaviour:
     leftFaceTexture: 16
     rightFaceTexture: 16
     DrawMode: 6
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Mushroom_red
@@ -22445,6 +22552,8 @@ MonoBehaviour:
     leftFaceTexture: 39
     rightFaceTexture: 39
     DrawMode: 1
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Mushroom_brown
@@ -22476,6 +22585,8 @@ MonoBehaviour:
     leftFaceTexture: 55
     rightFaceTexture: 55
     DrawMode: 1
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Redbrick
@@ -22507,6 +22618,8 @@ MonoBehaviour:
     leftFaceTexture: 35
     rightFaceTexture: 35
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Furnace
@@ -22538,6 +22651,8 @@ MonoBehaviour:
     leftFaceTexture: 49
     rightFaceTexture: 49
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: JukeBox
@@ -22569,6 +22684,8 @@ MonoBehaviour:
     leftFaceTexture: 71
     rightFaceTexture: 71
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Wool_Green
@@ -22600,12 +22717,14 @@ MonoBehaviour:
     leftFaceTexture: 101
     rightFaceTexture: 101
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Wool_White
     DestroyTime: 1
-    isSolid: 1
-    isTransparent: 0
+    isSolid: 0
+    isTransparent: 1
     canBeChoose: 1
     candropBlock: 1
     IsOriented: 0
@@ -22631,6 +22750,38 @@ MonoBehaviour:
     leftFaceTexture: 102
     rightFaceTexture: 102
     DrawMode: 0
+    GenerateTwoFaceWithAir: 1
+    OtherFaceCheck:
+    - FaceDirect: 0
+      checktype: 1
+      appointType: 42
+      appointDrawmode: 0
+      isCreateFace: 0
+    - FaceDirect: 1
+      checktype: 1
+      appointType: 42
+      appointDrawmode: 0
+      isCreateFace: 0
+    - FaceDirect: 2
+      checktype: 1
+      appointType: 42
+      appointDrawmode: 0
+      isCreateFace: 0
+    - FaceDirect: 3
+      checktype: 1
+      appointType: 42
+      appointDrawmode: 0
+      isCreateFace: 0
+    - FaceDirect: 4
+      checktype: 1
+      appointType: 42
+      appointDrawmode: 0
+      isCreateFace: 0
+    - FaceDirect: 5
+      checktype: 1
+      appointType: 42
+      appointDrawmode: 0
+      isCreateFace: 0
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Wool_Red
@@ -22662,6 +22813,8 @@ MonoBehaviour:
     leftFaceTexture: 117
     rightFaceTexture: 117
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Wool_Pink
@@ -22693,6 +22846,8 @@ MonoBehaviour:
     leftFaceTexture: 118
     rightFaceTexture: 118
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Chest
@@ -22724,6 +22879,8 @@ MonoBehaviour:
     leftFaceTexture: 86
     rightFaceTexture: 86
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Gravel
@@ -22755,6 +22912,8 @@ MonoBehaviour:
     leftFaceTexture: 5
     rightFaceTexture: 5
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Glass_Plane
@@ -22786,6 +22945,8 @@ MonoBehaviour:
     leftFaceTexture: 116
     rightFaceTexture: 116
     DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 0
     Toolsprite: {fileID: 0}
   - blockName: Tool_Sword
@@ -22817,6 +22978,8 @@ MonoBehaviour:
     leftFaceTexture: 116
     rightFaceTexture: 116
     DrawMode: 8
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 1
     Toolsprite: {fileID: -938338414, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
   - blockName: Tool_Pork
@@ -22848,6 +23011,8 @@ MonoBehaviour:
     leftFaceTexture: 116
     rightFaceTexture: 116
     DrawMode: 8
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 1
     Toolsprite: {fileID: -1530299636, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
   - blockName: Tool_MusicDiscs
@@ -22879,6 +23044,8 @@ MonoBehaviour:
     leftFaceTexture: 116
     rightFaceTexture: 116
     DrawMode: 8
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 1
     Toolsprite: {fileID: -1361506380, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
   - blockName: Tool_Flint
@@ -22910,6 +23077,8 @@ MonoBehaviour:
     leftFaceTexture: 116
     rightFaceTexture: 116
     DrawMode: 8
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 1
     Toolsprite: {fileID: -1945274408, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
   - blockName: Tool_Pickaxe
@@ -22941,6 +23110,8 @@ MonoBehaviour:
     leftFaceTexture: 116
     rightFaceTexture: 116
     DrawMode: 8
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
     isTool: 1
     Toolsprite: {fileID: -1700271542, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
   renderSize: 6
@@ -63557,6 +63728,8 @@ MonoBehaviour:
     command: /time
   - name: "\u6539\u53D8\u5E27\u6570"
     command: /fps
+  - name: "\u96FE"
+    command: /fog
   "\u5916\u7F6E\u6D88\u606F\u680F":
   - {fileID: 1634312355473790388}
   - {fileID: 1634312355615600238}

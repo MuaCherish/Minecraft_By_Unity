@@ -53,6 +53,25 @@ public enum Facing2d
 //    默认, 超平坦世界, 草原群系, 高原群系, 沙漠群系, 沼泽群系, 密林群系,
 //}
 
+public enum FaceCheck_Enum
+{
+    isSolid, appointType, appointDrawmode
+}
+
+//比如 门：{0, isSolid false} 代表后方如果是Solid则不生成面
+
+// 0 1  2   3  4  5
+//后 前 上 下 左 右
+
+[System.Serializable]
+public class FaceCheckMode
+{
+    public int FaceDirect;  //这个Direct属于本地方向，比如0指的是自己朝向的后方，因为后面要顾及到物体的旋转
+    public FaceCheck_Enum checktype;
+    public byte appointType;
+    public DrawMode appointDrawmode;
+    public bool isCreateFace;
+}
 
 
 
@@ -2589,6 +2608,11 @@ public class BlockType
     public int leftFaceTexture;
     public int rightFaceTexture;
     public DrawMode DrawMode;
+
+    [Header("面生成判断(后前上下左右)")]
+    public bool GenerateTwoFaceWithAir;    //如果朝向空气，则双面绘制
+    public List<FaceCheckMode> OtherFaceCheck; 
+
 
     [Header("工具类")]
     public bool isTool;
