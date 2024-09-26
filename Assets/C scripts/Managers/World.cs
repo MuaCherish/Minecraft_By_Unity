@@ -2573,12 +2573,14 @@ public class BlockType
     [Header("基本参数")]
     public string blockName;
     public float DestroyTime;
-    public bool isSolid;       //是否会阻挡玩家
-    public bool isTransparent; //周边方块是否面剔除
-    public bool canBeChoose;   //是否可被高亮方块捕捉到
-    public bool candropBlock;  //是否掉落方块
-    public bool IsOriented;   //是否跟随玩家朝向
+    public bool isSolid;        //是否会阻挡玩家
+    public bool isTransparent;  //周边方块是否面剔除
+    public bool canBeChoose;    //是否可被高亮方块捕捉到
+    public bool candropBlock;   //是否掉落方块
+    public bool IsOriented;     //是否跟随玩家朝向
     public bool isinteractable; //是否可被右键触发
+    public bool is2d;           //用来区分显示
+    public bool isTool;         //区分功能性
 
 
     [Header("自定义碰撞")]
@@ -2587,7 +2589,7 @@ public class BlockType
     //对于Y来说，(0.5f,0,0f)，就是Y正方向的面向内挤压0.5f，Y负方向的面向内挤压0.0f，即台阶的碰撞参数
     public CollosionRange CollosionRange;
 
-    [Header("图标")]
+    [Header("Sprits")]
     public Sprite icon; //物品栏图标
     public Sprite sprite; //掉落物
     public Sprite top_sprit; //掉落物
@@ -2613,12 +2615,7 @@ public class BlockType
     public bool GenerateTwoFaceWithAir;    //如果朝向空气，则双面绘制
     public List<FaceCheckMode> OtherFaceCheck; 
 
-
-    [Header("工具类")]
-    public bool isTool;
-    public Sprite Toolsprite;
-
-
+  
 
     //贴图中的面的坐标
     public int GetTextureID(int faceIndex)

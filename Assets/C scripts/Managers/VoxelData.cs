@@ -130,9 +130,19 @@ public static class VoxelData
     public static readonly Byte Tool_MusicDiscs = 50;
     public static readonly Byte Tool_Flint = 51; //打火石
     public static readonly Byte Tool_Pickaxe = 52; //稿子
-    //public static readonly Byte Tool_Pork = 48;
-    //public static readonly Byte Tool_Pork = 48;
-    //public static readonly Byte Tool_Pork = 48;
+    public static readonly Byte Tool_Egg = 53;
+    public static readonly Byte Tool_ReadMap = 54;
+    public static readonly Byte Tool_SnowBall = 55;
+    public static readonly Byte Tool_BoneMeal = 56; //骨粉
+    //public static readonly Byte Tool_Door = 57;
+    //public static readonly Byte Tool_Door = 58;
+    //public static readonly Byte Tool_Pork = 59;
+    //public static readonly Byte Tool_Pork = 60;
+    //public static readonly Byte Tool_Pork = 61;
+    //public static readonly Byte Tool_Pork = 62;
+    //public static readonly Byte Tool_Pork = 63;
+    //public static readonly Byte Tool_Pork = 64;
+    //public static readonly Byte Tool_Pork = 65;
 
 
     //音乐宏定义

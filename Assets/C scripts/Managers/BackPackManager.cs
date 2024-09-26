@@ -451,7 +451,7 @@ public class BackPackManager : MonoBehaviour
             else
             {
                 //如果是方块
-                if (!managerhub.world.blocktypes[now_HandBlock].isTool)
+                if (!managerhub.world.blocktypes[now_HandBlock].is2d)
                 {
                     //销毁挤压物品
                     if (ToolAlive)
@@ -530,7 +530,7 @@ public class BackPackManager : MonoBehaviour
 
                     //print(managerhub.world.blocktypes[now_HandBlock].blockName);
                     //print($"index: {now_HandBlock} , sprite:{managerhub.world.blocktypes[now_HandBlock].sprite}");
-                    managerhub.textureTo3D.ProcessSprite(managerhub.world.blocktypes[now_HandBlock].Toolsprite, HanTool.transform, 4);
+                    managerhub.textureTo3D.ProcessSprite(managerhub.world.blocktypes[now_HandBlock].sprite, HanTool.transform, 4);
 
 
                     //拿出Hand_Hold

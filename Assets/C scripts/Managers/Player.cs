@@ -844,20 +844,14 @@ public class Player : MonoBehaviour
             byte _targettype = world.GetBlockType(_raycastNow);
             byte _selecttype = managerhub.backpackManager.slots[selectindex].blockId;
 
-            //如果是可互动方块
+            //右键可互动方块
             if (_targettype < world.blocktypes.Length && world.blocktypes[_targettype].isinteractable)
             {
                 //print("isinteractable");
 
                 switch (_targettype)
                 {
-                    //熔炉
-                    case 39:
-                        //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
-                        world.Allchunks[world.GetChunkLocation(_raycastNow)].EditData(world.GetRelalocation(_raycastNow), VoxelData.Air);
-                        BlocksFunction.Smoke(managerhub, _raycastNow, 4);
-
-                        break;
+                    
                     //TNT
                     case 17:
 
@@ -945,7 +939,22 @@ public class Player : MonoBehaviour
 
             }
 
+            //执行工具方块的右键
+            else
+            {
+                switch (_selecttype)
+                {
+                    //雪球
+                    case 55:
+                        //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
+                        world.Allchunks[world.GetChunkLocation(_raycastNow)].EditData(world.GetRelalocation(_raycastNow), VoxelData.Air);
+                        BlocksFunction.Smoke(managerhub, _raycastNow, 2.5f);
 
+                        break;
+                    default:
+                        break;
+                }
+            }
 
 
 
