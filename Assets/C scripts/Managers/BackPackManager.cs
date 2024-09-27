@@ -501,8 +501,7 @@ public class BackPackManager : MonoBehaviour
                 {
                     ToolAlive = true;
 
-                    //改变父物体Transform
-
+                    //拿宝剑和水桶的旋转是不一样的
                     if (managerhub.world.blocktypes[now_HandBlock].isNeedRotation)
                     {
                         HanTool.transform.localPosition = new Vector3(0.542f, -0.098f, 0.774f);

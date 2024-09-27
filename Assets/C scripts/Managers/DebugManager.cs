@@ -97,11 +97,13 @@ public class DebugManager : MonoBehaviour
         LeftText.text += $"\n";
         LeftText.text += $"[Chunk]\n";
         LeftText.text += $"区块坐标: {managerHub.world.GetChunkLocation(footlocation)}\n";
+        LeftText.text += $"初始化区块平均渲染时间: {managerHub.world.OneChunkRenderTime * 1000f}ms\n";
         LeftText.text += $"\n";
         //LeftText.text += $"[Noise]\n";
 
 
     }
+
 
 
     public void UpdateBlockItem()

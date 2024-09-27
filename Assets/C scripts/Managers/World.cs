@@ -183,6 +183,10 @@ public class World : MonoBehaviour
     private Vector3 Center_direction; //这个代表了方向
 
 
+    //计时
+    public float InitStartTime;
+    public float InitEndTime;
+
     //UI Manager
     //[HideInInspector]
     //public float initprogress = 0f;
@@ -329,6 +333,7 @@ public class World : MonoBehaviour
 
             if (hasExec_SetSeed)
             {
+                InitStartTime = Time.time;
                 //获取当前模式
                 //if (canvasManager.currentWorldType == 6)
                 //{
@@ -542,7 +547,7 @@ public class World : MonoBehaviour
         canvasManager.Initprogress = 1f;
 
         //开启面优化协程
-        StartCoroutine(Chunk_Optimization());
+        //StartCoroutine(Chunk_Optimization());
 
         StartCoroutine(FlashChunkCoroutine());
 
@@ -678,53 +683,53 @@ public class World : MonoBehaviour
 
 
     //一直更新水的线程
-    void Thread_AwaysUpdate_Water()
-    {
-        int 次数 = 0;
-        int 个数 = 0;
+    //void Thread_AwaysUpdate_Water()
+    //{
+    //    int 次数 = 0;
+    //    int 个数 = 0;
 
-        //一直循环
-        while (game_state != Game_State.Ending)
-        {
+    //    //一直循环
+    //    while (game_state != Game_State.Ending)
+    //    {
 
-            lock (Allchunks_Lock)
-            {
+    //        lock (Allchunks_Lock)
+    //        {
 
-                //遍历所有AllChunks
-                foreach (var chunktemp in Allchunks)
-                {
+    //            //遍历所有AllChunks
+    //            foreach (var chunktemp in Allchunks)
+    //            {
 
-                    //如果区块包含水，且在12区块内，则更新
-                    if (chunktemp.Value.iHaveWater && GetVector3Length(chunktemp.Value.myposition - Center_Now) > MaxDistant_RenderFlowWater)
-                    {
+    //                //如果区块包含水，且在12区块内，则更新
+    //                if (chunktemp.Value.iHaveWater && GetVector3Length(chunktemp.Value.myposition - Center_Now) > MaxDistant_RenderFlowWater)
+    //                {
 
-                        chunktemp.Value.Always_updateWater();
-                        //print($"刷新了{chunktemp.Value.name}");
+    //                    chunktemp.Value.Always_updateWater();
+    //                    //print($"刷新了{chunktemp.Value.name}");
 
-                        个数++;
+    //                    个数++;
 
-                    }
+    //                }
 
-                }
+    //            }
 
-            }
-
-
+    //        }
 
 
 
 
-            //休眠5秒钟
-            次数++;
-            print($"第{次数}次刷新，一共刷新{个数}个");
-            个数 = 0;
-            Thread.Sleep(Delay_RenderFlowWater * 1000);
 
-        }
 
-        Debug.LogError("Water线程中止");
+    //        //休眠5秒钟
+    //        次数++;
+    //        print($"第{次数}次刷新，一共刷新{个数}个");
+    //        个数 = 0;
+    //        Thread.Sleep(Delay_RenderFlowWater * 1000);
 
-    }
+    //    }
+
+    //    Debug.LogError("Water线程中止");
+
+    //}
 
 
 
@@ -1295,6 +1300,8 @@ public class World : MonoBehaviour
     }
 
 
+    bool hasExec_CaculateInitTime = true;
+    public float OneChunkRenderTime;
     IEnumerator Mesh_0()
     {
 
@@ -1316,7 +1323,17 @@ public class World : MonoBehaviour
 
                 if (WaitToCreateMesh.Count == 0)
                 {
+                    if (hasExec_CaculateInitTime)
+                    {
+                        print("渲染完了");
+                        InitEndTime = Time.time;
 
+                        //renderSize * renderSize * 4是总区块数，2是因为面剔除渲染了两次
+                        OneChunkRenderTime = (InitEndTime - InitStartTime) / (renderSize * renderSize * 4 * 2);
+
+                        hasExec_CaculateInitTime = false;
+                    }
+                    
                     Mesh_Coroutine = null;
                     break;
 

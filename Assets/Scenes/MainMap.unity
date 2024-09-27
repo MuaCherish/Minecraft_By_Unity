@@ -21276,7 +21276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5a2505646a31148878c810f0e06954, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
+  "\u4F4E\u533A\u5757\u6A21\u5F0F": 0
   "\u65E0\u9ED1\u591C\u6A21\u5F0F": 0
   "\u662F\u5426\u751F\u6210Chunk\u4FA7\u9762": 0
   managerhub: {fileID: 843154432}
@@ -23437,9 +23437,12 @@ MonoBehaviour:
   Delay_RenderFlowWater: 3
   MaxDistant_RenderFlowWater: 5
   Delay_RenderMesh: 1000
+  InitStartTime: 0
+  InitEndTime: 0
   Chunks: {fileID: 0}
   RenderLock: 0
   MeshLock: 0
+  OneChunkRenderTime: 0
   PointSaving: 
 --- !u!4 &699955242
 Transform:
