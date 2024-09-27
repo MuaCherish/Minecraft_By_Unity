@@ -502,8 +502,18 @@ public class BackPackManager : MonoBehaviour
                     ToolAlive = true;
 
                     //改变父物体Transform
-                    //HanTool.transform.localPosition = new Vector3(0.542f, -0.098f, 0.774f);
-                    //HanTool.transform.rotation = Quaternion.Euler(0f, -93.837f, 68.013f);
+
+                    if (managerhub.world.blocktypes[now_HandBlock].isNeedRotation)
+                    {
+                        HanTool.transform.localPosition = new Vector3(0.542f, -0.098f, 0.774f);
+                        HanTool.transform.localEulerAngles = new Vector3(0f, -93.837f, 68.013f);
+                    }
+                    else
+                    {
+                        HanTool.transform.localPosition = new Vector3(1f, -0.2f, 0.696f);
+                        HanTool.transform.localEulerAngles = new Vector3(0f, -116.5f, 2.2f);
+                    }
+                    
 
 
 

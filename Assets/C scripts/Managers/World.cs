@@ -2570,7 +2570,7 @@ public class World : MonoBehaviour
 [System.Serializable]
 public class BlockType
 {
-    [Header("基本参数")]
+    [Header("方块参数")]
     public string blockName;
     public float DestroyTime;
     public bool isSolid;        //是否会阻挡玩家
@@ -2580,7 +2580,10 @@ public class BlockType
     public bool IsOriented;     //是否跟随玩家朝向
     public bool isinteractable; //是否可被右键触发
     public bool is2d;           //用来区分显示
+
+    [Header("工具参数")]
     public bool isTool;         //区分功能性
+    public bool isNeedRotation; //true后会做一定的旋转
 
 
     [Header("自定义碰撞")]

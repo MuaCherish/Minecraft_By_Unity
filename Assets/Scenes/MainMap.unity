@@ -15,7 +15,7 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 1
-  m_FogColor: {r: 0.70980394, g: 0.81960785, b: 1, a: 1}
+  m_FogColor: {r: 0.7254902, g: 0.7882353, b: 0.84705883, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.01
   m_LinearFogStart: 40
@@ -1415,10 +1415,10 @@ MonoBehaviour:
   FogCaveDistance: {x: 0, y: 20}
   SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
   SkyboxRange: {x: 0.2, y: 1}
-  FogDayColor: {r: 0.70980394, g: 0.81960785, b: 1, a: 0}
+  FogDayColor: {r: 0.7254902, g: 0.7882353, b: 0.84705883, a: 0}
   FogNightColor: {r: 0.14117648, g: 0.16470589, b: 0.2, a: 0}
   BlocksMaterial: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
-  BlocksDayColor: {r: 0.5647059, g: 0.5647059, b: 0.5647059, a: 1}
+  BlocksDayColor: {r: 0.43529412, g: 0.47058824, b: 0.39215687, a: 1}
   BlocksNightColor: {r: 0.101960786, g: 0.078431375, b: 0.05490196, a: 1}
 --- !u!114 &22826879
 MonoBehaviour:
@@ -21310,6 +21310,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21343,6 +21344,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21376,6 +21378,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21409,6 +21412,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21442,6 +21446,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21475,6 +21480,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21508,6 +21514,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21541,6 +21548,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21574,6 +21582,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21595,7 +21604,7 @@ MonoBehaviour:
     leftFaceTexture: 255
     rightFaceTexture: 255
     DrawMode: 4
-    GenerateTwoFaceWithAir: 0
+    GenerateTwoFaceWithAir: 1
     OtherFaceCheck: []
   - blockName: Coal
     DestroyTime: 3
@@ -21607,6 +21616,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21640,6 +21650,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21673,6 +21684,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21706,6 +21718,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21739,6 +21752,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21772,6 +21786,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21805,6 +21820,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21838,6 +21854,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21871,6 +21888,7 @@ MonoBehaviour:
     isinteractable: 1
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21904,6 +21922,7 @@ MonoBehaviour:
     isinteractable: 1
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21937,6 +21956,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -21970,6 +21990,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22003,6 +22024,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22036,6 +22058,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22069,6 +22092,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22102,6 +22126,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22135,6 +22160,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22168,6 +22194,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22201,6 +22228,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 1
     CollosionRange:
       xRange: {x: 0.4, y: 0.6}
@@ -22234,6 +22262,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22267,6 +22296,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22300,6 +22330,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22338,6 +22369,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22371,6 +22403,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22404,6 +22437,7 @@ MonoBehaviour:
     isinteractable: 1
     is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 1
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22452,12 +22486,13 @@ MonoBehaviour:
     isinteractable: 1
     is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 1
     CollosionRange:
       xRange: {x: 0, y: 1}
       yRange: {x: 0, y: 1}
       zRange: {x: 0.7, y: 1}
-    icon: {fileID: 1565114373, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    icon: {fileID: -714097491, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     sprite: {fileID: -1419666490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -22500,6 +22535,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 1
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22531,8 +22567,9 @@ MonoBehaviour:
     candropBlock: 1
     IsOriented: 0
     isinteractable: 0
-    is2d: 0
+    is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 1
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22564,8 +22601,9 @@ MonoBehaviour:
     candropBlock: 1
     IsOriented: 0
     isinteractable: 0
-    is2d: 0
+    is2d: 1
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 1
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22599,6 +22637,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 1
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22632,6 +22671,7 @@ MonoBehaviour:
     isinteractable: 1
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22665,6 +22705,7 @@ MonoBehaviour:
     isinteractable: 1
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22698,6 +22739,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22728,9 +22770,10 @@ MonoBehaviour:
     canBeChoose: 1
     candropBlock: 1
     IsOriented: 0
-    isinteractable: 0
+    isinteractable: 1
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22794,6 +22837,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22827,6 +22871,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22860,6 +22905,7 @@ MonoBehaviour:
     isinteractable: 1
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22893,6 +22939,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22926,6 +22973,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 0
     isTool: 0
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22959,6 +23007,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 1
+    isNeedRotation: 1
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -22992,6 +23041,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 1
+    isNeedRotation: 1
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -23025,6 +23075,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 1
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -23058,6 +23109,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 1
+    isNeedRotation: 1
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -23091,6 +23143,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 1
+    isNeedRotation: 1
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -23124,6 +23177,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 1
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -23157,6 +23211,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 1
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -23190,6 +23245,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 1
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -23223,6 +23279,7 @@ MonoBehaviour:
     isinteractable: 0
     is2d: 1
     isTool: 1
+    isNeedRotation: 0
     isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
@@ -23243,6 +23300,74 @@ MonoBehaviour:
     bottomFaceTexture: 116
     leftFaceTexture: 116
     rightFaceTexture: 116
+    DrawMode: 8
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
+  - blockName: Sapling
+    DestroyTime: 0.2
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 0
+    IsOriented: 0
+    isinteractable: 0
+    is2d: 1
+    isTool: 0
+    isNeedRotation: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    sprite: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    top_sprit: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    buttom_sprit: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
+    backFaceTexture: 8
+    frontFaceTexture: 8
+    topFaceTexture: 8
+    bottomFaceTexture: 8
+    leftFaceTexture: 8
+    rightFaceTexture: 8
+    DrawMode: 1
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
+  - blockName: Tool_Book
+    DestroyTime: 0.2
+    isSolid: 0
+    isTransparent: 1
+    canBeChoose: 1
+    candropBlock: 0
+    IsOriented: 0
+    isinteractable: 0
+    is2d: 1
+    isTool: 1
+    isNeedRotation: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    icon: {fileID: 1723185050, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    sprite: {fileID: 1723185050, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    top_sprit: {fileID: 1723185050, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    buttom_sprit: {fileID: 1723185050, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    walk_clips:
+    - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+    - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+    broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
+    backFaceTexture: 8
+    frontFaceTexture: 8
+    topFaceTexture: 8
+    bottomFaceTexture: 8
+    leftFaceTexture: 8
+    rightFaceTexture: 8
     DrawMode: 8
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
@@ -26844,13 +26969,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 821689787}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.40849364, y: -0.6054685, z: 0.38201427, w: 0.5662208}
+  m_LocalRotation: {x: -0.016324596, y: -0.85019547, z: 0.010101969, w: 0.526117}
   m_LocalPosition: {x: 0.547, y: -0.123, z: 0.696}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2047085375}
-  m_LocalEulerAnglesHint: {x: 0, y: -93.837, z: 68.013}
+  m_LocalEulerAnglesHint: {x: 0, y: -116.5, z: 2.2}
 --- !u!1 &825183540
 GameObject:
   m_ObjectHideFlags: 0
@@ -44716,6 +44841,7 @@ MonoBehaviour:
   horizontalInput: 0
   verticalInput: 0
   scrollWheelInput: 0
+  velocity: {x: 0, y: 0, z: 0}
   verticalMomentum: 0
   momentum: {x: 0, y: 0, z: 0}
   reach: 8

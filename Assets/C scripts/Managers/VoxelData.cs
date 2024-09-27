@@ -134,8 +134,8 @@ public static class VoxelData
     public static readonly Byte Tool_ReadMap = 54;
     public static readonly Byte Tool_SnowBall = 55;
     public static readonly Byte Tool_BoneMeal = 56; //骨粉
-    //public static readonly Byte Tool_Door = 57;
-    //public static readonly Byte Tool_Door = 58;
+    public static readonly Byte Sapling = 57; //树苗
+    public static readonly Byte Tool_Book = 58;
     //public static readonly Byte Tool_Pork = 59;
     //public static readonly Byte Tool_Pork = 60;
     //public static readonly Byte Tool_Pork = 61;

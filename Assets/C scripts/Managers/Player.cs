@@ -105,7 +105,7 @@ public class Player : MonoBehaviour
     private float mouseHorizontal;
     private float mouseVerticalspeed;
     private float Camera_verticalInput;
-    private Vector3 velocity;
+    public Vector3 velocity;
     //public float Max_verticalMomentum;
     public float verticalMomentum = 0;
     public Vector3 momentum = Vector3.zero; // 玩家瞬时动量
@@ -265,7 +265,7 @@ public class Player : MonoBehaviour
             //更新玩家脚下坐标
             Update_FootBlockType();
 
-
+            
 
 
 
@@ -308,7 +308,6 @@ public class Player : MonoBehaviour
     {
         if (world.game_state == Game_State.Playing)
         {
-
 
             if (isGrounded)
             {
@@ -610,7 +609,17 @@ public class Player : MonoBehaviour
             horizontalInputSmooth = Mathf.Lerp(horizontalInputSmooth, currentHorizontalInput, Time.deltaTime / Flying_inputInertia);
             verticalInputSmooth = Mathf.Lerp(verticalInputSmooth, currentVerticalInput, Time.deltaTime / Flying_inputInertia);
         }
-        
+
+        // 增加阈值判断，确保微小的输入直接归零
+        if (Mathf.Abs(horizontalInputSmooth) < 0.01f)
+        {
+            horizontalInputSmooth = 0f;
+        }
+
+        if (Mathf.Abs(verticalInputSmooth) < 0.01f)
+        {
+            verticalInputSmooth = 0f;
+        }
 
         // 这里使用平滑处理后的输入值
         horizontalInput = horizontalInputSmooth;
@@ -890,6 +899,17 @@ public class Player : MonoBehaviour
                             managerhub.backpackManager.update_slots(1, 50);
                         }
                         break;
+                    //DFS烟雾 
+                    case 42:
+                        if (_selecttype == VoxelData.Tool_BoneMeal)
+                        {
+                            //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
+                            world.Allchunks[world.GetChunkLocation(_raycastNow)].EditData(world.GetRelalocation(_raycastNow), VoxelData.Air);
+                            BlocksFunction.Smoke(managerhub, _raycastNow, 2.5f);
+                            managerhub.backpackManager.update_slots(1, 56);
+                        }
+                        break;
+
                 }
 
                 return;
@@ -944,13 +964,7 @@ public class Player : MonoBehaviour
             {
                 switch (_selecttype)
                 {
-                    //雪球
-                    case 55:
-                        //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
-                        world.Allchunks[world.GetChunkLocation(_raycastNow)].EditData(world.GetRelalocation(_raycastNow), VoxelData.Air);
-                        BlocksFunction.Smoke(managerhub, _raycastNow, 2.5f);
 
-                        break;
                     default:
                         break;
                 }
@@ -1300,7 +1314,7 @@ public class Player : MonoBehaviour
                 int posZ = Mathf.FloorToInt(pos.z);
 
                 HighlightBlock.position = new Vector3(posX + 0.5f, posY + 0.5f, posZ + 0.5f);
-                HighlightBlock.localScale = new Vector3(1f,1f,1f);
+                HighlightBlock.localScale = new Vector3(1.01f, 1.01f, 1.01f);
 
                 if (managerhub.world.blocktypes[point_Block_type].isDIYCollision)
                 {
@@ -1309,7 +1323,7 @@ public class Player : MonoBehaviour
                     float offsetY = _collisionRange.yRange.y - _collisionRange.yRange.x;
                     float offsetZ = _collisionRange.zRange.y - _collisionRange.zRange.x;
                     HighlightBlock.position = new Vector3(posX + _collisionRange.xRange.y - offsetX / 2f, posY + _collisionRange.yRange.y - offsetY / 2f, posZ + (_collisionRange.zRange.y - offsetZ / 2f));
-                    HighlightBlock.localScale = new Vector3(offsetX, offsetY, offsetZ);;
+                    HighlightBlock.localScale = new Vector3(offsetX + 0.01f, offsetY + 0.01f, offsetZ + 0.01f);;
 
                 }
                 
@@ -1634,7 +1648,6 @@ public class Player : MonoBehaviour
         }
     }
 
-
     //返回玩家object实际运动方向
     public Vector3 ActualMoveDirection
     {
@@ -1648,34 +1661,50 @@ public class Player : MonoBehaviour
             // 玩家面朝的方向
             Vector3 facing = FactFacing;
 
-            // 根据Facing方向来计算玩家实际运动方向
-            if (input.y > 0) // 向前运动
+            // 如果输入有非零值，则计算实际运动方向
+            if (input != Vector2.zero)
             {
-                direction += new Vector3(facing.x, 0, facing.z);
-            }
-            else if (input.y < 0) // 向后运动
-            {
-                direction -= new Vector3(facing.x, 0, facing.z);
-            }
+                if (input.y > 0) // 向前运动
+                {
+                    direction += new Vector3(facing.x, 0, facing.z);
+                }
+                else if (input.y < 0) // 向后运动
+                {
+                    direction -= new Vector3(facing.x, 0, facing.z);
+                }
 
-            if (input.x < 0) // 向左运动
-            {
-                // 左方向是面对方向的左侧 (-z, x)
-                direction += new Vector3(-facing.z, 0, facing.x);
+                if (input.x < 0) // 向左运动
+                {
+                    // 左方向是面对方向的左侧 (-z, x)
+                    direction += new Vector3(-facing.z, 0, facing.x);
+                }
+                else if (input.x > 0) // 向右运动
+                {
+                    // 右方向是面对方向的右侧 (z, -x)
+                    direction += new Vector3(facing.z, 0, -facing.x);
+                }
             }
-            else if (input.x > 0) // 向右运动
+            else
             {
-                // 右方向是面对方向的右侧 (z, -x)
-                direction += new Vector3(facing.z, 0, -facing.x);
+                // 如果没有按下键盘，direction 立即归零
+                direction = Vector3.zero;
             }
 
             // 将 momentum 添加到实际运动方向
             direction += momentum;
 
             // 归一化方向向量，以确保运动方向为单位向量
-            return direction.normalized;
+            if (direction != Vector3.zero)
+            {
+                direction = direction.normalized;
+            }
+
+            return direction;
         }
     }
+
+
+
 
     //返回四舍五入的面朝向量
     public Vector3 Facing
@@ -2184,7 +2213,6 @@ public class Player : MonoBehaviour
     //绘制碰撞
     void Draw_CollisionBox()
     {
-
 
         // 上面的四条线
         Debug.DrawLine(up_左上, up_右上, Color.red); // 左上 -- 右上

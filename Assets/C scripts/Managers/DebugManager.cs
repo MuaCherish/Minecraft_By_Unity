@@ -82,6 +82,7 @@ public class DebugManager : MonoBehaviour
         LeftText.text += $"当前时间: {managerHub.timeManager.GetCurrentTime():F2}时\n";
         LeftText.text += $"\n";
         LeftText.text += $"[Player]\n";
+        LeftText.text += $"速度: {managerHub.player.velocity}\n";
         LeftText.text += $"朝向: {CalculateFacing()}\n";
         LeftText.text += $"实际朝向: {managerHub.player.FactFacing}\n";
         LeftText.text += $"实际运动方向: {managerHub.player.ActualMoveDirection}\n";
