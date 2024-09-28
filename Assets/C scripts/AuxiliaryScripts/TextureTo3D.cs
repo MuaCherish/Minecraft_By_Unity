@@ -10,6 +10,7 @@ public class TextureTo3D : MonoBehaviour
     [Header("初始化参数")]
     private float thickness = 0.01f;
     public Material material;
+    public bool HandLayer;
 
     //找到边缘点
     private Texture2D spriteTexture;
@@ -29,10 +30,10 @@ public class TextureTo3D : MonoBehaviour
 
 
     //创造3d挤压物体
-    public void ProcessSprite(Sprite _sprite, Transform _partent, float _scale)
+    public void ProcessSprite(Sprite _sprite, Transform _partent, float _scale, bool _HandLayer)
     {
         if (_sprite == null) return;
-
+        HandLayer = _HandLayer;
 
         // 清空已有的边缘点列表
         edgePoints.Clear();
@@ -305,26 +306,31 @@ public class TextureTo3D : MonoBehaviour
         GameObject parent = new GameObject("挤压物体");
         parent.transform.localScale = new Vector3(_scale, _scale, _scale);
         parent.transform.SetParent(_parent, false);
-        parent.layer = LayerMask.NameToLayer("Hand");
-
+       
         //添加正反面
         GameObject front = new GameObject("正面");
         front.AddComponent<SpriteRenderer>().sprite = _sprite;
         front.transform.position = new Vector3(0.08f, 0.08f, thickness);
         front.transform.SetParent(parent.transform, false);
-        front.layer = LayerMask.NameToLayer("Hand");
-
+        
         GameObject back = new GameObject("反面");
         back.AddComponent<SpriteRenderer>().sprite = _sprite;
         back.transform.position = new Vector3(0.08f, 0.08f, 0);
         back.transform.SetParent(parent.transform, false);
-        back.layer = LayerMask.NameToLayer("Hand");
-
-
+       
         // 创建一个新的空 GameObject
         GameObject meshObject = new GameObject("侧面");
         meshObject.transform.SetParent(parent.transform, false);
-        meshObject.layer = LayerMask.NameToLayer("Hand");
+        
+
+        if (HandLayer)
+        {
+            parent.layer = LayerMask.NameToLayer("Hand");
+            front.layer = LayerMask.NameToLayer("Hand");
+            back.layer = LayerMask.NameToLayer("Hand");
+            meshObject.layer = LayerMask.NameToLayer("Hand");
+        }
+
 
         // 创建一个新的 Mesh
         Mesh mesh = new Mesh();

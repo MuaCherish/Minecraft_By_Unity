@@ -29,8 +29,10 @@ public static class BlocksFunction
                 {
                     Vector3 currentPos = new Vector3(x, y, z);
 
+
                     // 检查该坐标是否在球形半径范围内
-                    if (Vector3.Distance(_originPos, currentPos) <= _r)
+                    // 且不能是水
+                    if (Vector3.Distance(_originPos, currentPos) <= _r && managerhub.world.GetBlockType(currentPos) != VoxelData.Water)
                     {
                         // 如果该坐标属于爆炸边缘位置
                         if (Vector3.Distance(_originPos, currentPos) >= (_r - 0.5f))

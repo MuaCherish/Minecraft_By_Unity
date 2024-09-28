@@ -5,11 +5,10 @@ using UnityEngine;
 
 public class FloatingCube : MonoBehaviour
 {
-    public World world;
-    public GameObject Eyes;
-    public BackPackManager backpackmanager;
-    public MusicManager musicmanager;
+    public ManagerHub managerhub;
+    public GameObject eyes;
 
+    //参数
     public float destroyTime;
     public float rotationSpeed = 30f; // 旋转速度
     public float gravity; // 重力大小
@@ -17,24 +16,23 @@ public class FloatingCube : MonoBehaviour
     public Coroutine MoveToPlayerCoroutine;
     public float moveDuration;
     public byte point_Block_type;
-    public float ColdTimeToAbsorb;
+    public float ColdTimeToAbsorb = 1f;
 
     //材质
     public bool isGround; // 是否在地面上
 
-    public void InitWorld(ManagerHub _managerhub,byte _point_Block_type, float _ColdTimeToAbsorb)
+    public void InitWorld(ManagerHub _managerhub,byte _point_Block_type)
     {
-        world = _managerhub.world;
+        managerhub = _managerhub;
         destroyTime = _managerhub.backpackManager.dropblock_destroyTime;
         absorbDistance = _managerhub.backpackManager.absorb_Distance;
         gravity = _managerhub.backpackManager.drop_gravity;
         moveDuration = _managerhub.backpackManager.moveToplayer_duation;
 
         point_Block_type = _point_Block_type;
-        ColdTimeToAbsorb = _ColdTimeToAbsorb;
 
-        backpackmanager = _managerhub.backpackManager;
-        musicmanager = _managerhub.musicManager;
+        managerhub.backpackManager = _managerhub.backpackManager;
+        managerhub.musicManager = _managerhub.musicManager;
         
     }
 
@@ -60,14 +58,14 @@ public class FloatingCube : MonoBehaviour
     {
         Destroy(gameObject, destroyTime);
         StartCoroutine(absorb());
-        Eyes = GameObject.Find("Player/Eyes");
+        eyes = managerhub.player.eyesObject;
     }
 
 
 
     void CheckIsGround()
     {
-        if (world.GetBlockType(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z)) != VoxelData.Air)
+        if (managerhub.world.GetBlockType(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z)) != VoxelData.Air)
         {
             isGround = true;
         }
@@ -114,7 +112,7 @@ public class FloatingCube : MonoBehaviour
         while (elapsedTime < moveDuration)
         {
             // 每一帧更新玩家的位置
-            Vector3 targetPosition = new Vector3(Eyes.transform.position.x, Eyes.transform.position.y - 0.3f, Eyes.transform.position.z);
+            Vector3 targetPosition = new Vector3(eyes.transform.position.x, eyes.transform.position.y - 0.3f, eyes.transform.position.z);
 
             // 在移动持续时间内逐渐移动到目标位置
             transform.position = Vector3.Lerp(startingPosition, targetPosition, (elapsedTime / moveDuration));
@@ -127,12 +125,12 @@ public class FloatingCube : MonoBehaviour
 
 
         //播放音效
-        musicmanager.PlaySound_Absorb();
+        managerhub.musicManager.PlaySound_Absorb();
 
         
 
         //背包系统计数
-        if (world.game_mode == GameMode.Survival && point_Block_type != VoxelData.BedRock)
+        if (point_Block_type != VoxelData.BedRock)
         {
             byte _point_Block_type = point_Block_type;
 
@@ -142,11 +140,11 @@ public class FloatingCube : MonoBehaviour
                 _point_Block_type = VoxelData.Soil;
             }
 
-            backpackmanager.update_slots(0, _point_Block_type);
+            managerhub.backpackManager.update_slots(0, _point_Block_type);
         }
 
         //切换手中物品动画
-        backpackmanager.ChangeBlockInHand();
+        managerhub.backpackManager.ChangeBlockInHand();
 
         // 移动完成后销毁自身
         Destroy(gameObject);
@@ -161,7 +159,7 @@ public class FloatingCube : MonoBehaviour
         //是否可被吸收
         while (true)
         {
-            if (((transform.position - Eyes.transform.position).magnitude < absorbDistance) && backpackmanager.isfull == false)
+            if (((transform.position - eyes.transform.position).magnitude < absorbDistance) && managerhub.backpackManager.isfull == false)
             {
                 Absorbable();
             }

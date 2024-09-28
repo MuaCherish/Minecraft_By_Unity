@@ -44,6 +44,7 @@ public class Player : MonoBehaviour
     public Transform HighlightBlock;
     //public GameObject HighlightBlockObject;
 
+    public GameObject eyesObject;
     public Transform leg;
     public GameObject selectblock;
     public GameObject Eye_Light;
@@ -868,6 +869,7 @@ public class Player : MonoBehaviour
                         {
                             BlocksFunction.Boom(managerhub, _raycastNow, 4);
                             GameObject.Instantiate(particle_explosion, RayCast, Quaternion.identity);
+                            musicmanager.PlaySound(VoxelData.explore);
 
                             // 玩家被炸飞
                             Vector3 _Direction = cam.transform.position - _raycastNow;  //炸飞方向
@@ -904,7 +906,7 @@ public class Player : MonoBehaviour
                         if (_selecttype == VoxelData.Tool_BoneMeal)
                         {
                             //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
-                            world.Allchunks[world.GetChunkLocation(_raycastNow)].EditData(world.GetRelalocation(_raycastNow), VoxelData.Air);
+                            world.Allchunks[world.GetChunkLocation(_raycastNow)].EditData(_raycastNow, VoxelData.Air);
                             BlocksFunction.Smoke(managerhub, _raycastNow, 2.5f);
                             managerhub.backpackManager.update_slots(1, 56);
                         }
@@ -1163,7 +1165,7 @@ public class Player : MonoBehaviour
         if (world.game_mode == GameMode.Survival && world.blocktypes[theBlockwhichBeBrokenType].candropBlock)
         {
 
-            backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type, false, backpackmanager.ColdTime_Absorb);
+            backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type, false);
 
         }
 
@@ -2104,7 +2106,7 @@ public class Player : MonoBehaviour
 
             //(是竹子 || (是固体 && 不是基岩 && 不是水)则返回
             //if (world.GetBlockType(pos) == VoxelData.Bamboo || (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water))
-            if (world.blocktypes[world.GetBlockType(pos)].canBeChoose)
+            if (managerhub.world.eyesCheckForVoxel(pos))
             {
                 
 

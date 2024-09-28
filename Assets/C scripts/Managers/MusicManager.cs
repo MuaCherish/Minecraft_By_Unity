@@ -612,6 +612,11 @@ public class MusicManager : MonoBehaviour
         }
     }
 
+    public void PlaySound(int _clip)
+    {
+        Audio_Click.PlayOneShot(audioclips[_clip]);
+    }
+
     //---------------------------------------------------------------------------------------
 
 

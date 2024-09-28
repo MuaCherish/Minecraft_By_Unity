@@ -32,6 +32,7 @@ public class Chunk : MonoBehaviour
 
     //Transform
     World world;
+    ManagerHub managerhub;
     public GameObject chunkObject;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
@@ -90,12 +91,13 @@ public class Chunk : MonoBehaviour
 
 
     //Start()
-    public Chunk(Vector3 thisPosition, World _world, bool _BaseChunk)
+    public Chunk(Vector3 thisPosition, ManagerHub _managerhub, bool _BaseChunk)
     {
 
 
         //World
-        world = _world;
+        world = _managerhub.world;
+        managerhub = _managerhub;
         caveWidth = world.cave_width;
         //debug_CanLookCave = !world.debug_CanLookCave;
         BaseChunk = _BaseChunk;
@@ -168,12 +170,13 @@ public class Chunk : MonoBehaviour
 
 
     //Start()
-    public Chunk(Vector3 thisPosition, World _world, bool _BaseChunk, List<EditStruct> _editList)
+    public Chunk(Vector3 thisPosition, ManagerHub _managerhub, bool _BaseChunk, List<EditStruct> _editList)
     {
 
 
         //World
-        world = _world;
+        world = _managerhub.world;
+        managerhub = _managerhub;
         caveWidth = world.cave_width;
         //debug_CanLookCave = !world.debug_CanLookCave;
         BaseChunk = _BaseChunk;
@@ -2481,6 +2484,168 @@ public class Chunk : MonoBehaviour
 
     }
 
+
+    //Player使用，可以省去呼叫周边方块更新的个数
+    public void UpdateChunkMesh_WithSurround(Vector3 _pos, object obj, bool NotNeedThreading)
+    {
+
+        bool iscaller = (bool)obj;
+
+        ClearMeshData();
+
+        //刷新自己
+        for (int _y = 0; _y < VoxelData.ChunkHeight; _y++)
+        {
+
+            for (int _x = 0; _x < VoxelData.ChunkWidth; _x++)
+            {
+
+                for (int _z = 0; _z < VoxelData.ChunkWidth; _z++)
+                {
+
+                    //会变化的特殊方块
+                    updateSomeBlocks(_x, _y, _z);
+
+                    //[已废弃，移动至单独的线程执行]水的流动
+                    //updateWater();
+
+                    //if (isOutOfRange(x,y,z))
+                    //{
+                    //    print("");
+                    //}
+
+                    //如果是空气则不渲染
+                    if (world.blocktypes[GetBlock(_x, _y, _z).voxelType].DrawMode != DrawMode.Air)
+                    {
+                        UpdateMeshData(new Vector3(_x, _y, _z));
+                    }
+
+
+
+
+                    //UpdateMeshData(new Vector3(x, y, z));
+                }
+
+            }
+
+        }
+
+
+        //通知周围方块刷新
+        if (iscaller)
+        {
+            Chunk DirectChunk;
+            if (isOnEdge((int)_pos.x, (int)_pos.y, (int)_pos.z, out Vector3 Orient))
+            {
+                //print(Orient);
+                //print(_pos);
+
+                if (Orient.x > 0)
+                {
+                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
+                    {
+                        world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                        //DirectChunk.UpdateChunkMesh_WithSurround();
+                    }
+                }
+
+                if (Orient.x < 0)
+                {
+                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
+                    {
+                        world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                        //DirectChunk.UpdateChunkMesh_WithSurround();
+                    }
+                }
+
+                if (Orient.z > 0)
+                {
+                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
+                    {
+                        world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                        //DirectChunk.UpdateChunkMesh_WithSurround();
+                    }
+                }
+
+                if (Orient.z < 0)
+                {
+                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
+                    {
+                        world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                        //DirectChunk.UpdateChunkMesh_WithSurround();
+                    }
+                }
+            }
+
+            
+
+        }
+
+
+
+
+        //添加到world的渲染队列
+        isReadyToRender = true;
+
+        if (isCalled)
+        {
+
+            isCalled = false;
+
+        }
+        else
+        {
+
+            //print($"{world.GetChunkLocation(myposition)}Mesh完成");
+            world.MeshLock = false;
+
+        }
+
+
+        if (NotNeedThreading)
+        {
+            CreateMesh();
+        }
+        else
+        {
+
+            if (world.RenderLock)
+            {
+
+                world.WaitToRender_temp.Enqueue(this);
+                //print($"{world.GetChunkLocation(myposition)}被堵塞，入队temp");
+
+            }
+            else
+            {
+
+                //print($"{world.GetChunkLocation(myposition)}入队");
+                world.WaitToRender.Enqueue(this);
+
+            }
+        }
+
+
+
+        if (BaseChunk == true)
+        {
+
+            BaseChunk = false;
+
+        }
+
+
+
+
+
+
+    }
+
+
+
+
+
+
     //清除网格
     void ClearMeshData()
     {
@@ -2491,42 +2656,6 @@ public class Chunk : MonoBehaviour
         triangles_Water.Clear();
         uvs.Clear();
 
-    }
-
-    //编辑方块
-    public void EditData(Vector3 pos, byte targetBlocktype) 
-    {
-
-        //ClearFInd_Direvtion();
-
-        int x = Mathf.FloorToInt(pos.x);
-        int y = Mathf.FloorToInt(pos.y);
-        int z = Mathf.FloorToInt(pos.z);
-
-        //防止过高
-        if (y >= VoxelData.ChunkHeight - 2)
-        {
-
-            return;
-
-        }
-
-        //if (isOutOfRange(x,y,z))
-        //{
-        //    return;
-        //}
-
-        UpdateBlock(x, y, z, targetBlocktype);
-
-        //判断朝向
-        if (world.blocktypes[targetBlocktype].IsOriented)
-        {
-            UpdateBlockOriented(new Vector3(x, y, z), world.player.RealBacking);
-        }
-
-        EditForSomeBlocks(new Vector3(x, y, z), targetBlocktype);
-
-        UpdateChunkMesh_WithSurround(true, false);
     }
 
 
@@ -2554,21 +2683,26 @@ public class Chunk : MonoBehaviour
         }
 
         // 更新区块网格
-       //UpdateChunkMesh_WithSurround(true, false);
+        //UpdateChunkMesh_WithSurround(true, false);
 
         isSaving = false;
     }
 
 
-    // 算法创造方块
-    public void EditBlocks(Vector3 pos, byte targetBlocktype)
-    {
-        //ClearFInd_Direvtion();
-        Vector3 relaposition = world.GetRelalocation(pos);
 
-        int x = Mathf.FloorToInt(relaposition.x);
-        int y = Mathf.FloorToInt(relaposition.y);
-        int z = Mathf.FloorToInt(relaposition.z);
+    #region 修改方块
+
+    //编辑方块
+    //接收绝对坐标
+    public void EditData(Vector3 pos, byte targetBlocktype) 
+    {
+
+        //ClearFInd_Direvtion();
+        Vector3 _relaVec = world.GetRelalocation(pos);
+
+        int x = (int)_relaVec.x;
+        int y = (int)_relaVec.y;
+        int z = (int)_relaVec.z;
 
         //防止过高
         if (y >= VoxelData.ChunkHeight - 2)
@@ -2578,17 +2712,27 @@ public class Chunk : MonoBehaviour
 
         }
 
-        //if (isOutOfRange(x, y, z))
+        //if (isOutOfRange(x,y,z))
         //{
         //    return;
         //}
 
         UpdateBlock(x, y, z, targetBlocktype);
 
-        UpdateChunkMesh_WithSurround(true, false);
+        //判断朝向
+        if (world.blocktypes[targetBlocktype].IsOriented)
+        {
+            UpdateBlockOriented(new Vector3(x, y, z), world.player.RealBacking);
+        }
+
+        EditForSomeBlocks(new Vector3(x, y, z), targetBlocktype);
+
+
+        UpdateChunkMesh_WithSurround(pos, true, false);
     }
-    // 算法创造方块
-    public void EditBlocks(List<EditStruct> _EditList)
+
+    
+    public void EditData(List<EditStruct> _EditList) 
     {
         //print($"EditData:{_EditList.Count}");
 
@@ -2599,6 +2743,7 @@ public class Chunk : MonoBehaviour
             int _x = Mathf.FloorToInt(relaposition.x);
             int _y = Mathf.FloorToInt(relaposition.y);
             int _z = Mathf.FloorToInt(relaposition.z);
+            byte thisType = GetBlock(_x, _y, _z).voxelType;
 
             // 出界就跳过
             //if (isOutOfRange(_x, _y, _z))
@@ -2606,6 +2751,7 @@ public class Chunk : MonoBehaviour
             //    continue;
             //}
 
+            //非本区块则跳过
             if (world.GetChunkLocation(_EditList[i].editPos) != world.GetChunkLocation(myposition))
             {
                 //Debug.Log($"edit:{world.GetChunkLocation(_EditList[i].editPos)}, myposition:{world.GetChunkLocation(myposition)}");
@@ -2613,19 +2759,35 @@ public class Chunk : MonoBehaviour
             }
 
             //基岩也跳过
-            if (GetBlock(_x, _y, _z).voxelType == VoxelData.BedRock)
+            if (thisType == VoxelData.BedRock)
             {
                 continue;
             }
 
-            // 设置方块类型
-            GetBlock(_x, _y, _z).voxelType = _EditList[i].targetType;
+
+            //掉落物
+            if (thisType != VoxelData.TNT && GetProbability(30))
+            {
+                managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, thisType, false);
+
+            }
+            
+
+            // 设置方块类型 
+            UpdateBlock(_x, _y, _z, _EditList[i].targetType);
         }
 
         // 更新区块网格
         UpdateChunkMesh_WithSurround(true, false);
 
     }
+
+
+
+
+
+    #endregion
+
 
 
 
@@ -4644,22 +4806,55 @@ public class Chunk : MonoBehaviour
 
 
     //是否在边框上
-    //bool isOnEdge(int x, int y, int z)
-    //{
+    bool isOnEdge(int x, int y, int z, out Vector3 Orient)
+    {
+        Orient = Vector3.zero;
+        bool _bool = false;
 
-    //    if (x == 0 || x == VoxelData.ChunkWidth - 1 || y == 0 || y == VoxelData.ChunkHeight - 1 || z == 0 || z == VoxelData.ChunkWidth - 1)
-    //    {
+        if (x == 0)
+        {
+            Orient += new Vector3(-1f, 0f, 0f);
+            _bool = true;
 
-    //        return true;
+        }
+        if (x == VoxelData.ChunkWidth - 1)
+        {
+            Orient += new Vector3(1f, 0f, 0f);
+            _bool = true;
 
-    //    }
-    //    else
-    //    {
+        }
+        if (y == 0)
+        {
+            Orient += new Vector3(0f, -1f, 0f);
+            _bool = true;
 
-    //        return false;
+        }
+        if (y == VoxelData.ChunkHeight - 1)
+        {
+            Orient += new Vector3(0f, 1f, 0f);
+            _bool = true;
 
-    //    }
-    //}
+        }
+        if (z == 0)
+        {
+            Orient += new Vector3(0f, 0f, -1f);
+            _bool = true;
+
+        }
+        if (z == VoxelData.ChunkWidth - 1)
+        {
+            Orient += new Vector3(0f, 0f, 1f);
+            _bool = true;
+
+        }
+
+        return _bool;
+
+
+
+    }
+
+
     void InitVoxelStruct()
     {
         for (int x = 0; x < VoxelData.ChunkWidth; x++)
@@ -4746,55 +4941,3 @@ public class Chunk : MonoBehaviour
 
 
 
-//PerlinNoise噪声类
-public static class PerlinNoise
-{
-    static float interpolate(float a0, float a1, float w)
-    {
-        //线性插值
-        //return (a1 - a0) * w + a0;
-
-        //hermite插值
-        return Mathf.SmoothStep(a0, a1, w);
-    }
-
-
-    static Vector2 randomVector2(Vector2 p)
-    {
-        float random = Mathf.Sin(666 + p.x * 5678 + p.y * 1234) * 4321;
-        return new Vector2(Mathf.Sin(random), Mathf.Cos(random));
-    }
-
-
-    static float dotGridGradient(Vector2 p1, Vector2 p2)
-    {
-        Vector2 gradient = randomVector2(p1);
-        Vector2 offset = p2 - p1;
-        return Vector2.Dot(gradient, offset) / 2 + 0.5f;
-    }
-
-
-    public static float GetPerlinNoise(float x, float y) 
-    {
-        //声明二维坐标
-        Vector2 pos = new Vector2(x, y);
-        //声明该点所处的'格子'的四个顶点坐标
-        Vector2 rightUp = new Vector2((int)x + 1, (int)y + 1);
-        Vector2 rightDown = new Vector2((int)x + 1, (int)y);
-        Vector2 leftUp = new Vector2((int)x, (int)y + 1);
-        Vector2 leftDown = new Vector2((int)x, (int)y);
-
-        //计算x上的插值
-        float v1 = dotGridGradient(leftDown, pos);
-        float v2 = dotGridGradient(rightDown, pos);
-        float interpolation1 = interpolate(v1, v2, x - (int)x);
-
-        //计算y上的插值
-        float v3 = dotGridGradient(leftUp, pos);
-        float v4 = dotGridGradient(rightUp, pos);
-        float interpolation2 = interpolate(v3, v4, x - (int)x);
-
-        float value = interpolate(interpolation1, interpolation2, y - (int)y);
-        return value;
-    }
-}

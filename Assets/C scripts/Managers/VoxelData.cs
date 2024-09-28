@@ -192,6 +192,7 @@ public static class VoxelData
     public static readonly int bgm_3 = 16;
     public static readonly int absorb_1 = 17;
     public static readonly int absorb_2 = 18;
+    public static readonly int explore = 19;
 
 
 

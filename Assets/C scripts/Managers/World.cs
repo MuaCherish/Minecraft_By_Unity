@@ -58,20 +58,7 @@ public enum FaceCheck_Enum
     isSolid, appointType, appointDrawmode
 }
 
-//比如 门：{0, isSolid false} 代表后方如果是Solid则不生成面
 
-// 0 1  2   3  4  5
-//后 前 上 下 左 右
-
-[System.Serializable]
-public class FaceCheckMode
-{
-    public int FaceDirect;  //这个Direct属于本地方向，比如0指的是自己朝向的后方，因为后面要顾及到物体的旋转
-    public FaceCheck_Enum checktype;
-    public byte appointType;
-    public DrawMode appointDrawmode;
-    public bool isCreateFace;
-}
 
 
 
@@ -982,13 +969,13 @@ public class World : MonoBehaviour
         //}
 
         //调用Chunk
-        if (ContainsChunkLocation(_ChunkLocation))
+        if (ContainsChunkLocation(_ChunkLocation)) 
         {
-            _chunk_temp = new Chunk(_ChunkLocation, this, false, TheSaving[GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
+            _chunk_temp = new Chunk(_ChunkLocation, managerhub, false, TheSaving[GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
         }
         else
         {
-            _chunk_temp = new Chunk(_ChunkLocation, this, false);
+            _chunk_temp = new Chunk(_ChunkLocation, managerhub, false);
         }
 
         //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
@@ -1022,11 +1009,11 @@ public class World : MonoBehaviour
         //调用Chunk
         if (ContainsChunkLocation(_ChunkLocation))
         {
-            _chunk_temp = new Chunk(_ChunkLocation, this, false, TheSaving[GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
+            _chunk_temp = new Chunk(_ChunkLocation, managerhub, false, TheSaving[GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
         }
         else
         {
-            _chunk_temp = new Chunk(_ChunkLocation, this, false);
+            _chunk_temp = new Chunk(_ChunkLocation, managerhub, false);
         }
 
 
@@ -1325,7 +1312,7 @@ public class World : MonoBehaviour
                 {
                     if (hasExec_CaculateInitTime)
                     {
-                        print("渲染完了");
+                        //print("渲染完了");
                         InitEndTime = Time.time;
 
                         //renderSize * renderSize * 4是总区块数，2是因为面剔除渲染了两次
@@ -2188,6 +2175,9 @@ public class World : MonoBehaviour
         }
     }
 
+
+    #region 修改方块
+
     //外界修改方块
     public void EditBlock(Vector3 _pos, byte _target)
     {
@@ -2224,7 +2214,7 @@ public class World : MonoBehaviour
         // 遍历_ChunkLocations，将allchunk里的_ChunkLocations执行EditData
         foreach (var chunkLocation in _ChunkLocations)
         {
-            Allchunks[chunkLocation].EditBlocks(_editStructs);
+            Allchunks[chunkLocation].EditData(_editStructs);
         }
 
         // 打印找到的区块数量
@@ -2248,12 +2238,14 @@ public class World : MonoBehaviour
         foreach (var item in _editStructs)
         {
             //print("执行EditBlocks");
-            Allchunks[GetChunkLocation(item.editPos)].EditBlocks(item.editPos, item.targetType);
+            Allchunks[GetChunkLocation(item.editPos)].EditData(item.editPos, item.targetType);
 
             yield return new WaitForSeconds(_time);
         }
         editBlockCoroutine = null;
     }
+
+    #endregion
 
     //--------------------------------------------------------------------------------------------------------------
 
@@ -2417,6 +2409,8 @@ public class World : MonoBehaviour
     }
 
 
+    #region 方块检测
+
     //对玩家碰撞盒的方块判断
     //true：有碰撞
     public bool CheckForVoxel(Vector3 pos)
@@ -2442,47 +2436,6 @@ public class World : MonoBehaviour
         {
             return false; 
         }
-
-
-        //方块碰撞偏移
-
-        //X
-        //if (player.Facing.x != 0)
-        //{
-        //    if (player.Facing.x > 0)
-        //    {
-        //        realLocation.x -= player.Facing.x * blocktypes[targetBlock].CollisionOffset.Xoffset.y;
-        //    }
-        //    else
-        //    {
-        //        realLocation.x -= player.Facing.x * blocktypes[targetBlock].CollisionOffset.Xoffset.x;
-        //    }
-
-        //}
-
-        ////Y
-        //if (player.Facing.y > 0)
-        //{
-        //    realLocation.y -= player.Facing.y * blocktypes[targetBlock].CollisionOffset.Yoffset.y;
-        //}
-        //else if (player.Facing.y < 0)
-        //{
-        //    realLocation.y -= player.Facing.y * blocktypes[targetBlock].CollisionOffset.Yoffset.x;
-        //}
-
-        ////Z
-        //if (player.Facing.z != 0)
-        //{
-        //    if (player.Facing.z > 0)
-        //    {
-        //        realLocation.z -= player.Facing.z * blocktypes[targetBlock].CollisionOffset.Zoffset.y;
-        //    }
-        //    else
-        //    {
-        //        realLocation.z -= player.Facing.z * blocktypes[targetBlock].CollisionOffset.Zoffset.x;
-        //    }
-
-        //}
 
         //如果是自定义碰撞
         if (blocktypes[targetBlock].isDIYCollision)
@@ -2540,12 +2493,17 @@ public class World : MonoBehaviour
 
         return new Vector3(_x, _y, _z);
     }
-    
 
+    #endregion
 
     //放置高亮方块的
+    //用于眼睛射线的检测
     public bool eyesCheckForVoxel(Vector3 pos)
     {
+
+        Vector3 realLocation = pos; //绝对坐标
+        Vector3 relaLocation = GetRelalocation(realLocation);
+        byte targetBlock = GetBlockType(realLocation);
 
         if (!Allchunks.ContainsKey(GetChunkLocation(pos))) { return false; }
 
@@ -2558,8 +2516,24 @@ public class World : MonoBehaviour
         //判断Y上有没有出界
         if (vec.y >= VoxelData.ChunkHeight) { return false; }
 
-        //竹子返回true
-        //if (GetBlockType(pos) == VoxelData.Bamboo) { return true; }
+
+        //如果是自定义碰撞
+        if (blocktypes[targetBlock].isDIYCollision)
+        {
+            realLocation = CollisionOffset(realLocation, targetBlock);
+            Vector3 OffsetrelaLocation = GetRelalocation(realLocation);
+
+            if (OffsetrelaLocation != relaLocation)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
 
         //返回固体还是空气
         return blocktypes[Allchunks[GetChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z].voxelType].canBeChoose;
@@ -2581,281 +2555,4 @@ public class World : MonoBehaviour
 
 }
 
-
-//结构体BlockType
-//存储方块种类+面对应的UV
-[System.Serializable]
-public class BlockType
-{
-    [Header("方块参数")]
-    public string blockName;
-    public float DestroyTime;
-    public bool isSolid;        //是否会阻挡玩家
-    public bool isTransparent;  //周边方块是否面剔除
-    public bool canBeChoose;    //是否可被高亮方块捕捉到
-    public bool candropBlock;   //是否掉落方块
-    public bool IsOriented;     //是否跟随玩家朝向
-    public bool isinteractable; //是否可被右键触发
-    public bool is2d;           //用来区分显示
-
-    [Header("工具参数")]
-    public bool isTool;         //区分功能性
-    public bool isNeedRotation; //true后会做一定的旋转
-
-
-    [Header("自定义碰撞")]
-    public bool isDIYCollision;
-    //抽象来说就是方块向内挤压的数值
-    //对于Y来说，(0.5f,0,0f)，就是Y正方向的面向内挤压0.5f，Y负方向的面向内挤压0.0f，即台阶的碰撞参数
-    public CollosionRange CollosionRange;
-
-    [Header("Sprits")]
-    public Sprite icon; //物品栏图标
-    public Sprite sprite; //掉落物
-    public Sprite top_sprit; //掉落物
-    public Sprite buttom_sprit; //掉落物
-
-
-    [Header("音乐")]
-    public AudioClip[] walk_clips = new AudioClip[2]; 
-    public AudioClip broking_clip;
-    public AudioClip broken_clip;
-
-
-    [Header("绘制")]
-    public int backFaceTexture;
-    public int frontFaceTexture;
-    public int topFaceTexture;
-    public int bottomFaceTexture;
-    public int leftFaceTexture;
-    public int rightFaceTexture;
-    public DrawMode DrawMode;
-
-    [Header("面生成判断(后前上下左右)")]
-    public bool GenerateTwoFaceWithAir;    //如果朝向空气，则双面绘制
-    public List<FaceCheckMode> OtherFaceCheck; 
-
-  
-
-    //贴图中的面的坐标
-    public int GetTextureID(int faceIndex)
-    {
-
-        switch (faceIndex)
-        {
-
-            case 0:
-                return backFaceTexture;
-
-            case 1:
-                return frontFaceTexture;
-
-            case 2:
-                return topFaceTexture;
-
-            case 3:
-                return bottomFaceTexture;
-
-            case 4:
-                return leftFaceTexture;
-
-            case 5:
-                return rightFaceTexture;
-
-            default:
-                Debug.Log($"Error in GetTextureID; invalid face index {faceIndex}");
-                return 0;
-
-
-        }
-
-    }
-
-
-}
-
-
-//工具类
-//[System.Serializable]
-//public class ToolType
-//{
-//    public string name;
-//    public Sprite sprite;
-//}
-
-//方块种类结构体
-public class VoxelStruct
-{
-    public byte voxelType = VoxelData.Air;
-    public int blockOriented = 0;
-
-    //面生成的六个方向
-    public bool up = true;
-}
-
-
-//群系系统
-[System.Serializable]
-public class BiomeNoiseSystem
-{
-    public string BiomeName;
-    public Color BiomeColor;
-    public Vector2 HighDomain;
-    public Vector3 Noise_Scale_123;
-    public Vector3 Noise_Rank_123;
-}
-
-
-//地质分层与概率系统
-//TerrainLayerProbabilitySystem
-[System.Serializable]
-public class TerrainLayerProbabilitySystem
-{
-    //seed
-    public bool isRandomSeed = true;
-    public int Seed = 0;
-
-    //level
-    public float sea_level = 60;
-    public float Snow_Level = 100;
-
-    //tree
-    public int Normal_treecount;
-    public int 密林树木采样次数Forest_treecount;
-    public int TreeHigh_min = 5;
-    public int TreeHigh_max = 7;
-
-    //random
-    public float Random_Bush;
-    public float Random_Bamboo;
-    public float Random_BlueFlower;
-    public float Random_WhiteFlower1;
-    public float Random_WhiteFlower2;
-    public float Random_YellowFlower;
-
-    //coal
-    public float Random_Coal;
-    public float Random_Iron;
-    public float Random_Gold;
-    public float Random_Blue_Crystal;
-    public float Random_Diamond;
-}
-
-
-
-// 一个完整的WorldSetting
-[Serializable]
-public class WorldSetting
-{
-    public String date = "0000";//存档创建日期
-    public String name = "新的世界";
-    public int seed = 0;
-    public GameMode gameMode = GameMode.Survival;
-    public int worldtype = VoxelData.Biome_Default;
-    public Vector3 playerposition;   // 保存玩家的坐标
-    public Quaternion playerrotation; // 保存玩家的旋转
-
-    public WorldSetting(int _seed)  
-    {
-        this.seed = _seed;
-    }
-}
-
-
-//[System.Serializable]
-//public class EditStruct
-//{
-//    public Vector3 ChunkLocation;
-//    public Vector3 RelativeLocation;
-//    public byte EditType;
-
-//    public EditStruct(Vector3 _ChunkLocation, Vector3 _RelativeLocation, byte _EditType)
-//    {
-//        ChunkLocation = _ChunkLocation;
-//        RelativeLocation = _RelativeLocation;
-//        EditType = _EditType;
-//    }
-
-//}
-
-
-//玩家修改的数据缓存
-[System.Serializable]
-public class EditStruct
-{
-    public Vector3 editPos;
-    public byte targetType;
-    
-
-    public EditStruct(Vector3 _editPos, byte _targetType)
-    {
-        editPos = _editPos;
-        targetType = _targetType;
-    }
-
-}
-
-
-
-//最终保存的结构体
-[System.Serializable]
-public class SavingData
-{
-    public Vector3 ChunkLocation;
-    public List<EditStruct> EditDataInChunkList = new List<EditStruct>();
-
-    // 为了兼容反序列化后还原为Dictionary
-    [System.NonSerialized]
-    public Dictionary<Vector3, byte> EditDataInChunk = new Dictionary<Vector3, byte>();
-
-    public SavingData(Vector3 _vec, Dictionary<Vector3, byte> _D)
-    {
-        ChunkLocation = _vec;
-        EditDataInChunk = _D;
-
-        // 将字典转换为列表
-        foreach (var kvp in _D)
-        {
-            EditDataInChunkList.Add(new EditStruct(kvp.Key, kvp.Value));
-        }
-    }
-
-    // 在反序列化后还原Dictionary
-    public void RestoreDictionary()
-    {
-        EditDataInChunk = new Dictionary<Vector3, byte>();
-        foreach (var structItem in EditDataInChunkList)
-        {
-            EditDataInChunk[structItem.editPos] = structItem.targetType;
-        }
-    }
-
-    // 检查是否包含指定的 ChunkLocation
-    public bool ContainsChunkLocation(Vector3 location)
-    {
-        return ChunkLocation == location;
-    }
-}
-
-
-// 为List对象创建一个封装类，以便能够将其转换为JSON
-[System.Serializable]
-public class Wrapper<T>
-{
-    public List<T> Items;
-
-    public Wrapper(List<T> items)
-    {
-        Items = items;
-    }
-}
-
-//方块碰撞类
-[System.Serializable]
-public class CollosionRange
-{
-    public Vector2 xRange = new Vector3(0 ,1f);
-    public Vector2 yRange = new Vector3(0, 1f);
-    public Vector2 zRange = new Vector3(0, 1f);
-}
 
