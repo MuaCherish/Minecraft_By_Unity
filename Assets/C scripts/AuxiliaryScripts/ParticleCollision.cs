@@ -36,7 +36,7 @@ public class ParticleCollision : MonoBehaviour
             Vector3 particlePosition = particles[i].position;
 
             // 判断该位置是否有碰撞
-            if (managerhub.world.blocktypes[managerhub.world.GetBlockType(new Vector3(particlePosition.x, particlePosition.y + Y_Offset, particlePosition.z))].isSolid)
+            if (managerhub.world.CheckForVoxel(new Vector3(particlePosition.x, particlePosition.y + Y_Offset, particlePosition.z)))
             {
                 // 设置粒子的速度为零
                 particles[i].velocity = Vector3.zero;

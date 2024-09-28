@@ -300,7 +300,11 @@ public class World : MonoBehaviour
         //-------------------------------------
 
         PointSaving = "";
-    }
+
+        //初始化计数时间
+        InitStartTime = 0f;
+        InitEndTime = 0f;
+}
 
     private void FixedUpdate()
     {
@@ -534,7 +538,7 @@ public class World : MonoBehaviour
         canvasManager.Initprogress = 1f;
 
         //开启面优化协程
-        //StartCoroutine(Chunk_Optimization());
+        StartCoroutine(Chunk_Optimization());
 
         StartCoroutine(FlashChunkCoroutine());
 

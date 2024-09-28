@@ -6,8 +6,8 @@ using System.Threading;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using static UnityEngine.GraphicsBuffer;
-using static UnityEditor.PlayerSettings;
-using static UnityEditor.Progress;
+//using static UnityEditor.PlayerSettings;
+//using static UnityEditor.Progress;
 //using static UnityEditor.PlayerSettings;
 //using System.Diagnostics;
 
@@ -2766,7 +2766,7 @@ public class Chunk : MonoBehaviour
 
 
             //µÙ¬‰ŒÔ
-            if (thisType != VoxelData.TNT && GetProbability(30))
+            if (thisType != VoxelData.Air && thisType != VoxelData.TNT && GetProbability(30))
             {
                 managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, thisType, false);
 

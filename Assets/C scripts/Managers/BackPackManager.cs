@@ -12,7 +12,6 @@ using UnityEngine.XR;
 public class BackPackManager : MonoBehaviour
 {
     [Header("状态")]
-    [ReadOnly]public bool isfull = false;
     [ReadOnly] public bool isChanging = false;  //切换方块的冷却锁，但是好像没有用上
 
     //数据部分
@@ -93,10 +92,6 @@ public class BackPackManager : MonoBehaviour
 
                 }
 
-                if (_index == -1)
-                {
-                    isfull = true;
-                }
             }
 
         }
@@ -107,7 +102,6 @@ public class BackPackManager : MonoBehaviour
         {
             if (slots[managerhub.player.selectindex].number - 1 <= 0)
             {
-                isfull = false;
                 slots[managerhub.player.selectindex].ResetSlot();
             }
             else
@@ -175,10 +169,6 @@ public class BackPackManager : MonoBehaviour
 
                 }
 
-                if (_index == -1)
-                {
-                    isfull = true;
-                }
             }
 
             ChangeBlockInHand();
@@ -191,7 +181,6 @@ public class BackPackManager : MonoBehaviour
         {
             if (slots[managerhub.player.selectindex].number - 1 <= 0)
             {
-                isfull = false;
                 slots[managerhub.player.selectindex].ResetSlot();
             }
             else
@@ -211,9 +200,6 @@ public class BackPackManager : MonoBehaviour
 
         }
     }
-
-
-
 
     /// <summary>
     /// 按Q扔物品
@@ -238,7 +224,50 @@ public class BackPackManager : MonoBehaviour
 
     }
 
+    //用于替代isFull
+    //外界调用
+    //返回当前物品栏是否可以再装物品
+    public bool CheckSlotsFull(byte _targetType)
+    {
+        bool hasEmptySlot = false;
+        for (int i = 0;i < slots.Length; i++)
+        {
+            byte targetType = _targetType;
 
+            //草块变泥土
+            if (_targetType == VoxelData.Grass)
+            {
+                targetType = VoxelData.Soil;
+            }
+
+
+            //检测到相同的材质
+            if (slots[i].blockId == targetType)
+            {
+                //可以合并
+                return false;
+            }
+
+            //检测空的slot
+            if (slots[i].number == 0)
+            {
+                hasEmptySlot = true;
+            }
+        }
+
+        //如果没有相同材质，但是由空的slot
+        if (hasEmptySlot)
+        {
+            //没满
+            return false;
+        }
+        else
+        {
+            //满了
+            return true;
+        }
+
+    }
 
     //---------------------------------------------------------------------------------------------------------------------
 
