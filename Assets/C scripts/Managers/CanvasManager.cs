@@ -205,10 +205,8 @@ public class CanvasManager : MonoBehaviour
     }
 
 
-    
     private void Update() 
     {
-
 
         //加载中
         if (world.game_state == Game_State.Loading)
@@ -481,8 +479,7 @@ public class CanvasManager : MonoBehaviour
             ////鼠标不可视
             //Cursor.visible = false;
             ToggleMouseVisibilityAndLock(true);
-
-
+             
 
             if (world.game_mode == GameMode.Survival)
             {
@@ -527,17 +524,20 @@ public class CanvasManager : MonoBehaviour
     {
         if (isLocked)
         {
+            //print("隐藏鼠标");
             // 隐藏鼠标光标并将其锁定在屏幕中心
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
         else
         {
+            //print("显示鼠标");
             // 显示鼠标光标并解除锁定
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
     }
+
 
 
 
@@ -904,6 +904,42 @@ public class CanvasManager : MonoBehaviour
     //选项细节 - 辅助设置
 
     //------------------------------------- 工具 ------------------------------------------
+
+    //用于工作台等游戏中界面的显示
+    //-1为关闭
+    public void SwitchUI_Player(int _index)
+    {
+        //如果不是关闭
+        if (_index != -1)
+        {
+            if (isPausing == false)
+            {
+                isPausing = true;
+                ToggleMouseVisibilityAndLock(false);
+                UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_玩家互动ui前黑色背景]._object.SetActive(true);
+                UIManager[VoxelData.ui玩家].childs[_index]._object.SetActive(true);
+                UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_准心]._object.SetActive(false);
+                managerhub.world.game_state = Game_State.Pause;
+            }
+        }
+        //关闭UI
+        else
+        {
+            foreach (Transform item in UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_玩家互动ui前黑色背景]._object.transform)
+            {
+                item.gameObject.SetActive(false);
+            }
+
+            // 将父对象设为不可见
+            UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_准心]._object.SetActive(true);
+            UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_玩家互动ui前黑色背景]._object.SetActive(false);
+        }
+
+        
+        
+    } 
+
+
 
     //打开存档目录
     public void OpenPersistentDataDirectory()
@@ -1289,24 +1325,36 @@ public class CanvasManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-
+            // 执行暂停
             if (!isPausing)
             {
-                //未暂停
-                isPausing = !isPausing;
-                
+                isPausing = true;
                 SwitchToUI(VoxelData.ui游戏中暂停);
                 world.game_state = Game_State.Pause;
+
+                // 解锁鼠标以便在暂停时使用
+                ToggleMouseVisibilityAndLock(false);
             }
+            // 解除暂停
             else
             {
-                //正在暂停
-                isPausing = !isPausing;
+                isPausing = false;
 
-                SwitchToUI(VoxelData.ui玩家);
+                switch (UIBuffer.Peek())
+                {
+                    // 如果正在玩家界面
+                    case 8:
+                        SwitchUI_Player(-1);
+                        break;
+                    default:
+                        SwitchToUI(VoxelData.ui玩家);
+                        break;
+                }
+
+                // 重新锁定鼠标
+                ToggleMouseVisibilityAndLock(true);
                 world.game_state = Game_State.Playing;
             }
-
         }
     }
 

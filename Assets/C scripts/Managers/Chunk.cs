@@ -2609,21 +2609,30 @@ public class Chunk : MonoBehaviour
         else
         {
 
-            if (world.RenderLock)
+            if (iscaller)
             {
-
-                world.WaitToRender_temp.Enqueue(this);
-                //print($"{world.GetChunkLocation(myposition)}被堵塞，入队temp");
-
+                world.WaitToFlashChunkQueue.Enqueue(this);
             }
             else
             {
+                if (world.RenderLock)
+                {
 
-                //print($"{world.GetChunkLocation(myposition)}入队");
-                world.WaitToRender.Enqueue(this);
+                    world.WaitToRender_temp.Enqueue(this);
+                    //print($"{world.GetChunkLocation(myposition)}被堵塞，入队temp");
 
+                }
+                else
+                {
+
+                    //print($"{world.GetChunkLocation(myposition)}入队");
+                    world.WaitToRender.Enqueue(this);
+
+                }
             }
         }
+
+            
 
 
 

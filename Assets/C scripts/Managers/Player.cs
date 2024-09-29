@@ -32,7 +32,6 @@ public class Player : MonoBehaviour
     public CommandManager commandManager;
     public World world;
     public MusicManager musicmanager;
-    public CanvasManager canvasManager;
     public BackPackManager backpackmanager;
     public LifeManager lifemanager;
     public GameObject particle_explosion;
@@ -313,7 +312,7 @@ public class Player : MonoBehaviour
     }
 
 
-
+    public bool isOpenBackpack = false;
     private void Update()
     {
         if (world.game_state == Game_State.Playing)
@@ -339,7 +338,7 @@ public class Player : MonoBehaviour
             }
 
             //游戏中暂停，暂停玩家输入
-            if (canvasManager.isPausing == true || commandManager.isConsoleActive == true)
+            if (managerhub.canvasManager.isPausing == true || commandManager.isConsoleActive == true)
             {
                 horizontalInput = 0f;
                 verticalInput = 0f;
@@ -374,7 +373,20 @@ public class Player : MonoBehaviour
 
         }
 
+
+        //用于关闭背包
+        else if (world.game_state == Game_State.Pause)
+        {
+            if (Input.GetKeyDown(KeyCode.E) && isOpenBackpack)
+            {
+                managerhub.canvasManager.isPausing = false;
+                managerhub.canvasManager.SwitchUI_Player(-1);
+                managerhub.world.game_state = Game_State.Playing;
+            }
+        }
     }
+
+
 
 
     //减小饱食度
@@ -644,7 +656,7 @@ public class Player : MonoBehaviour
         float currentVerticalInput = Input.GetAxis("Vertical");
 
         // 使用 Mathf.Lerp 进行输入惯性平滑处理
-        if (!isFlying)
+        if (!isFlying) 
         {
             horizontalInputSmooth = Mathf.Lerp(horizontalInputSmooth, currentHorizontalInput, Time.deltaTime / inputInertia);
             verticalInputSmooth = Mathf.Lerp(verticalInputSmooth, currentVerticalInput, Time.deltaTime / inputInertia);
@@ -671,8 +683,8 @@ public class Player : MonoBehaviour
         verticalInput = verticalInputSmooth;
 
         // 获取鼠标输入（无惯性）
-        mouseHorizontal = Input.GetAxis("Mouse X") * canvasManager.Mouse_Sensitivity;
-        mouseVerticalspeed = Input.GetAxis("Mouse Y") * canvasManager.Mouse_Sensitivity;
+        mouseHorizontal = Input.GetAxis("Mouse X") * managerhub.canvasManager.Mouse_Sensitivity;
+        mouseVerticalspeed = Input.GetAxis("Mouse Y") * managerhub.canvasManager.Mouse_Sensitivity;
 
         scrollWheelInput = Input.GetAxis("Mouse ScrollWheel");
 
@@ -718,6 +730,19 @@ public class Player : MonoBehaviour
         //{
         //    SwitchThridPersonMode();
         //}
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            isOpenBackpack = true;
+            if (managerhub.world.game_mode == GameMode.Survival)
+            {
+                managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_生存背包);
+            }
+            else
+            {
+                managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_创造背包);
+            }
+        }
 
 
         if (isGrounded && Input.GetKey(KeyCode.Space) && groundTime >= minGroundedTime)
@@ -941,6 +966,7 @@ public class Player : MonoBehaviour
                         //print($"_Direction:{_Direction}, _distance: {_distance}");
 
                         break;
+                    
                     //唱片机
                     case 40:
                         if (_selecttype == VoxelData.Tool_MusicDiscs)
@@ -950,6 +976,7 @@ public class Player : MonoBehaviour
                             managerhub.backpackManager.update_slots(1, 50);
                         }
                         break;
+                   
                     //DFS烟雾 
                     case 42:
                         if (_selecttype == VoxelData.Tool_BoneMeal)
@@ -960,6 +987,23 @@ public class Player : MonoBehaviour
                             managerhub.backpackManager.update_slots(1, 56);
                         }
                         break;
+                    
+                    //工作台
+                    case 18:
+                        managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_工作台);
+                        break;
+
+                    //熔炉
+                    case 39:
+                        managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_熔炉);
+                        break;
+
+                    //箱子
+                    case 45:
+                        managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_箱子);
+                        break;
+
+
 
                 }
 
@@ -1020,6 +1064,19 @@ public class Player : MonoBehaviour
                         managerhub.lifeManager.UpdatePlayerFood(-4, true);
                         managerhub.backpackManager.update_slots(1, VoxelData.Apple);
                         break;
+
+                    //猪肉
+                    case 49:
+                        managerhub.lifeManager.UpdatePlayerFood(-8, true);
+                        managerhub.backpackManager.update_slots(1, VoxelData.Tool_Pork);
+                        break;
+
+                    //书籍
+                    case 58:
+                        managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_书籍);
+                        break;
+
+
                     default:
                         break;
                 }
@@ -1052,7 +1109,7 @@ public class Player : MonoBehaviour
 
             }
 
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }
@@ -1074,7 +1131,7 @@ public class Player : MonoBehaviour
 
             }
 
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }
@@ -1285,7 +1342,7 @@ public class Player : MonoBehaviour
         {
 
             selectindex = 0;
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }
@@ -1293,7 +1350,7 @@ public class Player : MonoBehaviour
         {
 
             selectindex = 1;
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }
@@ -1301,7 +1358,7 @@ public class Player : MonoBehaviour
         {
 
             selectindex = 2;
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }
@@ -1309,7 +1366,7 @@ public class Player : MonoBehaviour
         {
 
             selectindex = 3;
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }
@@ -1317,7 +1374,7 @@ public class Player : MonoBehaviour
         {
 
             selectindex = 4;
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }
@@ -1325,7 +1382,7 @@ public class Player : MonoBehaviour
         {
 
             selectindex = 5;
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }
@@ -1333,7 +1390,7 @@ public class Player : MonoBehaviour
         {
 
             selectindex = 6;
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }
@@ -1341,7 +1398,7 @@ public class Player : MonoBehaviour
         {
 
             selectindex = 7;
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }
@@ -1349,7 +1406,7 @@ public class Player : MonoBehaviour
         {
 
             selectindex = 8;
-            canvasManager.Change_text_selectBlockname(255);
+            managerhub.canvasManager.Change_text_selectBlockname(255);
             backpackmanager.ChangeBlockInHand();
 
         }

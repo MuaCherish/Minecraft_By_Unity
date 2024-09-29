@@ -116,13 +116,13 @@ public static class VoxelData
     public static readonly Byte Mushroom_red = 36;
     public static readonly Byte Mushroom_brown = 37;
     public static readonly Byte Redbrick = 38;
-    public static readonly Byte Furnace = 39;
+    public static readonly Byte Furnace = 39; // 熔炉
     public static readonly Byte JukeBox = 40; //唱片机
     public static readonly Byte Wool_Green = 41;
     public static readonly Byte Wool_White = 42;
     public static readonly Byte Wool_Red = 43;
     public static readonly Byte Wool_Pink = 44;
-    public static readonly Byte Chest = 45;
+    public static readonly Byte Chest = 45; //箱子宝箱
     public static readonly Byte Gravel = 46; //沙砾
     public static readonly Byte Glass_Plane = 47;
     public static readonly Byte Tool_Sword = 48;
@@ -218,8 +218,16 @@ public static class VoxelData
     public static readonly int 玩家设置 = 3;
     public static readonly int 辅助设置 = 4;
 
-
-
+    //玩家游戏中的页面显示
+    public static readonly int UIplayer_生存要素 = 0;
+    public static readonly int UIplayer_生存背包 = 1;
+    public static readonly int UIplayer_箱子 = 2;
+    public static readonly int UIplayer_工作台 = 3;
+    public static readonly int UIplayer_熔炉 = 4;
+    public static readonly int UIplayer_书籍 = 5;
+    public static readonly int UIplayer_创造背包 = 6;
+    public static readonly int UIplayer_玩家互动ui前黑色背景 = 7;
+    public static readonly int UIplayer_准心 = 8;
 
     //Select
     public static readonly float[] SelectLocation_x = new float[9]
