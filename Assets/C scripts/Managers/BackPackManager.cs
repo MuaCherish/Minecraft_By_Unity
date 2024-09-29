@@ -37,7 +37,7 @@ public class BackPackManager : MonoBehaviour
     /// <summary>
     /// 更新物品栏槽位状态，根据破坏或放置方块来增减相应物品数量。
     /// </summary>
-    /// <param name="brokeOrplace">操作类型，0表示破坏方块，1表示放置方块。</param>
+    /// <param name="brokeOrplace">0: 方块++</param>
     /// <param name="blocktype">要操作的方块类型，表示方块的ID。</param>
     public void update_slots (int brokeOrplace,byte blocktype)
     {

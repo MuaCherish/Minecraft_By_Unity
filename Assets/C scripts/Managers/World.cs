@@ -2556,6 +2556,22 @@ public class World : MonoBehaviour
         return new Vector2(a.x * b.x, a.y * b.y);
     }
 
+    // 返回一个概率值，范围在0~100，根据输入值越接近100，概率接近100%，越接近0，概率接近0%
+    public bool GetProbability(float input)
+    {
+        // 确保输入值在 0 到 100 之间
+        input = Mathf.Clamp(input, 0, 100);
+
+        // 生成一个 0 到 100 之间的随机数
+        float randomValue = UnityEngine.Random.Range(0f, 100f);
+
+        // 如果随机数小于等于输入值，则返回 true
+        //Debug.Log(randomValue);
+        bool a = randomValue < input;
+
+        return a;
+    }
+
 
 }
 

@@ -94,6 +94,7 @@ public class DebugManager : MonoBehaviour
         LeftText.text += $"相对坐标: {managerHub.world.GetRelalocation(footlocation)}\n";
         LeftText.text += $"已保存方块数量: {managerHub.world.EditNumber.Count}\n";
         LeftText.text += $"碰撞点检测个数:{managerHub.player.CollisionNumber}\n";
+        LeftText.text += $"生存模式玩家走过的路程: {managerHub.player.accumulatedDistance:F2}m\n";
         LeftText.text += $"\n";
         LeftText.text += $"[Chunk]\n";
         LeftText.text += $"区块坐标: {managerHub.world.GetChunkLocation(footlocation)}\n";

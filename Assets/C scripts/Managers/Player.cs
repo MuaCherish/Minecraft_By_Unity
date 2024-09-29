@@ -62,7 +62,7 @@ public class Player : MonoBehaviour
 
 
     [Header("角色参数")]
-    public Transform foot;
+    public Transform foot; 
     private bool hasExec = true;
     public float walkSpeed = 4f;
     public float sprintSpeed = 8f;
@@ -253,15 +253,24 @@ public class Player : MonoBehaviour
         isSuperMining = false;
         isFlying = false;
         momentum = Vector3.zero;
+
+
+        footPos = Vector3.zero;
+        previous_footPos = Vector3.zero;
+        walkingDistance = 0f;
+        accumulatedDistance = 0f;
         //managerhub.backpackManager.ChangeBlockInHand();
     }
 
-
+    
     private void FixedUpdate()
     {
 
         if (world.game_state == Game_State.Playing)
         {
+
+            //计算饱食度
+            DynamicFood();
 
             //更新玩家脚下坐标
             Update_FootBlockType();
@@ -366,6 +375,41 @@ public class Player : MonoBehaviour
         }
 
     }
+
+
+    //减小饱食度
+    [Header("饱食度参数")]
+    private bool hasExec_FixedUpdate = true;
+    private Vector3 footPos;
+    private Vector3 previous_footPos;
+    public float walkingDistance;
+    public float accumulatedDistance; //累计走的路程
+    public void DynamicFood()
+    {
+        if (managerhub.world.game_mode == GameMode.Survival)
+        {
+            if (hasExec_FixedUpdate)
+            {
+                footPos = foot.position;
+                previous_footPos = foot.position;
+                walkingDistance = 0f;
+                accumulatedDistance = 0f;
+                hasExec_FixedUpdate = false;
+            }
+
+            footPos = foot.position;
+            walkingDistance += (footPos - previous_footPos).magnitude;
+            previous_footPos = foot.position;
+
+            if (walkingDistance >= 10)
+            {
+                managerhub.lifeManager.UpdatePlayerFood(1, false);
+                accumulatedDistance += walkingDistance;
+                walkingDistance = 0f;
+            }
+        }
+    }
+
 
     //更新isInCave状态
     public void CheckisInCave()
@@ -653,6 +697,11 @@ public class Player : MonoBehaviour
             isSprinting = true;
             musicmanager.footstepInterval = VoxelData.sprintSpeed;
 
+        }
+
+        if (managerhub.lifeManager.SprintLock)
+        {
+            isSprinting = false;
         }
             
         if (Input.GetButtonUp("Sprint") && !isFlying)
@@ -966,7 +1015,11 @@ public class Player : MonoBehaviour
             {
                 switch (_selecttype)
                 {
-
+                    //苹果
+                    case 59:
+                        managerhub.lifeManager.UpdatePlayerFood(-4, true);
+                        managerhub.backpackManager.update_slots(1, VoxelData.Apple);
+                        break;
                     default:
                         break;
                 }
@@ -1161,11 +1214,28 @@ public class Player : MonoBehaviour
         HighLightMaterial.color = new Color(0, 0, 0, 0);
         HighLightMaterial.mainTexture = DestroyTextures[0];
 
-        //只有生存模式才会掉掉落物
-        if (world.game_mode == GameMode.Survival && world.blocktypes[theBlockwhichBeBrokenType].candropBlock)
+        //生存模式
+        if (world.game_mode == GameMode.Survival)
         {
 
-            backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type, false);
+            //掉落物判断
+            if (world.blocktypes[theBlockwhichBeBrokenType].candropBlock)
+            {
+                //树叶掉落苹果
+                if (theBlockwhichBeBrokenType == VoxelData.Leaves && managerhub.world.GetProbability(30))
+                {
+                    backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), VoxelData.Apple, false);
+
+                }
+                else
+                {
+                    backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type, false);
+
+                }
+
+            }
+
+
 
         }
 
