@@ -257,7 +257,7 @@ public class Player : MonoBehaviour
         footPos = Vector3.zero;
         previous_footPos = Vector3.zero;
         walkingDistance = 0f;
-        accumulatedDistance = 0f;
+        //accumulatedDistance = 0f;
         //managerhub.backpackManager.ChangeBlockInHand();
     }
 
@@ -395,28 +395,42 @@ public class Player : MonoBehaviour
     private Vector3 footPos;
     private Vector3 previous_footPos;
     public float walkingDistance;
-    public float accumulatedDistance; //累计走的路程
+    //public float accumulatedDistance; //累计走的路程
     public void DynamicFood()
     {
         if (managerhub.world.game_mode == GameMode.Survival)
         {
-            if (hasExec_FixedUpdate)
+            
+
+
+            //计算
+            if (isSprinting)
             {
+                //初始化
+                if (hasExec_FixedUpdate)
+                {
+                    footPos = foot.position;
+                    previous_footPos = foot.position;
+                    walkingDistance = 0f;
+                    //accumulatedDistance = 0f;
+                    hasExec_FixedUpdate = false;
+                }
+
+
                 footPos = foot.position;
+                walkingDistance += (footPos - previous_footPos).magnitude;
                 previous_footPos = foot.position;
-                walkingDistance = 0f;
-                accumulatedDistance = 0f;
-                hasExec_FixedUpdate = false;
             }
-
-            footPos = foot.position;
-            walkingDistance += (footPos - previous_footPos).magnitude;
-            previous_footPos = foot.position;
-
-            if (walkingDistance >= 10)
+            else
             {
-                managerhub.lifeManager.UpdatePlayerFood(1, false);
-                accumulatedDistance += walkingDistance;
+                hasExec_FixedUpdate = true;
+            }
+            
+
+            //饱食度衰减
+            if (walkingDistance >= 10f)
+            {
+                managerhub.lifeManager.UpdatePlayerFood(0.2f, false);
                 walkingDistance = 0f;
             }
         }

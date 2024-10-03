@@ -1,51 +1,61 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.UIElements;
-//using static UnityEditor.Progress;
 
 public class TimeManager : MonoBehaviour
 {
+
+    #region 状态
+
     [Header("状态")]
+    [Range(0, 24), SerializeField] private float CurrentTime = 12;
     [ReadOnly]public bool isNight;
 
-    [Header("引用")]
-    public ManagerHub managerhub;
+    #endregion
+    
 
     [Header("时间参数")]
-    [Range(0, 24),SerializeField] private float CurrentTime = 12; private float previous_CurrentTime = 12;
-    [SerializeField, ReadOnly] private float value;
     public float second_GameOneHour = 60; // 现实中多少秒过完游戏内一小时
     public Vector2 天开始变黑;
     public Vector2 天开始变亮;
+    private float previous_CurrentTime = 12;
+    private float value;
 
-    [Header("矿洞迷雾")]
-    //public float checkInterval = 10f; private float nextCheckTime = 0;// 每0.5秒检查一次
-    public float fogTransitionTime = 3f; // 迷雾过渡时间
-    public Vector2 FogDayDistance;  //迷雾距离
-    public Vector2 FogCaveDistance;  //迷雾距离
+    [Header("过渡系统")] 
+    [Space]  // 增加合适的间距
 
-    [Header("Skybox")]
+    [Header("--矿洞迷雾")]  // 自定义标签使用较小字体
+    public float fogTransitionTime = 3f;  // 迷雾过渡时间
+    public Vector2 FogDayDistance;  // 迷雾距离
+    public Vector2 FogCaveDistance;  // 迷雾距离
+
+
+    [Header("--Skybox")]
     public Material SkyboxMaterial;
     public Vector2 SkyboxRange = new Vector2(0.2f, 1f);
 
-    [Header("Fog")]
+    [Header("--Fog")]
     public Color FogDayColor;
     public Color FogNightColor;
     
 
-    [Header("Blocks")]
+    [Header("--Blocks")]
     public Material BlocksMaterial;
     public Color BlocksDayColor;
     public Color BlocksNightColor;
 
 
-    
+    #region 周期函数
 
+    private ManagerHub managerhub;
 
-    //---------------------------------主要函数-------------------------------------
+    private void Start()
+    {
+        managerhub = VoxelData.GetManagerhub();
+    }
+
+    #endregion
+
 
     // 初始化
     public void InitTimeManager()

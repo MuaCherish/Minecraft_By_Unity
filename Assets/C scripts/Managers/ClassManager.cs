@@ -35,8 +35,11 @@ public class FaceCheckMode
 [System.Serializable]
 public class BlockType
 {
-    [Header("方块参数")]
+    [Header("基本参数")]
     public string blockName;
+    public BlockClassfy BlockClassfy;
+
+    [Header("方块参数")]
     public float DestroyTime;
     public bool isSolid;        //是否会阻挡玩家
     public bool isTransparent;  //周边方块是否面剔除

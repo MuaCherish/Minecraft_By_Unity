@@ -3,29 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-//using System.Windows.Input;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-//using static UnityEngine.Rendering.DebugUI;
 
 public class CommandManager : MonoBehaviour
 {
+
+    #region 状态
+
     [Header("状态")]
     [ReadOnly]public bool isConsoleActive = false; // 标志位，跟踪控制台的激活状态
 
-    [Header("Transforms")]
-    public ManagerHub managerhub;
-    public GameObject CommandScreen;
-    //public GameObject 内置消息栏;
-    public TMP_InputField inputField; // 用于输入命令的InputField
-    
-
-    [Header("参数")]
-    public List<CommandSystem> commands = new List<CommandSystem>();
+    #endregion
 
 
-    //----------------------------- 命令面板的 -----------------------------------------
+    #region 周期函数
+
+    private ManagerHub managerhub;
+
+    private void Start()
+    {
+        managerhub = VoxelData.GetManagerhub();
+    }
 
 
     private void Update()
@@ -45,6 +44,18 @@ public class CommandManager : MonoBehaviour
         }
 
     }
+
+
+    #endregion
+
+
+    #region 聊天面板
+
+    [Header("聊天面板")]
+    public GameObject CommandScreen;
+    //public GameObject 内置消息栏;
+    public TMP_InputField inputField; // 用于输入命令的InputField
+
 
     private void ActivateConsole()
     {
@@ -70,14 +81,122 @@ public class CommandManager : MonoBehaviour
         inputField.readOnly = true;
     }
 
+    #endregion
 
-    //------------------------------ 消息系统 ------------------------------------------------
 
+    #region 聊天系统
+
+    [Header("聊天系统")]
     public TextMeshProUGUI[] 外置消息栏 = new TextMeshProUGUI[13];
     public FixedList<Amessage> AliveMessages = new FixedList<Amessage>(13);
     public float messageLife = 3f;
+    private Coroutine CheckMessageLifeCoroutine;
+
+    //有界链表用于消息系统(添加从头部, 删除从尾部)
+    public class FixedList<T>
+    {
+        private List<T> _list;
+        public int Capacity { get; private set; }
+
+        public FixedList(int capacity)
+        {
+            Capacity = capacity;
+            _list = new List<T>(capacity);
+        }
+
+        // 添加元素到头部
+        public void Add(T item)
+        {
+            // 如果列表已满，移除最旧的元素
+            if (_list.Count >= Capacity)
+            {
+                _list.RemoveAt(_list.Count - 1);
+            }
+
+            // 将新元素添加到头部
+            _list.Insert(0, item);
+        }
+
+        // 访问列表中的元素
+        public IEnumerable<T> Items => _list.AsEnumerable();
+
+        // 获取列表的当前元素数量
+        public int Count => _list.Count;
+
+        // 清空列表
+        public void Clear()
+        {
+            _list.Clear();
+        }
+
+        // 返回链表尾部元素
+        public T GetTail()
+        {
+            if (_list.Count == 0)
+            {
+                Debug.Log("empty");
+                return default(T); // 返回默认值
+            }
+            return _list[_list.Count - 1];
+        }
+
+        // 移除链表尾部元素
+        public void RemoveTail()
+        {
+            // 如果列表为空，抛出异常或处理为空情况
+            if (_list.Count == 0)
+            {
+                throw new InvalidOperationException("List is empty.");
+            }
+
+            // 移除列表尾部的元素
+            _list.RemoveAt(_list.Count - 1);
+        }
+
+        // 索引访问器
+        public T this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= _list.Count)
+                {
+                    throw new ArgumentOutOfRangeException("Index is out of range.");
+                }
+                return _list[index];
+            }
+        }
+    }
+
+    //消息结构体
+    [System.Serializable]
+    public class Amessage
+    {
+        public string content;
+        public float life;
+        public Color color;
+
+        public Amessage(string _content, float _life)
+        {
+            content = _content;
+            life = _life;
+        }
+
+        public Amessage(string _content, float _life, Color _color)
+        {
+            content = _content;
+            life = _life;
+            color = _color;
+        }
+
+    }
 
 
+    /// <summary>
+    /// 发送消息，并控制生命周期
+    /// </summary>
+    /// <param name="_Info"></param>
+    /// <param name="_time"></param>
+    /// <param name="_color"></param>
     public void PrintMessage(String _Info, float _time, Color _color)
     {
         //填充指令
@@ -112,6 +231,83 @@ public class CommandManager : MonoBehaviour
 
     }
 
+    //刷新消息栏
+    private void UpdateMessageScreen()
+    {
+        // 清空并重新更新外置消息栏
+        for (int i = 0; i < 外置消息栏.Length; i++)
+        {
+            if (i < AliveMessages.Count)
+            {
+                外置消息栏[i].text = AliveMessages[i].content;
+                外置消息栏[i].gameObject.SetActive(true);
+                外置消息栏[i].gameObject.GetComponent<TextMeshProUGUI>().color = AliveMessages[i].color;
+            }
+            else
+            {
+                外置消息栏[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+
+    //消息生命周期协程
+    IEnumerator CheckMessageLife()
+    {
+        while (true)
+        {
+            //为空就结束
+            if (AliveMessages.Count == 0)
+            {
+                CheckMessageLifeCoroutine = null;
+                break;
+            }
+            else
+            {
+                //print($"例行检查{AliveMessages.Count - 1},队尾生命{AliveMessages.GetTail().life}");
+                if (AliveMessages.GetTail().life <= 0f)
+                {
+                    //print($"移除队尾元素{AliveMessages.Count - 1}");
+                    AliveMessages.RemoveTail();
+                    UpdateMessageScreen();
+                }
+
+
+                for (int i = 0; i < AliveMessages.Count; i++)
+                {
+                    if (AliveMessages[i].life > 0f)
+                    {
+                        AliveMessages[i].life--;
+                    }
+
+                }
+            }
+
+
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+
+
+
+    #endregion
+
+
+    #region 指令系统
+
+    //指令结构体
+    [Serializable]
+    public class CommandSystem
+    {
+        public string name;
+        public string command;
+    }
+
+
+    [Header("指令系统")]
+    public List<CommandSystem> commands = new List<CommandSystem>();
+    public GameObject Entity_Slim;
 
     //指令解析-执行函数
     public String CheckCommand(String _input, out Color _color)
@@ -212,7 +408,7 @@ public class CommandManager : MonoBehaviour
                         {
                             // 更新背包内容，例如插入 type 数量为 number 的物品
                             managerhub.backpackManager.update_slots(0, type, number);
-                            managerhub.backpackManager.ChangeBlockInHand();
+                            //managerhub.backpackManager.ChangeBlockInHand();
                             managerhub.musicManager.PlaySound_Absorb();
                             return "<系统消息> " + "给与玩家方块";
                         }
@@ -356,8 +552,20 @@ public class CommandManager : MonoBehaviour
                     return "<系统消息> " + "雾效转换失败";
                 }
 
+            //help
+            case 8:
+                managerhub.backpackManager.managerhub.backpackManager.update_slots(0, VoxelData.Tool_Book);
 
-            //在这里添加新指令----------------------------
+                return "<系统消息> " + "请查看帮助文档";
+
+            //addSlim
+            case 9:
+                
+                Entity_Slim.transform.position = managerhub.player.transform.position;
+                Entity_Slim.SetActive(true);
+                return "<系统消息> " + "已添加史莱姆";
+            
+
             //没有找到
             default:
                 _color = Color.red;
@@ -368,178 +576,7 @@ public class CommandManager : MonoBehaviour
         
     }
 
+    #endregion
 
-    //刷新ui
-    private void UpdateMessageScreen()
-    {
-        // 清空并重新更新外置消息栏
-        for (int i = 0; i < 外置消息栏.Length; i++)
-        {
-            if (i < AliveMessages.Count)
-            {
-                外置消息栏[i].text = AliveMessages[i].content;
-                外置消息栏[i].gameObject.SetActive(true);
-                外置消息栏[i].gameObject.GetComponent<TextMeshProUGUI>().color = AliveMessages[i].color;
-            }
-            else
-            {
-                外置消息栏[i].gameObject.SetActive(false);
-            }
-        }
-    }
-
-
-
-
-    //消息生命周期协程
-    private Coroutine CheckMessageLifeCoroutine;
-    IEnumerator CheckMessageLife()
-    {
-        while (true)
-        {
-             //为空就结束
-            if (AliveMessages.Count == 0)
-            {
-                CheckMessageLifeCoroutine = null;
-                break;
-            }
-            else
-            {
-                //print($"例行检查{AliveMessages.Count - 1},队尾生命{AliveMessages.GetTail().life}");
-                if (AliveMessages.GetTail().life <= 0f)
-                {
-                    //print($"移除队尾元素{AliveMessages.Count - 1}");
-                    AliveMessages.RemoveTail();
-                    UpdateMessageScreen();
-                }
-
-
-                for (int i = 0; i < AliveMessages.Count; i++)
-                {
-                    if (AliveMessages[i].life > 0f)
-                    {
-                        AliveMessages[i].life--;
-                    }
-
-                }
-            }
-             
-
-            yield return new WaitForSeconds(1f); 
-        }
-    }
-
-
-
-
-
-}
-
-
-//指令集
-[System.Serializable]
-public class CommandSystem
-{
-    public string name;
-    public string command;
-}
-
-//有界链表
-//添加从头部
-//删除从尾部
-public class FixedList<T>
-{
-    private List<T> _list;
-    public int Capacity { get; private set; }
-
-    public FixedList(int capacity)
-    {
-        Capacity = capacity;
-        _list = new List<T>(capacity);
-    }
-
-    // 添加元素到头部
-    public void Add(T item)
-    {
-        // 如果列表已满，移除最旧的元素
-        if (_list.Count >= Capacity)
-        {
-            _list.RemoveAt(_list.Count - 1);
-        }
-
-        // 将新元素添加到头部
-        _list.Insert(0, item);
-    }
-
-    // 访问列表中的元素
-    public IEnumerable<T> Items => _list.AsEnumerable();
-
-    // 获取列表的当前元素数量
-    public int Count => _list.Count;
-
-    // 清空列表
-    public void Clear()
-    {
-        _list.Clear();
-    }
-
-    // 返回链表尾部元素
-    public T GetTail()
-    {
-        if (_list.Count == 0)
-        {
-            Debug.Log("empty");
-            return default(T); // 返回默认值
-        }
-        return _list[_list.Count - 1];
-    }
-
-    // 移除链表尾部元素
-    public void RemoveTail()
-    {
-        // 如果列表为空，抛出异常或处理为空情况
-        if (_list.Count == 0)
-        {
-            throw new InvalidOperationException("List is empty.");
-        }
-
-        // 移除列表尾部的元素
-        _list.RemoveAt(_list.Count - 1);
-    }
-
-    // 索引访问器
-    public T this[int index]
-    {
-        get
-        {
-            if (index < 0 || index >= _list.Count)
-            {
-                throw new ArgumentOutOfRangeException("Index is out of range.");
-            }
-            return _list[index];
-        }
-    }
-}
-
-//消息结构体
-[System.Serializable]
-public class Amessage 
-{
-    public string content;
-    public float life;
-    public Color color;
-
-    public Amessage(string _content,float _life)
-    {
-        content = _content;
-        life = _life;
-    }
-
-    public Amessage(string _content, float _life,Color _color)
-    {
-        content = _content;
-        life = _life;
-        color = _color;
-    }
 
 }

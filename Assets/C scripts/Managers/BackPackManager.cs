@@ -30,12 +30,14 @@ public class BackPackManager : MonoBehaviour
     [Header("改变手中物品")]
     private byte previous_HandBlock = 255;   //255代表手本身
     public float ChangeColdTime = 1f;
-    
+
 
     //------------------------------------------------ 核心功能 ---------------------------------------------------------------
 
     /// <summary>
-    /// 更新物品栏槽位状态，根据破坏或放置方块来增减相应物品数量。
+    /// 更新物品栏
+    /// (0:方块++)
+    /// (1:方块--)
     /// </summary>
     /// <param name="brokeOrplace">0: 方块++</param>
     /// <param name="blocktype">要操作的方块类型，表示方块的ID。</param>
@@ -116,6 +118,12 @@ public class BackPackManager : MonoBehaviour
         ChangeBlockInHand();
     }
 
+    /// <summary>
+    /// 更新物品栏(0:方块++)
+    /// </summary>
+    /// <param name="brokeOrplace"></param>
+    /// <param name="blocktype"></param>
+    /// <param name="_number"></param>
     public void update_slots(int brokeOrplace, byte blocktype, int _number)
     {
         //broke,方块++

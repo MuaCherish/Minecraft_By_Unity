@@ -23,10 +23,13 @@ public class TextureTo3D : MonoBehaviour
     int Totalsequence = 0;
 
 
+    //public Sprite cloud;
+
     //private void Start()
     //{
-    //    ProcessSprite(Sprite, FATHER_PATH, SCALE);
+    //    ProcessSprite(cloud, this.transform, 1, false);
     //}
+
 
 
     //创造3d挤压物体
@@ -302,26 +305,28 @@ public class TextureTo3D : MonoBehaviour
 
     void CreateMesh(Sprite _sprite, float _scale, Transform _parent)
     {
-        //父类
+        float spriteWidth = _sprite.rect.width;
+        //print($"像素大小：{spriteWidth} , 偏移大小：{spriteWidth / 200f}");
+
+        // 父类
         GameObject parent = new GameObject("挤压物体");
         parent.transform.localScale = new Vector3(_scale, _scale, _scale);
         parent.transform.SetParent(_parent, false);
-       
-        //添加正反面
+
+        // 添加正反面
         GameObject front = new GameObject("正面");
         front.AddComponent<SpriteRenderer>().sprite = _sprite;
-        front.transform.position = new Vector3(0.08f, 0.08f, thickness);
+        front.transform.position = new Vector3(spriteWidth / 200f, spriteWidth / 200f, thickness);
         front.transform.SetParent(parent.transform, false);
-        
+         
         GameObject back = new GameObject("反面");
         back.AddComponent<SpriteRenderer>().sprite = _sprite;
-        back.transform.position = new Vector3(0.08f, 0.08f, 0);
+        back.transform.position = new Vector3(spriteWidth / 200f, spriteWidth / 200f, 0);
         back.transform.SetParent(parent.transform, false);
-       
+
         // 创建一个新的空 GameObject
         GameObject meshObject = new GameObject("侧面");
         meshObject.transform.SetParent(parent.transform, false);
-        
 
         if (HandLayer)
         {
@@ -330,7 +335,6 @@ public class TextureTo3D : MonoBehaviour
             back.layer = LayerMask.NameToLayer("Hand");
             meshObject.layer = LayerMask.NameToLayer("Hand");
         }
-
 
         // 创建一个新的 Mesh
         Mesh mesh = new Mesh();
@@ -349,17 +353,17 @@ public class TextureTo3D : MonoBehaviour
         // 将生成的 Mesh 赋值到 MeshFilter
         meshFilter.mesh = mesh;
 
-        // 设置材质
-        if (material != null)
-        {
-            meshRenderer.material = material;
-        }
+        // 为每个 meshObject 创建一个独立的材质实例
+        Material newMaterial = Instantiate(material);
+
+        // 设置新材质到 MeshRenderer
+        meshRenderer.material = newMaterial;
 
         // 获取Sprite的纹理
         Texture2D spriteTexture = _sprite.texture;
 
-        // 将Sprite的纹理赋值给Material
-        material.SetTexture("_MainTex", spriteTexture);
+        // 将Sprite的纹理赋值给新材质
+        newMaterial.SetTexture("_MainTex", spriteTexture);
 
         // 如果Sprite有特殊的UV范围，比如是纹理集的一部分，设置UV偏移和缩放
         Vector4 textureScaleOffset = new Vector4(
@@ -369,13 +373,13 @@ public class TextureTo3D : MonoBehaviour
             _sprite.rect.y / spriteTexture.height   // UV Y偏移
         );
 
-        material.SetTextureScale("_MainTex", new Vector2(textureScaleOffset.x, textureScaleOffset.y));
-        material.SetTextureOffset("_MainTex", new Vector2(textureScaleOffset.z, textureScaleOffset.w));
+        newMaterial.SetTextureScale("_MainTex", new Vector2(textureScaleOffset.x, textureScaleOffset.y));
+        newMaterial.SetTextureOffset("_MainTex", new Vector2(textureScaleOffset.z, textureScaleOffset.w));
 
         // 可选：如果需要为新 GameObject 添加额外组件，比如碰撞体
         // meshObject.AddComponent<MeshCollider>();
-
     }
+
 
 
     #endregion

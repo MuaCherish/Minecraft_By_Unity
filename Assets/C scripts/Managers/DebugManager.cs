@@ -3,30 +3,39 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 using static UnityEngine.Animations.AimConstraint;
 
 public class DebugManager : MonoBehaviour
 {
+
+
+    #region 状态
+
     [Header("状态")]
     [ReadOnly] public bool isDebug = false;
 
-    //获取组件
-    [Header("引用")]
-    public ManagerHub managerHub;
-    public GameObject DebugScreen;
-    public Transform Content;
-    public GameObject blockitem;
-    public TextMeshProUGUI LeftText;
-    //public Player player;
-    //public World world;
+    #endregion
 
-    
 
+    #region 周期函数
+
+    private ManagerHub managerHub;
     private void Start()
     {
+        managerHub = VoxelData.GetManagerhub();
         UpdateBlockItem();
+    }
+
+    private void FixedUpdate()
+    {
+        if (isDebug)
+        {
+            UpdateScreen();
+        }
     }
 
     void Update()
@@ -38,12 +47,10 @@ public class DebugManager : MonoBehaviour
             {
                 DebugScreen.SetActive(false);
             }
-            
+
 
         }
-
-
-        if (managerHub.world.game_state == Game_State.Playing)
+        else if (managerHub.world.game_state == Game_State.Playing)
         {
             if (Input.GetKeyDown(KeyCode.F3))
             {
@@ -54,20 +61,23 @@ public class DebugManager : MonoBehaviour
 
         }
 
-        
+
 
     }
 
-    private void FixedUpdate()
-    {
-        if (isDebug)
-        {
-            UpdateScreen();
-        }
-    }
+
+    #endregion
 
 
+    #region 调试屏幕
 
+    public GameObject DebugScreen;
+    public TextMeshProUGUI LeftText;
+
+
+    
+   
+  
     void UpdateScreen()
     {
         Vector3 footlocation = managerHub.world.PlayerFoot.position;
@@ -94,7 +104,7 @@ public class DebugManager : MonoBehaviour
         LeftText.text += $"相对坐标: {managerHub.world.GetRelalocation(footlocation)}\n";
         LeftText.text += $"已保存方块数量: {managerHub.world.EditNumber.Count}\n";
         LeftText.text += $"碰撞点检测个数:{managerHub.player.CollisionNumber}\n";
-        LeftText.text += $"生存模式玩家走过的路程: {managerHub.player.accumulatedDistance:F2}m\n";
+        //LeftText.text += $"生存模式玩家走过的路程: {managerHub.player.accumulatedDistance:F2}m\n";
         LeftText.text += $"\n";
         LeftText.text += $"[Chunk]\n";
         LeftText.text += $"区块坐标: {managerHub.world.GetChunkLocation(footlocation)}\n";
@@ -105,7 +115,18 @@ public class DebugManager : MonoBehaviour
 
     }
 
+    #endregion
 
+
+    #region DEBUG-方块列表
+
+    enum BlockClassfy
+    {
+        普通方块类 ,功能性方块类, 工具类, 食物类, 
+    }
+    
+    public Transform Content;
+    public GameObject blockitem;
 
     public void UpdateBlockItem()
     {
@@ -135,7 +156,10 @@ public class DebugManager : MonoBehaviour
 
     }
 
+    #endregion
 
+
+    #region DEBUG-计算FPS
 
     // FPS计数器
     private int frameCount;
@@ -162,10 +186,10 @@ public class DebugManager : MonoBehaviour
     }
 
 
+    #endregion
 
 
-
-
+    #region DEBUG-计算String朝向
 
     //facing
     string CalculateFacing()
@@ -215,5 +239,8 @@ public class DebugManager : MonoBehaviour
 
         return facingDirection;
     }
+
+    #endregion
+
 
 }

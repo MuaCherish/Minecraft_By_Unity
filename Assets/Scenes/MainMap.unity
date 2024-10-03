@@ -1403,10 +1403,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edde10e4b15a4bd4a92b3028af0feaa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isNight: 0
-  managerhub: {fileID: 843154432}
   CurrentTime: 12
-  value: 0
+  isNight: 0
   second_GameOneHour: 60
   "\u5929\u5F00\u59CB\u53D8\u9ED1": {x: 15, y: 19}
   "\u5929\u5F00\u59CB\u53D8\u4EAE": {x: 4, y: 8}
@@ -1419,7 +1417,7 @@ MonoBehaviour:
   FogNightColor: {r: 0.14117648, g: 0.16470589, b: 0.2, a: 0}
   BlocksMaterial: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
   BlocksDayColor: {r: 0.43529412, g: 0.47058824, b: 0.39215687, a: 1}
-  BlocksNightColor: {r: 0.101960786, g: 0.078431375, b: 0.05490196, a: 1}
+  BlocksNightColor: {r: 0.27450982, g: 0.27450982, b: 0.27450982, a: 1}
 --- !u!114 &22826879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2896,7 +2894,7 @@ MeshRenderer:
   m_GameObject: {fileID: 79828172}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -4540,7 +4538,7 @@ MeshRenderer:
   m_GameObject: {fileID: 124718495}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -7489,7 +7487,7 @@ MeshRenderer:
   m_GameObject: {fileID: 222986715}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -9379,7 +9377,7 @@ MeshRenderer:
   m_GameObject: {fileID: 278099645}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -13519,7 +13517,7 @@ MeshRenderer:
   m_GameObject: {fileID: 423130255}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -13892,11 +13890,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDebug: 0
-  managerHub: {fileID: 843154432}
   DebugScreen: {fileID: 1357337469}
+  LeftText: {fileID: 439713266}
   Content: {fileID: 928502477}
   blockitem: {fileID: 6026453003721354756, guid: a586869b70e315c43a35ba280031ade8, type: 3}
-  LeftText: {fileID: 439713266}
 --- !u!114 &438324210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22437,7 +22434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5a2505646a31148878c810f0e06954, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  "\u4F4E\u533A\u5757\u6A21\u5F0F": 0
+  "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
   "\u65E0\u9ED1\u591C\u6A21\u5F0F": 0
   "\u662F\u5426\u751F\u6210Chunk\u4FA7\u9762": 0
   managerhub: {fileID: 843154432}
@@ -22462,6 +22459,7 @@ MonoBehaviour:
   material_Water: {fileID: 2100000, guid: e401bc414787ebc4eaf3eb598c2a55cf, type: 2}
   blocktypes:
   - blockName: BedRock
+    BlockClassfy: 0
     DestroyTime: 0
     isSolid: 1
     isTransparent: 0
@@ -22496,6 +22494,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Stone
+    BlockClassfy: 0
     DestroyTime: 2
     isSolid: 1
     isTransparent: 0
@@ -22530,6 +22529,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Grass
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 0
@@ -22564,6 +22564,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Soil
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 0
@@ -22598,6 +22599,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Air
+    BlockClassfy: 0
     DestroyTime: 0
     isSolid: 0
     isTransparent: 1
@@ -22632,6 +22634,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Sand
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 0
@@ -22666,6 +22669,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: wood
+    BlockClassfy: 0
     DestroyTime: 3.1
     isSolid: 1
     isTransparent: 0
@@ -22700,6 +22704,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: leave
+    BlockClassfy: 0
     DestroyTime: 0.4
     isSolid: 1
     isTransparent: 1
@@ -22734,6 +22739,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: water
+    BlockClassfy: 0
     DestroyTime: 0
     isSolid: 0
     isTransparent: 0
@@ -22768,6 +22774,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 1
     OtherFaceCheck: []
   - blockName: Coal
+    BlockClassfy: 0
     DestroyTime: 3
     isSolid: 1
     isTransparent: 0
@@ -22802,6 +22809,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: BirchWood
+    BlockClassfy: 0
     DestroyTime: 2
     isSolid: 1
     isTransparent: 0
@@ -22836,6 +22844,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: BlueFlower
+    BlockClassfy: 0
     DestroyTime: 0.1
     isSolid: 0
     isTransparent: 1
@@ -22870,6 +22879,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: whiteFlower_1
+    BlockClassfy: 0
     DestroyTime: 0.1
     isSolid: 0
     isTransparent: 1
@@ -22904,6 +22914,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: whiteFlower_2
+    BlockClassfy: 0
     DestroyTime: 0.1
     isSolid: 0
     isTransparent: 1
@@ -22938,6 +22949,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: yellowFlower
+    BlockClassfy: 0
     DestroyTime: 0.1
     isSolid: 0
     isTransparent: 1
@@ -22972,6 +22984,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: torch
+    BlockClassfy: 0
     DestroyTime: 0.4
     isSolid: 0
     isTransparent: 1
@@ -23006,6 +23019,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Cactus
+    BlockClassfy: 0
     DestroyTime: 2
     isSolid: 1
     isTransparent: 1
@@ -23040,6 +23054,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: TNT
+    BlockClassfy: 0
     DestroyTime: 0.5
     isSolid: 1
     isTransparent: 0
@@ -23074,6 +23089,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: WorkTable
+    BlockClassfy: 0
     DestroyTime: 2
     isSolid: 1
     isTransparent: 0
@@ -23108,6 +23124,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Pumpkin
+    BlockClassfy: 0
     DestroyTime: 2
     isSolid: 1
     isTransparent: 0
@@ -23142,6 +23159,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Glass
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -23176,6 +23194,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Blue_Crystal
+    BlockClassfy: 0
     DestroyTime: 3
     isSolid: 1
     isTransparent: 0
@@ -23210,6 +23229,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Diamond
+    BlockClassfy: 0
     DestroyTime: 5
     isSolid: 1
     isTransparent: 0
@@ -23244,6 +23264,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Iron
+    BlockClassfy: 0
     DestroyTime: 3
     isSolid: 1
     isTransparent: 0
@@ -23278,6 +23299,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Gold
+    BlockClassfy: 0
     DestroyTime: 3
     isSolid: 1
     isTransparent: 0
@@ -23312,6 +23334,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: bamboo
+    BlockClassfy: 0
     DestroyTime: 0.1
     isSolid: 0
     isTransparent: 1
@@ -23346,6 +23369,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: WoodenPlanks
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 0
@@ -23380,6 +23404,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Fluor
+    BlockClassfy: 0
     DestroyTime: 0.4
     isSolid: 1
     isTransparent: 0
@@ -23414,6 +23439,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Bush
+    BlockClassfy: 0
     DestroyTime: 0.1
     isSolid: 0
     isTransparent: 1
@@ -23448,6 +23474,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Snow
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 0
@@ -23482,6 +23509,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: SnowPower
+    BlockClassfy: 0
     DestroyTime: 0.1
     isSolid: 0
     isTransparent: 0
@@ -23521,6 +23549,7 @@ MonoBehaviour:
       appointDrawmode: 0
       isCreateFace: 0
   - blockName: Mycelium
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 0
@@ -23555,6 +23584,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Cobblestone
+    BlockClassfy: 0
     DestroyTime: 2
     isSolid: 1
     isTransparent: 0
@@ -23589,6 +23619,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Door_Up
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 1
@@ -23638,6 +23669,7 @@ MonoBehaviour:
       appointDrawmode: 7
       isCreateFace: 1
   - blockName: Door_Down
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 1
@@ -23687,6 +23719,7 @@ MonoBehaviour:
       appointDrawmode: 7
       isCreateFace: 1
   - blockName: HalfBrick_Wood
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 1
@@ -23721,6 +23754,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Mushroom_red
+    BlockClassfy: 0
     DestroyTime: 0.1
     isSolid: 0
     isTransparent: 1
@@ -23755,6 +23789,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Mushroom_brown
+    BlockClassfy: 0
     DestroyTime: 0.1
     isSolid: 0
     isTransparent: 1
@@ -23789,6 +23824,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Redbrick
+    BlockClassfy: 0
     DestroyTime: 3.1
     isSolid: 1
     isTransparent: 0
@@ -23823,6 +23859,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Furnace
+    BlockClassfy: 0
     DestroyTime: 3.1
     isSolid: 1
     isTransparent: 0
@@ -23857,6 +23894,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: JukeBox
+    BlockClassfy: 0
     DestroyTime: 2
     isSolid: 1
     isTransparent: 0
@@ -23891,6 +23929,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Wool_Green
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 0
@@ -23925,6 +23964,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Wool_White
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 0
     isTransparent: 1
@@ -23989,6 +24029,7 @@ MonoBehaviour:
       appointDrawmode: 0
       isCreateFace: 0
   - blockName: Wool_Red
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 0
@@ -24023,6 +24064,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Wool_Pink
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 0
@@ -24057,6 +24099,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Chest
+    BlockClassfy: 0
     DestroyTime: 2
     isSolid: 1
     isTransparent: 0
@@ -24091,6 +24134,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Gravel
+    BlockClassfy: 0
     DestroyTime: 1
     isSolid: 1
     isTransparent: 0
@@ -24125,6 +24169,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Glass_Plane
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -24159,6 +24204,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Tool_Sword
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -24193,6 +24239,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Tool_Pork
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -24227,6 +24274,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Tool_MusicDiscs
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -24261,6 +24309,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Tool_Flint
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -24295,6 +24344,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Tool_Pickaxe
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -24329,6 +24379,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Tool_Egg
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -24363,6 +24414,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Tool_ReadMap
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -24397,6 +24449,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Tool_SnowBall
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -24431,6 +24484,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Tool_BoneMeal
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 1
     isTransparent: 1
@@ -24465,6 +24519,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Sapling
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 0
     isTransparent: 1
@@ -24499,6 +24554,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Tool_Book
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 0
     isTransparent: 1
@@ -24533,6 +24589,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Apple
+    BlockClassfy: 0
     DestroyTime: 0.2
     isSolid: 0
     isTransparent: 1
@@ -30182,7 +30239,7 @@ MeshRenderer:
   m_GameObject: {fileID: 883631482}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -30620,7 +30677,7 @@ MeshRenderer:
   m_GameObject: {fileID: 907126908}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -34496,7 +34553,7 @@ MeshRenderer:
   m_GameObject: {fileID: 1055362039}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -34583,7 +34640,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blood: 20
   food: 20
-  managerhub: {fileID: 843154432}
   Bloods:
   - {fileID: 543218632}
   - {fileID: 244997885}
@@ -36975,7 +37031,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1159943495
 RectTransform:
   m_ObjectHideFlags: 0
@@ -36991,6 +37047,7 @@ RectTransform:
   - {fileID: 1473800203}
   - {fileID: 363393493}
   - {fileID: 1890132378}
+  - {fileID: 2024885361}
   m_Father: {fileID: 944192295}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -37011,14 +37068,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fdeeeae47224b9f48b03f413a3e01107, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -43221,7 +43278,7 @@ MeshRenderer:
   m_GameObject: {fileID: 1388735498}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -46535,7 +46592,6 @@ MonoBehaviour:
   isInCave_checkInterval: 3
   isOpenBackpack: 0
   walkingDistance: 0
-  accumulatedDistance: 0
   inputInertia: 0.1
   Flying_inputInertia: 0.5
   hasExec_isChangedBlock: 1
@@ -57885,7 +57941,7 @@ MeshRenderer:
   m_GameObject: {fileID: 1736085929}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -58995,7 +59051,7 @@ MeshRenderer:
   m_GameObject: {fileID: 1764715622}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -60965,7 +61021,7 @@ MeshRenderer:
   m_GameObject: {fileID: 1826043237}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -66313,6 +66369,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2021112338}
   m_CullTransparentMesh: 1
+--- !u!1 &2024885360
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2024885361}
+  - component: {fileID: 2024885363}
+  - component: {fileID: 2024885362}
+  m_Layer: 5
+  m_Name: Panel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2024885361
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024885360}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1159943495}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2024885362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024885360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: fdeeeae47224b9f48b03f413a3e01107, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2024885363
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024885360}
+  m_CullTransparentMesh: 1
 --- !u!1 &2031280223
 GameObject:
   m_ObjectHideFlags: 0
@@ -66358,26 +66489,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isConsoleActive: 0
-  managerhub: {fileID: 843154432}
   CommandScreen: {fileID: 720881543}
   inputField: {fileID: 163696392}
-  commands:
-  - name: print
-    command: /print
-  - name: "\u5B58\u6863"
-    command: /save
-  - name: kill
-    command: /kill
-  - name: "\u8BFB\u6863"
-    command: /load
-  - name: "\u7ED9\u4E0E\u624B\u4E2D\u65B9\u5757"
-    command: /give
-  - name: "\u66F4\u65B0\u663C\u591C"
-    command: /time
-  - name: "\u6539\u53D8\u5E27\u6570"
-    command: /fps
-  - name: "\u96FE"
-    command: /fog
   "\u5916\u7F6E\u6D88\u606F\u680F":
   - {fileID: 1634312355473790388}
   - {fileID: 1634312355615600238}
@@ -66393,6 +66506,26 @@ MonoBehaviour:
   - {fileID: 1634312355975464646}
   - {fileID: 1634312356464405634}
   messageLife: 5
+  commands:
+  - name: "\u6253\u5370"
+    command: /print
+  - name: "\u5B58\u6863"
+    command: /save
+  - name: "\u81EA\u6740"
+    command: /kill
+  - name: "\u8BFB\u6863"
+    command: /load
+  - name: "\u7ED9\u65B9\u5757"
+    command: /give
+  - name: "\u8BBE\u5B9A\u65F6\u95F4"
+    command: /time
+  - name: "\u8BBE\u5B9A\u5E27\u6570"
+    command: /fps
+  - name: "\u5E2E\u52A9\u6587\u6863"
+    command: /help
+  - name: "\u6DFB\u52A0\u53F2\u83B1\u59C6"
+    command: /addSlim
+  Entity_Slim: {fileID: 2104549777}
 --- !u!1 &2032131446
 GameObject:
   m_ObjectHideFlags: 0
@@ -68827,7 +68960,7 @@ MonoBehaviour:
   isGrounded: 0
   eyesHight: 0.4
   playerWidth: 0.8
-  playerHeight: 1.6
+  playerHeight: 1.5
   blood: 20
   velocity: {x: 0, y: 0, z: 0}
   momentum: {x: 0, y: 0, z: 0}

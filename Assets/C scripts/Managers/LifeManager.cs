@@ -5,14 +5,26 @@ using UnityEngine.UI;
 
 public class LifeManager : MonoBehaviour
 {
+
+
+    #region 状态
+
     [Header("状态")]
     [ReadOnly]public int blood = 20;   private int maxblood = 20;  //当前血量和最高血量
-    [ReadOnly] public int food = 20;   private int maxfood = 20; 
+    [ReadOnly] public float food = 20;   private float maxfood = 20;
 
-    [Header("引用")]
-    public ManagerHub managerhub;
-    
+    #endregion
+
+
     #region 周期函数
+
+    private ManagerHub managerhub;
+    bool hasExec_FixedUpdate = true;
+
+    private void Start()
+    {
+        managerhub = VoxelData.GetManagerhub();
+    }
 
     public void InitLifeManager()
     {
@@ -28,7 +40,6 @@ public class LifeManager : MonoBehaviour
     }
 
 
-    bool hasExec_Init = true;
     private void FixedUpdate()
     {
         if (managerhub.world.game_state == Game_State.Playing)
@@ -40,11 +51,11 @@ public class LifeManager : MonoBehaviour
 
 
             //初始化血条
-            if (hasExec_Init)
+            if (hasExec_FixedUpdate)
             {
                 UpdatePlayerBlood(0, false, false);
                 UpdatePlayerFood(0, false);
-                hasExec_Init = false;
+                hasExec_FixedUpdate = false;
             }
             
 
@@ -121,7 +132,12 @@ public class LifeManager : MonoBehaviour
     public int recoverBlood = 1;
     Coroutine RecoveryCoroutine;
 
-    //更新血条
+    /// <summary>
+    /// 更新玩家血条(hurt为负数是加血)
+    /// </summary>
+    /// <param name="hurt"></param>
+    /// <param name="isBlind"></param>
+    /// <param name="isShakeHead"></param>
     public void UpdatePlayerBlood(int hurt, bool isBlind, bool isShakeHead)
     {
         //减去伤害
@@ -245,8 +261,12 @@ public class LifeManager : MonoBehaviour
     [Header("饥饿值系统参数")]
     public bool SprintLock = false;
 
-    //更新饥饿条
-    public void UpdatePlayerFood(int hurt, bool isBlind)
+    /// <summary>
+    /// 更新玩家饱食度(hurt为负数是加饱食度)
+    /// </summary>
+    /// <param name="hurt"></param>
+    /// <param name="isBlind"></param>
+    public void UpdatePlayerFood(float hurt, bool isBlind)
     {
         //减去
         food -= hurt;
@@ -293,7 +313,7 @@ public class LifeManager : MonoBehaviour
             }
 
             //empty
-            for (int i = food / 2; i < maxfood / 2; i++)
+            for (int i = (int)(food / 2); i < maxfood / 2; i++)
             {
                 foods[i].color = Color.black;
             }
@@ -310,11 +330,11 @@ public class LifeManager : MonoBehaviour
             }
 
             //half
-            foods[food / 2].sprite = food_half;
-            foods[food / 2].color = Color.white;
+            foods[(int)(food / 2)].sprite = food_half;
+            foods[(int)(food / 2)].color = Color.white;
 
             //empty
-            for (int i = (food / 2) + 1; i < maxfood / 2; i++)
+            for (int i = (int)((food / 2) + 1); i < maxfood / 2; i++)
             {
                 foods[i].color = Color.black;
             }

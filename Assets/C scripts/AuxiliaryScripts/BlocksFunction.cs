@@ -5,9 +5,11 @@ using UnityEngine;
 
 public static class BlocksFunction
 {
+
     //爆炸算法
     public static void Boom(ManagerHub managerhub, Vector3 _originPos, float _r)
     {
+
         // 将原始位置转换为整数
         _originPos = new Vector3((int)_originPos.x, (int)_originPos.y, (int)_originPos.z);
 
@@ -119,6 +121,5 @@ public static class BlocksFunction
     }
 
 
-
-
+    
 }
