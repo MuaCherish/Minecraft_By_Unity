@@ -61,7 +61,7 @@ public enum FaceCheck_Enum
 
 public enum BlockClassfy
 {
-    普通方块类, 功能性方块类, 工具类, 食物类,
+    全部方块, 建筑方块, 功能性方块, 工具, 食物, 禁用, 
 }
 
 

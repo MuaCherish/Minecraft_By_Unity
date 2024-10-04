@@ -312,7 +312,7 @@ public class Player : MonoBehaviour
     }
 
 
-    public bool isOpenBackpack = false;
+    
     private void Update()
     {
         if (world.game_state == Game_State.Playing)
@@ -374,16 +374,7 @@ public class Player : MonoBehaviour
         }
 
 
-        //用于关闭背包
-        else if (world.game_state == Game_State.Pause)
-        {
-            if (Input.GetKeyDown(KeyCode.E) && isOpenBackpack)
-            {
-                managerhub.canvasManager.isPausing = false;
-                managerhub.canvasManager.SwitchUI_Player(-1);
-                managerhub.world.game_state = Game_State.Playing;
-            }
-        }
+        
     }
 
 
@@ -745,18 +736,7 @@ public class Player : MonoBehaviour
         //    SwitchThridPersonMode();
         //}
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            isOpenBackpack = true;
-            if (managerhub.world.game_mode == GameMode.Survival)
-            {
-                managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_生存背包);
-            }
-            else
-            {
-                managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_创造背包);
-            }
-        }
+        
 
 
         if (isGrounded && Input.GetKey(KeyCode.Space) && groundTime >= minGroundedTime)
@@ -1188,17 +1168,29 @@ public class Player : MonoBehaviour
         float startTime = Time.time;
         float destroy_time = world.blocktypes[world.GetBlockType(position)].DestroyTime;
 
-        //是否开启快速挖掘
-        if (isSuperMining || _selecttype == VoxelData.Tool_Pickaxe)
+        //挖掘时间修改
+        //1. 创造模式
+        //end.基岩
+        if (theBlockwhichBeBrokenType == VoxelData.BedRock)
         {
-            destroy_time = 0.25f;
+            
+            destroy_time = Mathf.Infinity;
+
         }
+        else
+        {
+            if (isSuperMining || _selecttype == VoxelData.Tool_Pickaxe)
+            {
+                destroy_time = 0.25f;
+            }
+        }
+        
 
         // 等待
         while (Time.time - startTime < destroy_time)
         {
 
-            if (isFirstBrokeBlock && managerhub.world.game_mode == GameMode.Creative)
+            if (isFirstBrokeBlock && managerhub.world.game_mode == GameMode.Creative && theBlockwhichBeBrokenType != VoxelData.BedRock)
             {
                 isFirstBrokeBlock = false;
                 break;

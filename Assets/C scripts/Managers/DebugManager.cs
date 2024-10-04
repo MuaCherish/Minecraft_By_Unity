@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
@@ -27,7 +26,6 @@ public class DebugManager : MonoBehaviour
     private void Start()
     {
         managerHub = VoxelData.GetManagerhub();
-        UpdateBlockItem();
     }
 
     private void FixedUpdate()
@@ -71,13 +69,14 @@ public class DebugManager : MonoBehaviour
 
     #region 调试屏幕
 
+    public Camera FirstPersonCamera;
     public GameObject DebugScreen;
     public TextMeshProUGUI LeftText;
+    public TextMeshProUGUI RightText;
 
 
-    
-   
-  
+
+
     void UpdateScreen()
     {
         Vector3 footlocation = managerHub.world.PlayerFoot.position;
@@ -108,53 +107,21 @@ public class DebugManager : MonoBehaviour
         LeftText.text += $"\n";
         LeftText.text += $"[Chunk]\n";
         LeftText.text += $"区块坐标: {managerHub.world.GetChunkLocation(footlocation)}\n";
-        LeftText.text += $"初始化区块平均渲染时间: {managerHub.world.OneChunkRenderTime * 1000f}ms\n";
+        LeftText.text += $"初始化区块平均渲染时间: {(managerHub.world.OneChunkRenderTime * 1000f):F3}ms\n";
         LeftText.text += $"\n";
         //LeftText.text += $"[Noise]\n";
 
 
-    }
-
-    #endregion
 
 
-    #region DEBUG-方块列表
-
-    enum BlockClassfy
-    {
-        普通方块类 ,功能性方块类, 工具类, 食物类, 
-    }
-    
-    public Transform Content;
-    public GameObject blockitem;
-
-    public void UpdateBlockItem()
-    {
+        //RightText.text += $"\n";
+        RightText.text = $"[System]\n";
+        RightText.text += $"实时渲染面数: {CameraOnPreRender()}个\n";
         
 
-        for (int index = 0;index < managerHub.world.blocktypes.Length; index++)
-        {
-            //初始化item
-            GameObject instance = Instantiate(blockitem);
-            instance.transform.SetParent(Content, false);
-            instance.transform.Find("TMP_index").GetComponent<TextMeshProUGUI>().text = $"{index}";
-            instance.transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
-
-            if (managerHub.world.blocktypes[index].sprite != null)
-            {
-                instance.transform.Find("Image").GetComponent<Image>().sprite = managerHub.world.blocktypes[index].sprite;
-            }else if (managerHub.world.blocktypes[index].sprite != null)
-            {
-                instance.transform.Find("Image").GetComponent<Image>().sprite = managerHub.world.blocktypes[index].top_sprit;
-            }
-            else
-            {
-                instance.transform.Find("Image").GetComponent<Image>().color = new Color(0, 0, 0, 0);
-            }
-            
-        }
-
     }
+
+    
 
     #endregion
 
@@ -238,6 +205,36 @@ public class DebugManager : MonoBehaviour
         }
 
         return facingDirection;
+    }
+
+    #endregion
+
+
+    #region DEBUG-Camera渲染面数
+
+    //渲染面数
+    private int CameraOnPreRender()
+    {
+        int triangleCount = 0;
+
+        // 获取场景中的所有 MeshRenderer
+        MeshRenderer[] meshRenderers = FindObjectsOfType<MeshRenderer>();
+        foreach (MeshRenderer meshRenderer in meshRenderers)
+        {
+            // 检查物体是否在相机视野内
+            if (meshRenderer.isVisible)
+            {
+                // 获取 MeshFilter 组件
+                MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
+                if (meshFilter != null && meshFilter.sharedMesh != null)
+                {
+                    // 累加三角形数
+                    triangleCount += meshFilter.sharedMesh.triangles.Length / 3; // 每个三角形由3个顶点组成
+                }
+            }
+        }
+
+        return triangleCount;
     }
 
     #endregion

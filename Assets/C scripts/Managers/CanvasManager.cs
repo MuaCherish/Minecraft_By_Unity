@@ -130,7 +130,6 @@ public class CanvasManager : MonoBehaviour
     private void Start()
     {
         InitCanvasManager();
-
     }
 
     public void InitCanvasManager()
@@ -238,7 +237,17 @@ public class CanvasManager : MonoBehaviour
         else if (world.game_state == Game_State.Pause)
         {
             Show_Esc_Screen();
+
+            if (Input.GetKeyDown(KeyCode.E) && isOpenBackpack && !managerhub.commandManager.isConsoleActive)
+            {
+                isPausing = false;
+                isOpenBackpack = false;
+                SwitchUI_Player(-1);
+                managerhub.world.game_state = Game_State.Playing;
+            }
+
         }
+
 
         Prompt_FlashLight();
     }
@@ -1059,21 +1068,25 @@ public class CanvasManager : MonoBehaviour
 
         while (true)
         {
-            // 控制缩放
-            float scaleX = 1.0f + Mathf.PingPong(offset * speed, magnitude) * 0.5f; // 控制x轴的缩放
-            float scaleY = 1.0f + Mathf.PingPong(offset * speed, magnitude) * 0.5f; // 控制y轴的缩放
-            muacherish.transform.localScale = new Vector3(scaleX, scaleY, muacherish.transform.localScale.z);
+            if (managerhub.world.game_state == Game_State.Start)
+            {
+                // 控制缩放
+                float scaleX = 1.0f + Mathf.PingPong(offset * speed, magnitude) * 0.5f; // 控制x轴的缩放
+                float scaleY = 1.0f + Mathf.PingPong(offset * speed, magnitude) * 0.5f; // 控制y轴的缩放
+                muacherish.transform.localScale = new Vector3(scaleX, scaleY, muacherish.transform.localScale.z);
 
-            // 控制颜色渐变
-            Color color = new Color(
-                Mathf.Sin(offset * colorSpeed) * 0.5f + 0.5f, // 红
-                Mathf.Sin(offset * colorSpeed + Mathf.PI * 2 / 3) * 0.5f + 0.5f, // 绿
-                Mathf.Sin(offset * colorSpeed + Mathf.PI * 4 / 3) * 0.5f + 0.5f, // 蓝
-                1f // 不透明度
-            );
-            muacherish.GetComponent<TextMeshProUGUI>().color = color;
+                // 控制颜色渐变
+                Color color = new Color(
+                    Mathf.Sin(offset * colorSpeed) * 0.5f + 0.5f, // 红
+                    Mathf.Sin(offset * colorSpeed + Mathf.PI * 2 / 3) * 0.5f + 0.5f, // 绿
+                    Mathf.Sin(offset * colorSpeed + Mathf.PI * 4 / 3) * 0.5f + 0.5f, // 蓝
+                    1f // 不透明度
+                );
+                muacherish.GetComponent<TextMeshProUGUI>().color = color;
 
-            offset += Time.deltaTime;
+                offset += Time.deltaTime;
+            }
+
 
             yield return null;
         }
@@ -1116,6 +1129,10 @@ public class CanvasManager : MonoBehaviour
 
 
     //------------------------------------- GameMode -----------------------------------------
+
+    //是否打开背包
+    public bool isOpenBackpack = false;
+
     //Survival
     void GameMode_Survival()
     {
@@ -1137,7 +1154,11 @@ public class CanvasManager : MonoBehaviour
         //EscScreen
         Show_Esc_Screen();
 
-
+        if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.commandManager.isConsoleActive)
+        {
+            isOpenBackpack = true;
+            SwitchUI_Player(VoxelData.UIplayer_生存背包);
+        }
 
         //Debug面板
         if (Input.GetKeyDown(KeyCode.F3))
@@ -1211,12 +1232,11 @@ public class CanvasManager : MonoBehaviour
         //EscScreen
         Show_Esc_Screen();
 
-
-
-        //Debug面板
-        if (Input.GetKeyDown(KeyCode.F3))
+        if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.commandManager.isConsoleActive)
         {
-            //Debug_Screen.SetActive(!Debug_Screen.activeSelf);
+            isOpenBackpack = true;
+            SwitchUI_Player(VoxelData.UIplayer_创造背包);
+            UpdateBackPackSlot(BlockClassfy.全部方块);
         }
 
 
@@ -1235,6 +1255,151 @@ public class CanvasManager : MonoBehaviour
         }
     }
 
+    
+    [Header("创造背包")]
+    public Transform 创造背包Content;
+    public GameObject 创造背包blockitem;
+    public TextMeshProUGUI 创造背包Text;
+
+    [System.Serializable]
+    public class BlockEntry
+    {
+        public BlockClassfy _classify; // 假设 BlockClassfy 是一个可以序列化的枚举或类
+        public GameObject _button;
+    }
+    public List<BlockEntry> 创造模式背包选择栏;
+
+    //分类
+    public void UpdateBackPackSlot(BlockClassfy _classfy)
+    {
+        创造背包Text.text = _classfy.ToString();
+
+        //clear
+        foreach (Transform item in 创造背包Content.transform)
+        {
+            Destroy(item.gameObject);
+        }
+
+        //不分类
+        if (_classfy == BlockClassfy.全部方块)
+        {
+            for (int index = 0; index < managerhub.world.blocktypes.Length; index++)
+            {
+                //初始化item
+                GameObject instance = Instantiate(创造背包blockitem);
+                instance.transform.SetParent(创造背包Content, false);
+                instance.transform.Find("TMP_index").GetComponent<TextMeshProUGUI>().text = $"{index}";
+                instance.transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
+
+                GameObject icon2D = instance.transform.Find("Icon").gameObject;
+                GameObject icon3D = instance.transform.Find("3Dicon").gameObject;
+
+
+                //是否显示3d图形
+                if (!managerhub.world.blocktypes[index].is2d)
+                {
+                    icon2D.SetActive(false);
+                    icon3D.SetActive(true);
+
+                    instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].top_sprit;
+                    instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].sprite;
+                    instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].sprite;
+                }
+                else
+                {
+                    icon2D.SetActive(true);
+                    icon3D.SetActive(false);
+
+                    instance.transform.Find("Icon").GetComponent<Image>().sprite = managerhub.world.blocktypes[index].icon;
+                }
+            }
+        }
+        
+        //分类
+        else
+        {
+            for (int index = 0; index < managerhub.world.blocktypes.Length; index++)
+            {
+                if (managerhub.world.blocktypes[index].BlockClassfy == _classfy)
+                {
+                    //初始化item
+                    GameObject instance = Instantiate(创造背包blockitem);
+                    instance.transform.SetParent(创造背包Content, false);
+                    instance.transform.Find("TMP_index").GetComponent<TextMeshProUGUI>().text = $"{index}";
+                    instance.transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
+
+                    GameObject icon2D = instance.transform.Find("Icon").gameObject;
+                    GameObject icon3D = instance.transform.Find("3Dicon").gameObject;
+
+
+                    //是否显示3d图形
+                    if (!managerhub.world.blocktypes[index].is2d)
+                    {
+                        icon2D.SetActive(false);
+                        icon3D.SetActive(true);
+
+                        instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].top_sprit;
+                        instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].sprite;
+                        instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].sprite;
+                    }
+                    else
+                    {
+                        icon2D.SetActive(true);
+                        icon3D.SetActive(false);
+
+                        instance.transform.Find("Icon").GetComponent<Image>().sprite = managerhub.world.blocktypes[index].icon;
+                    }
+                }
+            }
+        }
+
+
+
+            
+            
+
+        
+    }
+
+    //更新按钮
+   
+    public void UpdateBackPackButton(int _index)
+    {
+        BlockClassfy _classify = 创造模式背包选择栏[_index]._classify;
+
+        UpdateBackPackSlot(_classify);
+
+        foreach (var item in 创造模式背包选择栏)
+        {
+            //本按钮变亮色
+            if (item._classify == _classify)
+            {
+                //color
+                item._button.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+
+                //rect
+                RectTransform rectTransform = item._button.GetComponent<RectTransform>();
+                Vector2 temp = rectTransform.anchoredPosition;
+                temp.y = 2; // 设置 Y 值为 2
+                rectTransform.anchoredPosition = temp; // 更新 RectTransform 的位置
+            }
+            //其他按钮变暗色
+            else
+            {
+                //color
+                item._button.GetComponent<Image>().color = new Color(153f / 255, 153f / 255, 153f / 255, 1);
+
+                //rect
+                RectTransform rectTransform = item._button.GetComponent<RectTransform>();
+                Vector2 temp = rectTransform.anchoredPosition;
+                temp.y = -2; // 设置 Y 值为 2
+                rectTransform.anchoredPosition = temp; // 更新 RectTransform 的位置
+            }
+        }
+
+    }
+     
+
     //----------------------------------------------------------------------------------------
 
 
@@ -1243,7 +1408,7 @@ public class CanvasManager : MonoBehaviour
 
 
     //----------------------------------- Init_Screen ---------------------------------------
-  
+
 
     ////选择生存模式
     //public void GamemodeToSurvival()
@@ -1339,6 +1504,11 @@ public class CanvasManager : MonoBehaviour
             else
             {
                 isPausing = false;
+
+                if (isOpenBackpack)
+                {
+                    isOpenBackpack = false;
+                }
 
                 switch (UIBuffer.Peek())
                 {

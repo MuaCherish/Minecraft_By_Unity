@@ -29,7 +29,7 @@ public class CommandManager : MonoBehaviour
 
     private void Update()
     {
-        if (managerhub.world.game_state == Game_State.Playing)
+        if (managerhub.world.game_state == Game_State.Playing || managerhub.world.game_state == Game_State.Pause)
         {
             // 按下T键且控制台未激活时才激活控制台
             if (Input.GetKeyDown(KeyCode.T) && !isConsoleActive)
