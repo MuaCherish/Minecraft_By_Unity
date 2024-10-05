@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,6 +34,82 @@ public class BackPackManager : MonoBehaviour
 
 
     //------------------------------------------------ 核心功能 ---------------------------------------------------------------
+
+    /// <summary>
+    /// 同步物品栏和背包物品栏
+    /// _prior = 0：物品栏更新了，同步背包物品栏
+    /// _prior = 1：背包物品栏更新了，同步物品栏
+    /// </summary>
+    public Transform 背包物品栏;
+    public void SYN_allSlots(int _prior)
+    {
+        //同步背包物品栏
+        if (_prior == 0)
+        {
+            print("已同步背包物品栏");
+        }
+
+        //同步物品栏
+        else if (_prior == 1)
+        {
+            //print("已同步物品栏");
+            int i = 0;
+            foreach (Transform item in 背包物品栏)
+            {
+                BlockItem _targetItem = item.GetComponent<SlotBlockItem>().MyItem;
+                slots[i].blockId = _targetItem._blocktype;
+                slots[i].number = _targetItem._number;
+                i++;
+            }
+            FlashSlot();
+            ChangeBlockInHand();
+        }
+        else
+        {
+            print("_prior不符合输入");
+        }
+        
+
+        
+    }
+
+    //单纯刷新Slot
+    public void FlashSlot()
+    {
+        for (int i = 0;i < slots.Length;i ++)
+        {
+            byte _type = slots[i].blockId;
+
+            if (_type != 255)
+            {
+                //状态
+                slots[i].ishave = true;
+
+                //Icon
+                if (managerhub.world.blocktypes[_type].is2d == false) //3d
+                {
+                    slots[i].Icon3Dobject.SetActive(true);
+                    slots[i].TopFace.sprite = managerhub.world.blocktypes[_type].top_sprit;
+                    slots[i].LeftFace.sprite = managerhub.world.blocktypes[_type].sprite;
+                    slots[i].RightFace.sprite = managerhub.world.blocktypes[_type].sprite;
+                }
+                else
+                {
+                    slots[i].icon.sprite = managerhub.world.blocktypes[_type].icon;
+                    slots[i].icon.color = new Color(1f, 1f, 1f, 1f);
+                }
+
+                //number
+                slots[i].TMP_number.text = $"{slots[i].number}";
+
+            }
+            //不渲染
+            else
+            {
+                slots[i].ResetSlot();
+            }
+        }
+    }
 
     /// <summary>
     /// 更新物品栏
@@ -74,7 +151,7 @@ public class BackPackManager : MonoBehaviour
 
                     //icon
                     //判断是用3d还是2d
-                    if (managerhub.world.blocktypes[blocktype].DrawMode == DrawMode.Block) //3d
+                    if (managerhub.world.blocktypes[blocktype].is2d == false) //3d
                     {
                         slots[_index].Icon3Dobject.SetActive(true);
                         slots[_index].TopFace.sprite = managerhub.world.blocktypes[blocktype].top_sprit;
@@ -157,7 +234,7 @@ public class BackPackManager : MonoBehaviour
 
                     //icon
                     //判断是用3d还是2d
-                    if (managerhub.world.blocktypes[blocktype].DrawMode == DrawMode.Block) //3d
+                    if (managerhub.world.blocktypes[blocktype].is2d == false) //3d
                     {
                         slots[_index].Icon3Dobject.SetActive(true);
                         slots[_index].TopFace.sprite = managerhub.world.blocktypes[blocktype].top_sprit;

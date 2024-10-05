@@ -10,6 +10,7 @@ using UnityEngine.XR;
 //using static UnityEditor.Progress;
 using System.IO;
 using System.Diagnostics;
+using UnityEngine.EventSystems;
 
 
 public class CanvasManager : MonoBehaviour
@@ -17,7 +18,7 @@ public class CanvasManager : MonoBehaviour
     public ManagerHub managerhub;
     [Header("UIMAnager")]
     public List<CanvasId> UIManager = new List<CanvasId>();
-    
+
     [Header("Transforms")]
     //场景对象
     public ParticleSystem partSystem;
@@ -29,7 +30,7 @@ public class CanvasManager : MonoBehaviour
     public Player player;
     public TextMeshProUGUI selectblockname;
     public BackPackManager BackPackManager;
-    public LifeManager LifeManager; 
+    public LifeManager LifeManager;
     //public TextMeshProUGUI gamemodeTEXT;
     //public GameObject CreativeButtom;
     //public GameObject SurvivalButtom;
@@ -83,14 +84,14 @@ public class CanvasManager : MonoBehaviour
     //sound
     public float volume_sound = 0.5f;
     private float previous_sound = 0.5f;
-    
+
     //render speed
     public float Mouse_Sensitivity = 1f;
     private float previous_Mouse_Sensitivity = 1f;
 
     //isSpaceMode
     public bool SpaceMode_isOn = false;
-    private bool previous_spaceMode_isOn = false; 
+    private bool previous_spaceMode_isOn = false;
 
     //isSpaceMode
     public bool SuperMining_isOn = false;
@@ -114,7 +115,7 @@ public class CanvasManager : MonoBehaviour
 
     //Score
     //public TextMeshProUGUI scoreText;
-    
+
 
     //一次性代码
     bool hasExec_Playing = true;
@@ -204,7 +205,7 @@ public class CanvasManager : MonoBehaviour
     }
 
 
-    private void Update() 
+    private void Update()
     {
 
         //加载中
@@ -229,8 +230,8 @@ public class CanvasManager : MonoBehaviour
                 GameMode_Creative();
             }
 
-            
-            
+
+
         }
 
         //Pause
@@ -245,6 +246,8 @@ public class CanvasManager : MonoBehaviour
                 SwitchUI_Player(-1);
                 managerhub.world.game_state = Game_State.Playing;
             }
+
+            LayintSwapBlock();
 
         }
 
@@ -291,10 +294,10 @@ public class CanvasManager : MonoBehaviour
     [Header("Transforms")]
     //public NighManager nightmanager;
     public FixedStack<int> UIBuffer = new FixedStack<int>(5, 0);
-    
+
     [Header("状态")]
     public bool isInitError = false;
-    [HideInInspector]public float Initprogress = 0;
+    [HideInInspector] public float Initprogress = 0;
     public bool NotNeedBackGround = false; //游戏中暂停隐藏背景的
     public bool isClickSaving = false;
 
@@ -327,8 +330,8 @@ public class CanvasManager : MonoBehaviour
             UnityEngine.Debug.LogError("非法ID");
             return;
         }
-        
-        
+
+
 
         //根据目标面板进行特殊判断
         if (UpdateCanvasState(_TargetID))
@@ -346,7 +349,7 @@ public class CanvasManager : MonoBehaviour
         }
 
 
-        
+
 
         UIBuffer.Push(_TargetID);  // 将目标UI的ID加入固定栈
         //print($"加入 {_TargetID}, count {UIBuffer.Count()}");
@@ -463,7 +466,7 @@ public class CanvasManager : MonoBehaviour
                 return false;
             }
             else
-            { 
+            {
 
                 //游戏状态切换
                 world.game_state = Game_State.Loading;
@@ -476,7 +479,7 @@ public class CanvasManager : MonoBehaviour
                 //HideCursor();
                 ToggleMouseVisibilityAndLock(true);
             }
-            
+
 
         }
 
@@ -488,7 +491,7 @@ public class CanvasManager : MonoBehaviour
             ////鼠标不可视
             //Cursor.visible = false;
             ToggleMouseVisibilityAndLock(true);
-             
+
 
             if (world.game_mode == GameMode.Survival)
             {
@@ -555,7 +558,7 @@ public class CanvasManager : MonoBehaviour
 
 
     //选择存档组件
-    public void NewWorldGenerate(String name,String date,GameMode gamemode, int worldtype, int seed)
+    public void NewWorldGenerate(String name, String date, GameMode gamemode, int worldtype, int seed)
     {
         //初始化item
         GameObject instance = Instantiate(NewWorld_item);
@@ -604,7 +607,7 @@ public class CanvasManager : MonoBehaviour
     public void LightButton()
     {
         isClickSaving = true;
-        UIManager[VoxelData.ui初始化_选择存档].childs[0]._object.GetComponent<Image>().color = new Color(1,1,1,1);
+        UIManager[VoxelData.ui初始化_选择存档].childs[0]._object.GetComponent<Image>().color = new Color(1, 1, 1, 1);
         UIManager[VoxelData.ui初始化_选择存档].childs[1]._object.GetComponent<Image>().color = new Color(1, 1, 1, 1);
     }
 
@@ -636,7 +639,7 @@ public class CanvasManager : MonoBehaviour
 
             //保存种子
             case 1:
-                
+
                 String _text = UIManager[VoxelData.ui初始化_新建世界].childs[1]._object.GetComponent<TMP_InputField>().text;
                 int _number;
 
@@ -651,7 +654,7 @@ public class CanvasManager : MonoBehaviour
                 {
                     if (int.TryParse(_text, out _number))
                     {
-                        
+
                         if (_number > 0)
                         {
                             if (isInitError)
@@ -660,10 +663,10 @@ public class CanvasManager : MonoBehaviour
                                 UIManager[VoxelData.ui初始化_新建世界].childs[4]._object.GetComponent<TextMeshProUGUI>().text = " ";
                             }
 
-                            
+
                             world.worldSetting.seed = _number;
-                            
-                        } 
+
+                        }
                         else
                         {
                             isInitError = true;
@@ -685,8 +688,8 @@ public class CanvasManager : MonoBehaviour
                         UIManager[VoxelData.ui初始化_新建世界].childs[4]._object.GetComponent<TextMeshProUGUI>().text = "种子转换失败！";
                     }
                 }
-                    
-                
+
+
                 break;
 
             //渲染区块
@@ -835,7 +838,7 @@ public class CanvasManager : MonoBehaviour
                 }
 
                 break;
-            default :  
+            default:
                 break;
         }
     }
@@ -860,7 +863,7 @@ public class CanvasManager : MonoBehaviour
 
             //音效
             case 1:
-                
+
                 //GetValue
                 value = UIManager[VoxelData.ui选项细节].childs[8]._object.GetComponent<Slider>().value;
 
@@ -874,7 +877,7 @@ public class CanvasManager : MonoBehaviour
                 musicmanager.Audio_Player_moving_swiming.volume = Mathf.Lerp(0f, 0.8f, value);
 
                 break;
-            default: 
+            default:
                 break;
         }
     }
@@ -886,7 +889,7 @@ public class CanvasManager : MonoBehaviour
         {
             //白天时间
             case 0:
-                
+
                 break;
 
             //夜晚时间
@@ -898,7 +901,7 @@ public class CanvasManager : MonoBehaviour
             case 2:
 
                 break;
-            default : 
+            default:
                 break;
         }
     }
@@ -944,9 +947,9 @@ public class CanvasManager : MonoBehaviour
             UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_玩家互动ui前黑色背景]._object.SetActive(false);
         }
 
-        
-        
-    } 
+
+
+    }
 
 
 
@@ -1050,7 +1053,7 @@ public class CanvasManager : MonoBehaviour
 
 
     //无背景的情况下打开选项ui
-    public void SwitchNoBackGround(bool _t) 
+    public void SwitchNoBackGround(bool _t)
     {
         NotNeedBackGround = _t;
     }
@@ -1175,7 +1178,7 @@ public class CanvasManager : MonoBehaviour
             {
                 //data
                 //Debug.Log("IntoWater");
-                
+
                 Swimming_Screen.SetActive(true);
 
                 partSystem.Play();
@@ -1255,11 +1258,15 @@ public class CanvasManager : MonoBehaviour
         }
     }
 
-    
+
     [Header("创造背包")]
+    public GameObject 创造模式背包;
     public Transform 创造背包Content;
     public GameObject 创造背包blockitem;
     public TextMeshProUGUI 创造背包Text;
+    public GameObject 创造背包text_ShowName;
+    public Transform 创造物品栏Content;
+
 
     [System.Serializable]
     public class BlockEntry
@@ -1283,86 +1290,77 @@ public class CanvasManager : MonoBehaviour
         //不分类
         if (_classfy == BlockClassfy.全部方块)
         {
-            for (int index = 0; index < managerhub.world.blocktypes.Length; index++)
+            for (byte index = 0; index < managerhub.world.blocktypes.Length; index++)
             {
-                //初始化item
-                GameObject instance = Instantiate(创造背包blockitem);
-                instance.transform.SetParent(创造背包Content, false);
-                instance.transform.Find("TMP_index").GetComponent<TextMeshProUGUI>().text = $"{index}";
-                instance.transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
-
-                GameObject icon2D = instance.transform.Find("Icon").gameObject;
-                GameObject icon3D = instance.transform.Find("3Dicon").gameObject;
-
-
-                //是否显示3d图形
-                if (!managerhub.world.blocktypes[index].is2d)
-                {
-                    icon2D.SetActive(false);
-                    icon3D.SetActive(true);
-
-                    instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].top_sprit;
-                    instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].sprite;
-                    instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].sprite;
-                }
-                else
-                {
-                    icon2D.SetActive(true);
-                    icon3D.SetActive(false);
-
-                    instance.transform.Find("Icon").GetComponent<Image>().sprite = managerhub.world.blocktypes[index].icon;
-                }
+                CreateBlockItem(new BlockItem(index, 0));
             }
         }
-        
+
         //分类
         else
         {
-            for (int index = 0; index < managerhub.world.blocktypes.Length; index++)
+            for (byte index = 0; index < managerhub.world.blocktypes.Length; index++)
             {
                 if (managerhub.world.blocktypes[index].BlockClassfy == _classfy)
                 {
-                    //初始化item
-                    GameObject instance = Instantiate(创造背包blockitem);
-                    instance.transform.SetParent(创造背包Content, false);
-                    instance.transform.Find("TMP_index").GetComponent<TextMeshProUGUI>().text = $"{index}";
-                    instance.transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
-
-                    GameObject icon2D = instance.transform.Find("Icon").gameObject;
-                    GameObject icon3D = instance.transform.Find("3Dicon").gameObject;
-
-
-                    //是否显示3d图形
-                    if (!managerhub.world.blocktypes[index].is2d)
-                    {
-                        icon2D.SetActive(false);
-                        icon3D.SetActive(true);
-
-                        instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].top_sprit;
-                        instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].sprite;
-                        instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[index].sprite;
-                    }
-                    else
-                    {
-                        icon2D.SetActive(true);
-                        icon3D.SetActive(false);
-
-                        instance.transform.Find("Icon").GetComponent<Image>().sprite = managerhub.world.blocktypes[index].icon;
-                    }
+                    CreateBlockItem(new BlockItem(index, 0));
                 }
             }
         }
 
-
-
-            
-            
-
-        
     }
 
+    //生成方块Item
+    public void CreateBlockItem(BlockItem _item)
+    {
+        //初始化item
+        GameObject instance = Instantiate(创造背包blockitem);
+        instance.transform.SetParent(创造背包Content, false);
+        instance.transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
+
+        //方块的显示模式
+        GameObject icon2D = instance.transform.Find("Icon").gameObject;
+        icon2D.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+        GameObject icon3D = instance.transform.Find("3Dicon").gameObject;
+
+        //初始化脚本
+        instance.GetComponent<SlotBlockItem>().InitBlockItem(new BlockItem(_item._blocktype, _item._number));
+        if (_item._number != 0)
+        {
+            instance.transform.Find("TMP_number").gameObject.GetComponent<TextMeshProUGUI>().text = $"{_item._number}";
+        }
+        else
+        {
+            instance.transform.Find("TMP_number").gameObject.GetComponent<TextMeshProUGUI>().text = "";
+        }
+
+
+        //测试下标
+        //instance.transform.Find("TMP_index").GetComponent<TextMeshProUGUI>().text = $"{_item._blocktype}";
+
+
+        //是否显示3d图形
+        if (!managerhub.world.blocktypes[_item._blocktype].is2d)
+        {
+            icon2D.SetActive(false);
+            icon3D.SetActive(true);
+
+            instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].top_sprit;
+            instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].sprite;
+            instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].sprite;
+        }
+        else
+        {
+            icon2D.SetActive(true);
+            icon3D.SetActive(false);
+
+            instance.transform.Find("Icon").GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].icon;
+        }
+    }
+
+
     //更新按钮
-   
+
     public void UpdateBackPackButton(int _index)
     {
         BlockClassfy _classify = 创造模式背包选择栏[_index]._classify;
@@ -1398,7 +1396,145 @@ public class CanvasManager : MonoBehaviour
         }
 
     }
-     
+
+    //悬浮显示Block名字
+    public void UpdateText_ShowName(byte _type)
+    {
+        if (_type == 255)
+        {
+            创造背包text_ShowName.GetComponent<TextMeshProUGUI>().text = "";
+        }
+        else
+        {
+            创造背包text_ShowName.GetComponent<TextMeshProUGUI>().text = $"{managerhub.world.blocktypes[_type].blockName} - {_type}";
+        }
+
+    }
+
+    
+
+    //物质交换媒介
+    [Header("物质交换媒介")]
+    public GameObject SwapBlockPrefeb;
+    public SwapBlockStruct SwapBlock;
+
+    [SerializeField]
+    public class SwapBlockStruct
+    {
+        public GameObject _object;
+        public BlockItem _data = new BlockItem(0, 0);
+    }
+
+
+    //创建SwapBlock
+    public void CreateSwapBlock(BlockItem _item)
+    {
+        
+        //初始化item
+        GameObject instance = Instantiate(SwapBlockPrefeb);
+        instance.transform.SetParent(创造模式背包.transform, false);
+        //instance.transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
+
+        //初始化数据
+        SwapBlock = new SwapBlockStruct();
+        SwapBlock._object = instance;
+        SwapBlock._data = _item;
+
+        //方块的显示模式
+        GameObject icon2D = instance.transform.Find("Icon").gameObject;
+        GameObject icon3D = instance.transform.Find("3Dicon").gameObject;
+
+        //初始化脚本
+        instance.GetComponent<SwapBlockItem>().InitBlockItem(new BlockItem(_item._blocktype, _item._number));
+        if (_item._number != 0 || _item._number != 1)
+        {
+            instance.transform.Find("TMP_number").gameObject.GetComponent<TextMeshProUGUI>().text = $"{_item._number}";
+        }
+        else
+        {
+            instance.transform.Find("TMP_number").gameObject.GetComponent<TextMeshProUGUI>().text = "";
+        }
+
+
+        //测试下标
+        //instance.transform.Find("TMP_index").GetComponent<TextMeshProUGUI>().text = $"{_item._blocktype}";
+
+
+        //是否显示3d图形
+        if (!managerhub.world.blocktypes[_item._blocktype].is2d)
+        {
+            icon2D.SetActive(false);
+            icon3D.SetActive(true);
+
+            instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].top_sprit;
+            instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].sprite;
+            instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].sprite;
+        }
+        else
+        {
+            icon2D.SetActive(true);
+            icon3D.SetActive(false);
+
+            instance.transform.Find("Icon").GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].icon;
+        }
+
+    }
+
+    //销毁SwapBlock
+    public void DestroySwapBlock()
+    {
+        Destroy(SwapBlock._object);
+        SwapBlock = null;
+    }
+
+    //处理如果没点到slot的情况
+    public bool hasClickedSlot = false;  // 标记是否点击了slot
+    private float maxWaitSeconds = 0.1f;  // 设置最大等待时间（单位：秒）
+
+
+    //延迟判定是否点击到slot
+    public void LayintSwapBlock()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0) && SwapBlock != null)
+        {
+            // 启动协程，将逻辑放到一定秒数内检查
+            StartCoroutine(ExecuteAfterSeconds());
+        }
+    }
+
+    private IEnumerator ExecuteAfterSeconds()
+    {
+        float elapsedTime = 0f;
+
+        // 等待一定时间
+        while (elapsedTime < maxWaitSeconds)
+        {
+            // 如果点击了 slot，则不执行任何操作
+            if (hasClickedSlot)
+            {
+                // print($"点击slot，经过了 {elapsedTime} 秒");
+                hasClickedSlot = false;  // 点击完成后重置标记
+                yield break;  // 点击到 slot，提前结束协程
+            }
+
+            elapsedTime += Time.deltaTime;  // 累加经过的时间
+            yield return null;  // 等待下一帧
+        }
+
+        // 检查是否点击了slot
+        if (!hasClickedSlot && SwapBlock != null)
+        {
+            // 如果经过了最大时间且未点击 slot，销毁 swapblock
+            //print("未点击slot，销毁swapblock");
+            DestroySwapBlock();
+        }
+
+        // 重置标记，以便下一次点击生效
+        hasClickedSlot = false;
+    }
+
+
+
 
     //----------------------------------------------------------------------------------------
 
