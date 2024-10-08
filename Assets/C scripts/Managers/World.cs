@@ -337,7 +337,7 @@ public class World : MonoBehaviour
                 //worldSetting.worldtype = canvasManager.currentWorldType
 
                 //开始初始化
-                Update_CenterChunks();
+                Update_CenterChunks(true);
 
                 hasExec_SetSeed = false;
             }
@@ -486,7 +486,7 @@ public class World : MonoBehaviour
 
     //初始化地图
     public Coroutine Init_MapCoroutine;
-    IEnumerator Init_Map_Thread()
+    IEnumerator Init_Map_Thread(bool _isInitPlayerLocation)
     {
 
 
@@ -533,8 +533,13 @@ public class World : MonoBehaviour
 
         }
 
-        //重新初始化玩家位置，放置穿模
-        Init_Player_Location();
+
+        //重新初始化玩家位置，防止穿模
+        if (_isInitPlayerLocation)
+        {
+            player.InitPlayerLocation();
+        }
+        
 
         //游戏开始
         yield return new WaitForSeconds(0.5f);
@@ -596,13 +601,13 @@ public class World : MonoBehaviour
 
 
     //更新中心区块
-    public void Update_CenterChunks()
+    public void Update_CenterChunks(bool _isInitPlayerLocation)
     {
         //print("更新中心区块");
         //update加载中心区块
         if (Init_MapCoroutine == null)
         {
-            Init_MapCoroutine = StartCoroutine(Init_Map_Thread());
+            Init_MapCoroutine = StartCoroutine(Init_Map_Thread(_isInitPlayerLocation));
         }
 
 
@@ -1606,35 +1611,35 @@ public class World : MonoBehaviour
     }
 
 
-    //初始化人物位置
-    void Init_Player_Location()
+
+
+    //指定方向寻址
+    public Vector3 AddressingBlock(Vector3 _start, int _direct)
     {
+        Vector3 _address = _start;
 
-        if (isLoadSaving)
+        for (int i = 0;i < VoxelData.ChunkHeight; i ++)
         {
-            Start_Position = worldSetting.playerposition;
-            player.gameObject.transform.rotation = worldSetting.playerrotation;
-        }
-        else
-        {
-            Start_Position = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, VoxelData.ChunkHeight - 1f, GetRealChunkLocation(PlayerFoot.transform.position).z);
-
-            //从<1600,63,1600>向下遍历，直到坐标符合条件
-            while (GetBlockType(Start_Position) == VoxelData.Air)
+            byte _byte = GetBlockType(_address);
+            if (_byte != VoxelData.Air)
             {
 
-                Start_Position.y -= 1f;
+                //添加一个方块踮脚
+                if (_byte == VoxelData.Water)
+                {
+                    EditBlock(_address, VoxelData.Grass);
+                }
 
+                //Offset
+                return _address + new Vector3(0.5f, 2f, 0.5f);
             }
 
-            Start_Position.y += 2f;
+            _address += VoxelData.faceChecks[_direct];
         }
 
+        print("寻址失败");
+        return _start;
 
-        
-        
-        player.InitPlayerLocation();
-        //print(Start_Position);
     }
 
 
@@ -2377,6 +2382,72 @@ public class World : MonoBehaviour
     }
 
 
+    // 推送玩家更新的具体方块
+    public List<EditStruct> WaitToAdd_EditList = new List<EditStruct>();
+    public Coroutine updateEditNumberCoroutine;
+
+    public void UpdateEditNumber(Vector3 RealPos, byte targetBlocktype)
+    {
+        // 将修改细节推送至World里
+        // 转换RealPos为整型Vector3以便用作字典的key
+        Vector3 intPos = new Vector3((int)RealPos.x, (int)RealPos.y, (int)RealPos.z);
+
+        // 查找是否已经存在相同的editPos
+        EditStruct existingEdit = EditNumber.Find(edit => edit.editPos == intPos);
+
+        if (existingEdit != null)
+        {
+            // 如果存在，更新targetType
+            existingEdit.targetType = targetBlocktype;
+        }
+        else
+        {
+            // 如果不存在，添加新的EditStruct
+            EditNumber.Add(new EditStruct(intPos, targetBlocktype));
+        }
+    }
+
+    public void UpdateEditNumber(List<EditStruct> _EditList)
+    {
+        // 添加新的编辑列表到等待处理的队列尾部
+        WaitToAdd_EditList.AddRange(_EditList);
+        // 如果协程未运行，则启动协程
+        if (updateEditNumberCoroutine == null)
+        {
+            updateEditNumberCoroutine = StartCoroutine(_updateEditNumberCoroutine());
+        }
+    }
+
+    IEnumerator _updateEditNumberCoroutine()
+    {
+        // 每次处理的数量，避免卡顿
+        int batchSize = 10;
+
+        while (WaitToAdd_EditList.Count > 0)
+        {
+            // 每次取出最多 batchSize 个 EditStruct 从头部进行处理
+            int count = Mathf.Min(batchSize, WaitToAdd_EditList.Count);
+
+            for (int i = 0; i < count; i++)
+            {
+                // 取出列表中的第一个元素
+                EditStruct edit = WaitToAdd_EditList[0];
+                // 将编辑项添加到 EditNumber 中
+                UpdateEditNumber(edit.editPos, edit.targetType);
+                // 从头部移除已处理的项
+                WaitToAdd_EditList.RemoveAt(0);
+            }
+
+            // 暂停一帧，避免一次性处理太多项导致卡顿
+            yield return null;
+        }
+
+        // 处理完成后，将协程变量设为 null
+        //print("null");
+        updateEditNumberCoroutine = null;
+    }
+
+
 
     //给定int，返回世界类型的中文
     public String GetWorldTypeString(int WorldType)
@@ -2521,7 +2592,7 @@ public class World : MonoBehaviour
         if (!Allchunks.ContainsKey(GetChunkLocation(pos))) { return true; }
 
         //判断Y上有没有出界
-        if (vec.y >= VoxelData.ChunkHeight) { return false; }
+        if (realLocation.y >= VoxelData.ChunkHeight) { return false; }
 
 
         //如果是自定义碰撞

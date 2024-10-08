@@ -375,9 +375,21 @@ public class BackPackManager : MonoBehaviour
         {
             _slot.ResetSlot();
         }
+        ClearDropBlocks();
 
         ChangeBlockInHand();
     }
+
+    void ClearDropBlocks()
+    {
+        Transform dropblockParent = GameObject.Find("Environment/DropBlocks").transform;
+
+        foreach (Transform item in dropblockParent)
+        {
+            Destroy(item.gameObject);
+        }
+    }
+
 
     //创造掉落物(坐标,类型)
     public void CreateDropBox(Vector3 _pos, byte _blocktype, bool _needThrow)

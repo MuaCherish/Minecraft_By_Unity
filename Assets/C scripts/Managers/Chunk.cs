@@ -2721,10 +2721,11 @@ public class Chunk : MonoBehaviour
 
         }
 
-        //if (isOutOfRange(x,y,z))
-        //{
-        //    return;
-        //}
+        if (isOutOfRange(x, y, z))
+        {
+            print($"EditData的pos越界: {pos}");
+            return;
+        }
 
         UpdateBlock(x, y, z, targetBlocktype);
 
@@ -2734,6 +2735,7 @@ public class Chunk : MonoBehaviour
             UpdateBlockOriented(new Vector3(x, y, z), world.player.RealBacking);
         }
 
+        world.UpdateEditNumber(pos, targetBlocktype);
         EditForSomeBlocks(new Vector3(x, y, z), targetBlocktype);
 
 
@@ -2788,13 +2790,14 @@ public class Chunk : MonoBehaviour
                 
 
             }
-            
+
 
             // 设置方块类型 
             UpdateBlock(_x, _y, _z, _EditList[i].targetType);
         }
 
         // 更新区块网格
+        world.UpdateEditNumber(_EditList);
         UpdateChunkMesh_WithSurround(true, false);
 
     }
@@ -2808,28 +2811,6 @@ public class Chunk : MonoBehaviour
 
 
 
-    //推送玩家更新的具体方块
-    // 推送玩家更新的具体方块
-    public void UpdateEditNumber(Vector3 RealPos, byte targetBlocktype)
-    {
-        // 将修改细节推送至World里
-        // 转换RealPos为整型Vector3以便用作字典的key
-        Vector3 intPos = new Vector3((int)RealPos.x, (int)RealPos.y, (int)RealPos.z);
-
-        // 查找是否已经存在相同的editPos
-        EditStruct existingEdit = world.EditNumber.Find(edit => edit.editPos == intPos);
-
-        if (existingEdit != null)
-        {
-            // 如果存在，更新targetType
-            existingEdit.targetType = targetBlocktype;
-        }
-        else
-        {
-            // 如果不存在，添加新的EditStruct
-            world.EditNumber.Add(new EditStruct(intPos, targetBlocktype));
-        }
-    }
 
 
 
@@ -3478,10 +3459,12 @@ public class Chunk : MonoBehaviour
                     {
 
                         //如果上下方有水，则换成方块的渲染方式
-                        if ((GetBlock((int)pos.x, (int)pos.y + 1, (int)pos.z).voxelType == VoxelData.Water || GetBlock((int)pos.x, (int)pos.y - 1, (int)pos.z).voxelType == VoxelData.Water) && p != 2  && GetBlock((int)pos.x, (int)pos.y + 1, (int)pos.z).voxelType != VoxelData.Air)
+                        if ((GetBlock((int)pos.x, (int)pos.y + 1, (int)pos.z).voxelType == VoxelData.Water || GetBlock((int)pos.x, (int)pos.y - 1, (int)pos.z).voxelType == VoxelData.Water) && p != 2 && GetBlock((int)pos.x, (int)pos.y + 1, (int)pos.z).voxelType != VoxelData.Air)
                         {
+                            //print("上下方有水");
+
                             //如果需要双面绘制
-                            if (world.blocktypes[GetBlock(pos).voxelType].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                             {
                                 vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
                                 vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
@@ -3506,7 +3489,7 @@ public class Chunk : MonoBehaviour
                                 triangles_Water.Add(vertexIndex + 2);
                                 vertexIndex += 4;
 
-                                
+
                             }
 
                             vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
@@ -3539,227 +3522,259 @@ public class Chunk : MonoBehaviour
                         //如果是水面
                         else if (GetBlock(_x, _y, _z).voxelType == VoxelData.Water && GetBlock(_x, _y, _z, 2).voxelType == VoxelData.Air)
                         {
+                            //print("水面");
+
                             //面融合算法
-                            if (p == 2 && GetBlock(_x, _y, _z).up == true)
+                            //if (p == 2 && GetBlock(_x, _y, _z).up == true)
+                            //{
+                            //    //print("使用面融合");
+                            //    int _zz = 0;
+                            //    int _xx = 0;
+
+                            //    //if (x == 15 && z == 9)
+                            //    //{
+                            //    //    print("");
+                            //    //}
+
+
+                            //    //局部变量
+                            //    int __z = 0;
+                            //    bool Z排碰到障碍物 = false;
+
+                            //    //运行后获得当前方块可以踏步的范围
+                            //    for (_xx = 0; _xx < VoxelData.ChunkWidth; _xx++)
+                            //    {
+                            //        for (__z = 0; __z < VoxelData.ChunkWidth; __z++)
+                            //        {
+
+
+
+
+                            //            //如果出界则停止
+                            //            if (isOutOfRange(_x + _xx, _y, _z + __z))
+                            //            {
+                            //                break;
+                            //            }
+
+                            //            //if(_xx == 8){
+                            //            //    print("");
+                            //            //} 
+
+
+                            //            //目标是水 && 目标上方是空气 && 目标的up是true
+                            //            if ((GetBlock(_x + _xx, _y, _z + __z).voxelType != VoxelData.Water || GetBlock(_x + _xx, _y + 1, _z + __z).voxelType != VoxelData.Air) || (GetBlock(_x + _xx, _y, _z + __z).up == false))
+                            //            {
+                            //                Z排碰到障碍物 = true;
+                            //                break;
+                            //            }
+
+                            //        }
+
+
+
+
+                            //        if (__z > _zz)
+                            //        {
+                            //            _zz = __z;
+                            //        }
+
+
+                            //        if (Z排碰到障碍物)
+                            //        {
+
+                            //            if (_xx == 0)
+                            //            {
+                            //                for (int i = 0; i < __z; i++)
+                            //                {
+                            //                    UpdateBlockDirection(new Vector3(_x + _xx, _y, _z + i), 2, false);
+                            //                }
+
+                            //            }
+
+
+                            //            break;
+                            //        }
+                            //        else
+                            //        {
+                            //            for (int i = 0; i < __z; i++)
+                            //            {
+                            //                UpdateBlockDirection(new Vector3(_x + _xx, _y, _z + i), 2, false);
+                            //            }
+
+                            //            //如果出界则停止
+                            //            if (_x + _xx == VoxelData.ChunkWidth)
+                            //            {
+                            //                break;
+                            //            }
+
+                            //        }
+
+
+
+                            //    }
+
+                            //    //print($"local：{new Vector3(x, y, z)},长和宽：<{_xx},{_zz}>");
+
+
+                            //    //最后应该给定一个长和宽 _xx与_zz
+
+
+
+                            //    //防止顶点乘上0
+                            //    if (_xx == 0)
+                            //    {
+
+                            //        //int _x = Mathf.FloorToInt((pos + VoxelData.faceChecks[p]).x);
+                            //        //int _y = Mathf.FloorToInt((pos + VoxelData.faceChecks[p]).y);
+                            //        //int _z = Mathf.FloorToInt((pos + VoxelData.faceChecks[p]).z);
+
+                            //        //如果需要双面绘制
+                            //        if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            //        {
+                            //            //print("绘制了");
+                            //            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                            //            vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
+                            //            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
+                            //            vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(1, 1, _zz)));
+
+                            //            triangles_Water.Add(vertexIndex);
+                            //            triangles_Water.Add(vertexIndex + 2);
+                            //            triangles_Water.Add(vertexIndex + 1);
+                            //            triangles_Water.Add(vertexIndex + 3);
+                            //            triangles_Water.Add(vertexIndex + 1);
+                            //            triangles_Water.Add(vertexIndex + 2);
+                            //            vertexIndex += 4;
+
+                            //            //根据p生成对应的面，对应的UV
+                            //            //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //            uvs.Add(new Vector2(0f, 0f));
+                            //            uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
+                            //            uvs.Add(new Vector2(1f, 0f));
+                            //            uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(1, _zz)));
+                            //        }
+                            //        else
+                            //        {
+                            //            print($"self: {blockID} , bool: {world.blocktypes[blockID].GenerateTwoFaceWithAir} , target: {GetBlock(pos, p).voxelType}");
+                            //        }
+
+                            //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                            //        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
+                            //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
+                            //        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(1, 1, _zz)));
+
+
+                            //        //根据p生成对应的面，对应的UV
+                            //        //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //        uvs.Add(new Vector2(0f, 0f));
+                            //        uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
+                            //        uvs.Add(new Vector2(1f, 0f));
+                            //        uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(1, _zz)));
+
+                            //    }
+                            //    else
+                            //    {
+                            //        //如果需要双面绘制
+                            //        if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            //        {
+                            //            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                            //            vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
+                            //            vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]], new Vector3(_xx, 1, 1)));
+                            //            vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(_xx, 1, _zz)));
+
+                            //            triangles_Water.Add(vertexIndex);
+                            //            triangles_Water.Add(vertexIndex + 2);
+                            //            triangles_Water.Add(vertexIndex + 1);
+                            //            triangles_Water.Add(vertexIndex + 3);
+                            //            triangles_Water.Add(vertexIndex + 1);
+                            //            triangles_Water.Add(vertexIndex + 2);
+                            //            vertexIndex += 4;
+
+                            //            //根据p生成对应的面，对应的UV
+                            //            //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //            uvs.Add(new Vector2(0f, 0f));
+                            //            uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
+                            //            uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 0f), new Vector2(_xx, 1)));
+                            //            uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(_xx, _zz)));
+                            //        }
+                            //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                            //        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
+                            //        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]], new Vector3(_xx, 1, 1)));
+                            //        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(_xx, 1, _zz)));
+
+
+                            //        //根据p生成对应的面，对应的UV
+                            //        //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //        uvs.Add(new Vector2(0f, 0f));
+                            //        uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
+                            //        uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 0f), new Vector2(_xx, 1)));
+                            //        uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(_xx, _zz)));
+
+                            //    }
+
+
+                            //    triangles_Water.Add(vertexIndex);
+                            //    triangles_Water.Add(vertexIndex + 1);
+                            //    triangles_Water.Add(vertexIndex + 2);
+                            //    triangles_Water.Add(vertexIndex + 2);
+                            //    triangles_Water.Add(vertexIndex + 1);
+                            //    triangles_Water.Add(vertexIndex + 3);
+                            //    vertexIndex += 4;
+                            //}
+                            //else if (p != 2)
+                            //{
+                            //    //print("侧面");
+                            //    //如果需要双面绘制
+                            //    if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            //    {
+                            //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                            //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
+                            //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
+                            //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
+
+                            //        //根据p生成对应的面，对应的UV
+                            //        //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //        uvs.Add(new Vector2(0f, 0f));
+                            //        uvs.Add(new Vector2(0f, 1f));
+                            //        uvs.Add(new Vector2(1f, 0f));
+                            //        uvs.Add(new Vector2(1f, 1f));
+
+                            //        triangles_Water.Add(vertexIndex);
+                            //        triangles_Water.Add(vertexIndex + 2);
+                            //        triangles_Water.Add(vertexIndex + 1);
+                            //        triangles_Water.Add(vertexIndex + 3);
+                            //        triangles_Water.Add(vertexIndex + 1);
+                            //        triangles_Water.Add(vertexIndex + 2);
+                            //        vertexIndex += 4;
+                            //    }
+                            //    else
+                            //    {
+                            //        print($"无法侧面双面绘制，pos:{pos} , self: {blockID}, blockId: {blockID}");
+                            //    }
+
+                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
+                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
+                            //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
+
+                            //    //根据p生成对应的面，对应的UV
+                            //    //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //    uvs.Add(new Vector2(0f, 0f));
+                            //    uvs.Add(new Vector2(0f, 1f));
+                            //    uvs.Add(new Vector2(1f, 0f));
+                            //    uvs.Add(new Vector2(1f, 1f));
+
+                            //    triangles_Water.Add(vertexIndex);
+                            //    triangles_Water.Add(vertexIndex + 1);
+                            //    triangles_Water.Add(vertexIndex + 2);
+                            //    triangles_Water.Add(vertexIndex + 2);
+                            //    triangles_Water.Add(vertexIndex + 1);
+                            //    triangles_Water.Add(vertexIndex + 3);
+                            //    vertexIndex += 4;
+                            //}
+
+
+                            if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                             {
-                                int _zz = 0;
-                                int _xx = 0;
-
-                                //if (x == 15 && z == 9)
-                                //{
-                                //    print("");
-                                //}
-
-
-                                //局部变量
-                                int __z = 0;
-                                bool Z排碰到障碍物 = false;
-
-                                //运行后获得当前方块可以踏步的范围
-                                for (_xx = 0; _xx < VoxelData.ChunkWidth; _xx++)
-                                {
-                                    for (__z = 0; __z < VoxelData.ChunkWidth; __z++)
-                                    {
-
-
-
-
-                                        //如果出界则停止
-                                        if (isOutOfRange(_x + _xx, _y, _z + __z))
-                                        {
-                                            break;
-                                        }
-
-                                        //if(_xx == 8){
-                                        //    print("");
-                                        //} 
-
-
-                                        //目标是水 && 目标上方是空气 && 目标的up是true
-                                        if ((GetBlock(_x + _xx, _y, _z + __z).voxelType != VoxelData.Water || GetBlock(_x + _xx, _y + 1, _z + __z).voxelType != VoxelData.Air) || (GetBlock(_x + _xx, _y, _z + __z).up == false))
-                                        {
-                                            Z排碰到障碍物 = true;
-                                            break;
-                                        }
-
-                                    }
-
-
-
-
-                                    if (__z > _zz)
-                                    {
-                                        _zz = __z;
-                                    }
-
-
-                                    if (Z排碰到障碍物)
-                                    {
-
-                                        if (_xx == 0)
-                                        {
-                                            for (int i = 0; i < __z; i++)
-                                            {
-                                                UpdateBlockDirection(new Vector3(_x + _xx, _y, _z + i), 2 ,false);
-                                            }
-
-                                        }
-
-
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        for (int i = 0; i < __z; i++)
-                                        {
-                                            UpdateBlockDirection(new Vector3(_x + _xx, _y, _z + i), 2, false);
-                                        }
-
-                                        //如果出界则停止
-                                        if (_x + _xx == VoxelData.ChunkWidth)
-                                        {
-                                            break;
-                                        }
-
-                                    }
-
-
-
-                                }
-
-                                //print($"local：{new Vector3(x, y, z)},长和宽：<{_xx},{_zz}>");
-
-
-                                //最后应该给定一个长和宽 _xx与_zz
-
-
-
-                                //防止顶点乘上0
-                                if (_xx == 0)
-                                {
-
-                                    //int _x = Mathf.FloorToInt((pos + VoxelData.faceChecks[p]).x);
-                                    //int _y = Mathf.FloorToInt((pos + VoxelData.faceChecks[p]).y);
-                                    //int _z = Mathf.FloorToInt((pos + VoxelData.faceChecks[p]).z);
-
-                                    //如果需要双面绘制
-                                    if (world.blocktypes[GetBlock(pos).voxelType].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
-                                    {
-                                        print("绘制了");
-                                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                                        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
-                                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
-                                        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(1, 1, _zz)));
-
-                                        triangles_Water.Add(vertexIndex);
-                                        triangles_Water.Add(vertexIndex + 2);
-                                        triangles_Water.Add(vertexIndex + 1);
-                                        triangles_Water.Add(vertexIndex + 3);
-                                        triangles_Water.Add(vertexIndex + 1);
-                                        triangles_Water.Add(vertexIndex + 2);
-                                        vertexIndex += 4;
-
-                                        //根据p生成对应的面，对应的UV
-                                        //AddTexture(world.blocktypes[blockID].GetTextureID(p));
-                                        uvs.Add(new Vector2(0f, 0f));
-                                        uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
-                                        uvs.Add(new Vector2(1f, 0f));
-                                        uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(1, _zz)));
-                                    }
-                                    else
-                                    {
-                                        print($"bool: {world.blocktypes[GetBlock(pos).voxelType].GenerateTwoFaceWithAir} , target: {GetBlock(pos, p).voxelType}");
-                                    }
-
-                                    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                                    vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
-                                    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
-                                    vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(1, 1, _zz)));
-
-
-                                    //根据p生成对应的面，对应的UV
-                                    //AddTexture(world.blocktypes[blockID].GetTextureID(p));
-                                    uvs.Add(new Vector2(0f, 0f));
-                                    uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
-                                    uvs.Add(new Vector2(1f, 0f));
-                                    uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(1, _zz)));
-
-                                }
-                                else
-                                {
-                                    //如果需要双面绘制
-                                    if (world.blocktypes[GetBlock(pos).voxelType].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
-                                    {
-                                        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                                        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
-                                        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]], new Vector3(_xx, 1, 1)));
-                                        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(_xx, 1, _zz)));
-
-                                        triangles_Water.Add(vertexIndex);
-                                        triangles_Water.Add(vertexIndex + 2);
-                                        triangles_Water.Add(vertexIndex + 1);
-                                        triangles_Water.Add(vertexIndex + 3);
-                                        triangles_Water.Add(vertexIndex + 1);
-                                        triangles_Water.Add(vertexIndex + 2);
-                                        vertexIndex += 4;
-
-                                        //根据p生成对应的面，对应的UV
-                                        //AddTexture(world.blocktypes[blockID].GetTextureID(p));
-                                        uvs.Add(new Vector2(0f, 0f));
-                                        uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
-                                        uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 0f), new Vector2(_xx, 1)));
-                                        uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(_xx, _zz)));
-                                    }
-                                    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                                    vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
-                                    vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]], new Vector3(_xx, 1, 1)));
-                                    vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(_xx, 1, _zz)));
-
-
-                                    //根据p生成对应的面，对应的UV
-                                    //AddTexture(world.blocktypes[blockID].GetTextureID(p));
-                                    uvs.Add(new Vector2(0f, 0f));
-                                    uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
-                                    uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 0f), new Vector2(_xx, 1)));
-                                    uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(_xx, _zz)));
-
-                                }
-
-
-                                triangles_Water.Add(vertexIndex);
-                                triangles_Water.Add(vertexIndex + 1);
-                                triangles_Water.Add(vertexIndex + 2);
-                                triangles_Water.Add(vertexIndex + 2);
-                                triangles_Water.Add(vertexIndex + 1);
-                                triangles_Water.Add(vertexIndex + 3);
-                                vertexIndex += 4;
-                            }
-                            else if(p != 2)
-                            {
-                                //如果需要双面绘制
-                                if (world.blocktypes[GetBlock(pos).voxelType].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
-                                {
-                                    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                                    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
-                                    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
-                                    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
-
-                                    //根据p生成对应的面，对应的UV
-                                    //AddTexture(world.blocktypes[blockID].GetTextureID(p));
-                                    uvs.Add(new Vector2(0f, 0f));
-                                    uvs.Add(new Vector2(0f, 1f));
-                                    uvs.Add(new Vector2(1f, 0f));
-                                    uvs.Add(new Vector2(1f, 1f));
-
-                                    triangles_Water.Add(vertexIndex);
-                                    triangles_Water.Add(vertexIndex + 2);
-                                    triangles_Water.Add(vertexIndex + 1);
-                                    triangles_Water.Add(vertexIndex + 3);
-                                    triangles_Water.Add(vertexIndex + 1);
-                                    triangles_Water.Add(vertexIndex + 2);
-                                    vertexIndex += 4;
-                                }
-
                                 vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
                                 vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
                                 vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
@@ -3773,23 +3788,47 @@ public class Chunk : MonoBehaviour
                                 uvs.Add(new Vector2(1f, 1f));
 
                                 triangles_Water.Add(vertexIndex);
-                                triangles_Water.Add(vertexIndex + 1);
-                                triangles_Water.Add(vertexIndex + 2);
                                 triangles_Water.Add(vertexIndex + 2);
                                 triangles_Water.Add(vertexIndex + 1);
                                 triangles_Water.Add(vertexIndex + 3);
+                                triangles_Water.Add(vertexIndex + 1);
+                                triangles_Water.Add(vertexIndex + 2);
                                 vertexIndex += 4;
                             }
+                            else
+                            {
+                                print($"无法侧面双面绘制，pos:{pos} , self: {blockID}, blockId: {blockID}");
+                            }
+
+                            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
+                            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
+                            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
+                            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
+
+                            //根据p生成对应的面，对应的UV
+                            //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            uvs.Add(new Vector2(0f, 0f));
+                            uvs.Add(new Vector2(0f, 1f));
+                            uvs.Add(new Vector2(1f, 0f));
+                            uvs.Add(new Vector2(1f, 1f));
+
+                            triangles_Water.Add(vertexIndex);
+                            triangles_Water.Add(vertexIndex + 1);
+                            triangles_Water.Add(vertexIndex + 2);
+                            triangles_Water.Add(vertexIndex + 2);
+                            triangles_Water.Add(vertexIndex + 1);
+                            triangles_Water.Add(vertexIndex + 3);
+                            vertexIndex += 4;
                         }
 
 
                         else
                         {
-
+                            //print($"else:p = {p}");
                             //如果需要双面绘制
-                            if (world.blocktypes[GetBlock(pos).voxelType].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                             {
-                                
+
                                 vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
                                 vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
                                 vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
@@ -3838,6 +3877,8 @@ public class Chunk : MonoBehaviour
                             triangles_Water.Add(vertexIndex + 3);
                             vertexIndex += 4;
                         }
+
+
 
 
                     }
@@ -3985,7 +4026,7 @@ public class Chunk : MonoBehaviour
                     {
 
                         //如果需要双面绘制
-                        if (world.blocktypes[GetBlock(pos).voxelType].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                        if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                         {
                             vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
                             vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
@@ -4355,126 +4396,126 @@ public class Chunk : MonoBehaviour
 
     }
 
-    private VoxelStruct GetBlock(Vector3 _pos)
-    {
-        int _x = (int)_pos.x;
-        int _y = (int)_pos.x;
-        int _z = (int)_pos.x;
+    //private VoxelStruct GetBlock(Vector3 _pos)
+    //{
+    //    int _x = (int)_pos.x;
+    //    int _y = (int)_pos.x;
+    //    int _z = (int)_pos.x;
 
-        //如果目标出界
-        if (isOutOfRange(_x, _y, _z))
-        {
-            int _p;
+    //    //如果目标出界
+    //    if (isOutOfRange(_x, _y, _z))
+    //    {
+    //        int _p;
 
-            //Front
-            if (_z > VoxelData.ChunkWidth - 1)
-            {
-                _p = 1;
-                //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
-                {
-                    //if (isOutOfRange(_x,_y,_z))
-                    //{
-                    //    print(new Vector3(_x,_y,_z));
-                    //}
+    //        //Front
+    //        if (_z > VoxelData.ChunkWidth - 1)
+    //        {
+    //            _p = 1;
+    //            //如果能查到
+    //            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            {
+    //                //if (isOutOfRange(_x,_y,_z))
+    //                //{
+    //                //    print(new Vector3(_x,_y,_z));
+    //                //}
 
-                    return chunktemp.voxelMap[_x, _y, 0];
-                }
-                else
-                {
-                    //print("GetTargetBlockType()搜索不到目标Chunk");
-                    return new VoxelStruct();
+    //                return chunktemp.voxelMap[_x, _y, 0];
+    //            }
+    //            else
+    //            {
+    //                //print("GetTargetBlockType()搜索不到目标Chunk");
+    //                return new VoxelStruct();
 
-                }
+    //            }
 
-            }
+    //        }
 
-            //Back
-            if (_z < 0)
-            {
-                _p = 0;
-                //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
-                {
-                    return chunktemp.voxelMap[_x, _y, VoxelData.ChunkWidth - 1];
+    //        //Back
+    //        if (_z < 0)
+    //        {
+    //            _p = 0;
+    //            //如果能查到
+    //            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            {
+    //                return chunktemp.voxelMap[_x, _y, VoxelData.ChunkWidth - 1];
 
-                }
-                else
-                {
-                    //print("GetTargetBlockType()搜索不到目标Chunk");
-                    return new VoxelStruct();
+    //            }
+    //            else
+    //            {
+    //                //print("GetTargetBlockType()搜索不到目标Chunk");
+    //                return new VoxelStruct();
 
-                }
+    //            }
 
 
-            }
+    //        }
 
-            //Left
-            if (_x < 0)
-            {
-                _p = 4;
-                //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
-                {
+    //        //Left
+    //        if (_x < 0)
+    //        {
+    //            _p = 4;
+    //            //如果能查到
+    //            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            {
 
-                    return chunktemp.voxelMap[VoxelData.ChunkWidth - 1, _y, _z];
+    //                return chunktemp.voxelMap[VoxelData.ChunkWidth - 1, _y, _z];
 
-                }
-                else
-                {
-                    //print("GetTargetBlockType()搜索不到目标Chunk");
-                    return new VoxelStruct();
+    //            }
+    //            else
+    //            {
+    //                //print("GetTargetBlockType()搜索不到目标Chunk");
+    //                return new VoxelStruct();
 
-                }
+    //            }
 
-            }
+    //        }
 
-            //Right
-            if (_x > VoxelData.ChunkWidth - 1)
-            {
-                _p = 5;
-                //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
-                {
+    //        //Right
+    //        if (_x > VoxelData.ChunkWidth - 1)
+    //        {
+    //            _p = 5;
+    //            //如果能查到
+    //            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            {
 
-                    return chunktemp.voxelMap[0, _y, _x];
+    //                return chunktemp.voxelMap[0, _y, _x];
 
-                }
-                else
-                {
-                    //print("GetTargetBlockType()搜索不到目标Chunk");
-                    return new VoxelStruct();
+    //            }
+    //            else
+    //            {
+    //                //print("GetTargetBlockType()搜索不到目标Chunk");
+    //                return new VoxelStruct();
 
-                }
+    //            }
 
-            }
+    //        }
 
-            //Up不需要考虑
-            //if (_y > VoxelData.ChunkHeight - 1)
-            //{
-            //    return new VoxelStruct();
-            //}
+    //        //Up不需要考虑
+    //        //if (_y > VoxelData.ChunkHeight - 1)
+    //        //{
+    //        //    return new VoxelStruct();
+    //        //}
 
-            ////Down
-            //if (_y < 0)
-            //{
+    //        ////Down
+    //        //if (_y < 0)
+    //        //{
 
-            //    return new VoxelStruct();
+    //        //    return new VoxelStruct();
 
-            //}
+    //        //}
 
-            //print("GetTargetBlockType()出界了但是全都找不到");
-            return new VoxelStruct();
+    //        //print("GetTargetBlockType()出界了但是全都找不到");
+    //        return new VoxelStruct();
 
-        }
+    //    }
 
-        else
-        {
+    //    else
+    //    {
 
-            return voxelMap[_x, _y, _z];
-        }
+    //        return voxelMap[_x, _y, _z];
+    //    }
 
-    }
+    //}
 
     //重载
     private VoxelStruct GetBlock(int _x, int _y,int _z)
@@ -4600,7 +4641,7 @@ public class Chunk : MonoBehaviour
                 if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
-                    return chunktemp.voxelMap[0, _y, _x];
+                    return chunktemp.voxelMap[0, _y, _z];
 
                 }
                 else
@@ -4732,8 +4773,10 @@ public class Chunk : MonoBehaviour
 
         else
         {
-
-            return voxelMap[_x, _y, _z];
+            int posX = (int)VoxelData.faceChecks[_p].x;
+            int posY = (int)VoxelData.faceChecks[_p].y;
+            int posZ = (int)VoxelData.faceChecks[_p].z;
+            return voxelMap[_x + posX, _y + posY, _z + posZ];
         }
     }
 

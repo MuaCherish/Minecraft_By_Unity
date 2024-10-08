@@ -6019,7 +6019,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1055, y: -29}
+  m_AnchoredPosition: {x: 1362.5, y: -29}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &157465766
@@ -6076,7 +6076,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 4
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -23315,7 +23315,7 @@ Transform:
   m_GameObject: {fileID: 656216632}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.893, z: 0}
+  m_LocalPosition: {x: 0, y: -1.419, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25871,16 +25871,16 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 1
     canBeChoose: 1
-    candropBlock: 1
+    candropBlock: 0
     IsOriented: 0
     isinteractable: 0
     is2d: 1
     isTool: 0
     isNeedRotation: 0
-    isDIYCollision: 1
+    isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
-      yRange: {x: 0, y: 0.5}
+      yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1992469322, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     sprite: {fileID: -1992469322, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25906,16 +25906,16 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 1
     canBeChoose: 1
-    candropBlock: 1
+    candropBlock: 0
     IsOriented: 0
     isinteractable: 0
     is2d: 1
     isTool: 0
     isNeedRotation: 0
-    isDIYCollision: 1
+    isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0, y: 1}
-      yRange: {x: 0, y: 0.5}
+      yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1845019132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     sprite: {fileID: 1845019132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26983,6 +26983,7 @@ MonoBehaviour:
   MeshLock: 0
   OneChunkRenderTime: 0
   PointSaving: 
+  WaitToAdd_EditList: []
 --- !u!4 &699955242
 Transform:
   m_ObjectHideFlags: 0
@@ -36661,6 +36662,7 @@ MonoBehaviour:
     _button: {fileID: 546164567}
   SwapBlockPrefeb: {fileID: 8692207135206538234, guid: 2470c7bafe8f68d4e979146ac3155a33, type: 3}
   hasClickedSlot: 0
+  maxWaitSeconds: 0.15
 --- !u!1 &1032736498
 GameObject:
   m_ObjectHideFlags: 0
@@ -49725,6 +49727,7 @@ MonoBehaviour:
   inputInertia: 0.1
   Flying_inputInertia: 0.5
   hasExec_isChangedBlock: 1
+  LastHighLightBlockPos: {x: 0, y: 0, z: 0}
   MainBody: {fileID: 473442143}
   FirstPersonCamera: {fileID: 1727421506}
   ThridPersonCamera: {fileID: 1039204585}
@@ -70279,23 +70282,25 @@ MonoBehaviour:
   - {fileID: 1634312356464405634}
   messageLife: 5
   commands:
-  - name: "\u6253\u5370"
+  - name: "0\u6253\u5370"
     command: /print
-  - name: "\u5B58\u6863"
+  - name: "1\u5B58\u6863"
     command: /save
-  - name: "\u81EA\u6740"
+  - name: "2\u81EA\u6740"
     command: /kill
-  - name: "\u8BFB\u6863"
+  - name: "3\u8BFB\u6863"
     command: /load
-  - name: "\u7ED9\u65B9\u5757"
+  - name: "4\u7ED9\u65B9\u5757"
     command: /give
-  - name: "\u8BBE\u5B9A\u65F6\u95F4"
+  - name: "5\u8BBE\u5B9A\u65F6\u95F4"
     command: /time
-  - name: "\u8BBE\u5B9A\u5E27\u6570"
+  - name: "6\u8BBE\u5B9A\u5E27\u6570"
     command: /fps
-  - name: "\u5E2E\u52A9\u6587\u6863"
+  - name: "7\u96FE\u6C14"
+    command: /fog
+  - name: "8\u5E2E\u52A9\u6587\u6863"
     command: /help
-  - name: "\u6DFB\u52A0\u53F2\u83B1\u59C6"
+  - name: "9\u6DFB\u52A0\u53F2\u83B1\u59C6"
     command: /addSlim
   Entity_Slim: {fileID: 2104549777}
 --- !u!1 &2032131446

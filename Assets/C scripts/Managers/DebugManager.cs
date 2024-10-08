@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
@@ -28,6 +29,12 @@ public class DebugManager : MonoBehaviour
         managerHub = VoxelData.GetManagerhub();
     }
 
+    public void InitDebugManager()
+    {
+        isDebug = false;
+    }
+
+
     private void FixedUpdate()
     {
         if (isDebug)
@@ -43,6 +50,7 @@ public class DebugManager : MonoBehaviour
         {
             if (DebugScreen.activeSelf)
             {
+                isDebug = false;
                 DebugScreen.SetActive(false);
             }
 
@@ -84,10 +92,24 @@ public class DebugManager : MonoBehaviour
         //FPS
         CalculateFPS();
 
+        // 根据 FPS 设置颜色
+        string fpsColor;
+        if (managerHub.fpsmManaer.fps < 60)
+        {
+            fpsColor = "red";
+        }
+        else if (managerHub.fpsmManaer.fps <= 80)
+        {
+            fpsColor = "yellow";
+        }
+        else
+        {
+            fpsColor = "white";
+        }
 
         //update
         //LeftText.text += $"\n";
-        LeftText.text = $"帧数: {managerHub.fpsmManaer.fps:F2}\n";
+        LeftText.text = $"<color={fpsColor}>帧数: {managerHub.fpsmManaer.fps:F2}</color>\n";
         LeftText.text += $"当前时间: {managerHub.timeManager.GetCurrentTime():F2}时\n";
         LeftText.text += $"\n";
         LeftText.text += $"[Player]\n";
@@ -99,26 +121,29 @@ public class DebugManager : MonoBehaviour
         LeftText.text += $"输入: {managerHub.player.keyInput}\n";
         LeftText.text += $"眼睛坐标: {managerHub.player.cam.position}\n";
         LeftText.text += $"实时重力: {managerHub.player.verticalMomentum}\n";
-        LeftText.text += $"绝对坐标: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))}\n";
-        LeftText.text += $"相对坐标: {managerHub.world.GetRelalocation(footlocation)}\n";
+        //LeftText.text += $"绝对坐标: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))}\n";
+        //LeftText.text += $"相对坐标: {managerHub.world.GetRelalocation(footlocation)}\n";
         LeftText.text += $"已保存方块数量: {managerHub.world.EditNumber.Count}\n";
         LeftText.text += $"碰撞点检测个数:{managerHub.player.CollisionNumber}\n";
         //LeftText.text += $"生存模式玩家走过的路程: {managerHub.player.accumulatedDistance:F2}m\n";
         LeftText.text += $"\n";
         LeftText.text += $"[Chunk]\n";
         LeftText.text += $"区块坐标: {managerHub.world.GetChunkLocation(footlocation)}\n";
-        LeftText.text += $"初始化区块平均渲染时间: {(managerHub.world.OneChunkRenderTime * 1000f):F3}ms\n";
+        LeftText.text += $"初始化区块平均渲染时间: {CaculateChunkRenderTime()}\n";
         LeftText.text += $"\n";
         //LeftText.text += $"[Noise]\n";
 
 
 
 
-        //RightText.text += $"\n";
+        //RightText.text += $"\n"; 
         RightText.text = $"[System]\n";
-        RightText.text += $"实时渲染面数: {CameraOnPreRender()}个\n";
-        
-
+        RightText.text += $"实时渲染面数; {CameraOnPreRender()}\n";
+        RightText.text += $"\n";
+        RightText.text += $"[Position]\n";
+        RightText.text += $"foot绝对坐标: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))} \n";
+        RightText.text += $"foot相对坐标: {managerHub.world.GetRelalocation(footlocation)} \n";
+        RightText.text += $"foot坐标类型: {managerHub.world.GetBlockType(footlocation)} \n";
     }
 
     
@@ -153,7 +178,9 @@ public class DebugManager : MonoBehaviour
     }
 
 
-    #endregion
+
+
+#endregion
 
 
     #region DEBUG-计算String朝向
@@ -212,8 +239,8 @@ public class DebugManager : MonoBehaviour
 
     #region DEBUG-Camera渲染面数
 
-    //渲染面数
-    private int CameraOnPreRender()
+    // 渲染面数
+    private string CameraOnPreRender()
     {
         int triangleCount = 0;
 
@@ -234,8 +261,66 @@ public class DebugManager : MonoBehaviour
             }
         }
 
-        return triangleCount;
+        string triangleCountStr;
+        string color;
+
+        // 判断三角形数量是否小于 1w
+        if (triangleCount < 10000)
+        {
+            // 显示具体数量，不做 "w" 转换
+            triangleCountStr = triangleCount.ToString();
+            color = "white";
+        }
+        else
+        {
+            // 转换为 "W" 单位
+            int triangleCountInW = Mathf.RoundToInt(triangleCount / 10000f);
+            triangleCountStr = triangleCountInW.ToString() + "w";
+
+            // 根据渲染面数设置颜色
+            if (triangleCountInW > 50)
+            {
+                color = "red";
+            }
+            else if (triangleCountInW >= 20 && triangleCountInW <= 50)
+            {
+                color = "yellow";
+            }
+            else
+            {
+                color = "white";
+            }
+        }
+
+        // 返回带有颜色标签的字符串
+        return $"<color={color}>{triangleCountStr}</color>";
     }
+
+
+
+
+    #endregion
+
+
+    #region DEBUG-区块渲染时间
+
+    string CaculateChunkRenderTime()
+    {
+        float time = Mathf.Round(managerHub.world.OneChunkRenderTime * 1000f * 100f) / 100f;
+
+        if (time == 0)
+        {
+            // 返回"正在计算..."
+            return "正在计算...";
+        }
+        else
+        {
+            // 返回保留两位小数的time
+            return time.ToString("F3") + "ms";
+        }
+    }
+
+
 
     #endregion
 

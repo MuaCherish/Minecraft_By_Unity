@@ -305,6 +305,8 @@ public class Player : MonoBehaviour
                 lifemanager.UpdatePlayerBlood(100, true, true);
             }
 
+            placeCursorBlocks();
+
         }
 
 
@@ -346,11 +348,13 @@ public class Player : MonoBehaviour
                 mouseVerticalspeed = 0f;
 
             }
+
+            //Playing
             else
             {
 
                 GetPlayerInputs();
-                placeCursorBlocks();
+                
 
             }
 
@@ -878,7 +882,7 @@ public class Player : MonoBehaviour
 
             if (pointvector != OldPointLocation && OldPointLocation != Vector3.zero && pointvector != Vector3.zero)
             {
-
+                //print("CHangedBlock");
                 isChangeBlock = true;
                 musicmanager.isbroking = false;
                 OldPointLocation = pointvector;
@@ -1025,7 +1029,7 @@ public class Player : MonoBehaviour
 
 
                         //EditNumber
-                        world.GetChunkObject(RayCast).UpdateEditNumber(RayCast, backpackmanager.slots[selectindex].blockId);
+                        world.UpdateEditNumber(RayCast, backpackmanager.slots[selectindex].blockId);
 
 
                         if (world.game_mode == GameMode.Survival)
@@ -1324,7 +1328,7 @@ public class Player : MonoBehaviour
         //World
         var chunkObject = world.GetChunkObject(position);
         chunkObject.EditData(world.GetRelalocation(position), VoxelData.Air);
-        chunkObject.UpdateEditNumber(position, VoxelData.Air);
+        //world.UpdateEditNumber(position, VoxelData.Air);
 
 
         
@@ -1421,9 +1425,11 @@ public class Player : MonoBehaviour
     }
 
 
-
+    //放置高亮方块
+    [ReadOnly]public Vector3 LastHighLightBlockPos;
     private void placeCursorBlocks()
     {
+        //如果成功放置，则不需要再更新，直到玩家改变方块isChangeBlock == true或者world.GetBlockType(pos)发生改变
 
         float step = checkIncrement;
         Vector3 lastPos = new Vector3();
@@ -1440,33 +1446,24 @@ public class Player : MonoBehaviour
             }
 
 
+            //如果可以放置
             if (world.eyesCheckForVoxel(pos))
             {
-                point_Block_type = world.GetBlockType(pos);
-
                 int posX = Mathf.FloorToInt(pos.x);
                 int posY = Mathf.FloorToInt(pos.y);
                 int posZ = Mathf.FloorToInt(pos.z);
-
-                HighlightBlock.position = new Vector3(posX + 0.5f, posY + 0.5f, posZ + 0.5f);
-                HighlightBlock.localScale = new Vector3(1.01f, 1.01f, 1.01f);
-
-                if (managerhub.world.blocktypes[point_Block_type].isDIYCollision)
-                {
-                    CollosionRange _collisionRange = managerhub.world.blocktypes[point_Block_type].CollosionRange;
-                    float offsetX = _collisionRange.xRange.y - _collisionRange.xRange.x;
-                    float offsetY = _collisionRange.yRange.y - _collisionRange.yRange.x;
-                    float offsetZ = _collisionRange.zRange.y - _collisionRange.zRange.x;
-                    HighlightBlock.position = new Vector3(posX + _collisionRange.xRange.y - offsetX / 2f, posY + _collisionRange.yRange.y - offsetY / 2f, posZ + (_collisionRange.zRange.y - offsetZ / 2f));
-                    HighlightBlock.localScale = new Vector3(offsetX + 0.01f, offsetY + 0.01f, offsetZ + 0.01f);;
-
-                }
+                point_Block_type = world.GetBlockType(pos);
                 
 
+                //如果不一样则重新放置
+                if (new Vector3(posX, posY, posZ) != LastHighLightBlockPos)
+                {
+                    //print("不一样");
+                    updateHightLightBlock(posX, posY, posZ);
+                    LastHighLightBlockPos = new Vector3(posX, posY, posZ);
+                }
 
-
-                HighlightBlock.gameObject.SetActive(true);
-
+               
 
                 return;
 
@@ -1482,6 +1479,29 @@ public class Player : MonoBehaviour
 
         HighlightBlock.gameObject.SetActive(false);
 
+    }
+
+    void updateHightLightBlock(int posX, int posY,int posZ)
+    {
+        //print("更新高亮方块");
+
+        HighlightBlock.position = new Vector3(posX + 0.5f, posY + 0.5f + 0.01f, posZ + 0.5f);
+        HighlightBlock.localScale = new Vector3(1.01f, 1.01f, 1.01f);
+
+
+        //动态改变HighLightBlock大小
+        if (managerhub.world.blocktypes[point_Block_type].isDIYCollision)
+        {
+            CollosionRange _collisionRange = managerhub.world.blocktypes[point_Block_type].CollosionRange;
+            float offsetX = _collisionRange.xRange.y - _collisionRange.xRange.x;
+            float offsetY = _collisionRange.yRange.y - _collisionRange.yRange.x;
+            float offsetZ = _collisionRange.zRange.y - _collisionRange.zRange.x;
+            HighlightBlock.position = new Vector3(posX + _collisionRange.xRange.y - offsetX / 2f, posY + _collisionRange.yRange.y - offsetY / 2f, posZ + (_collisionRange.zRange.y - offsetZ / 2f));
+            HighlightBlock.localScale = new Vector3(offsetX + 0.01f, offsetY + 0.01f, offsetZ + 0.01f); ;
+
+        }
+
+        HighlightBlock.gameObject.SetActive(true);
     }
 
 
@@ -1588,8 +1608,29 @@ public class Player : MonoBehaviour
     }
 
 
+
+    //初始化玩家坐标
     public void InitPlayerLocation()
     {
+
+        if (managerhub.world.isLoadSaving)
+        {
+            managerhub.world.Start_Position = managerhub.world.worldSetting.playerposition;
+        }
+
+
+        if (managerhub.world.isLoadSaving && managerhub.world.worldSetting.playerposition.y > 0)
+        {
+            managerhub.world.Start_Position = managerhub.world.worldSetting.playerposition;
+            transform.rotation = managerhub.world.worldSetting.playerrotation;
+        }
+        else
+        {
+
+            managerhub.world.Start_Position = new Vector3(managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).x, VoxelData.ChunkHeight - 1, managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).z);
+            //print($"start: {Start_Position}");
+            managerhub.world.Start_Position = managerhub.world.AddressingBlock(managerhub.world.Start_Position, 3);
+        }
 
         transform.position = world.Start_Position;
 
@@ -2761,6 +2802,12 @@ public class Player : MonoBehaviour
 
 
     //---------------------------------- 工具类 ---------------------------------------------
+
+    public Vector3 GetIntPosition(Vector3 _pos)
+    {
+        return new Vector3((int)_pos.x, (int)_pos.y, (int)_pos.z);
+    }
+
 
     public Transform GetEyesPosition()
     {

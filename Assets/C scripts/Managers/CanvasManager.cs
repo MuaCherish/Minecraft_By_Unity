@@ -79,23 +79,23 @@ public class CanvasManager : MonoBehaviour
     [Header("Options")]
     //bgm
     public float volume_bgm = 0.5f;
-    private float previous_bgm = 0.5f;
+    //private float previous_bgm = 0.5f;
 
     //sound
     public float volume_sound = 0.5f;
-    private float previous_sound = 0.5f;
+    //private float previous_sound = 0.5f;
 
     //render speed
     public float Mouse_Sensitivity = 1f;
-    private float previous_Mouse_Sensitivity = 1f;
+    //private float previous_Mouse_Sensitivity = 1f;
 
     //isSpaceMode
     public bool SpaceMode_isOn = false;
-    private bool previous_spaceMode_isOn = false;
+    //private bool previous_spaceMode_isOn = false;
 
     //isSpaceMode
     public bool SuperMining_isOn = false;
-    private bool previous_SuperMining_isOn = false;
+    //private bool previous_SuperMining_isOn = false;
 
     //pormpt
     public float promptShowspeed = 400f;
@@ -144,15 +144,15 @@ public class CanvasManager : MonoBehaviour
         // 初始化修改值参数
         isPausing = false;
         volume_bgm = 0.5f;
-        previous_bgm = 0.5f;
+        //previous_bgm = 0.5f;
         volume_sound = 0.5f;
-        previous_sound = 0.5f;
+        //previous_sound = 0.5f;
         //Mouse_Sensitivity = 1f;
         //previous_Mouse_Sensitivity = 1f;
         SpaceMode_isOn = false;
-        previous_spaceMode_isOn = false;
+        //previous_spaceMode_isOn = false;
         SuperMining_isOn = false;
-        previous_SuperMining_isOn = false;
+        //previous_SuperMining_isOn = false;
 
         // 初始化提示信息显示速度
         promptShowspeed = 400f;
@@ -1022,22 +1022,31 @@ public class CanvasManager : MonoBehaviour
     {
         world.ClassifyWorldData();
 
+        // 切换到 "正在保存中" 的 UI
         SwitchToUI(VoxelData.ui正在保存中);
 
+        // 假设分类完成后有1秒的延迟（根据实际情况调整）
         yield return new WaitForSeconds(1f);
 
         while (true)
         {
-            if (world.isFinishSaving)
+            // 等待世界保存完成以及 updateEditNumberCoroutine 协程执行完毕
+            if (world.isFinishSaving && managerhub.world.updateEditNumberCoroutine == null)
             {
+                // 切换回菜单界面
                 SwitchToUI(VoxelData.ui菜单);
 
+                // 停止所有协程并重新初始化所有管理器
                 StopAllCoroutines();
                 InitAllManagers();
                 break;
             }
+
+            // 暂停一帧，避免过度占用 CPU
+            yield return null;
         }
     }
+
 
 
     //全部初始化
@@ -1049,6 +1058,8 @@ public class CanvasManager : MonoBehaviour
         player.InitPlayerManager();
         BackPackManager.InitBackPackManager();
         LifeManager.InitLifeManager();
+        managerhub.debugManager.InitDebugManager();
+        InitBackPackSlots();
     }
 
 
@@ -1267,6 +1278,15 @@ public class CanvasManager : MonoBehaviour
     public GameObject 创造背包text_ShowName;
     public Transform 创造物品栏Content;
 
+    //背包物品栏初始化
+    public void InitBackPackSlots()
+    {
+        foreach (Transform item in 创造物品栏Content)
+        {
+            item.gameObject.GetComponent<SlotBlockItem>().InitBlockItem(new BlockItem(255, 0));
+            item.gameObject.GetComponent<SlotBlockItem>().UpdateBlockItem();
+        }
+    }
 
     [System.Serializable]
     public class BlockEntry
@@ -1488,8 +1508,8 @@ public class CanvasManager : MonoBehaviour
     }
 
     //处理如果没点到slot的情况
-    public bool hasClickedSlot = false;  // 标记是否点击了slot
-    private float maxWaitSeconds = 0.1f;  // 设置最大等待时间（单位：秒）
+    [HideInInspector]public bool hasClickedSlot = false;  // 标记是否点击了slot
+    public float maxWaitSeconds = 0.1f;  // 设置最大等待时间（单位：秒）
 
 
     //延迟判定是否点击到slot
@@ -1910,11 +1930,11 @@ public class CanvasManager : MonoBehaviour
         //DeadScreen.SetActive(false);
         SwitchToUI(VoxelData.ui玩家);
 
-        
+
 
         world.game_state = Game_State.Playing;
 
-        LifeManager.blood = 20; 
+        LifeManager.blood = 20;
         LifeManager.oxygen = 10;
         LifeManager.UpdatePlayerBlood(0, false, false);
         startTime = Time.time;
@@ -1922,11 +1942,15 @@ public class CanvasManager : MonoBehaviour
         player.InitPlayerLocation();
         player.transform.rotation = Quaternion.identity;
 
-        world.Update_CenterChunks();
+        world.Update_CenterChunks(false);
 
         world.HideFarChunks();
 
-        managerhub.timeManager.Buff_CaveFog(false);
+        if (managerhub.timeManager.gameObject.activeSelf)
+        {
+            managerhub.timeManager.Buff_CaveFog(false);
+        }
+        
 
 
 
