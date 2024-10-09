@@ -533,6 +533,7 @@ public class World : MonoBehaviour
 
         }
 
+        //yield return new WaitForSeconds(0.5f);
 
         //重新初始化玩家位置，防止穿模
         if (_isInitPlayerLocation)
@@ -1617,13 +1618,14 @@ public class World : MonoBehaviour
     public Vector3 AddressingBlock(Vector3 _start, int _direct)
     {
         Vector3 _address = _start;
+        print($"start: {_address}");
 
         for (int i = 0;i < VoxelData.ChunkHeight; i ++)
         {
             byte _byte = GetBlockType(_address);
             if (_byte != VoxelData.Air)
             {
-
+                print($"坐标：{_address} , 碰到{_byte}");
                 //添加一个方块踮脚
                 if (_byte == VoxelData.Water)
                 {

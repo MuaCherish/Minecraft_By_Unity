@@ -1627,11 +1627,12 @@ public class Player : MonoBehaviour
         else
         {
 
-            managerhub.world.Start_Position = new Vector3(managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).x, VoxelData.ChunkHeight - 1, managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).z);
-            //print($"start: {Start_Position}");
+            managerhub.world.Start_Position = new Vector3(managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).x, VoxelData.ChunkHeight - 2, managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).z);
+            //print($"start: {managerhub.world.Start_Position}");
             managerhub.world.Start_Position = managerhub.world.AddressingBlock(managerhub.world.Start_Position, 3);
-        }
 
+        }
+        //print($"end: {managerhub.world.Start_Position}");
         transform.position = world.Start_Position;
 
     }
