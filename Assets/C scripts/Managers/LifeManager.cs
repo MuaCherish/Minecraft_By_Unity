@@ -1,3 +1,4 @@
+using Homebrew;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,13 +6,19 @@ using UnityEngine.UI;
 
 public class LifeManager : MonoBehaviour
 {
+    /// <summary>
+    /// 优化建议：
+    /// 1. 奔跑锁定希望能放在player里
+    /// 2. 希望该脚本可以挂载在玩家身上
+    /// </summary>
+
 
 
     #region 状态
 
-    [Header("状态")]
-    [ReadOnly]public int blood = 20;   private int maxblood = 20;  //当前血量和最高血量
-    [ReadOnly] public float food = 20;   private float maxfood = 20;
+    [Foldout("状态", true)]
+    [Header("血量")][ReadOnly]public int blood = 20;   private int maxblood = 20;  //当前血量和最高血量
+    [Header("饱食度")][ReadOnly] public float food = 20;   private float maxfood = 20;
 
     #endregion
 
@@ -111,6 +118,7 @@ public class LifeManager : MonoBehaviour
 
     #region 生命值系统
 
+    [Foldout("生命值系统", true)]
     [Header("生命值系统引用")]
     public Image[] Bloods = new Image[10];
     public Image[] BloodContainer = new Image[10];
@@ -122,14 +130,14 @@ public class LifeManager : MonoBehaviour
 
     //Container闪烁参数
     [Header("血条闪烁")]
-    public int blink_numbet = 3;
-    public float blink_time = 0.2f;
-    public float duretime = 0.3f;
+    [Header("闪烁次数")] public int blink_numbet = 3;
+    [Header("闪烁持续时间")] public float blink_time = 0.2f;
+    [Header("闪烁间隔时间")] public float duretime = 0.3f;
 
     //血量恢复
     [Header("血量恢复")]
-    public float recoverTime = 5f;
-    public int recoverBlood = 1;
+    [Header("血量恢复间隔时间")] public float recoverTime = 5f;
+    [Header("每次恢复的血量")] public int recoverBlood = 1;
     Coroutine RecoveryCoroutine;
 
     /// <summary>
@@ -252,6 +260,7 @@ public class LifeManager : MonoBehaviour
 
     #region 饥饿值系统
 
+    [Foldout("饥饿值系统", true)]
     [Header("饥饿值系统引用")]
     public Image[] foods = new Image[10];
     public Image[] FoodsContainer = new Image[10];
@@ -259,7 +268,7 @@ public class LifeManager : MonoBehaviour
     public Sprite food_half;
 
     [Header("饥饿值系统参数")]
-    public bool SprintLock = false;
+    [Header("奔跑锁定")] public bool SprintLock = false;
 
     /// <summary>
     /// 更新玩家饱食度(hurt为负数是加饱食度)
@@ -380,18 +389,17 @@ public class LifeManager : MonoBehaviour
 
     #region 氧气系统
 
-    [Header("氧气系统")]
-    public int oxygen = 10;
+    [Foldout("氧气系统", true)]
+    [Header("氧气值")] public int oxygen = 10;
     private int oxygen_max = 10;
-    public Image[] oxygen_sprites = new Image[10];
+    [Header("氧气引用")] public Image[] oxygen_sprites = new Image[10];
 
     Coroutine minus_oxy_Coroutine;
     Coroutine add_oxy_Coroutine;
 
-    public float minusTime = 1f;
-    public float brustTime = 0.5f;
-
-    public float addTime = 0.2f;
+    [Header("氧气破裂间隔时间")] public float minusTime = 1f;
+    [Header("氧气破裂持续时间")] public float brustTime = 0.5f;
+    [Header("恢复氧气间隔时间")] public float addTime = 0.2f;
 
     //入水
     public void Oxy_IntoWater()

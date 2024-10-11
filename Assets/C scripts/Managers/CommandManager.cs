@@ -1,3 +1,4 @@
+using Homebrew;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,25 +12,28 @@ public class CommandManager : MonoBehaviour
 
     #region 状态
 
+    [Foldout("状态", true)]
     [Header("状态")]
     [ReadOnly]public bool isConsoleActive = false; // 标志位，跟踪控制台的激活状态
 
     #endregion
-
+    
 
     #region 周期函数
 
     private ManagerHub managerhub;
+    private World world;
 
     private void Start()
     {
         managerhub = VoxelData.GetManagerhub();
+        world = managerhub.world;
     }
 
 
     private void Update()
     {
-        if (managerhub.world.game_state == Game_State.Playing || managerhub.world.game_state == Game_State.Pause)
+        if (world.game_state == Game_State.Playing || world.game_state == Game_State.Pause)
         {
             // 按下T键且控制台未激活时才激活控制台
             if (Input.GetKeyDown(KeyCode.T) && !isConsoleActive)
@@ -51,9 +55,10 @@ public class CommandManager : MonoBehaviour
 
     #region 聊天面板
 
-    [Header("聊天面板")]
+    [Foldout("聊天面板", true)]
     public GameObject CommandScreen;
     //public GameObject 内置消息栏;
+    [Header("输入框")]
     public TMP_InputField inputField; // 用于输入命令的InputField
 
 
@@ -86,9 +91,12 @@ public class CommandManager : MonoBehaviour
 
     #region 聊天系统
 
-    [Header("聊天系统")]
+    [Foldout("聊天系统", true)]
+    [Header("外置消息栏")]
     public TextMeshProUGUI[] 外置消息栏 = new TextMeshProUGUI[13];
+    [Header("13条聊天消息")]
     public FixedList<Amessage> AliveMessages = new FixedList<Amessage>(13);
+    [Header("消息生命")]
     public float messageLife = 3f;
     private Coroutine CheckMessageLifeCoroutine;
 
@@ -304,10 +312,9 @@ public class CommandManager : MonoBehaviour
         public string command;
     }
 
-
-    [Header("指令系统")]
-    public List<CommandSystem> commands = new List<CommandSystem>();
-    public GameObject Entity_Slim;
+    [Foldout("指令系统", true)]
+    [Header("指令集")] public List<CommandSystem> commands = new List<CommandSystem>();
+    [Header("史莱姆引用")] public GameObject Entity_Slim;
 
     //指令解析-执行函数
     public String CheckCommand(String _input, out Color _color)
@@ -404,7 +411,7 @@ public class CommandManager : MonoBehaviour
                         //Debug.Log("提取并转换的类型和数量: " + type + ", " + number);
 
                         // 判断 type 是否在 blocktypes 范围内
-                        if (type < managerhub.world.blocktypes.Length)
+                        if (type < world.blocktypes.Length)
                         {
                             // 更新背包内容，例如插入 type 数量为 number 的物品
                             managerhub.backpackManager.update_slots(0, type, number);
@@ -554,7 +561,7 @@ public class CommandManager : MonoBehaviour
 
             //help
             case 8:
-                managerhub.backpackManager.managerhub.backpackManager.update_slots(0, VoxelData.Tool_Book);
+                managerhub.backpackManager.update_slots(0, VoxelData.Tool_Book);
 
                 return "<系统消息> " + "请查看帮助文档";
 

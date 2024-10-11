@@ -1,21 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using Homebrew;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
-using UnityEngine.UI;
-using static UnityEngine.Animations.AimConstraint;
 
 public class DebugManager : MonoBehaviour
 {
 
-
     #region 状态
 
-    [Header("状态")]
+    [Foldout("状态", true)]
     [ReadOnly] public bool isDebug = false;
 
     #endregion
@@ -24,6 +16,13 @@ public class DebugManager : MonoBehaviour
     #region 周期函数
 
     private ManagerHub managerHub;
+
+    private void Awake()
+    {
+        Application.targetFrameRate = 100;
+    }
+
+
     private void Start()
     {
         managerHub = VoxelData.GetManagerhub();
@@ -34,12 +33,17 @@ public class DebugManager : MonoBehaviour
         isDebug = false;
     }
 
+    [Foldout("Debug参数", true)]
+    [Header("Debug刷新频率")]
+    public float debugUpdateInterval = 0.5f;
+    private float lastDebugUpdateTime;
 
     private void FixedUpdate()
     {
-        if (isDebug)
+        if (isDebug && Time.time - lastDebugUpdateTime >= debugUpdateInterval)
         {
             UpdateScreen();
+            lastDebugUpdateTime = Time.time;
         }
     }
 
@@ -64,6 +68,10 @@ public class DebugManager : MonoBehaviour
                 DebugScreen.SetActive(!DebugScreen.activeSelf);
             }
 
+            if (isDebug)
+            {
+                CaculateFPS();
+            }
 
         }
 
@@ -77,10 +85,11 @@ public class DebugManager : MonoBehaviour
 
     #region 调试屏幕
 
-    public Camera FirstPersonCamera;
-    public GameObject DebugScreen;
-    public TextMeshProUGUI LeftText;
-    public TextMeshProUGUI RightText;
+    [Foldout("调试屏幕", true)]
+    [Header("摄像机引用")] public Camera FirstPersonCamera;
+    [Header("调试屏幕引用引用")] public GameObject DebugScreen;
+    [Header("左文本引用")] public TextMeshProUGUI LeftText;
+    [Header("右文本引用")] public TextMeshProUGUI RightText;
 
 
 
@@ -89,16 +98,13 @@ public class DebugManager : MonoBehaviour
     {
         Vector3 footlocation = managerHub.world.PlayerFoot.position;
 
-        //FPS
-        CalculateFPS();
-
         // 根据 FPS 设置颜色
         string fpsColor;
-        if (managerHub.fpsmManaer.fps < 60)
+        if (fps < 60)
         {
             fpsColor = "red";
         }
-        else if (managerHub.fpsmManaer.fps <= 80)
+        else if (fps <= 80)
         {
             fpsColor = "yellow";
         }
@@ -109,7 +115,7 @@ public class DebugManager : MonoBehaviour
 
         //update
         //LeftText.text += $"\n";
-        LeftText.text = $"<color={fpsColor}>帧数: {managerHub.fpsmManaer.fps:F2}</color>\n";
+        LeftText.text = $"<color={fpsColor}>帧数: {fps:F2}</color>\n";
         LeftText.text += $"当前时间: {managerHub.timeManager.GetCurrentTime():F2}时\n";
         LeftText.text += $"\n";
         LeftText.text += $"[Player]\n";
@@ -138,7 +144,7 @@ public class DebugManager : MonoBehaviour
 
         //RightText.text += $"\n"; 
         RightText.text = $"[System]\n";
-        RightText.text += $"实时渲染面数; {CameraOnPreRender()}\n";
+        RightText.text += $"实时渲染面数; {CameraOnPreRender(FirstPersonCamera)}\n";
         RightText.text += $"\n";
         RightText.text += $"[Position]\n";
         RightText.text += $"foot绝对坐标: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))} \n";
@@ -149,38 +155,6 @@ public class DebugManager : MonoBehaviour
     
 
     #endregion
-
-
-    #region DEBUG-计算FPS
-
-    // FPS计数器
-    private int frameCount;
-    private float elapsedTime;
-    private float fps;
-
-    // 更新并计算FPS
-    void CalculateFPS()
-    {
-        // 每帧累加时间
-        elapsedTime += Time.deltaTime;
-        frameCount++;
-
-        // 每秒计算一次FPS
-        if (elapsedTime >= 1.0f)
-        {
-            // 计算FPS
-            fps = frameCount / elapsedTime;
-
-            // 重置计数器和 elapsedTime
-            frameCount = 0;
-            elapsedTime = 0f;
-        }
-    }
-
-
-
-
-#endregion
 
 
     #region DEBUG-计算String朝向
@@ -239,61 +213,39 @@ public class DebugManager : MonoBehaviour
 
     #region DEBUG-Camera渲染面数
 
+    [Header("渲染面数设置")]
+    private string chunksPath = "Environment/Chunks"; // 需要查找的目录路径
+
     // 渲染面数
-    private string CameraOnPreRender()
+    private int CameraOnPreRender(Camera camera)
     {
         int triangleCount = 0;
 
-        // 获取场景中的所有 MeshRenderer
-        MeshRenderer[] meshRenderers = FindObjectsOfType<MeshRenderer>();
-        foreach (MeshRenderer meshRenderer in meshRenderers)
+        // 查找指定路径下的所有子物体
+        Transform[] chunks = GameObject.Find(chunksPath).GetComponentsInChildren<Transform>();
+
+        foreach (Transform chunk in chunks)
         {
-            // 检查物体是否在相机视野内
-            if (meshRenderer.isVisible)
+            MeshRenderer meshRenderer = chunk.GetComponent<MeshRenderer>();
+            if (meshRenderer != null && meshRenderer.isVisible)  // 确保物体在摄像机视野内
             {
-                // 获取 MeshFilter 组件
-                MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
-                if (meshFilter != null && meshFilter.sharedMesh != null)
+                // 使用 WorldToViewportPoint 来检查物体是否在视野内
+                Vector3 viewportPoint = camera.WorldToViewportPoint(chunk.position);
+                if (viewportPoint.x >= 0 && viewportPoint.x <= 1 &&
+                    viewportPoint.y >= 0 && viewportPoint.y <= 1 &&
+                    viewportPoint.z > 0) // 确保物体在摄像头前方
                 {
-                    // 累加三角形数
-                    triangleCount += meshFilter.sharedMesh.triangles.Length / 3; // 每个三角形由3个顶点组成
+                    MeshFilter meshFilter = chunk.GetComponent<MeshFilter>();
+                    if (meshFilter != null && meshFilter.sharedMesh != null)
+                    {
+                        // 累加三角形数
+                        triangleCount += meshFilter.sharedMesh.triangles.Length / 3; // 每个三角形由3个顶点组成
+                    }
                 }
             }
         }
 
-        string triangleCountStr;
-        string color;
-
-        // 判断三角形数量是否小于 1w
-        if (triangleCount < 10000)
-        {
-            // 显示具体数量，不做 "w" 转换
-            triangleCountStr = triangleCount.ToString();
-            color = "white";
-        }
-        else
-        {
-            // 转换为 "W" 单位
-            int triangleCountInW = Mathf.RoundToInt(triangleCount / 10000f);
-            triangleCountStr = triangleCountInW.ToString() + "w";
-
-            // 根据渲染面数设置颜色
-            if (triangleCountInW > 50)
-            {
-                color = "red";
-            }
-            else if (triangleCountInW >= 20 && triangleCountInW <= 50)
-            {
-                color = "yellow";
-            }
-            else
-            {
-                color = "white";
-            }
-        }
-
-        // 返回带有颜色标签的字符串
-        return $"<color={color}>{triangleCountStr}</color>";
+        return triangleCount;
     }
 
 
@@ -325,4 +277,30 @@ public class DebugManager : MonoBehaviour
     #endregion
 
 
+    #region DEBUG-FPS
+
+    private float m_lastUpdateShowTime = 0f;
+    private readonly float m_updateTime = 0.5f;
+    private int m_frames = 0;
+    private float m_frameDeltaTime = 0;
+    public float fps { get; private set; }
+
+
+    void CaculateFPS()
+    {
+        m_frames++;
+        if (Time.realtimeSinceStartup - m_lastUpdateShowTime >= m_updateTime)
+        {
+            fps = m_frames / (Time.realtimeSinceStartup - m_lastUpdateShowTime);
+            m_frameDeltaTime = (Time.realtimeSinceStartup - m_lastUpdateShowTime) / m_frames;
+            m_frames = 0;
+            m_lastUpdateShowTime = Time.realtimeSinceStartup;
+        }
+    }
+
+    #endregion
+
+
 }
+
+

@@ -1408,13 +1408,13 @@ MonoBehaviour:
   second_GameOneHour: 60
   "\u5929\u5F00\u59CB\u53D8\u9ED1": {x: 15, y: 19}
   "\u5929\u5F00\u59CB\u53D8\u4EAE": {x: 4, y: 8}
+  FogDayColor: {r: 0.7254902, g: 0.7882353, b: 0.84705883, a: 0}
+  FogNightColor: {r: 0.14117648, g: 0.16470589, b: 0.2, a: 0}
   fogTransitionTime: 1.5
   FogDayDistance: {x: 40, y: 80}
   FogCaveDistance: {x: 0, y: 20}
   SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
   SkyboxRange: {x: 0.2, y: 1}
-  FogDayColor: {r: 0.7254902, g: 0.7882353, b: 0.84705883, a: 0}
-  FogNightColor: {r: 0.14117648, g: 0.16470589, b: 0.2, a: 0}
   BlocksMaterial: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
   BlocksDayColor: {r: 0.43529412, g: 0.47058824, b: 0.39215687, a: 1}
   BlocksNightColor: {r: 0.27450982, g: 0.27450982, b: 0.27450982, a: 1}
@@ -15024,7 +15024,6 @@ GameObject:
   m_Component:
   - component: {fileID: 438324208}
   - component: {fileID: 438324209}
-  - component: {fileID: 438324210}
   m_Layer: 0
   m_Name: Debug Manager
   m_TagString: Untagged
@@ -15060,22 +15059,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDebug: 0
+  debugUpdateInterval: 0.2
   FirstPersonCamera: {fileID: 1727421509}
   DebugScreen: {fileID: 1357337469}
   LeftText: {fileID: 439713266}
   RightText: {fileID: 157465766}
---- !u!114 &438324210
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 438324207}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9668efa270903f49b2a2fe9fecfae2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &439713263
 GameObject:
   m_ObjectHideFlags: 0
@@ -24588,6 +24576,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1511832494, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1511832494, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 1511832494, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 1511832494, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -24623,6 +24612,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 75776795, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 75776795, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 75776795, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 75776795, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -24658,6 +24648,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 479296534, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 479296534, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -1488969610, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -24693,6 +24684,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -24728,6 +24720,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 21300000, guid: 8b52399ddbd163147b71d42a68065115, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 21300000, guid: 60b3caffdfcb5c34c951618c6e988871, type: 3}
     top_sprit: {fileID: 21300000, guid: 60b3caffdfcb5c34c951618c6e988871, type: 3}
     buttom_sprit: {fileID: 21300000, guid: 60b3caffdfcb5c34c951618c6e988871, type: 3}
@@ -24763,6 +24756,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 2137020597, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 2137020597, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 2137020597, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 2137020597, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -24798,6 +24792,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -2032363236, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -870017175, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -2032363236, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -2032363236, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -24833,6 +24828,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -937306073, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -937306073, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -937306073, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -937306073, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -24868,6 +24864,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -154138583, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -154138583, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -154138583, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: -154138583, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -24903,6 +24900,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1076829975, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1076829975, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -1076829975, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -1076829975, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -24938,6 +24936,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1513870991, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1513870991, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -134501385, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -134501385, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -24973,6 +24972,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1675117522, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1675117522, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -1675117522, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -1675117522, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25008,6 +25008,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1995264521, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1995264521, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -1995264521, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -1995264521, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25043,6 +25044,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 294878490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 294878490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 294878490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 294878490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25078,6 +25080,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25113,6 +25116,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1617832153, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1617832153, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -1617832153, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -1617832153, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25148,6 +25152,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1270823066, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1270823066, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 1757426451, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 1757426451, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25183,6 +25188,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -234706480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -234706480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -1648070132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -1828174737, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25218,6 +25224,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1876818674, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1837824407, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -1248260401, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -274910487, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25253,6 +25260,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1643297714, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 752758839, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 632610796, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -533544242, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25288,6 +25296,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25323,6 +25332,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -804561095, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -804561095, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -804561095, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -804561095, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25358,6 +25368,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25393,6 +25404,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -749339295, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -749339295, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -749339295, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -749339295, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25428,6 +25440,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 223001660, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 223001660, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 223001660, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 223001660, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25463,6 +25476,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1398765871, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1398765871, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 1398765871, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 1398765871, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25498,6 +25512,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25533,6 +25548,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0.4, y: 0.6}
     icon: {fileID: 984198818, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 984198818, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 984198818, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 984198818, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25568,6 +25584,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -436829475, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -436829475, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -436829475, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -436829475, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25603,6 +25620,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25638,6 +25656,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 1875372480, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25678,6 +25697,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 922800950, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 922800950, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 1337056831, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 12903108, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25713,6 +25733,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1643857855, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1643857855, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 1643857855, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 1643857855, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25748,6 +25769,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0.7, y: 1}
     icon: {fileID: -1419666490, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 21300000, guid: 60b3caffdfcb5c34c951618c6e988871, type: 3}
     top_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25798,6 +25820,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0.7, y: 1}
     icon: {fileID: -714097491, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -714097491, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25848,6 +25871,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 0.5}
       zRange: {x: 0, y: 1}
     icon: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25883,6 +25907,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1992469322, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1992469322, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -1992469322, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -1992469322, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25918,6 +25943,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1845019132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1845019132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 1845019132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 1845019132, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25953,6 +25979,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 0.5}
       zRange: {x: 0, y: 1}
     icon: {fileID: 596971128, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 596971128, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 596971128, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 596971128, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -25988,6 +26015,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1348348521, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 2095931267, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -263868062, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -263868062, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26023,6 +26051,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 67690352, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 67690352, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 1681274038, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 67690352, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26041,7 +26070,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Wool_Green
-    BlockClassfy: 2
+    BlockClassfy: 1
     DestroyTime: 1
     isSolid: 0
     isTransparent: 0
@@ -26058,6 +26087,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 13249902, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 13249902, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 13249902, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 13249902, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26093,6 +26123,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -214719595, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -214719595, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -214719595, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -214719595, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26141,7 +26172,7 @@ MonoBehaviour:
       appointDrawmode: 0
       isCreateFace: 0
   - blockName: Wool_Red
-    BlockClassfy: 2
+    BlockClassfy: 1
     DestroyTime: 1
     isSolid: 0
     isTransparent: 0
@@ -26158,6 +26189,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1445223779, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1445223779, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -1445223779, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -1445223779, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26176,7 +26208,7 @@ MonoBehaviour:
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
   - blockName: Wool_Pink
-    BlockClassfy: 2
+    BlockClassfy: 1
     DestroyTime: 1
     isSolid: 0
     isTransparent: 0
@@ -26193,6 +26225,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 804032010, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 804032010, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 804032010, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 804032010, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26228,6 +26261,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 784903220, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 116696860, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: 1717838658, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: 1717838658, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26263,6 +26297,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26298,6 +26333,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -128003864, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26333,6 +26369,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -938338414, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -938338414, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -938338414, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: -938338414, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26368,6 +26405,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1530299636, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1530299636, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -1530299636, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: -1530299636, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26403,6 +26441,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1361506380, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1361506380, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -1361506380, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: -1361506380, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26438,6 +26477,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1945274408, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1945274408, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -1945274408, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: -1945274408, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26473,6 +26513,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1700271542, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1700271542, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -1700271542, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: -1700271542, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26508,6 +26549,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 508079789, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 508079789, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: 508079789, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: 508079789, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26543,6 +26585,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1119544168, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1119544168, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: 1119544168, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: 1119544168, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26578,6 +26621,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1088150674, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1088150674, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -1088150674, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: -1088150674, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26613,6 +26657,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 703435957, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 703435957, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: 703435957, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: 703435957, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26648,6 +26693,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     top_sprit: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
     buttom_sprit: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -26683,6 +26729,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1723185050, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1723185050, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: 1723185050, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: 1723185050, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26718,6 +26765,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -1368980977, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -1368980977, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -1368980977, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: -1368980977, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26753,6 +26801,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 43406315, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 43406315, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: 43406315, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: 43406315, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26788,6 +26837,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 1846869911, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 1846869911, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: 1846869911, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: 1846869911, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26823,6 +26873,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -624413424, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -624413424, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -624413424, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: -624413424, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26858,6 +26909,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: 179050098, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: 179050098, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: 179050098, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: 179050098, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26893,6 +26945,7 @@ MonoBehaviour:
       yRange: {x: 0, y: 1}
       zRange: {x: 0, y: 1}
     icon: {fileID: -192763112, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+    front_sprite: {fileID: 0}
     sprite: {fileID: -192763112, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     top_sprit: {fileID: -192763112, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
     buttom_sprit: {fileID: -192763112, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
@@ -26910,6 +26963,9 @@ MonoBehaviour:
     DrawMode: 8
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
+  goods:
+  - {fileID: 11400000, guid: c812dc43640d8cb4283b5c72ecef9888, type: 2}
+  - {fileID: 11400000, guid: 74cd2bdf3496f0e48ac8771cc5638756, type: 2}
   renderSize: 6
   StartToRender: 1
   DestroySize: 7
@@ -30982,7 +31038,6 @@ MonoBehaviour:
   timeManager: {fileID: 22826878}
   world: {fileID: 699955241}
   player: {fileID: 1504082080}
-  fpsmManaer: {fileID: 438324210}
   textureTo3D: {fileID: 843154433}
 --- !u!114 &843154433
 MonoBehaviour:

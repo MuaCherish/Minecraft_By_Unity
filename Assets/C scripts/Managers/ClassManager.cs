@@ -10,6 +10,9 @@ using static UnityEngine.GraphicsBuffer;
 //using static UnityEditor.PlayerSettings;
 //using static UnityEditor.Progress; 
 using System;
+using Homebrew;
+using UnityEditor;
+using static UnityEditor.LightingExplorerTableColumn;
 //using static UnityEditor.PlayerSettings;
 //using System.Diagnostics;
 
@@ -62,7 +65,8 @@ public class BlockType
 
     [Header("Sprits")]
     public Sprite icon; //物品栏图标
-    public Sprite sprite; //掉落物
+    public Sprite front_sprite; //掉落物
+    public Sprite sprite;  //侧面
     public Sprite top_sprit; //掉落物
     public Sprite buttom_sprit; //掉落物
 
@@ -126,6 +130,8 @@ public class BlockType
 }
 
 
+
+
 //工具类
 //[System.Serializable]
 //public class ToolType
@@ -137,7 +143,7 @@ public class BlockType
 //方块种类结构体
 public class VoxelStruct
 {
-    public byte voxelType = VoxelData.Air;
+    public byte voxelType = 0;
     public int blockOriented = 0;
 
     //面生成的六个方向
@@ -364,3 +370,119 @@ public static class PerlinNoise
         return value;
     }
 }
+
+
+
+//#if UNITY_EDITOR
+
+
+//[CustomEditor(typeof(Goods))]
+//public class GoodsEditor : Editor
+//{
+//    // 序列化属性
+//    SerializedProperty nameProp;
+//    SerializedProperty iconProp;
+//    SerializedProperty classifyProp;
+
+//    private void OnEnable()
+//    {
+//        // 初始化必填属性
+//        nameProp = serializedObject.FindProperty("name");
+//        iconProp = serializedObject.FindProperty("icon");
+//        classifyProp = serializedObject.FindProperty("classify");
+//    }
+
+//    public override void OnInspectorGUI()
+//    {
+//        serializedObject.Update(); 
+
+//        // 显示必填参数
+//        EditorGUILayout.PropertyField(nameProp);
+//        EditorGUILayout.PropertyField(iconProp);
+//        EditorGUILayout.PropertyField(classifyProp);
+
+//        // 根据 classify 的值来显示或隐藏属性  
+//        switch ((BlockClassfy)classifyProp.enumValueIndex)
+//        {
+//            case BlockClassfy.建筑方块:
+//            case BlockClassfy.功能性方块:
+//                DrawBuildingBlockProperties();
+//                break;
+
+//            case BlockClassfy.工具:
+//                DrawToolProperties();
+//                break;
+
+//            case BlockClassfy.食物:
+//                DrawFoodProperties();
+//                break;
+//        }
+
+//        // 应用更改
+//        serializedObject.ApplyModifiedProperties();
+//    }
+
+//    // 显示建筑方块和功能性方块的属性
+//    private void DrawBuildingBlockProperties()
+//    {
+//        // 获取属性
+//        var destroyTimeProp = serializedObject.FindProperty("DestroyTime");
+//        var isSolidProp = serializedObject.FindProperty("isSolid");
+//        var isTransparentProp = serializedObject.FindProperty("isTransparent");
+//        var canBeChooseProp = serializedObject.FindProperty("canBeChoose");
+//        var candropBlockProp = serializedObject.FindProperty("candropBlock");
+//        var isDIYCollisionProp = serializedObject.FindProperty("isDIYCollision");
+//        var collosionRangeProp = serializedObject.FindProperty("CollosionRange");
+
+//        // 显示属性
+//        EditorGUILayout.PropertyField(destroyTimeProp);
+//        EditorGUILayout.PropertyField(isSolidProp);
+//        EditorGUILayout.PropertyField(isTransparentProp);
+//        EditorGUILayout.PropertyField(canBeChooseProp);
+//        EditorGUILayout.PropertyField(candropBlockProp);
+//        EditorGUILayout.PropertyField(isDIYCollisionProp);
+//        EditorGUILayout.PropertyField(collosionRangeProp);
+
+//        // 显示功能性方块的附加属性
+//        if ((BlockClassfy)classifyProp.enumValueIndex == BlockClassfy.功能性方块)
+//        {
+//            var isInteractableProp = serializedObject.FindProperty("isinteractable");
+//            var isOrientedProp = serializedObject.FindProperty("IsOriented");
+//            EditorGUILayout.PropertyField(isInteractableProp);
+//            EditorGUILayout.PropertyField(isOrientedProp);
+//        }
+//    }
+
+//    // 显示工具的属性
+//    private void DrawToolProperties()
+//    {
+//        var hasDiyRotationProp = serializedObject.FindProperty("hasDiyRotation");
+//        var diyRotationProp = serializedObject.FindProperty("DiyRotation");
+//        var canBreakBlockWithMouse1Prop = serializedObject.FindProperty("canBreakBlockWithMouse1");
+//        var hasMouse2ActionProp = serializedObject.FindProperty("hasMouse2Action");
+//        var hasMouse2HoldActionProp = serializedObject.FindProperty("hasMouse2HoldAction");
+
+//        EditorGUILayout.PropertyField(hasDiyRotationProp);
+//        if (hasDiyRotationProp.boolValue)
+//        {
+//            EditorGUILayout.PropertyField(diyRotationProp);
+//        }
+//        EditorGUILayout.PropertyField(canBreakBlockWithMouse1Prop);
+//        EditorGUILayout.PropertyField(hasMouse2ActionProp);
+//        EditorGUILayout.PropertyField(hasMouse2HoldActionProp);
+//    }
+
+//    // 显示食物的属性
+//    private void DrawFoodProperties()
+//    {
+//        var healthRecoveryAmountProp = serializedObject.FindProperty("healthRecoveryAmount");
+//        EditorGUILayout.PropertyField(healthRecoveryAmountProp);
+//    }
+//}
+//#endif
+
+
+
+
+
+

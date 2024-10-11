@@ -1,21 +1,12 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using System.Xml;
-//using System.Diagnostics;
-using TMPro;
-using Unity.Collections.LowLevel.Unsafe;
-//using UnityEditor.Search;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 using System;
-using System.Linq;
-using UnityEngine.UIElements.Experimental;
-using static UnityEngine.GraphicsBuffer;
+using UnityEditor;
+using Homebrew;
 
 
 
@@ -61,8 +52,14 @@ public enum FaceCheck_Enum
 
 public enum BlockClassfy
 {
-    全部方块, 建筑方块, 功能性方块, 工具, 食物, 禁用, 
+    全部方块 = 0,
+    建筑方块 = 1,
+    功能性方块 = 2,
+    工具 = 3,
+    食物 = 4,
+    禁用 = 5,
 }
+
 
 
 public class World : MonoBehaviour
@@ -96,6 +93,8 @@ public class World : MonoBehaviour
     public Material material;
     public Material material_Water;
     public BlockType[] blocktypes;
+    public GoodData[] goods;
+
 
     [Header("World-渲染设置")]
     [Tooltip("4就是边长为4*16的正方形")] public int renderSize = 5;        //渲染区块半径,即renderSize*16f
@@ -488,7 +487,7 @@ public class World : MonoBehaviour
     public Coroutine Init_MapCoroutine;
     IEnumerator Init_Map_Thread(bool _isInitPlayerLocation)
     {
-
+        
 
         //确定玩家圈养中心点
         if (isLoadSaving)
@@ -499,7 +498,8 @@ public class World : MonoBehaviour
         }
         else
         {
-
+            player.RandomPlayerLocaiton();
+            //print(PlayerFoot.transform.position);
             Center_Now = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, 0, GetRealChunkLocation(PlayerFoot.transform.position).z);
 
         }
@@ -1618,14 +1618,14 @@ public class World : MonoBehaviour
     public Vector3 AddressingBlock(Vector3 _start, int _direct)
     {
         Vector3 _address = _start;
-        print($"start: {_address}");
+        //print($"start: {_address}");
 
         for (int i = 0;i < VoxelData.ChunkHeight; i ++)
         {
             byte _byte = GetBlockType(_address);
             if (_byte != VoxelData.Air)
             {
-                print($"坐标：{_address} , 碰到{_byte}");
+                //print($"坐标：{_address} , 碰到{_byte}");
                 //添加一个方块踮脚
                 if (_byte == VoxelData.Water)
                 {
@@ -2493,7 +2493,7 @@ public class World : MonoBehaviour
 
     //对玩家碰撞盒的方块判断
     //true：有碰撞
-    public bool CheckForVoxel(Vector3 pos)
+    public bool CollisionCheckForVoxel(Vector3 pos)
     {
         //if (GetBlockType(pos) == VoxelData.Wood)
         //{
@@ -2578,7 +2578,7 @@ public class World : MonoBehaviour
 
     //放置高亮方块的
     //用于眼睛射线的检测
-    public bool eyesCheckForVoxel(Vector3 pos)
+    public bool RayCheckForVoxel(Vector3 pos)
     {
 
         Vector3 realLocation = pos; //绝对坐标
@@ -2650,5 +2650,6 @@ public class World : MonoBehaviour
 
 
 }
+
 
 

@@ -1,19 +1,17 @@
 //using System;
+using Homebrew;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-//using UnityEngine.UIElements;
-using UnityEngine.XR;
+using UnityEngine.LowLevel;
 
 
 public class Player : MonoBehaviour
 {
 
     //玩家状态
+    [Foldout("玩家状态", true)]
     [Header("玩家状态")]
+    
     [ReadOnly] public bool isGrounded;
     [ReadOnly] public bool isSprinting;
     [ReadOnly] public bool isSwiming;
@@ -26,7 +24,7 @@ public class Player : MonoBehaviour
     [ReadOnly] public bool isBroking;
     [ReadOnly] public bool isFirstBrokeBlock;  //创造模式点击可以瞬间销毁方块
 
-
+    [Foldout("Transforms", true)]
     [Header("Transforms")]
     public ManagerHub managerhub;
     public CommandManager commandManager;
@@ -242,7 +240,7 @@ public class Player : MonoBehaviour
 
         //X = [800,1600]
         //Z = [400,800]
-        transform.position = new Vector3(Random.Range(800, 3200), transform.position.y, Random.Range(800, 3200));
+        
 
 
         //初始化数据
@@ -259,6 +257,12 @@ public class Player : MonoBehaviour
         walkingDistance = 0f;
         //accumulatedDistance = 0f;
         //managerhub.backpackManager.ChangeBlockInHand();
+    }
+
+    public void RandomPlayerLocaiton()
+    {
+        transform.position = new Vector3(Random.Range(800, 3200), transform.position.y, Random.Range(800, 3200));
+        world.Start_Position = transform.position;
     }
 
     
@@ -865,20 +869,21 @@ public class Player : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Mouse0))
         {
-            
+
             //Debug.Log("Player Mouse0");
             //isLeftMouseDown = true;
             //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
             //Vector3 _raycastNow = RayCast_now();
+            RayCastStruct _rayCast = NewRayCast();
 
-            if (RayCast_now()!= Vector3.zero && hasExec_isChangedBlock && world.blocktypes[world.GetBlockType(RayCast_now())].canBeChoose)
+            if (_rayCast.isHit && hasExec_isChangedBlock && world.blocktypes[world.GetBlockType(_rayCast.hitPoint)].canBeChoose)
             {
-                OldPointLocation = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
+                OldPointLocation = new Vector3(Mathf.FloorToInt(_rayCast.hitPoint.x), Mathf.FloorToInt(_rayCast.hitPoint.y), Mathf.FloorToInt(_rayCast.hitPoint.z));
                 hasExec_isChangedBlock = false;
             }
 
 
-            Vector3 pointvector = new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z));
+            Vector3 pointvector = new Vector3(Mathf.FloorToInt(_rayCast.hitPoint.x), Mathf.FloorToInt(_rayCast.hitPoint.y), Mathf.FloorToInt(_rayCast.hitPoint.z));
 
             if (pointvector != OldPointLocation && OldPointLocation != Vector3.zero && pointvector != Vector3.zero)
             {
@@ -890,7 +895,7 @@ public class Player : MonoBehaviour
             }
 
             //如果打到
-            if (RayCast_now() != Vector3.zero)
+            if (_rayCast.hitPoint != Vector3.zero)
             {
 
                 //如果正在销毁则不执行
@@ -899,7 +904,7 @@ public class Player : MonoBehaviour
 
                     //Debug.Log("执行销毁");
                     elapsedTime = 0.0f;
-                    StartCoroutine(DestroySoilWithDelay(RayCast_now()));
+                    StartCoroutine(DestroySoilWithDelay(_rayCast.hitPoint));
 
 
                 }
@@ -921,9 +926,11 @@ public class Player : MonoBehaviour
         {
 
             isPlacing = true;
-            Vector3 RayCast = RayCast_last();
-            Vector3 _raycastNow = RayCast_now();
-            byte _targettype = world.GetBlockType(_raycastNow);
+            RayCastStruct _rayCast = NewRayCast();
+
+            //Vector3 RayCast = RayCast_last();
+            //Vector3 _raycastNow = RayCast_now();
+            byte _targettype = world.GetBlockType(_rayCast.hitPoint);
             byte _selecttype = managerhub.backpackManager.slots[selectindex].blockId;
 
             //右键可互动方块
@@ -939,12 +946,12 @@ public class Player : MonoBehaviour
 
                         if (_selecttype == VoxelData.Tool_Flint)
                         {
-                            BlocksFunction.Boom(managerhub, _raycastNow, 4);
-                            GameObject.Instantiate(particle_explosion, RayCast, Quaternion.identity);
+                            BlocksFunction.Boom(managerhub, _rayCast.hitPoint, 4);
+                            GameObject.Instantiate(particle_explosion, _rayCast.hitPoint_Previous, Quaternion.identity);
                             musicmanager.PlaySound(VoxelData.explore);
 
                             // 玩家被炸飞
-                            Vector3 _Direction = cam.transform.position - _raycastNow;  //炸飞方向
+                            Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
                             float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
 
                             //计算炸飞距离
@@ -980,8 +987,8 @@ public class Player : MonoBehaviour
                         if (_selecttype == VoxelData.Tool_BoneMeal)
                         {
                             //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
-                            world.Allchunks[world.GetChunkLocation(_raycastNow)].EditData(_raycastNow, VoxelData.Air);
-                            BlocksFunction.Smoke(managerhub, _raycastNow, 2.5f);
+                            world.Allchunks[world.GetChunkLocation(_rayCast.hitPoint)].EditData(_rayCast.hitPoint, VoxelData.Air);
+                            BlocksFunction.Smoke(managerhub, _rayCast.hitPoint, 2.5f);
                             managerhub.backpackManager.update_slots(1, 56);
                         }
                         break;
@@ -1012,7 +1019,7 @@ public class Player : MonoBehaviour
             if (_selecttype < managerhub.world.blocktypes .Length && !managerhub.world.blocktypes[_selecttype].isTool)
             {
                 //如果打到 && 距离大于2f && 且不是脚底下
-                if (RayCast != Vector3.zero && (RayCast - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(RayCast.x, RayCast.y - 1f, RayCast.z)))
+                if (_rayCast.isHit && (_rayCast.hitPoint_Previous - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(_rayCast.hitPoint_Previous.x, _rayCast.hitPoint_Previous.y - 1f, _rayCast.hitPoint_Previous.z)))
                 {
 
                     //music
@@ -1025,11 +1032,11 @@ public class Player : MonoBehaviour
 
 
                         //Edit
-                        world.GetChunkObject(RayCast).EditData(world.GetRelalocation(RayCast), backpackmanager.slots[selectindex].blockId);
+                        world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(world.GetRelalocation(_rayCast.hitPoint_Previous), backpackmanager.slots[selectindex].blockId);
 
 
                         //EditNumber
-                        world.UpdateEditNumber(RayCast, backpackmanager.slots[selectindex].blockId);
+                        world.UpdateEditNumber(_rayCast.hitPoint_Previous, backpackmanager.slots[selectindex].blockId);
 
 
                         if (world.game_mode == GameMode.Survival)
@@ -1447,7 +1454,7 @@ public class Player : MonoBehaviour
 
 
             //如果可以放置
-            if (world.eyesCheckForVoxel(pos))
+            if (world.RayCheckForVoxel(pos))
             {
                 int posX = Mathf.FloorToInt(pos.x);
                 int posY = Mathf.FloorToInt(pos.y);
@@ -1634,7 +1641,7 @@ public class Player : MonoBehaviour
         }
         //print($"end: {managerhub.world.Start_Position}");
         transform.position = world.Start_Position;
-
+        //print(transform.position);
     }
 
     
@@ -1764,10 +1771,10 @@ public class Player : MonoBehaviour
     {
 
         if (
-            world.CheckForVoxel(down_左上) ||
-            world.CheckForVoxel(down_右上) ||
-            world.CheckForVoxel(down_左下) ||
-            world.CheckForVoxel(down_右下)
+            world.CollisionCheckForVoxel(down_左上) ||
+            world.CollisionCheckForVoxel(down_右上) ||
+            world.CollisionCheckForVoxel(down_左下) ||
+            world.CollisionCheckForVoxel(down_右下)
 
             )
         {
@@ -1794,10 +1801,10 @@ public class Player : MonoBehaviour
     {
 
         if (
-            world.CheckForVoxel(up_左上) ||
-            world.CheckForVoxel(up_右上) ||
-            world.CheckForVoxel(up_左下) ||
-            world.CheckForVoxel(up_右下)
+            world.CollisionCheckForVoxel(up_左上) ||
+            world.CollisionCheckForVoxel(up_右上) ||
+            world.CollisionCheckForVoxel(up_左下) ||
+            world.CollisionCheckForVoxel(up_右下)
            )
         {
 
@@ -1985,11 +1992,11 @@ public class Player : MonoBehaviour
         get
         {
             //如果world返回true，则碰撞
-            if (world.CheckForVoxel(front_左上) || 
-                world.CheckForVoxel(front_右上) || 
-                world.CheckForVoxel(front_左下) || 
-                world.CheckForVoxel(front_右下) ||
-                world.CheckForVoxel(front_Center))
+            if (world.CollisionCheckForVoxel(front_左上) || 
+                world.CollisionCheckForVoxel(front_右上) || 
+                world.CollisionCheckForVoxel(front_左下) || 
+                world.CollisionCheckForVoxel(front_右下) ||
+                world.CollisionCheckForVoxel(front_Center))
             {
                 return true;
             }
@@ -1998,7 +2005,7 @@ public class Player : MonoBehaviour
             else if (isSquating)
             {
                 //(左下固体 && 左下延伸不是固体) || (右下固体 && 右下延伸不是固体)
-                if ((world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x, down_左下.y, down_左下.z + extend_delta))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x, down_右下.y, down_右下.z + extend_delta))))
+                if ((world.CollisionCheckForVoxel(down_左下) && !world.CollisionCheckForVoxel(new Vector3(down_左下.x, down_左下.y, down_左下.z + extend_delta))) || (world.CollisionCheckForVoxel(down_右下) && !world.CollisionCheckForVoxel(new Vector3(down_右下.x, down_右下.y, down_右下.z + extend_delta))))
                 {
 
                     return true;
@@ -2022,10 +2029,10 @@ public class Player : MonoBehaviour
             //if (!isSquating)
             //{
             //    if (
-            //    world.CheckForVoxel(back_左上) ||
-            //    world.CheckForVoxel(back_右上) ||
-            //    world.CheckForVoxel(back_左下) ||
-            //    world.CheckForVoxel(back_右下)
+            //    world.CollisionCheckForVoxel(back_左上) ||
+            //    world.CollisionCheckForVoxel(back_右上) ||
+            //    world.CollisionCheckForVoxel(back_左下) ||
+            //    world.CollisionCheckForVoxel(back_右下)
             //    )
             //        return true;
             //    else
@@ -2034,7 +2041,7 @@ public class Player : MonoBehaviour
             //else
             //{
             //    //(左上固体 && 左上延伸不是固体) || (右上固体 && 右上延伸不是固体)
-            //    if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x, down_左上.y, down_左上.z - extend_delta))) || (world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x, down_右上.y, down_右上.z - extend_delta))))
+            //    if ((world.CollisionCheckForVoxel(down_左上) && !world.CollisionCheckForVoxel(new Vector3(down_左上.x, down_左上.y, down_左上.z - extend_delta))) || (world.CollisionCheckForVoxel(down_右上) && !world.CollisionCheckForVoxel(new Vector3(down_右上.x, down_右上.y, down_右上.z - extend_delta))))
             //    {
 
             //        return true;
@@ -2044,11 +2051,11 @@ public class Player : MonoBehaviour
             //}
 
             if (
-                world.CheckForVoxel(back_左上) ||
-                world.CheckForVoxel(back_右上) ||
-                world.CheckForVoxel(back_左下) ||
-                world.CheckForVoxel(back_右下) ||
-                world.CheckForVoxel(back_Center)
+                world.CollisionCheckForVoxel(back_左上) ||
+                world.CollisionCheckForVoxel(back_右上) ||
+                world.CollisionCheckForVoxel(back_左下) ||
+                world.CollisionCheckForVoxel(back_右下) ||
+                world.CollisionCheckForVoxel(back_Center)
                 )
                 return true;
 
@@ -2056,7 +2063,7 @@ public class Player : MonoBehaviour
             {
 
                 //(右上固体 && 右上延伸不是固体) || (右下固体 && 右下延伸不是固体)
-                if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x, down_左上.y, down_左上.z - extend_delta))) || (world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x, down_右上.y, down_右上.z - extend_delta))))
+                if ((world.CollisionCheckForVoxel(down_左上) && !world.CollisionCheckForVoxel(new Vector3(down_左上.x, down_左上.y, down_左上.z - extend_delta))) || (world.CollisionCheckForVoxel(down_右上) && !world.CollisionCheckForVoxel(new Vector3(down_右上.x, down_右上.y, down_右上.z - extend_delta))))
                 {
 
                     return true;
@@ -2084,10 +2091,10 @@ public class Player : MonoBehaviour
             //if (!isSquating)
             //{
             //    if (
-            //    world.CheckForVoxel(left_左上) ||
-            //    world.CheckForVoxel(left_右上) ||
-            //    world.CheckForVoxel(left_左下) ||
-            //    world.CheckForVoxel(left_右下)
+            //    world.CollisionCheckForVoxel(left_左上) ||
+            //    world.CollisionCheckForVoxel(left_右上) ||
+            //    world.CollisionCheckForVoxel(left_左下) ||
+            //    world.CollisionCheckForVoxel(left_右下)
             //    )
             //        return true;
             //    else
@@ -2097,7 +2104,7 @@ public class Player : MonoBehaviour
             //{
                 
             //    //(右上固体 && 右上延伸不是固体) || (右下固体 && 右下延伸不是固体)
-            //    if ((world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x - extend_delta, down_右下.y, down_右下.z))))
+            //    if ((world.CollisionCheckForVoxel(down_右上) && !world.CollisionCheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))) || (world.CollisionCheckForVoxel(down_右下) && !world.CollisionCheckForVoxel(new Vector3(down_右下.x - extend_delta, down_右下.y, down_右下.z))))
             //    {
 
             //        return true;
@@ -2111,11 +2118,11 @@ public class Player : MonoBehaviour
 
 
             if (
-                world.CheckForVoxel(left_左上) ||
-                world.CheckForVoxel(left_右上) ||
-                world.CheckForVoxel(left_左下) ||
-                world.CheckForVoxel(left_右下) ||
-                world.CheckForVoxel(left_Center)
+                world.CollisionCheckForVoxel(left_左上) ||
+                world.CollisionCheckForVoxel(left_右上) ||
+                world.CollisionCheckForVoxel(left_左下) ||
+                world.CollisionCheckForVoxel(left_右下) ||
+                world.CollisionCheckForVoxel(left_Center)
                 )
                 return true;
 
@@ -2123,7 +2130,7 @@ public class Player : MonoBehaviour
             {
 
                 //(右上固体 && 右上延伸不是固体) || (右下固体 && 右下延伸不是固体)
-                if ((world.CheckForVoxel(down_右上) && !world.CheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))) || (world.CheckForVoxel(down_右下) && !world.CheckForVoxel(new Vector3(down_右下.x - extend_delta, down_右下.y, down_右下.z))))
+                if ((world.CollisionCheckForVoxel(down_右上) && !world.CollisionCheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))) || (world.CollisionCheckForVoxel(down_右下) && !world.CollisionCheckForVoxel(new Vector3(down_右下.x - extend_delta, down_右下.y, down_右下.z))))
                 {
 
                     return true;
@@ -2151,11 +2158,11 @@ public class Player : MonoBehaviour
         {
 
             if (
-                world.CheckForVoxel(right_左上) ||
-                world.CheckForVoxel(right_右上) ||
-                world.CheckForVoxel(right_左下) ||
-                world.CheckForVoxel(right_右下) ||
-                world.CheckForVoxel(right_Center)
+                world.CollisionCheckForVoxel(right_左上) ||
+                world.CollisionCheckForVoxel(right_右上) ||
+                world.CollisionCheckForVoxel(right_左下) ||
+                world.CollisionCheckForVoxel(right_右下) ||
+                world.CollisionCheckForVoxel(right_Center)
                 )
                 return true;
 
@@ -2163,7 +2170,7 @@ public class Player : MonoBehaviour
             {
 
                 //(左上固体 && 左上延伸不是固体) || (左下固体 && 左下延伸不是固体)
-                if ((world.CheckForVoxel(down_左上) && !world.CheckForVoxel(new Vector3(down_左上.x + extend_delta, down_左上.y, down_左上.z))) || (world.CheckForVoxel(down_左下) && !world.CheckForVoxel(new Vector3(down_左下.x + extend_delta, down_左下.y, down_左下.z))))
+                if ((world.CollisionCheckForVoxel(down_左上) && !world.CollisionCheckForVoxel(new Vector3(down_左上.x + extend_delta, down_左上.y, down_左上.z))) || (world.CollisionCheckForVoxel(down_左下) && !world.CollisionCheckForVoxel(new Vector3(down_左下.x + extend_delta, down_左下.y, down_左下.z))))
                 {
 
                     return true;
@@ -2185,14 +2192,14 @@ public class Player : MonoBehaviour
         get
         {
             //如果world返回true，则碰撞
-            if (world.CheckForVoxel(front_左下) ||
-                world.CheckForVoxel(front_右下) ||
-                world.CheckForVoxel(back_左下)  ||
-                world.CheckForVoxel(back_右下)  ||
-                world.CheckForVoxel(left_右下)  ||
-                world.CheckForVoxel(left_右下)  ||
-                world.CheckForVoxel(right_右下) ||
-                world.CheckForVoxel(right_右下)
+            if (world.CollisionCheckForVoxel(front_左下) ||
+                world.CollisionCheckForVoxel(front_右下) ||
+                world.CollisionCheckForVoxel(back_左下)  ||
+                world.CollisionCheckForVoxel(back_右下)  ||
+                world.CollisionCheckForVoxel(left_右下)  ||
+                world.CollisionCheckForVoxel(left_右下)  ||
+                world.CollisionCheckForVoxel(right_右下) ||
+                world.CollisionCheckForVoxel(right_右下)
                 )
             {
                 return true;
@@ -2209,10 +2216,10 @@ public class Player : MonoBehaviour
         get
         {
             //如果world返回true，则碰撞
-            if (world.CheckForVoxel(front_Center) ||
-                world.CheckForVoxel(back_Center) ||
-                world.CheckForVoxel(left_Center) ||
-                world.CheckForVoxel(right_Center)
+            if (world.CollisionCheckForVoxel(front_Center) ||
+                world.CollisionCheckForVoxel(back_Center) ||
+                world.CollisionCheckForVoxel(left_Center) ||
+                world.CollisionCheckForVoxel(right_Center)
                 )
             {
                 return true;
@@ -2253,127 +2260,278 @@ public class Player : MonoBehaviour
     //--------------------------------- 射线检测 ------------------------------------------
 
 
-
-    //射线检测——返回打中的方块的相对坐标
-    //没打中就是(0,0,0)
-    Vector3 RayCast_now()
+    [System.Serializable]
+    public struct RayCastStruct
     {
+        // 是否命中
+        public bool isHit;
 
+        // 射线起点
+        public Vector3 rayOrigin;
+
+        // 打中点坐标
+        public Vector3 hitPoint;
+
+        // 打中前一点坐标
+        public Vector3 hitPoint_Previous;
+
+        // 打中方块类型
+        public byte blockType; // 如果需要使用枚举，也可以改为枚举类型
+
+        // 打中法线方向
+        public Vector3 hitNormal;
+
+        // 射线距离
+        public float rayDistance;
+
+        // 构造函数
+        public RayCastStruct(bool isHit, Vector3 rayOrigin, Vector3 hitPoint, Vector3 hitPoint_Previous, byte blockType, Vector3 hitNormal, float rayDistance)
+        {
+            this.isHit = isHit;
+            this.rayOrigin = rayOrigin;
+            this.hitPoint = hitPoint;
+            this.hitPoint_Previous = hitPoint_Previous;
+            this.blockType = blockType;
+            this.hitNormal = hitNormal;
+            this.rayDistance = rayDistance;
+        }
+
+        // 覆盖ToString方法，用于打印输出
+        public override string ToString()
+        {
+            return $"RayCastStruct: \n" +
+                   $"  Is Hit: {isHit}\n" +
+                   $"  Ray Origin: {rayOrigin}\n" +
+                   $"  Hit Point: {hitPoint}\n" +
+                   $"  Previous Hit Point: {hitPoint_Previous}\n" +
+                   $"  Block Type: {blockType}\n" +
+                   $"  Hit Normal: {hitNormal}\n" +
+                   $"  Ray Distance: {rayDistance}";
+        }
+    }
+
+
+
+    //射线检测
+    // 返回结构体的RayCast
+    public RayCastStruct NewRayCast()
+    {
+        // 射线增量和最大射程
         float step = checkIncrement;
-        //Vector3 lastPos = new Vector3();
+        Vector3 lastPos = new Vector3();  // 用于记录上一个点的位置
+        Vector3 hitPoint = Vector3.zero;  // 用于记录命中的点
+        byte blockType = 255;             // 用于记录打中方块的类型，默认为255表示未命中
+        Vector3 hitNormal = Vector3.zero; // 用于记录法线方向
+        float rayDistance = 0f;           // 用于记录射线距离
+        bool isHit = false;               // 用于记录是否命中
 
+        // 从射线起点（摄像机位置）开始，沿着摄像机的前方向进行检测
         while (step < reach)
         {
-
+            // 当前射线所在的点
             Vector3 pos = cam.position + (cam.forward * step);
 
-            //异常检测
+            // 如果y坐标小于0，修正为0，避免穿透地面
             if (pos.y < 0)
             {
                 pos = new Vector3(pos.x, 0, pos.z);
             }
 
-            // 绘制射线以便调试
-            //if (debug_ray)
-            //{
-            //    Debug.DrawRay(cam.position, cam.forward * step, Color.red, 100f);
-            //}
-
-            //(是竹子 || (是固体 && 不是基岩 && 不是水)则返回
-            //if (world.GetBlockType(pos) == VoxelData.Bamboo || (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water))
-            if (managerhub.world.eyesCheckForVoxel(pos))
+            // 检测当前点是否命中了某个方块
+            if (managerhub.world.RayCheckForVoxel(pos))
             {
-                
+                // 记录命中点
+                hitPoint = pos;
+                isHit = true; // 记录命中
 
-                //print($"now射线检测：{(pos-cam.position).magnitude}");
-                ray_length = (pos - cam.position).magnitude;
-                return pos;
+                // 获取命中的方块类型
+                blockType = managerhub.world.GetBlockType(pos);
 
+                // 计算命中的法线方向，基于命中点的相对位置判断法线单位向量
+                Vector3 blockCenter = new Vector3(Mathf.Floor(hitPoint.x) + 0.5f, Mathf.Floor(hitPoint.y) + 0.5f, Mathf.Floor(hitPoint.z) + 0.5f);
+                Vector3 relativePos = hitPoint - blockCenter;
+
+                // 找出影响最大的轴
+                if (Mathf.Abs(relativePos.x) > Mathf.Abs(relativePos.y) && Mathf.Abs(relativePos.x) > Mathf.Abs(relativePos.z))
+                {
+                    // x轴占主导，命中左右侧面
+                    hitNormal = new Vector3(Mathf.Sign(relativePos.x), 0, 0);
+                }
+                else if (Mathf.Abs(relativePos.y) > Mathf.Abs(relativePos.x) && Mathf.Abs(relativePos.y) > Mathf.Abs(relativePos.z))
+                {
+                    // y轴占主导，命中顶部或底部
+                    hitNormal = new Vector3(0, Mathf.Sign(relativePos.y), 0);
+                }
+                else
+                {
+                    // z轴占主导，命中前后侧面
+                    hitNormal = new Vector3(0, 0, Mathf.Sign(relativePos.z));
+                }
+
+                // 计算射线距离
+                rayDistance = (pos - cam.position).magnitude;
+
+                // 命中后跳出循环
+                break;
             }
 
-            //lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
-
-            step += checkIncrement;
-
-        }
-
-        point_Block_type = 255;
-        return Vector3.zero;
-
-    }
-
-
-    //射线检测——返回打中的方块的前一帧
-    Vector3 RayCast_last()
-    {
-
-        float step = checkIncrement;
-        Vector3 lastPos = new Vector3();
-
-        while (step < reach)
-        {
-
-            Vector3 pos = cam.position + (cam.forward * step);
-
-            // 绘制射线以便调试
-            //if (debug_ray)
-            //{
-            //    Debug.DrawRay(cam.position, cam.forward * step, Color.red, 100f);
-            //}
-
-            //检测
-            if (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.Water)
-            {
-
-                //print($"last射线检测：{(lastPos - cam.position).magnitude}");
-                ray_length = (lastPos - cam.position).magnitude;
-                return lastPos;
-
-            }
-
-            //lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+            // 更新上一帧的位置
             lastPos = pos;
 
+            // 增加射线步长
             step += checkIncrement;
-
         }
 
-        return new Vector3(0f, 0f, 0f);
+        // 如果没有命中任何方块，返回未命中的结果
+        if (!isHit)
+        {
+            return new RayCastStruct
+            {
+                isHit = false,
+                rayOrigin = cam.position,
+                hitPoint = Vector3.zero,
+                hitPoint_Previous = Vector3.zero,
+                blockType = 255,  // 未命中方块
+                hitNormal = Vector3.zero,
+                rayDistance = 0f
+            };
+        }
 
+        // 返回射线检测结果的结构体
+        return new RayCastStruct
+        {
+            isHit = true,                    // 设置命中状态为true
+            rayOrigin = cam.position,        // 射线的起点
+            hitPoint = hitPoint,             // 命中的点
+            hitPoint_Previous = lastPos,     // 上一个点
+            blockType = blockType,           // 方块类型
+            hitNormal = hitNormal,           // 命中的法线方向
+            rayDistance = rayDistance        // 射线距离
+        };
     }
+
+
+
+    //射线检测——返回打中的方块的相对坐标
+    //没打中就是(0,0,0)
+    //Vector3 RayCast_now()
+    //{
+
+    //    float step = checkIncrement;
+    //    //Vector3 lastPos = new Vector3();
+
+    //    while (step < reach)
+    //    {
+
+    //        Vector3 pos = cam.position + (cam.forward * step);
+
+    //        //异常检测
+    //        if (pos.y < 0)
+    //        {
+    //            pos = new Vector3(pos.x, 0, pos.z);
+    //        }
+
+    //        // 绘制射线以便调试
+    //        //if (debug_ray)
+    //        //{
+    //        //    Debug.DrawRay(cam.position, cam.forward * step, Color.red, 100f);
+    //        //}
+
+    //        //(是竹子 || (是固体 && 不是基岩 && 不是水)则返回
+    //        //if (world.GetBlockType(pos) == VoxelData.Bamboo || (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water))
+    //        if (managerhub.world.RayCheckForVoxel(pos))
+    //        {
+                
+
+    //            //print($"now射线检测：{(pos-cam.position).magnitude}");
+    //            ray_length = (pos - cam.position).magnitude;
+    //            return pos;
+
+    //        }
+
+    //        //lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+
+    //        step += checkIncrement;
+
+    //    }
+
+    //    point_Block_type = 255;
+    //    return Vector3.zero;
+
+    //}
+
+
+    ////射线检测——返回打中的方块的前一帧
+    //Vector3 RayCast_last()
+    //{
+
+    //    float step = checkIncrement;
+    //    Vector3 lastPos = new Vector3();
+
+    //    while (step < reach)
+    //    {
+
+    //        Vector3 pos = cam.position + (cam.forward * step);
+
+    //        // 绘制射线以便调试
+    //        //if (debug_ray)
+    //        //{
+    //        //    Debug.DrawRay(cam.position, cam.forward * step, Color.red, 100f);
+    //        //}
+
+    //        //检测
+    //        if (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.Water)
+    //        {
+
+    //            //print($"last射线检测：{(lastPos - cam.position).magnitude}");
+    //            ray_length = (lastPos - cam.position).magnitude;
+    //            return lastPos;
+
+    //        }
+
+    //        //lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+    //        lastPos = pos;
+
+    //        step += checkIncrement;
+
+    //    }
+
+    //    return new Vector3(0f, 0f, 0f);
+
+    //}
 
 
     // 射线检测——返回从起始点到打中前一帧点的距离
-    float RayCast_last(Vector3 originPos, Vector3 direction, float distance)
-    {
-        float step = checkIncrement;
-        Vector3 lastPos = originPos;
+    //float RayCast_last(Vector3 originPos, Vector3 direction, float distance)
+    //{
+    //    float step = checkIncrement;
+    //    Vector3 lastPos = originPos;
 
-        while (step < distance)
-        {
-            Vector3 pos = originPos + (direction.normalized * step);
+    //    while (step < distance)
+    //    {
+    //        Vector3 pos = originPos + (direction.normalized * step);
 
-            // 绘制射线以便调试，使用绿色
-            //Debug.DrawLine(lastPos, pos, Color.red);
+    //        // 绘制射线以便调试，使用绿色
+    //        //Debug.DrawLine(lastPos, pos, Color.red);
 
-            // 检测
-            if (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.Water)
-            {
-                // 返回从起始点到打中前一帧点的距离
-                //print((lastPos - originPos).magnitude);
-                return (lastPos - originPos).magnitude;
+    //        // 检测
+    //        if (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.Water)
+    //        {
+    //            // 返回从起始点到打中前一帧点的距离
+    //            //print((lastPos - originPos).magnitude);
+    //            return (lastPos - originPos).magnitude;
                 
-            }
+    //        }
 
-            // 保存当前帧的位置作为最后的有效位置
-            lastPos = pos;
+    //        // 保存当前帧的位置作为最后的有效位置
+    //        lastPos = pos;
 
-            step += checkIncrement;
-        }
+    //        step += checkIncrement;
+    //    }
 
-        // 如果没有检测到任何有效的块，返回零
-        return distance;
-    }
+    //    // 如果没有检测到任何有效的块，返回零
+    //    return distance;
+    //}
 
 
     //-------------------------------------------------------------------------------------
@@ -2883,3 +3041,5 @@ public class Player : MonoBehaviour
     //-------------------------------------------------------------------------------------
 
 }
+
+

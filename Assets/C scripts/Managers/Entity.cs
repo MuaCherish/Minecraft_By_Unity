@@ -146,10 +146,10 @@ public class Entity : MonoBehaviour
     {
 
         if (
-            managerhub.world.CheckForVoxel(down_左上) ||
-            managerhub.world.CheckForVoxel(down_右上) ||
-            managerhub.world.CheckForVoxel(down_左下) ||
-            managerhub.world.CheckForVoxel(down_右下)
+            managerhub.world.CollisionCheckForVoxel(down_左上) ||
+            managerhub.world.CollisionCheckForVoxel(down_右上) ||
+            managerhub.world.CollisionCheckForVoxel(down_左下) ||
+            managerhub.world.CollisionCheckForVoxel(down_右下)
 
             )
         {
@@ -173,10 +173,10 @@ public class Entity : MonoBehaviour
     {
 
         if (
-            managerhub.world.CheckForVoxel(up_左上) ||
-            managerhub.world.CheckForVoxel(up_右上) ||
-            managerhub.world.CheckForVoxel(up_左下) ||
-            managerhub.world.CheckForVoxel(up_右下)
+            managerhub.world.CollisionCheckForVoxel(up_左上) ||
+            managerhub.world.CollisionCheckForVoxel(up_右上) ||
+            managerhub.world.CollisionCheckForVoxel(up_左下) ||
+            managerhub.world.CollisionCheckForVoxel(up_右下)
            )
         {
 
@@ -199,11 +199,11 @@ public class Entity : MonoBehaviour
         get
         {
             //如果managerhub.world返回true，则碰撞
-            if (managerhub.world.CheckForVoxel(front_左上) ||
-                managerhub.world.CheckForVoxel(front_右上) ||
-                managerhub.world.CheckForVoxel(front_左下) ||
-                managerhub.world.CheckForVoxel(front_右下) ||
-                managerhub.world.CheckForVoxel(front_Center))
+            if (managerhub.world.CollisionCheckForVoxel(front_左上) ||
+                managerhub.world.CollisionCheckForVoxel(front_右上) ||
+                managerhub.world.CollisionCheckForVoxel(front_左下) ||
+                managerhub.world.CollisionCheckForVoxel(front_右下) ||
+                managerhub.world.CollisionCheckForVoxel(front_Center))
             {
                 return true;
             }
@@ -222,11 +222,11 @@ public class Entity : MonoBehaviour
         {
 
             if (
-                managerhub.world.CheckForVoxel(back_左上) ||
-                managerhub.world.CheckForVoxel(back_右上) ||
-                managerhub.world.CheckForVoxel(back_左下) ||
-                managerhub.world.CheckForVoxel(back_右下) ||
-                managerhub.world.CheckForVoxel(back_Center)
+                managerhub.world.CollisionCheckForVoxel(back_左上) ||
+                managerhub.world.CollisionCheckForVoxel(back_右上) ||
+                managerhub.world.CollisionCheckForVoxel(back_左下) ||
+                managerhub.world.CollisionCheckForVoxel(back_右下) ||
+                managerhub.world.CollisionCheckForVoxel(back_Center)
                 )
                 return true;
 
@@ -244,11 +244,11 @@ public class Entity : MonoBehaviour
         {
 
             if (
-                managerhub.world.CheckForVoxel(left_左上) ||
-                managerhub.world.CheckForVoxel(left_右上) ||
-                managerhub.world.CheckForVoxel(left_左下) ||
-                managerhub.world.CheckForVoxel(left_右下) ||
-                managerhub.world.CheckForVoxel(left_Center)
+                managerhub.world.CollisionCheckForVoxel(left_左上) ||
+                managerhub.world.CollisionCheckForVoxel(left_右上) ||
+                managerhub.world.CollisionCheckForVoxel(left_左下) ||
+                managerhub.world.CollisionCheckForVoxel(left_右下) ||
+                managerhub.world.CollisionCheckForVoxel(left_Center)
                 )
                 return true;
 
@@ -268,11 +268,11 @@ public class Entity : MonoBehaviour
         {
 
             if (
-                managerhub.world.CheckForVoxel(right_左上) ||
-                managerhub.world.CheckForVoxel(right_右上) ||
-                managerhub.world.CheckForVoxel(right_左下) ||
-                managerhub.world.CheckForVoxel(right_右下) ||
-                managerhub.world.CheckForVoxel(right_Center)
+                managerhub.world.CollisionCheckForVoxel(right_左上) ||
+                managerhub.world.CollisionCheckForVoxel(right_右上) ||
+                managerhub.world.CollisionCheckForVoxel(right_左下) ||
+                managerhub.world.CollisionCheckForVoxel(right_右下) ||
+                managerhub.world.CollisionCheckForVoxel(right_Center)
                 )
                 return true;
 

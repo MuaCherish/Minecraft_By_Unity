@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ba6daff7d853234690d917cda652f3b, type: 3}
+  m_Name: "\u529F\u80FD\u6027\u65B9\u5757"
+  m_EditorClassIdentifier: 
+  goodName: 111
+  icon: {fileID: 0}
+  classify: 0
+  "Goods_\u5EFA\u7B51\u65B9\u5757":
+    DestroyTime: 0
+    isSolid: 0
+    isTransparent: 0
+    canBeChoose: 0
+    candropBlock: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    is2d: 0
+    front_sprite: {fileID: 0}
+    surround_sprite: {fileID: 0}
+    top_sprit: {fileID: 0}
+    buttom_sprit: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 0
+    frontFaceTexture: 0
+    topFaceTexture: 0
+    bottomFaceTexture: 0
+    leftFaceTexture: 0
+    rightFaceTexture: 0
+    DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
+  "Goods_\u529F\u80FD\u6027\u65B9\u5757":
+    DestroyTime: 0
+    isSolid: 0
+    isTransparent: 0
+    canBeChoose: 0
+    candropBlock: 0
+    isDIYCollision: 0
+    CollosionRange:
+      xRange: {x: 0, y: 1}
+      yRange: {x: 0, y: 1}
+      zRange: {x: 0, y: 1}
+    isinteractable: 0
+    IsOriented: 0
+    is2d: 0
+    front_sprite: {fileID: 0}
+    surround_sprite: {fileID: 0}
+    top_sprit: {fileID: 0}
+    buttom_sprit: {fileID: 0}
+    walk_clips:
+    - {fileID: 0}
+    - {fileID: 0}
+    broking_clip: {fileID: 0}
+    broken_clip: {fileID: 0}
+    backFaceTexture: 0
+    frontFaceTexture: 0
+    topFaceTexture: 0
+    bottomFaceTexture: 0
+    leftFaceTexture: 0
+    rightFaceTexture: 0
+    DrawMode: 0
+    GenerateTwoFaceWithAir: 0
+    OtherFaceCheck: []
+  "Goods_\u5DE5\u5177":
+    hasDiyRotation: 0
+    DiyRotation: {x: 0, y: 0, z: 0}
+    canBreakBlockWithMouse1: 0
+    hasMouse2Action: 0
+    hasMouse2HoldAction: 0
+  "Goods_\u98DF\u7269":
+    hasDiyRotation: 0
+    DiyRotation: {x: 0, y: 0, z: 0}
+    healthRecoveryAmount: 0

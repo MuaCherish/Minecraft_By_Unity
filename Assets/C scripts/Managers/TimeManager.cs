@@ -1,3 +1,4 @@
+using Homebrew;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -7,42 +8,11 @@ public class TimeManager : MonoBehaviour
 
     #region 状态
 
-    [Header("状态")]
-    [Range(0, 24), SerializeField] private float CurrentTime = 12;
-    [ReadOnly]public bool isNight;
+    [Foldout("状态", true)]
+    [Header("当前时间(24小时制)")][Range(0, 24), SerializeField] private float CurrentTime = 12;
+    [Header("是否是晚上")][ReadOnly]public bool isNight;
 
     #endregion
-    
-
-    [Header("时间参数")]
-    public float second_GameOneHour = 60; // 现实中多少秒过完游戏内一小时
-    public Vector2 天开始变黑;
-    public Vector2 天开始变亮;
-    private float previous_CurrentTime = 12;
-    private float value;
-
-    [Header("过渡系统")] 
-    [Space]  // 增加合适的间距
-
-    [Header("--矿洞迷雾")]  // 自定义标签使用较小字体
-    public float fogTransitionTime = 3f;  // 迷雾过渡时间
-    public Vector2 FogDayDistance;  // 迷雾距离
-    public Vector2 FogCaveDistance;  // 迷雾距离
-
-
-    [Header("--Skybox")]
-    public Material SkyboxMaterial;
-    public Vector2 SkyboxRange = new Vector2(0.2f, 1f);
-
-    [Header("--Fog")]
-    public Color FogDayColor;
-    public Color FogNightColor;
-    
-
-    [Header("--Blocks")]
-    public Material BlocksMaterial;
-    public Color BlocksDayColor;
-    public Color BlocksNightColor;
 
 
     #region 周期函数
@@ -55,6 +25,35 @@ public class TimeManager : MonoBehaviour
     }
 
     #endregion
+
+
+    [Foldout("时间参数", true)]
+    [Header("游戏内一小时对应现实多少秒")] public float second_GameOneHour = 60; // 现实中多少秒过完游戏内一小时
+
+    [Foldout("天空过渡参数", true)]
+    [Header("白天过渡范围")] public Vector2 天开始变黑;
+    [Header("晚上过渡范围")] public Vector2 天开始变亮;
+    private float previous_CurrentTime = 12;
+    private float value;
+
+    [Foldout("迷雾过渡参数", true)]
+    [Header("迷雾白天颜色")] public Color FogDayColor;
+    [Header("迷雾晚上颜色")] public Color FogNightColor;
+    [Header("迷雾过渡时间")] public float fogTransitionTime = 3f;  // 迷雾过渡时间
+    [Header("迷雾白天范围")] public Vector2 FogDayDistance;  // 迷雾距离
+    [Header("迷雾矿洞范围")] public Vector2 FogCaveDistance;  // 迷雾距离
+
+
+    [Foldout("天空盒过渡参数", true)]
+    [Header("天空盒引用")] public Material SkyboxMaterial;
+    [Header("天空盒过渡范围")] public Vector2 SkyboxRange = new Vector2(0.2f, 1f);
+
+
+    [Foldout("地形颜色过渡参数", true)]
+    [Header("地形材质引用")] public Material BlocksMaterial;
+    [Header("白天颜色")] public Color BlocksDayColor;
+    [Header("晚上颜色")] public Color BlocksNightColor;
+
 
 
     // 初始化
