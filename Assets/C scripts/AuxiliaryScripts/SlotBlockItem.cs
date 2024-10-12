@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
 {
     public bool isBackPackSlot = false;  //是物品栏
     public BlockItem MyItem = new BlockItem(255, 0);
@@ -51,36 +51,45 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     }
 
     //如果被点击，尝试触发SwapBlock
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
+        //print("slot被点击");
+
         //拿出物品
         if (managerhub.canvasManager.SwapBlock == null)
         {
+            //print("拿出物品");
             if (isBackPackSlot)
             {
                 if (MyItem._number != 0)
                 {
+                    
                     managerhub.canvasManager.CreateSwapBlock(new BlockItem(MyItem._blocktype, MyItem._number));
-
+                    Cursor.visible = false;
                     InitMyItem();
                 }
-                UpdateBlockItem();
-
+                UpdateBlockItem(true);
+                
             }
             else
             {
+                
                 managerhub.canvasManager.CreateSwapBlock(new BlockItem(MyItem._blocktype, 1));
+                Cursor.visible = false;
             }
             
 
-        }
+        } 
+        
         //放入物品
         else
         {
+            //print("放入物品");
             if (isBackPackSlot)
             {
                 //print("slot被点击");
                 managerhub.canvasManager.hasClickedSlot = true;
+                
 
                 //执行交换SwapBlock的逻辑              
                 //相同累加数字
@@ -95,35 +104,43 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                     MyItem._number = managerhub.canvasManager.SwapBlock._data._number;
                 }
 
-                UpdateBlockItem();
+                UpdateBlockItem(true);
 
                 //Destroy
                 managerhub.canvasManager.DestroySwapBlock();
             }
 
-          
+            Cursor.visible = true;
         }
 
 
         
     }
 
-    //刷新自己
-    public void UpdateBlockItem()
+    /// <summary>
+    /// 刷新背包物品栏
+    /// </summary>
+    /// <param name="_needSYN">是否需要同步物品栏</param>
+    public void UpdateBlockItem(bool _needSYN)
     {
-        transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
+        //transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
 
         //方块的显示模式
         GameObject icon2D = transform.Find("Icon").gameObject;
         GameObject icon3D = transform.Find("3Dicon").gameObject;
         //print($"正在渲染Slot，number: {MyItem._number}");
 
+        if (managerhub == null)
+        {
+            managerhub = GlobalData.GetManagerhub();
+        }
+        //print(MyItem._blocktype + "-" + MyItem._number);
+
         //如果类型是空的则不渲染
         if (MyItem._blocktype == 255)
         {
             //icon
-            icon2D.SetActive(true);
-            icon2D.GetComponent<Image>().color = new Color(139f / 255, 139f / 255, 139f / 255, 1);
+            icon2D.SetActive(false);
             icon3D.SetActive(false);
 
             //number
@@ -138,6 +155,7 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             {
                 transform.Find("TMP_number").gameObject.GetComponent<TextMeshProUGUI>().text = $"{MyItem._number}";
 
+                //print(MyItem._blocktype);
                 //是否显示3d图形
                 if (!managerhub.world.blocktypes[MyItem._blocktype].is2d)
                 {
@@ -171,8 +189,11 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             }
         }
 
-
-        managerhub.backpackManager.SYN_allSlots(1);
+        if (_needSYN)
+        {
+            managerhub.backpackManager.SYN_allSlots(1);
+        }
+        
     }
 
     void InitMyItem()

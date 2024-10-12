@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 项目总代码量正则表达式: b*[^:b#/]+.*$
+/// </summary>
 public class ManagerHub : MonoBehaviour
 {
     [Foldout("Managers", true)]

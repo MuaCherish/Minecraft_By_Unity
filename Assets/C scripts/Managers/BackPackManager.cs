@@ -44,25 +44,46 @@ public class BackPackManager : MonoBehaviour
 
     public Transform 生存背包物品栏;
     public Transform 创造背包物品栏;
-    
+
+    /// <summary>
+    /// 用于同步物品栏和背包物品栏
+    /// <para>[0]: 更新背包物品栏</para>
+    /// <para>[1]: 更新物品栏</para>
+    /// </summary>
+    /// <param name="_prior"></param>
     public void SYN_allSlots(int _prior)
     {
 
-        Transform 物品栏;
+        Transform 背包物品栏;
         if (managerhub.world.game_mode == GameMode.Survival)
         {
-            物品栏 = 生存背包物品栏;
+            背包物品栏 = 生存背包物品栏;
         }
         else
         {
-            物品栏 = 创造背包物品栏;
+            背包物品栏 = 创造背包物品栏;
         }
 
 
         //同步背包物品栏
         if (_prior == 0)
         {
-            print("已同步背包物品栏");
+            GameObject[] 背包物品栏集合 = new GameObject[slots.Length];
+            int index_背包物品栏 = 0;
+
+            //填充背包物品栏集合
+            foreach (Transform item in 背包物品栏)
+            {
+                背包物品栏集合[index_背包物品栏] = item.gameObject;
+
+                index_背包物品栏++;
+            }
+
+            for (int i = 0;i < slots.Length; i ++)
+            {
+                背包物品栏集合[i].GetComponent<SlotBlockItem>().InitBlockItem(new BlockItem(slots[i].blockId, slots[i].number));
+                背包物品栏集合[i].GetComponent<SlotBlockItem>().UpdateBlockItem(false);
+            }
         }
 
         //同步物品栏
@@ -70,14 +91,14 @@ public class BackPackManager : MonoBehaviour
         {
             //print("已同步物品栏");
             int i = 0;
-            foreach (Transform item in 物品栏)
+            foreach (Transform item in 背包物品栏)
             {
                 BlockItem _targetItem = item.GetComponent<SlotBlockItem>().MyItem;
                 slots[i].blockId = _targetItem._blocktype;
                 slots[i].number = _targetItem._number;
                 i++;
             }
-            FlashSlot();
+            Render_BackPackSlots(false);
             ChangeBlockInHand();
         }
         else
@@ -88,11 +109,155 @@ public class BackPackManager : MonoBehaviour
 
         
     }
-
-    //单纯刷新Slot
-    public void FlashSlot()
+   
+    /// <summary>
+    /// 计算物品栏参数
+    /// <para>[0]: 方块++ </para>
+    /// <para>[1]: 方块--</para>
+    /// </summary>
+    /// <param name="brokeOrplace">操作类型，放置或破坏</param>
+    /// <param name="blocktype">方块类型</param>
+    public void update_slots (int brokeOrplace,byte blocktype)
     {
-        for (int i = 0;i < slots.Length;i ++)
+        //broke,方块++
+        if (brokeOrplace == 0)
+        {
+            bool isfind = false;
+
+            //先寻找是否有该方块
+            foreach (Slot _slot in slots)
+            {
+
+                //如果找到
+                if (_slot.blockId == blocktype)
+                {
+                    isfind = true;
+
+                    _slot.number++;
+                }
+            }
+
+            //如果没有该方块，则新加
+            if (!isfind)
+            {
+                int _index = find_empty_index();
+                if (_index != -1)
+                {
+                    //parameter
+                    slots[_index].ishave = true;
+                    slots[_index].blockId = blocktype;
+
+                    //number
+                    slots[_index].number++;
+
+
+                }
+
+            }
+
+        }
+
+
+        //place，方块--
+        else if (brokeOrplace == 1)
+        {
+            if (slots[managerhub.player.selectindex].number - 1 <= 0)
+            {
+                slots[managerhub.player.selectindex].ResetSlot();
+            }
+            else
+            {
+                slots[managerhub.player.selectindex].number--;
+            }
+
+        }
+
+        Render_BackPackSlots(true);
+        ChangeBlockInHand();
+    }
+
+    /// <summary>
+    /// 计算物品栏参数
+    /// <para>[0]: 方块++ </para>
+    /// <para>[1]: 方块--</para>
+    /// </summary>
+    /// <param name="brokeOrplace">操作类型，放置或破坏</param>
+    /// <param name="blocktype">方块类型</param>
+    /// <param name="_number">更新的数量</param>
+    public void update_slots(int brokeOrplace, byte blocktype, int _number)
+    {
+        //broke,方块++
+        if (brokeOrplace == 0)
+        {
+            bool isfind = false;
+
+            //先寻找是否有该方块
+            foreach (Slot _slot in slots)
+            {
+
+                //如果找到
+                if (_slot.blockId == blocktype)
+                {
+                    isfind = true;
+
+                    _slot.number += _number;
+                }
+            }
+
+            //如果没有该方块，则新加
+            if (!isfind)
+            {
+                int _index = find_empty_index();
+                if (_index != -1)
+                {
+                    //parameter
+                    slots[_index].ishave = true;
+                    slots[_index].blockId = blocktype;
+
+                    //number
+                    slots[_index].number += _number;
+
+
+                }
+
+            }
+
+
+            Render_BackPackSlots(true);
+            ChangeBlockInHand();
+
+        }
+
+
+        //place，方块--
+        else if (brokeOrplace == 1)
+        {
+            if (slots[managerhub.player.selectindex].number - 1 <= 0)
+            {
+                slots[managerhub.player.selectindex].ResetSlot();
+            }
+            else
+            {
+                if (slots[managerhub.player.selectindex].number > _number)
+                {
+                    slots[managerhub.player.selectindex].number -= _number;
+                }
+                else
+                {
+                    slots[managerhub.player.selectindex].number = 0;
+                }
+                
+            }
+
+        }
+    }
+
+    /// <summary>
+    /// 渲染物品栏，同步背包物品栏
+    /// </summary>
+    public void Render_BackPackSlots(bool _NeedSYN)
+    {
+        for (int i = 0; i < slots.Length; i++)
         {
             byte _type = slots[i].blockId;
 
@@ -129,183 +294,13 @@ public class BackPackManager : MonoBehaviour
             }
         }
 
-        SYN_allSlots(0);
-    }
-
-    /// <summary>
-    /// 更新物品栏
-    /// (0:方块++)
-    /// (1:方块--)
-    /// </summary>
-    /// <param name="brokeOrplace">0: 方块++</param>
-    /// <param name="blocktype">要操作的方块类型，表示方块的ID。</param>
-    public void update_slots (int brokeOrplace,byte blocktype)
-    {
-        //broke,方块++
-        if (brokeOrplace == 0)
+        if (_NeedSYN)
         {
-            bool isfind = false;
-
-            //先寻找是否有该方块
-            foreach (Slot _slot in slots)
-            {
-
-                //如果找到
-                if (_slot.blockId == blocktype)
-                {
-                    isfind = true;
-
-                    _slot.number++;
-                    _slot.TMP_number.text = $"{_slot.number}";
-                }
-            }
-
-            //如果没有该方块，则新加
-            if (!isfind)
-            {
-                int _index = find_empty_index();
-                if (_index != -1)
-                {
-                    //parameter
-                    slots[_index].ishave = true;
-                    slots[_index].blockId = blocktype;
-
-                    //icon
-                    //判断是用3d还是2d
-                    if (managerhub.world.blocktypes[blocktype].is2d == false) //3d
-                    {
-                        slots[_index].Icon3Dobject.SetActive(true);
-                        slots[_index].TopFace.sprite = managerhub.world.blocktypes[blocktype].top_sprit;
-                        slots[_index].LeftFace.sprite = managerhub.world.blocktypes[blocktype].sprite;
-                        slots[_index].RightFace.sprite = managerhub.world.blocktypes[blocktype].sprite;
-                    }
-                    else
-                    {
-                        slots[_index].icon.sprite = managerhub.world.blocktypes[blocktype].icon;
-                        slots[_index].icon.color = new Color(1f, 1f, 1f, 1f);
-                    }
-
-                    //number
-                    slots[_index].number++;
-                    slots[_index].TMP_number.text = $"{slots[_index].number}";
-
-
-                }
-
-            }
-
+            SYN_allSlots(0);
         }
-
-
-        //place，方块--
-        else if (brokeOrplace == 1)
-        {
-            if (slots[managerhub.player.selectindex].number - 1 <= 0)
-            {
-                slots[managerhub.player.selectindex].ResetSlot();
-            }
-            else
-            {
-                slots[managerhub.player.selectindex].number--;
-                slots[managerhub.player.selectindex].TMP_number.text = $"{slots[managerhub.player.selectindex].number}";
-            }
-
-        }
-
         
-        ChangeBlockInHand();
     }
 
-    /// <summary>
-    /// 更新物品栏(0:方块++)
-    /// </summary>
-    /// <param name="brokeOrplace"></param>
-    /// <param name="blocktype"></param>
-    /// <param name="_number"></param>
-    public void update_slots(int brokeOrplace, byte blocktype, int _number)
-    {
-        //broke,方块++
-        if (brokeOrplace == 0)
-        {
-            bool isfind = false;
-
-            //先寻找是否有该方块
-            foreach (Slot _slot in slots)
-            {
-
-                //如果找到
-                if (_slot.blockId == blocktype)
-                {
-                    isfind = true;
-
-                    _slot.number += _number;
-                    _slot.TMP_number.text = $"{_slot.number}";
-                }
-            }
-
-            //如果没有该方块，则新加
-            if (!isfind)
-            {
-                int _index = find_empty_index();
-                if (_index != -1)
-                {
-                    //parameter
-                    slots[_index].ishave = true;
-                    slots[_index].blockId = blocktype;
-
-                    //icon
-                    //判断是用3d还是2d
-                    if (managerhub.world.blocktypes[blocktype].is2d == false) //3d
-                    {
-                        slots[_index].Icon3Dobject.SetActive(true);
-                        slots[_index].TopFace.sprite = managerhub.world.blocktypes[blocktype].top_sprit;
-                        slots[_index].LeftFace.sprite = managerhub.world.blocktypes[blocktype].sprite;
-                        slots[_index].RightFace.sprite = managerhub.world.blocktypes[blocktype].sprite;
-                    }
-                    else
-                    {
-                        slots[_index].icon.sprite = managerhub.world.blocktypes[blocktype].icon;
-                        slots[_index].icon.color = new Color(1f, 1f, 1f, 1f);
-                    }
-
-                    //number
-                    slots[_index].number += _number;
-                    slots[_index].TMP_number.text = $"{slots[_index].number}";
-
-
-                }
-
-            }
-
-            ChangeBlockInHand();
-
-        }
-
-
-        //place，方块--
-        else if (brokeOrplace == 1)
-        {
-            if (slots[managerhub.player.selectindex].number - 1 <= 0)
-            {
-                slots[managerhub.player.selectindex].ResetSlot();
-            }
-            else
-            {
-                if (slots[managerhub.player.selectindex].number > _number)
-                {
-                    slots[managerhub.player.selectindex].number -= _number;
-                    slots[managerhub.player.selectindex].TMP_number.text = $"{slots[managerhub.player.selectindex].number}";
-                }
-                else
-                {
-                    slots[managerhub.player.selectindex].number = 0;
-                    slots[managerhub.player.selectindex].TMP_number.text = $"{slots[managerhub.player.selectindex].number}";
-                }
-                
-            }
-
-        }
-    }
 
     /// <summary>
     /// 按Q扔物品

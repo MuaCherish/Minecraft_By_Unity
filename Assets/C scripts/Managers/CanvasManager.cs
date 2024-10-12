@@ -11,6 +11,7 @@ using UnityEngine.XR;
 using System.IO;
 using System.Diagnostics;
 using UnityEngine.EventSystems;
+using System.Reflection;
 
 
 public class CanvasManager : MonoBehaviour
@@ -247,7 +248,7 @@ public class CanvasManager : MonoBehaviour
                 managerhub.world.game_state = Game_State.Playing;
             }
 
-            LayintSwapBlock();
+            //LayintSwapBlock();
 
         }
 
@@ -1284,7 +1285,7 @@ public class CanvasManager : MonoBehaviour
         foreach (Transform item in 创造物品栏Content)
         {
             item.gameObject.GetComponent<SlotBlockItem>().InitBlockItem(new BlockItem(255, 0));
-            item.gameObject.GetComponent<SlotBlockItem>().UpdateBlockItem();
+            item.gameObject.GetComponent<SlotBlockItem>().UpdateBlockItem(true);
         }
     }
 
@@ -1436,7 +1437,7 @@ public class CanvasManager : MonoBehaviour
     //物质交换媒介
     [Header("物质交换媒介")]
     public GameObject SwapBlockPrefeb;
-    public SwapBlockStruct SwapBlock;
+    public SwapBlockStruct SwapBlock = null;
 
     [SerializeField]
     public class SwapBlockStruct
@@ -1447,12 +1448,28 @@ public class CanvasManager : MonoBehaviour
 
 
     //创建SwapBlock
+    public Transform 生存模式背包Parent;
+    public Transform 创造模式背包Parent;
     public void CreateSwapBlock(BlockItem _item)
     {
         
         //初始化item
         GameObject instance = Instantiate(SwapBlockPrefeb);
-        instance.transform.SetParent(创造模式背包.transform, false);
+       
+
+        if (managerhub.world.game_mode == GameMode.Survival)
+        {
+            instance.transform.SetParent(生存模式背包Parent, false);
+            instance.transform.localScale = new Vector3(0.34f, 0.34f, 0.34f);
+            instance.transform.SetSiblingIndex(1);
+        }
+        else
+        {
+            instance.transform.SetParent(创造模式背包Parent, false);
+            instance.transform.localScale = new Vector3(0.26f, 0.26f, 0.26f);
+            instance.transform.SetSiblingIndex(3);
+        }
+
         //instance.transform.Find("Image").GetComponent<Image>().color = new Color(1, 1, 1, 200f / 255);
 
         //初始化数据
@@ -1463,6 +1480,7 @@ public class CanvasManager : MonoBehaviour
         //方块的显示模式
         GameObject icon2D = instance.transform.Find("Icon").gameObject;
         GameObject icon3D = instance.transform.Find("3Dicon").gameObject;
+        icon2D.GetComponent<Image>().raycastTarget = false;
 
         //初始化脚本
         instance.GetComponent<SwapBlockItem>().InitBlockItem(new BlockItem(_item._blocktype, _item._number));
@@ -1504,6 +1522,7 @@ public class CanvasManager : MonoBehaviour
     public void DestroySwapBlock()
     {
         Destroy(SwapBlock._object);
+        Cursor.visible = true;
         SwapBlock = null;
     }
 

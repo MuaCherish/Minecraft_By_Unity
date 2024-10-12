@@ -8,25 +8,28 @@ public class SwapBlockItem : MonoBehaviour
     public BlockItem MyItem = new BlockItem(0, 0);
     private RectTransform rectTransform;
 
-    private ManagerHub managerhub;
+    //private ManagerHub managerhub;
 
-    private void Start()
-    {
-        managerhub = GlobalData.GetManagerhub();
-    }
+    //private void Start()
+    //{
+    //    managerhub = GlobalData.GetManagerhub();
+    //}
 
 
     //public int debug_type;
     //public int debug_Number;
-
-
-    [SerializeField]
-    private Vector2 offset = new Vector2(118f, -118f); // 偏移量，可在 Inspector 中设置
+    private Vector2 offset = new Vector2(50f, -50f); // 偏移量，可在 Inspector 中设置
 
     private void Awake()
     {
         // 获取 RectTransform 组件
         rectTransform = GetComponent<RectTransform>();
+        
+    }
+
+    private void Start()
+    {
+        FollowMouse();
     }
 
     public void InitBlockItem(BlockItem _item)
@@ -45,7 +48,7 @@ public class SwapBlockItem : MonoBehaviour
         //debug_Number = MyItem._number;
     }
 
-    private void FollowMouse()
+    public void FollowMouse()
     {
         Vector2 mousePosition;
         // 将鼠标位置从屏幕坐标转换为 UI 坐标
