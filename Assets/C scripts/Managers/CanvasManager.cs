@@ -120,7 +120,7 @@ public class CanvasManager : MonoBehaviour
     //一次性代码
     bool hasExec_Playing = true;
     public bool hasExec_PromptScreen_isShow = false;
-    bool hasExec_PromptScreen_isHide = true;
+    //bool hasExec_PromptScreen_isHide = true;
     bool hasExec_InWater = false;
 
     //debug
@@ -172,7 +172,7 @@ public class CanvasManager : MonoBehaviour
         // 初始化一次性代码的执行状态
         hasExec_Playing = true;
         hasExec_PromptScreen_isShow = false;
-        hasExec_PromptScreen_isHide = true;
+        //hasExec_PromptScreen_isHide = true;
         hasExec_InWater = false;
 
         // 初始化UI缓冲栈
@@ -188,7 +188,7 @@ public class CanvasManager : MonoBehaviour
         endTime = 0f;
 
         // 初始化当前世界类型
-        currentWorldType = VoxelData.Biome_Default;
+        currentWorldType = TerrainData.Biome_Default;
         numberofWorldType = 7; // 总量
 
         // 初始化需要内部共享的变量
@@ -200,8 +200,8 @@ public class CanvasManager : MonoBehaviour
 
         //恢复按钮
         isClickSaving = false;
-        UIManager[VoxelData.ui初始化_选择存档].childs[0]._object.GetComponent<Image>().color = new Color(58f / 255, 58f / 255, 58f / 255, 1);
-        UIManager[VoxelData.ui初始化_选择存档].childs[1]._object.GetComponent<Image>().color = new Color(58f / 255, 58f / 255, 58f / 255, 1);
+        UIManager[CanvasData.ui初始化_选择存档].childs[0]._object.GetComponent<Image>().color = new Color(58f / 255, 58f / 255, 58f / 255, 1);
+        UIManager[CanvasData.ui初始化_选择存档].childs[1]._object.GetComponent<Image>().color = new Color(58f / 255, 58f / 255, 58f / 255, 1);
     }
 
 
@@ -258,8 +258,8 @@ public class CanvasManager : MonoBehaviour
     //加载进度条
     public void LoadingWorld()
     {
-        TextMeshProUGUI progressNumber = UIManager[VoxelData.ui加载世界].childs[0]._object.GetComponent<TextMeshProUGUI>();
-        GameObject progressHandle = UIManager[VoxelData.ui加载世界].childs[1]._object;
+        TextMeshProUGUI progressNumber = UIManager[CanvasData.ui加载世界].childs[0]._object.GetComponent<TextMeshProUGUI>();
+        GameObject progressHandle = UIManager[CanvasData.ui加载世界].childs[1]._object;
 
         //UpdateText
         progressNumber.text = $"{(Initprogress * 100):F2} %";
@@ -274,7 +274,7 @@ public class CanvasManager : MonoBehaviour
         {
             world.game_state = Game_State.Playing;
 
-            SwitchToUI(VoxelData.ui玩家);
+            SwitchToUI(CanvasData.ui玩家);
 
         }
     }
@@ -309,7 +309,7 @@ public class CanvasManager : MonoBehaviour
     float startTime; float endTime;
 
     // 当前世界类型
-    private int currentWorldType = VoxelData.Biome_Default;
+    private int currentWorldType = TerrainData.Biome_Default;
     private int numberofWorldType = 7; // 总量-这个不能乱加了
 
     //需要内部共享的变量
@@ -370,7 +370,7 @@ public class CanvasManager : MonoBehaviour
 
 
             //如果是细节面板，则把子目录隐藏
-            if (currentUIID == VoxelData.ui选项细节)
+            if (currentUIID == CanvasData.ui选项细节)
             {
                 UIManager[Detail_Number].canvas.SetActive(false);
             }
@@ -393,7 +393,7 @@ public class CanvasManager : MonoBehaviour
     public bool UpdateCanvasState(int _TargetID)
     {
         //选择存档
-        if (_TargetID == VoxelData.ui初始化_选择存档)
+        if (_TargetID == CanvasData.ui初始化_选择存档)
         {
             foreach (Transform child in NewWorld_Transform)
             {
@@ -406,7 +406,7 @@ public class CanvasManager : MonoBehaviour
 
 
         //新建世界
-        else if (_TargetID == VoxelData.ui初始化_新建世界)
+        else if (_TargetID == CanvasData.ui初始化_新建世界)
         {
             //InitAllManagers();
 
@@ -423,7 +423,7 @@ public class CanvasManager : MonoBehaviour
 
 
         //判断是不是选项
-        else if (_TargetID == VoxelData.ui选项)
+        else if (_TargetID == CanvasData.ui选项)
         {
             if (NotNeedBackGround)
             {
@@ -435,14 +435,14 @@ public class CanvasManager : MonoBehaviour
             }
         }
         //判断是不是选项细节
-        else if (_TargetID == VoxelData.ui选项细节)
+        else if (_TargetID == CanvasData.ui选项细节)
         {
 
             //同步一些数据
 
             //rendersize
-            UIManager[VoxelData.ui选项细节].childs[5]._object.GetComponent<Slider>().value = RenderSize_Value;
-            UIManager[VoxelData.ui选项细节].childs[22]._object.GetComponent<TextMeshProUGUI>().text = $"渲染距离：{Mathf.RoundToInt(Mathf.Lerp(2, 23, RenderSize_Value))} 区块";
+            UIManager[CanvasData.ui选项细节].childs[5]._object.GetComponent<Slider>().value = RenderSize_Value;
+            UIManager[CanvasData.ui选项细节].childs[22]._object.GetComponent<TextMeshProUGUI>().text = $"渲染距离：{Mathf.RoundToInt(Mathf.Lerp(2, 23, RenderSize_Value))} 区块";
 
             if (NotNeedBackGround)
             {
@@ -457,7 +457,7 @@ public class CanvasManager : MonoBehaviour
         }
 
         //游戏模式的判断
-        else if (_TargetID == VoxelData.ui加载世界)
+        else if (_TargetID == CanvasData.ui加载世界)
         {
 
 
@@ -484,7 +484,7 @@ public class CanvasManager : MonoBehaviour
         }
 
         //玩家模式
-        else if (_TargetID == VoxelData.ui玩家)
+        else if (_TargetID == CanvasData.ui玩家)
         {
             // 将鼠标锁定在屏幕中心
             //Cursor.lockState = CursorLockMode.Locked;
@@ -505,7 +505,7 @@ public class CanvasManager : MonoBehaviour
         }
 
         //从游戏中暂停
-        else if (_TargetID == VoxelData.ui游戏中暂停)
+        else if (_TargetID == CanvasData.ui游戏中暂停)
         {
             //Cursor.lockState = CursorLockMode.None;
             //Cursor.visible = true;
@@ -513,7 +513,7 @@ public class CanvasManager : MonoBehaviour
         }
 
         //死亡
-        else if (_TargetID == VoxelData.ui死亡)
+        else if (_TargetID == CanvasData.ui死亡)
         {
             //Cursor.lockState = CursorLockMode.None;
             //Cursor.visible = true;
@@ -607,8 +607,8 @@ public class CanvasManager : MonoBehaviour
     public void LightButton()
     {
         isClickSaving = true;
-        UIManager[VoxelData.ui初始化_选择存档].childs[0]._object.GetComponent<Image>().color = new Color(1, 1, 1, 1);
-        UIManager[VoxelData.ui初始化_选择存档].childs[1]._object.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+        UIManager[CanvasData.ui初始化_选择存档].childs[0]._object.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+        UIManager[CanvasData.ui初始化_选择存档].childs[1]._object.GetComponent<Image>().color = new Color(1, 1, 1, 1);
     }
 
     //进入加载地图的ui
@@ -621,7 +621,7 @@ public class CanvasManager : MonoBehaviour
             world.LoadSavingData(world.savingPATH + "\\Saves\\" + world.PointSaving);
             //print(world.TheSaving.Count);
 
-            SwitchToUI(VoxelData.ui加载世界);
+            SwitchToUI(CanvasData.ui加载世界);
         }
     }
 
@@ -634,13 +634,13 @@ public class CanvasManager : MonoBehaviour
         {
             //保存名字
             case 0:
-                world.worldSetting.name = UIManager[VoxelData.ui初始化_新建世界].childs[0]._object.GetComponent<TMP_InputField>().text;
+                world.worldSetting.name = UIManager[CanvasData.ui初始化_新建世界].childs[0]._object.GetComponent<TMP_InputField>().text;
                 break;
 
             //保存种子
             case 1:
 
-                String _text = UIManager[VoxelData.ui初始化_新建世界].childs[1]._object.GetComponent<TMP_InputField>().text;
+                String _text = UIManager[CanvasData.ui初始化_新建世界].childs[1]._object.GetComponent<TMP_InputField>().text;
                 int _number;
 
 
@@ -648,7 +648,7 @@ public class CanvasManager : MonoBehaviour
                 {
                     isInitError = true;
                     //print("种子为空!");
-                    UIManager[VoxelData.ui初始化_新建世界].childs[4]._object.GetComponent<TextMeshProUGUI>().text = "种子为空！";
+                    UIManager[CanvasData.ui初始化_新建世界].childs[4]._object.GetComponent<TextMeshProUGUI>().text = "种子为空！";
                 }
                 else
                 {
@@ -660,7 +660,7 @@ public class CanvasManager : MonoBehaviour
                             if (isInitError)
                             {
                                 isInitError = false;
-                                UIManager[VoxelData.ui初始化_新建世界].childs[4]._object.GetComponent<TextMeshProUGUI>().text = " ";
+                                UIManager[CanvasData.ui初始化_新建世界].childs[4]._object.GetComponent<TextMeshProUGUI>().text = " ";
                             }
 
 
@@ -671,7 +671,7 @@ public class CanvasManager : MonoBehaviour
                         {
                             isInitError = true;
                             //Debug.Log("种子必须大于0！");
-                            UIManager[VoxelData.ui初始化_新建世界].childs[4]._object.GetComponent<TextMeshProUGUI>().text = "种子必须大于0！";
+                            UIManager[CanvasData.ui初始化_新建世界].childs[4]._object.GetComponent<TextMeshProUGUI>().text = "种子必须大于0！";
 
                         }
 
@@ -685,7 +685,7 @@ public class CanvasManager : MonoBehaviour
                     {
                         isInitError = true;
                         //Debug.Log("种子转换失败！");
-                        UIManager[VoxelData.ui初始化_新建世界].childs[4]._object.GetComponent<TextMeshProUGUI>().text = "种子转换失败！";
+                        UIManager[CanvasData.ui初始化_新建世界].childs[4]._object.GetComponent<TextMeshProUGUI>().text = "种子转换失败！";
                     }
                 }
 
@@ -695,7 +695,7 @@ public class CanvasManager : MonoBehaviour
             //渲染区块
             case 2:
 
-                float Rendervalue = UIManager[VoxelData.ui初始化_新建世界].childs[5]._object.GetComponent<Slider>().value;
+                float Rendervalue = UIManager[CanvasData.ui初始化_新建世界].childs[5]._object.GetComponent<Slider>().value;
 
                 //更新全局变量
                 RenderSize_Value = Rendervalue;
@@ -707,7 +707,7 @@ public class CanvasManager : MonoBehaviour
                 if (previous_mappedValue != mappedValue)
                 {
                     //改变文本
-                    UIManager[VoxelData.ui初始化_新建世界].childs[6]._object.GetComponent<TextMeshProUGUI>().text = $"渲染距离：{mappedValue} 区块";
+                    UIManager[CanvasData.ui初始化_新建世界].childs[6]._object.GetComponent<TextMeshProUGUI>().text = $"渲染距离：{mappedValue} 区块";
 
                     //改变world
                     world.renderSize = mappedValue;
@@ -723,13 +723,13 @@ public class CanvasManager : MonoBehaviour
                 {
                     //改为创造模式
                     world.game_mode = GameMode.Creative;
-                    UIManager[VoxelData.ui初始化_新建世界].childs[2]._object.GetComponent<TextMeshProUGUI>().text = "游戏模式：创造";
+                    UIManager[CanvasData.ui初始化_新建世界].childs[2]._object.GetComponent<TextMeshProUGUI>().text = "游戏模式：创造";
                 }
                 else
                 {
                     //改为生成模式
                     world.game_mode = GameMode.Survival;
-                    UIManager[VoxelData.ui初始化_新建世界].childs[2]._object.GetComponent<TextMeshProUGUI>().text = "游戏模式：生存";
+                    UIManager[CanvasData.ui初始化_新建世界].childs[2]._object.GetComponent<TextMeshProUGUI>().text = "游戏模式：生存";
                 }
 
                 musicmanager.PlaySound_Click();
@@ -743,32 +743,32 @@ public class CanvasManager : MonoBehaviour
                 switch (currentWorldType)
                 {
                     case 0:
-                        world.worldSetting.worldtype = VoxelData.Biome_Plain;
-                        UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：草原群系";
+                        world.worldSetting.worldtype = TerrainData.Biome_Plain;
+                        UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：草原群系";
                         break;
                     case 1:
-                        world.worldSetting.worldtype = VoxelData.Biome_Plateau;
-                        UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：高原群系";
+                        world.worldSetting.worldtype = TerrainData.Biome_Plateau;
+                        UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：高原群系";
                         break;
                     case 2:
-                        world.worldSetting.worldtype = VoxelData.Biome_Dessert;
-                        UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：沙漠群系";
+                        world.worldSetting.worldtype = TerrainData.Biome_Dessert;
+                        UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：沙漠群系";
                         break;
                     case 3:
-                        world.worldSetting.worldtype = VoxelData.Biome_Marsh;
-                        UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：沼泽群系";
+                        world.worldSetting.worldtype = TerrainData.Biome_Marsh;
+                        UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：沼泽群系";
                         break;
                     case 4:
-                        world.worldSetting.worldtype = VoxelData.Biome_Forest;
-                        UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：密林群系";
+                        world.worldSetting.worldtype = TerrainData.Biome_Forest;
+                        UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：密林群系";
                         break;
                     case 5:
-                        world.worldSetting.worldtype = VoxelData.Biome_Default;
-                        UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：默认";
+                        world.worldSetting.worldtype = TerrainData.Biome_Default;
+                        UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：默认";
                         break;
                     case 6:
-                        world.worldSetting.worldtype = VoxelData.Biome_SuperPlain;
-                        UIManager[VoxelData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：超平坦";
+                        world.worldSetting.worldtype = TerrainData.Biome_SuperPlain;
+                        UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：超平坦";
                         break;
                     default:
                         print("ClickToSwitchWorldType出错");
@@ -796,7 +796,7 @@ public class CanvasManager : MonoBehaviour
         {
             //渲染范围
             case 0:
-                float Rendervalue = UIManager[VoxelData.ui选项细节].childs[5]._object.GetComponent<Slider>().value;
+                float Rendervalue = UIManager[CanvasData.ui选项细节].childs[5]._object.GetComponent<Slider>().value;
 
                 //更新全局变量
                 RenderSize_Value = Rendervalue;
@@ -808,7 +808,7 @@ public class CanvasManager : MonoBehaviour
                 if (previous_mappedValue != mappedValue)
                 {
                     //改变文本
-                    UIManager[VoxelData.ui选项细节].childs[22]._object.GetComponent<TextMeshProUGUI>().text = $"渲染距离：{mappedValue} 区块";
+                    UIManager[CanvasData.ui选项细节].childs[22]._object.GetComponent<TextMeshProUGUI>().text = $"渲染距离：{mappedValue} 区块";
 
                     //改变world
                     world.renderSize = mappedValue;
@@ -820,7 +820,7 @@ public class CanvasManager : MonoBehaviour
 
             //开始渲染范围
             case 1:
-                float StartToRendervalue = UIManager[VoxelData.ui选项细节].childs[6]._object.GetComponent<Slider>().value;
+                float StartToRendervalue = UIManager[CanvasData.ui选项细节].childs[6]._object.GetComponent<Slider>().value;
 
                 //将值归一到具体的int
                 //2 7 12 17 23 
@@ -829,7 +829,7 @@ public class CanvasManager : MonoBehaviour
                 if (previous_starttoreder_mappedValue != starttoreder_mappedValue)
                 {
                     //改变文本
-                    UIManager[VoxelData.ui选项细节].childs[23]._object.GetComponent<TextMeshProUGUI>().text = $"开始渲染的距离：{starttoreder_mappedValue} 区块";
+                    UIManager[CanvasData.ui选项细节].childs[23]._object.GetComponent<TextMeshProUGUI>().text = $"开始渲染的距离：{starttoreder_mappedValue} 区块";
 
                     //改变world
                     world.StartToRender = starttoreder_mappedValue;
@@ -854,7 +854,7 @@ public class CanvasManager : MonoBehaviour
             case 0:
 
                 //GetValue
-                value = UIManager[VoxelData.ui选项细节].childs[7]._object.GetComponent<Slider>().value;
+                value = UIManager[CanvasData.ui选项细节].childs[7]._object.GetComponent<Slider>().value;
 
                 //Update
                 musicmanager.Audio_envitonment.volume = Mathf.Lerp(0f, 1f, value);
@@ -865,7 +865,7 @@ public class CanvasManager : MonoBehaviour
             case 1:
 
                 //GetValue
-                value = UIManager[VoxelData.ui选项细节].childs[8]._object.GetComponent<Slider>().value;
+                value = UIManager[CanvasData.ui选项细节].childs[8]._object.GetComponent<Slider>().value;
 
                 //Update
                 musicmanager.Audio_player_place.volume = Mathf.Lerp(0f, 0.8f, value);
@@ -928,23 +928,23 @@ public class CanvasManager : MonoBehaviour
             {
                 isPausing = true;
                 ToggleMouseVisibilityAndLock(false);
-                UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_玩家互动ui前黑色背景]._object.SetActive(true);
-                UIManager[VoxelData.ui玩家].childs[_index]._object.SetActive(true);
-                UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_准心]._object.SetActive(false);
+                UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_玩家互动ui前黑色背景]._object.SetActive(true);
+                UIManager[CanvasData.ui玩家].childs[_index]._object.SetActive(true);
+                UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_准心]._object.SetActive(false);
                 managerhub.world.game_state = Game_State.Pause;
             }
         }
         //关闭UI
         else
         {
-            foreach (Transform item in UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_玩家互动ui前黑色背景]._object.transform)
+            foreach (Transform item in UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_玩家互动ui前黑色背景]._object.transform)
             {
                 item.gameObject.SetActive(false);
             }
 
             // 将父对象设为不可见
-            UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_准心]._object.SetActive(true);
-            UIManager[VoxelData.ui玩家].childs[VoxelData.UIplayer_玩家互动ui前黑色背景]._object.SetActive(false);
+            UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_准心]._object.SetActive(true);
+            UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_玩家互动ui前黑色背景]._object.SetActive(false);
         }
 
 
@@ -1023,7 +1023,7 @@ public class CanvasManager : MonoBehaviour
         world.ClassifyWorldData();
 
         // 切换到 "正在保存中" 的 UI
-        SwitchToUI(VoxelData.ui正在保存中);
+        SwitchToUI(CanvasData.ui正在保存中);
 
         // 假设分类完成后有1秒的延迟（根据实际情况调整）
         yield return new WaitForSeconds(1f);
@@ -1034,7 +1034,7 @@ public class CanvasManager : MonoBehaviour
             if (world.isFinishSaving && managerhub.world.updateEditNumberCoroutine == null)
             {
                 // 切换回菜单界面
-                SwitchToUI(VoxelData.ui菜单);
+                SwitchToUI(CanvasData.ui菜单);
 
                 // 停止所有协程并重新初始化所有管理器
                 StopAllCoroutines();
@@ -1072,7 +1072,7 @@ public class CanvasManager : MonoBehaviour
     //关闭细节面板的子目录
     public void CloseDetail_Child(int _Id)
     {
-        UIManager[VoxelData.ui选项细节].childs[_Id]._object.SetActive(false);
+        UIManager[CanvasData.ui选项细节].childs[_Id]._object.SetActive(false);
     }
 
     //跳动的MuaCherish
@@ -1123,7 +1123,7 @@ public class CanvasManager : MonoBehaviour
     public void ChangeFOV()
     {
         // 获取滑动条的值
-        float sliderValue = UIManager[VoxelData.ui选项].childs[0]._object.GetComponent<Slider>().value;
+        float sliderValue = UIManager[CanvasData.ui选项].childs[0]._object.GetComponent<Slider>().value;
 
         // 将滑动条的值映射到FOV的范围内
         float newFOV = Mathf.Lerp(50f, 90f, sliderValue);
@@ -1171,7 +1171,7 @@ public class CanvasManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.commandManager.isConsoleActive)
         {
             isOpenBackpack = true;
-            SwitchUI_Player(VoxelData.UIplayer_生存背包);
+            SwitchUI_Player(CanvasData.uiplayer_生存背包);
         }
 
         //Debug面板
@@ -1249,7 +1249,7 @@ public class CanvasManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.commandManager.isConsoleActive)
         {
             isOpenBackpack = true;
-            SwitchUI_Player(VoxelData.UIplayer_创造背包);
+            SwitchUI_Player(CanvasData.uiplayer_创造背包);
             UpdateBackPackSlot(BlockClassfy.全部方块);
         }
 
@@ -1650,7 +1650,7 @@ public class CanvasManager : MonoBehaviour
             if (!isPausing)
             {
                 isPausing = true;
-                SwitchToUI(VoxelData.ui游戏中暂停);
+                SwitchToUI(CanvasData.ui游戏中暂停);
                 world.game_state = Game_State.Pause;
 
                 // 解锁鼠标以便在暂停时使用
@@ -1673,7 +1673,7 @@ public class CanvasManager : MonoBehaviour
                         SwitchUI_Player(-1);
                         break;
                     default:
-                        SwitchToUI(VoxelData.ui玩家);
+                        SwitchToUI(CanvasData.ui玩家);
                         break;
                 }
 
@@ -1695,7 +1695,7 @@ public class CanvasManager : MonoBehaviour
         //Cursor.visible = false;
         ToggleMouseVisibilityAndLock(true);
 
-        SwitchToUI(VoxelData.ui玩家);
+        SwitchToUI(CanvasData.ui玩家);
         world.game_state = Game_State.Playing;
     }
 
@@ -1918,7 +1918,7 @@ public class CanvasManager : MonoBehaviour
     public void PlayerDead()
     {
         //DeadScreen.SetActive(true);
-        SwitchToUI(VoxelData.ui死亡);
+        SwitchToUI(CanvasData.ui死亡);
 
        
 
@@ -1928,7 +1928,7 @@ public class CanvasManager : MonoBehaviour
     public void PlayerClickToRestart()
     {
         //DeadScreen.SetActive(false);
-        SwitchToUI(VoxelData.ui玩家);
+        SwitchToUI(CanvasData.ui玩家);
 
 
 

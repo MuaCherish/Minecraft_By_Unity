@@ -1,9 +1,11 @@
+using Homebrew;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ManagerHub : MonoBehaviour
 {
+    [Foldout("Managers", true)]
     public BackPackManager backpackManager;
     public CanvasManager canvasManager;
     public CommandManager commandManager;
@@ -14,4 +16,13 @@ public class ManagerHub : MonoBehaviour
     public World world;
     public Player player;
     public TextureTo3D textureTo3D;
+
+    [Foldout("开发者模式", true)]
+    public bool 低区块模式; [HideInInspector] public bool hasExec_低区块模式 = true;
+    public bool 无黑夜模式; [HideInInspector] public bool hasExec_无黑夜模式 = true;
+    public bool 是否生成Chunk侧面 = false;
+
+
+
+
 }

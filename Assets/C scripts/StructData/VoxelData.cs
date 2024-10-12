@@ -3,68 +3,114 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class VoxelData
-{
-    /// <summary>
-    /// 获取场景里的ManagerHub
-    /// </summary>
-    /// <returns></returns>
-    public static ManagerHub GetManagerhub()
-    {
-        // 在场景中查找名为 "ManagerHub" 的 GameObject
-        GameObject managerhubObject = GameObject.Find("Manager/ManagerHub");
 
-        if (managerhubObject != null)
+/// <summary>
+/// old
+/// </summary>
+//结构体BlockType
+//存储方块种类+面对应的UV
+[System.Serializable]
+public class BlockType
+{
+    [Header("基本参数")]
+    public string blockName;
+    public BlockClassfy BlockClassfy;
+
+    [Header("方块参数")]
+    public float DestroyTime;
+    public bool isSolid;        //是否会阻挡玩家
+    public bool isTransparent;  //周边方块是否面剔除
+    public bool canBeChoose;    //是否可被高亮方块捕捉到
+    public bool candropBlock;   //是否掉落方块
+    public bool IsOriented;     //是否跟随玩家朝向
+    public bool isinteractable; //是否可被右键触发
+    public bool is2d;           //用来区分显示
+
+    [Header("工具参数")]
+    public bool isTool;         //区分功能性
+    public bool isNeedRotation; //true后会做一定的旋转
+
+
+    [Header("自定义碰撞")]
+    public bool isDIYCollision;
+    //抽象来说就是方块向内挤压的数值
+    //对于Y来说，(0.5f,0,0f)，就是Y正方向的面向内挤压0.5f，Y负方向的面向内挤压0.0f，即台阶的碰撞参数
+    public CollosionRange CollosionRange;
+
+    [Header("Sprits")]
+    public Sprite icon; //物品栏图标
+    public Sprite front_sprite; //掉落物
+    public Sprite sprite;  //侧面
+    public Sprite top_sprit; //掉落物
+    public Sprite buttom_sprit; //掉落物
+
+
+    [Header("音乐")]
+    public AudioClip[] walk_clips = new AudioClip[2];
+    public AudioClip broking_clip;
+    public AudioClip broken_clip;
+
+
+    [Header("绘制")]
+    public int backFaceTexture;
+    public int frontFaceTexture;
+    public int topFaceTexture;
+    public int bottomFaceTexture;
+    public int leftFaceTexture;
+    public int rightFaceTexture;
+    public DrawMode DrawMode;
+
+    [Header("面生成判断(后前上下左右)")]
+    public bool GenerateTwoFaceWithAir;    //如果朝向空气，则双面绘制
+    public List<FaceCheckMode> OtherFaceCheck;
+
+
+
+    //贴图中的面的坐标
+    public int GetTextureID(int faceIndex)
+    {
+
+        switch (faceIndex)
         {
-            ManagerHub managerhub = managerhubObject.GetComponent<ManagerHub>();
-            return managerhub;
+
+            case 0:
+                return backFaceTexture;
+
+            case 1:
+                return frontFaceTexture;
+
+            case 2:
+                return topFaceTexture;
+
+            case 3:
+                return bottomFaceTexture;
+
+            case 4:
+                return leftFaceTexture;
+
+            case 5:
+                return rightFaceTexture;
+
+            default:
+                Debug.Log($"Error in GetTextureID; invalid face index {faceIndex}");
+                return 0;
+
+
         }
-        else
-        {
-            Debug.LogError("ManagerHub not found in the scene at Manager/ManagerHub");
-            return null;
-        }
+
     }
 
 
+}
 
-    /*群系系统
-     *平原：0
-     *高原：1
-     *沙漠：2
-     *沼泽：3
-     */
-    public static readonly int Biome_Plain = 0;
-    public static readonly int Biome_Plateau = 1;
-    public static readonly int Biome_Dessert = 2;
-    public static readonly int Biome_Marsh = 3;
-    public static readonly int Biome_Forest = 4;
-    public static readonly int Biome_Default = 5;
-    public static readonly int Biome_SuperPlain = 6;
 
-    //地形参数
-    /*
-     * 平原：soil[10,30],sealevel[17],tree[1]
-     * 丘陵：soil[20,50],sealevel[30],tree[5]
-    */
+/// <summary>
+/// 包含Block类型集合，Mesh数据
+/// </summary>
+public static class VoxelData
+{
 
-    //特殊参数
-    /*
-     * 253：未找到Chunk
-     * 254：固体
-     * 255：射线未打中
-    */
-    public static readonly Byte notChunk = 25;
-    public static readonly Byte Solid = 254;
-    public static readonly Byte notHit = 255;
-
-    //走路参数
-    /*
-     * walkSpeed：走路播放延迟
-     * sprintSpeed：冲刺播放延迟
-    */
-    public static readonly float walkSpeed = 0.5f;
-    public static readonly float sprintSpeed = 0.3f;
+    #region Block 宏定义
 
     //方块宏定义
     /*
@@ -165,113 +211,19 @@ public static class VoxelData
     public static readonly Byte Tool_Arrow = 62; //箭
     public static readonly Byte Fish = 63;
     public static readonly Byte Rotten_Flesh = 64; //腐肉
-    //public static readonly Byte Tool_Pork = 65;
-    //public static readonly Byte Tool_Pork = 66;
-    //public static readonly Byte Tool_Pork = 67;
-    //public static readonly Byte Tool_Pork = 68;
-    //public static readonly Byte Tool_Pork = 69;
-    //public static readonly Byte Tool_Pork = 70;
-    //public static readonly Byte Tool_Pork = 71;
-    //public static readonly Byte Tool_Pork = 72;
+                                                   //public static readonly Byte Tool_Pork = 65;
+                                                   //public static readonly Byte Tool_Pork = 66;
+                                                   //public static readonly Byte Tool_Pork = 67;
+                                                   //public static readonly Byte Tool_Pork = 68;
+                                                   //public static readonly Byte Tool_Pork = 69;
+                                                   //public static readonly Byte Tool_Pork = 70;
+                                                   //public static readonly Byte Tool_Pork = 71;
+                                                   //public static readonly Byte Tool_Pork = 72;
 
 
-    //音乐宏定义
-    //宏定义
-    /*
-     * 0.  click
-     * 1.  bgm_menu
-     * 2.  bgm_1
-     * 3.  bgm_2
-     * 16. bgm_3
-     * 4.  dancegirl
-     * 
-     * 5.  moving_normal
-     * 6.  moving_water
-     * 
-     * 7.  dive
-     * 8.  fall_water
-     * 9.  fall_high
-     * 
-     * 10. place
-     * 
-     * 11. broke_leaves
-     * 12. broke_sand
-     * 13. broke_soil
-     * 14. broke_wood
-     * 15. broke_stone
-     * 
-     * 17. absorb_1
-     * 18. absorb_2
-    */
-    public static readonly int click = 0;
-    public static readonly int bgm_menu = 1;
-    public static readonly int bgm_1 = 2;
-    public static readonly int bgm_2 = 3;
-    public static readonly int dancegirl = 4;
-    public static readonly int moving_normal = 5;
-    public static readonly int moving_water = 6;
-    public static readonly int dive = 7;
-    public static readonly int fall_water = 8;
-    public static readonly int fall_high = 9;
-    public static readonly int place_normal = 10;
-    public static readonly int broke_leaves = 11;
-    public static readonly int broke_sand = 12;
-    public static readonly int broke_soil = 13;
-    public static readonly int broke_wood = 14;
-    public static readonly int broke_stone = 15;
-    public static readonly int bgm_3 = 16;
-    public static readonly int absorb_1 = 17;
-    public static readonly int absorb_2 = 18;
-    public static readonly int explore = 19;
+    #endregion
 
-
-
-    //canvas宏定义
-    public static readonly int ui菜单 = 0;
-    public static readonly int ui多人游戏 = 1;
-    public static readonly int ui初始化_选择存档 = 2;
-    public static readonly int ui初始化_新建世界 = 3;
-    public static readonly int ui加载世界 = 4;
-    public static readonly int ui选项 = 5;
-    public static readonly int ui选项细节 = 6;
-    public static readonly int ui调试 = 7;
-    public static readonly int ui玩家 = 8;
-    public static readonly int ui游戏中暂停 = 9;
-    public static readonly int ui死亡 = 10;
-    public static readonly int ui正在保存中 = 11;
-    public static readonly int ui项目展示内容 = 12;
-
-    //ui选项细节宏定义
-    public static readonly int 视频设置 = 0;
-    public static readonly int 音乐与声音 = 1;
-    public static readonly int 昼夜模式 = 2;
-    public static readonly int 玩家设置 = 3;
-    public static readonly int 辅助设置 = 4;
-
-    //玩家游戏中的页面显示
-    public static readonly int UIplayer_生存要素 = 0;
-    public static readonly int UIplayer_生存背包 = 1;
-    public static readonly int UIplayer_箱子 = 2;
-    public static readonly int UIplayer_工作台 = 3;
-    public static readonly int UIplayer_熔炉 = 4;
-    public static readonly int UIplayer_书籍 = 5;
-    public static readonly int UIplayer_创造背包 = 6;
-    public static readonly int UIplayer_玩家互动ui前黑色背景 = 7;
-    public static readonly int UIplayer_准心 = 8;
-
-    //Select
-    public static readonly float[] SelectLocation_x = new float[9]
-    {
-
-        46f,126f,206f,286f,366f,445f,526f,606f,686f,
-
-    };
-
-
-
-    //chunk大小
-    public static readonly int ChunkWidth = 16;
-    public static readonly int ChunkHeight = 128;
+    #region Mesh 宏定义
 
     public static readonly int TextureAtlasSizeInBlocks = 16;
 
@@ -483,4 +435,32 @@ public static class VoxelData
         new Vector2 (1.0f, 1.0f)
 
     };
+
+
+    #endregion
+
+}
+
+
+//比如 门：{0, isSolid false} 代表后方如果是Solid则不生成面
+// 0 1  2   3  4  5
+//后 前 上 下 左 右
+[Serializable]
+public class FaceCheckMode
+{
+    public int FaceDirect;  //这个Direct属于本地方向，比如0指的是自己朝向的后方，因为后面要顾及到物体的旋转
+    public FaceCheck_Enum checktype;
+    public byte appointType;
+    public DrawMode appointDrawmode;
+    public bool isCreateFace;
+}
+
+
+//方块碰撞类
+[Serializable]
+public class CollosionRange
+{
+    public Vector2 xRange = new Vector3(0, 1f);
+    public Vector2 yRange = new Vector3(0, 1f);
+    public Vector2 zRange = new Vector3(0, 1f);
 }

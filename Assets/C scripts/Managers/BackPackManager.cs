@@ -40,9 +40,25 @@ public class BackPackManager : MonoBehaviour
     /// _prior = 0：物品栏更新了，同步背包物品栏
     /// _prior = 1：背包物品栏更新了，同步物品栏
     /// </summary>
-    public Transform 背包物品栏;
+
+
+    public Transform 生存背包物品栏;
+    public Transform 创造背包物品栏;
+    
     public void SYN_allSlots(int _prior)
     {
+
+        Transform 物品栏;
+        if (managerhub.world.game_mode == GameMode.Survival)
+        {
+            物品栏 = 生存背包物品栏;
+        }
+        else
+        {
+            物品栏 = 创造背包物品栏;
+        }
+
+
         //同步背包物品栏
         if (_prior == 0)
         {
@@ -54,7 +70,7 @@ public class BackPackManager : MonoBehaviour
         {
             //print("已同步物品栏");
             int i = 0;
-            foreach (Transform item in 背包物品栏)
+            foreach (Transform item in 物品栏)
             {
                 BlockItem _targetItem = item.GetComponent<SlotBlockItem>().MyItem;
                 slots[i].blockId = _targetItem._blocktype;
@@ -92,9 +108,12 @@ public class BackPackManager : MonoBehaviour
                     slots[i].TopFace.sprite = managerhub.world.blocktypes[_type].top_sprit;
                     slots[i].LeftFace.sprite = managerhub.world.blocktypes[_type].sprite;
                     slots[i].RightFace.sprite = managerhub.world.blocktypes[_type].sprite;
+
+                    slots[i].icon.color = new Color(1f, 1f, 1f, 0f);
                 }
                 else
                 {
+                    slots[i].Icon3Dobject.SetActive(false);
                     slots[i].icon.sprite = managerhub.world.blocktypes[_type].icon;
                     slots[i].icon.color = new Color(1f, 1f, 1f, 1f);
                 }
@@ -109,6 +128,8 @@ public class BackPackManager : MonoBehaviour
                 slots[i].ResetSlot();
             }
         }
+
+        SYN_allSlots(0);
     }
 
     /// <summary>
@@ -191,7 +212,7 @@ public class BackPackManager : MonoBehaviour
 
         }
 
-
+        
         ChangeBlockInHand();
     }
 

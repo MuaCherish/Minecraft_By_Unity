@@ -12,7 +12,7 @@ public class SwapBlockItem : MonoBehaviour
 
     private void Start()
     {
-        managerhub = VoxelData.GetManagerhub();
+        managerhub = GlobalData.GetManagerhub();
     }
 
 

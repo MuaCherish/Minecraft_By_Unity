@@ -11,7 +11,7 @@ public class BackGroundMoving : MonoBehaviour
     private ManagerHub managerhub;
     void Start()
     {
-        managerhub = VoxelData.GetManagerhub();
+        managerhub = GlobalData.GetManagerhub();
         // 记录物体的初始位置
         startPosition = transform.position;
     }

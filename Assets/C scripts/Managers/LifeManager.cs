@@ -30,7 +30,7 @@ public class LifeManager : MonoBehaviour
 
     private void Start()
     {
-        managerhub = VoxelData.GetManagerhub();
+        managerhub = GlobalData.GetManagerhub();
     }
 
     public void InitLifeManager()

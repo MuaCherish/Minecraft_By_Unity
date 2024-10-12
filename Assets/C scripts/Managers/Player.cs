@@ -60,7 +60,7 @@ public class Player : MonoBehaviour
 
     [Header("角色参数")]
     public Transform foot; 
-    private bool hasExec = true;
+    //private bool hasExec = true;
     public float walkSpeed = 4f;
     public float sprintSpeed = 8f;
     public float squatWalkSpeed = 1f;
@@ -720,7 +720,7 @@ public class Player : MonoBehaviour
         {
 
             isSprinting = true;
-            musicmanager.footstepInterval = VoxelData.sprintSpeed;
+            musicmanager.footstepInterval = PlayerData.sprintSpeed;
 
         }
 
@@ -733,7 +733,7 @@ public class Player : MonoBehaviour
         {
 
             isSprinting = false;
-            musicmanager.footstepInterval = VoxelData.walkSpeed;
+            musicmanager.footstepInterval = PlayerData.walkSpeed;
 
         }
 
@@ -948,7 +948,7 @@ public class Player : MonoBehaviour
                         {
                             BlocksFunction.Boom(managerhub, _rayCast.hitPoint, 4);
                             GameObject.Instantiate(particle_explosion, _rayCast.hitPoint_Previous, Quaternion.identity);
-                            musicmanager.PlaySound(VoxelData.explore);
+                            musicmanager.PlaySound(MusicData.explore);
 
                             // 玩家被炸飞
                             Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
@@ -995,17 +995,17 @@ public class Player : MonoBehaviour
                     
                     //工作台
                     case 18:
-                        managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_工作台);
+                        managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_工作台);
                         break;
 
                     //熔炉
                     case 39:
-                        managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_熔炉);
+                        managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_熔炉);
                         break;
 
                     //箱子
                     case 45:
-                        managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_箱子);
+                        managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_箱子);
                         break;
 
 
@@ -1078,7 +1078,7 @@ public class Player : MonoBehaviour
 
                     //书籍
                     case 58:
-                        managerhub.canvasManager.SwitchUI_Player(VoxelData.UIplayer_书籍);
+                        managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_书籍);
                         break;
 
 
@@ -1477,7 +1477,7 @@ public class Player : MonoBehaviour
             }
 
 
-            point_Block_type = VoxelData.notHit;
+            point_Block_type = PlayerData.notHit;
             lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
 
             step += checkIncrement;
@@ -1577,7 +1577,7 @@ public class Player : MonoBehaviour
         if (selectindex >= 0 && selectindex <= 9)
         {
 
-            selectblock.GetComponent<RectTransform>().anchoredPosition = new Vector2(VoxelData.SelectLocation_x[selectindex], 0);
+            selectblock.GetComponent<RectTransform>().anchoredPosition = new Vector2(PlayerData.SelectLocation_x[selectindex], 0);
 
         }
 
@@ -1634,7 +1634,7 @@ public class Player : MonoBehaviour
         else
         {
 
-            managerhub.world.Start_Position = new Vector3(managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).x, VoxelData.ChunkHeight - 2, managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).z);
+            managerhub.world.Start_Position = new Vector3(managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).x, TerrainData.ChunkHeight - 2, managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).z);
             //print($"start: {managerhub.world.Start_Position}");
             managerhub.world.Start_Position = managerhub.world.AddressingBlock(managerhub.world.Start_Position, 3);
 

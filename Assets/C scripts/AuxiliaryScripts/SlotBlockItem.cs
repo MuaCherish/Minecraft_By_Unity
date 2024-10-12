@@ -13,7 +13,7 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     private void Start()
     {
-        managerhub = VoxelData.GetManagerhub();
+        managerhub = GlobalData.GetManagerhub();
     }
 
 

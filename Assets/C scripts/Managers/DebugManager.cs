@@ -25,7 +25,7 @@ public class DebugManager : MonoBehaviour
 
     private void Start()
     {
-        managerHub = VoxelData.GetManagerhub();
+        managerHub = GlobalData.GetManagerhub();
     }
 
     public void InitDebugManager()

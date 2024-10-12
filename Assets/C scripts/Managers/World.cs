@@ -29,7 +29,7 @@ public enum GameMode
 public enum DrawMode
 {
 
-    Block,Bush,Torch,Air,Water,SnowPower,HalfBrick,Door,Tool,
+    Block,Bush,Torch,Air,Water,SnowPower,HalfBrick,Door,Tool,Null,
 
 }
 
@@ -64,10 +64,10 @@ public enum BlockClassfy
 
 public class World : MonoBehaviour
 {
-    [Header("Debug")]
-    public bool 低区块模式; private bool hasExec_低区块模式 = true;
-    public bool 无黑夜模式; private bool hasExec_无黑夜模式 = true;
-    public bool 是否生成Chunk侧面 = false;
+    //[Header("Debug")]
+    //public bool 低区块模式; private bool hasExec_低区块模式 = true;
+    //public bool 无黑夜模式; private bool hasExec_无黑夜模式 = true;
+    [HideInInspector] public bool 是否生成Chunk侧面 = false;
 
     [Header("引用")]
     public ManagerHub managerhub;
@@ -93,7 +93,6 @@ public class World : MonoBehaviour
     public Material material;
     public Material material_Water;
     public BlockType[] blocktypes;
-    public GoodData[] goods;
 
 
     [Header("World-渲染设置")]
@@ -233,7 +232,7 @@ public class World : MonoBehaviour
 
 
         isLoadSaving = false;
-
+        是否生成Chunk侧面 = managerhub.是否生成Chunk侧面;
 
         // 使用 persistentDataPath 作为根目录
         savingPATH = Path.Combine(Application.persistentDataPath);
@@ -265,7 +264,7 @@ public class World : MonoBehaviour
         WatingToRemove_Chunks = new List<Vector3>();
         myThread_Render = null;
         WaitToRender_New = new ConcurrentQueue<Chunk>();
-        是否生成Chunk侧面 = false;
+        //是否生成Chunk侧面 = false;
         Center_Now = Vector3.zero;
         Center_direction = Vector3.zero;
         hasExec = true;
@@ -368,7 +367,7 @@ public class World : MonoBehaviour
 
                 //更新Center
                 Center_direction = VtoNormal(PlayerFoot.transform.position - Center_Now);
-                Center_Now += Center_direction * VoxelData.ChunkWidth;
+                Center_Now += Center_direction * TerrainData.ChunkWidth;
 
                 //添加Chunk
                 AddtoCreateChunks(Center_direction);
@@ -424,19 +423,19 @@ public class World : MonoBehaviour
 
     private void Update()
     {
-        if (低区块模式 && hasExec_低区块模式)
+        if (managerhub.低区块模式 && managerhub.hasExec_低区块模式)
         {
             renderSize = 2;
 
-            hasExec_低区块模式 = false;
+            managerhub.hasExec_低区块模式 = false;
         }
 
-        if (无黑夜模式 && hasExec_无黑夜模式)
+        if (managerhub.无黑夜模式 && managerhub.hasExec_无黑夜模式)
         {
 
             managerhub.timeManager.gameObject.SetActive(false);
 
-            hasExec_无黑夜模式 = false;
+            managerhub.hasExec_无黑夜模式 = false;
         }
 
     }
@@ -514,10 +513,10 @@ public class World : MonoBehaviour
         //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
         float temp = 0f;
 
-        for (int x = -renderSize + (int)(Center_Now.x / VoxelData.ChunkWidth); x < renderSize + (int)(Center_Now.x / VoxelData.ChunkWidth); x++)
+        for (int x = -renderSize + (int)(Center_Now.x / TerrainData.ChunkWidth); x < renderSize + (int)(Center_Now.x / TerrainData.ChunkWidth); x++)
         {
 
-            for (int z = -renderSize + (int)(Center_Now.z / VoxelData.ChunkWidth); z < renderSize + (int)(Center_Now.z / VoxelData.ChunkWidth); z++)
+            for (int z = -renderSize + (int)(Center_Now.z / TerrainData.ChunkWidth); z < renderSize + (int)(Center_Now.z / TerrainData.ChunkWidth); z++)
             {
 
                 //Create
@@ -582,10 +581,10 @@ public class World : MonoBehaviour
 
         Center_Now = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, 0, GetRealChunkLocation(PlayerFoot.transform.position).z);
 
-        for (int x = -renderSize + (int)(Center_Now.x / VoxelData.ChunkWidth); x < renderSize + (int)(Center_Now.x / VoxelData.ChunkWidth); x++)
+        for (int x = -renderSize + (int)(Center_Now.x / TerrainData.ChunkWidth); x < renderSize + (int)(Center_Now.x / TerrainData.ChunkWidth); x++)
         {
 
-            for (int z = -renderSize + (int)(Center_Now.z / VoxelData.ChunkWidth); z < renderSize + (int)(Center_Now.z / VoxelData.ChunkWidth); z++)
+            for (int z = -renderSize + (int)(Center_Now.z / TerrainData.ChunkWidth); z < renderSize + (int)(Center_Now.z / TerrainData.ChunkWidth); z++)
             {
 
                 //Create
@@ -753,7 +752,7 @@ public class World : MonoBehaviour
         if (add_vec == new Vector3(0, 0, 1))
         {
 
-            add_vec = (Center_Now / VoxelData.ChunkWidth) + Center_direction * (renderSize - 1);
+            add_vec = (Center_Now / TerrainData.ChunkWidth) + Center_direction * (renderSize - 1);
 
             //新增Chunk
             for (int i = -renderSize; i < renderSize; i++)
@@ -790,7 +789,7 @@ public class World : MonoBehaviour
         if (add_vec == new Vector3(0, 0, -1))
         {
 
-            add_vec = (Center_Now / VoxelData.ChunkWidth) + Center_direction * (renderSize);
+            add_vec = (Center_Now / TerrainData.ChunkWidth) + Center_direction * (renderSize);
 
             for (int i = -renderSize; i < renderSize; i++)
             {
@@ -823,7 +822,7 @@ public class World : MonoBehaviour
         if (add_vec == new Vector3(-1, 0, 0))
         {
 
-            add_vec = (Center_Now / VoxelData.ChunkWidth) + Center_direction * (renderSize);
+            add_vec = (Center_Now / TerrainData.ChunkWidth) + Center_direction * (renderSize);
 
             for (int i = -renderSize; i < renderSize; i++)
             {
@@ -858,7 +857,7 @@ public class World : MonoBehaviour
         if (add_vec == new Vector3(1, 0, 0))
         {
 
-            add_vec = (Center_Now / VoxelData.ChunkWidth) + Center_direction * (renderSize - 1);
+            add_vec = (Center_Now / TerrainData.ChunkWidth) + Center_direction * (renderSize - 1);
 
             for (int i = -renderSize; i < renderSize; i++)
             {
@@ -1063,7 +1062,7 @@ public class World : MonoBehaviour
         if (add_vec == new Vector3(0, 0, 1))
         {
 
-            add_vec = (Center_Now / VoxelData.ChunkWidth) - Center_direction * (renderSize + 1);
+            add_vec = (Center_Now / TerrainData.ChunkWidth) - Center_direction * (renderSize + 1);
 
             for (int i = -renderSize; i < renderSize; i++)
             {
@@ -1080,7 +1079,7 @@ public class World : MonoBehaviour
         if (add_vec == new Vector3(0, 0, -1))
         {
 
-            add_vec = (Center_Now / VoxelData.ChunkWidth) - Center_direction * (renderSize);
+            add_vec = (Center_Now / TerrainData.ChunkWidth) - Center_direction * (renderSize);
 
             for (int i = -renderSize; i < renderSize; i++)
             {
@@ -1097,7 +1096,7 @@ public class World : MonoBehaviour
         if (add_vec == new Vector3(-1, 0, 0))
         {
 
-            add_vec = (Center_Now / VoxelData.ChunkWidth) - Center_direction * (renderSize);
+            add_vec = (Center_Now / TerrainData.ChunkWidth) - Center_direction * (renderSize);
 
             for (int i = -renderSize; i < renderSize; i++)
             {
@@ -1112,7 +1111,7 @@ public class World : MonoBehaviour
         if (add_vec == new Vector3(1, 0, 0))
         {
 
-            add_vec = (Center_Now / VoxelData.ChunkWidth) - Center_direction * (renderSize + 1);
+            add_vec = (Center_Now / TerrainData.ChunkWidth) - Center_direction * (renderSize + 1);
 
             for (int i = -renderSize; i < renderSize; i++)
             {
@@ -1514,20 +1513,20 @@ public class World : MonoBehaviour
     //变成给定的群系噪声
     public float GetTotalNoiseHigh_Biome(int _x, int _z, Vector3 _myposition, int _WorldType)
     {
-        if (_x < 0 || _x > VoxelData.ChunkWidth || _z < 0 || _z > VoxelData.ChunkWidth)
+        if (_x < 0 || _x > TerrainData.ChunkWidth || _z < 0 || _z > TerrainData.ChunkWidth)
         {
             print($"GetTotalNoiseHigh_Biome出界,{_x},{_z}");
             return 128f;
         }
 
-        if (_WorldType == VoxelData.Biome_SuperPlain)
+        if (_WorldType == TerrainData.Biome_SuperPlain)
         {
             return 0f;
         }
 
 
         //默认
-        if (_WorldType == VoxelData.Biome_Default)
+        if (_WorldType == TerrainData.Biome_Default)
         {
             //Noise
             float noise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.x);
@@ -1549,7 +1548,7 @@ public class World : MonoBehaviour
             //高原
             if (_B >= 三维密度Density3d)
             {
-                BiomeType = VoxelData.Biome_Plateau;
+                BiomeType = TerrainData.Biome_Plateau;
                 BiomeIntensity = Mathf.InverseLerp(三维密度Density3d, 1f, _B);
             }
             else
@@ -1557,7 +1556,7 @@ public class World : MonoBehaviour
 
                 if (_C >= 干燥程度Aridity)
                 {
-                    BiomeType = VoxelData.Biome_Dessert;
+                    BiomeType = TerrainData.Biome_Dessert;
                     BiomeIntensity = Mathf.InverseLerp(干燥程度Aridity, 1f, _C);
                 }
                 //草原
@@ -1565,18 +1564,18 @@ public class World : MonoBehaviour
                 {
                     if (_D >= 空气湿度MoistureLevel)
                     {
-                        BiomeType = VoxelData.Biome_Marsh;
+                        BiomeType = TerrainData.Biome_Marsh;
                         BiomeIntensity = Mathf.InverseLerp(空气湿度MoistureLevel, 1f, _D);
                     }
                     else
                     {
-                        BiomeType = VoxelData.Biome_Plain;
+                        BiomeType = TerrainData.Biome_Plain;
                         BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
                     }
                 }
                 else
                 {
-                    BiomeType = VoxelData.Biome_Plain;
+                    BiomeType = TerrainData.Biome_Plain;
                     BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
                 }
 
@@ -1620,7 +1619,7 @@ public class World : MonoBehaviour
         Vector3 _address = _start;
         //print($"start: {_address}");
 
-        for (int i = 0;i < VoxelData.ChunkHeight; i ++)
+        for (int i = 0;i < TerrainData.ChunkHeight; i ++)
         {
             byte _byte = GetBlockType(_address);
             if (_byte != VoxelData.Air)
@@ -1655,7 +1654,7 @@ public class World : MonoBehaviour
         Vector3 _next = _start;
 
         //Loop
-        for (int i = 0; i < VoxelData.ChunkHeight; i++)
+        for (int i = 0; i < TerrainData.ChunkHeight; i++)
         {
             // Check，如果当前位置的方块类型不是空气，返回该坐标
             if (GetBlockType(_next) != VoxelData.Air)
@@ -1675,7 +1674,7 @@ public class World : MonoBehaviour
     public Vector3 GetChunkLocation(Vector3 vec)
     {
 
-        return new Vector3((vec.x - vec.x % VoxelData.ChunkWidth) / VoxelData.ChunkWidth, 0, (vec.z - vec.z % VoxelData.ChunkWidth) / VoxelData.ChunkWidth);
+        return new Vector3((vec.x - vec.x % TerrainData.ChunkWidth) / TerrainData.ChunkWidth, 0, (vec.z - vec.z % TerrainData.ChunkWidth) / TerrainData.ChunkWidth);
 
     }
 
@@ -1683,7 +1682,7 @@ public class World : MonoBehaviour
     public Vector3 GetRealChunkLocation(Vector3 vec)
     {
 
-        return new Vector3(16f * ((vec.x - vec.x % VoxelData.ChunkWidth) / VoxelData.ChunkWidth), 0, 16f * ((vec.z - vec.z % VoxelData.ChunkWidth) / VoxelData.ChunkWidth));
+        return new Vector3(16f * ((vec.x - vec.x % TerrainData.ChunkWidth) / TerrainData.ChunkWidth), 0, 16f * ((vec.z - vec.z % TerrainData.ChunkWidth) / TerrainData.ChunkWidth));
 
     }
 
@@ -1701,7 +1700,7 @@ public class World : MonoBehaviour
     public Vector3 GetRelalocation(Vector3 vec)
     {
 
-        return new Vector3(Mathf.FloorToInt(vec.x % VoxelData.ChunkWidth), Mathf.FloorToInt(vec.y) % VoxelData.ChunkHeight, Mathf.FloorToInt(vec.z % VoxelData.ChunkWidth));
+        return new Vector3(Mathf.FloorToInt(vec.x % TerrainData.ChunkWidth), Mathf.FloorToInt(vec.y) % TerrainData.ChunkHeight, Mathf.FloorToInt(vec.z % TerrainData.ChunkWidth));
 
     }
 
@@ -1724,7 +1723,7 @@ public class World : MonoBehaviour
             }
 
 
-            if ((int)GetRelalocation(pos).y >= VoxelData.ChunkHeight)
+            if ((int)GetRelalocation(pos).y >= TerrainData.ChunkHeight)
             {
 
                 //isBlock = false;
@@ -2512,7 +2511,7 @@ public class World : MonoBehaviour
         }
         
         //出界判断(Y)
-        if (realLocation.y >= VoxelData.ChunkHeight || realLocation.y < 0) 
+        if (realLocation.y >= TerrainData.ChunkHeight || realLocation.y < 0) 
         {
             return false; 
         }
@@ -2594,7 +2593,7 @@ public class World : MonoBehaviour
         if (!Allchunks.ContainsKey(GetChunkLocation(pos))) { return true; }
 
         //判断Y上有没有出界
-        if (realLocation.y >= VoxelData.ChunkHeight) { return false; }
+        if (realLocation.y >= TerrainData.ChunkHeight) { return false; }
 
 
         //如果是自定义碰撞

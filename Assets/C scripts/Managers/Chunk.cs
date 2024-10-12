@@ -52,7 +52,7 @@ public class Chunk : MonoBehaviour
     //private int x;
     //private int y;
     //private int z;
-    public VoxelStruct[,,] voxelMap = new VoxelStruct[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+    public VoxelStruct[,,] voxelMap = new VoxelStruct[TerrainData.ChunkWidth, TerrainData.ChunkHeight, TerrainData.ChunkWidth];
 
 
     //Mesh
@@ -112,7 +112,7 @@ public class Chunk : MonoBehaviour
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = world.material;
         chunkObject.transform.SetParent(world.Chunks.transform);
-        chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
+        chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
         rand = new System.Random(world.worldSetting.seed);
@@ -193,7 +193,7 @@ public class Chunk : MonoBehaviour
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = world.material;
         chunkObject.transform.SetParent(world.Chunks.transform);
-        chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
+        chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
         rand = new System.Random(world.worldSetting.seed);
@@ -365,11 +365,11 @@ public class Chunk : MonoBehaviour
 
 
         //对一个chunk进行遍历
-        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        for (int y = 0; y < TerrainData.ChunkHeight; y++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            for (int x = 0; x < TerrainData.ChunkWidth; x++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < TerrainData.ChunkWidth; z++)
                 {
 
 
@@ -527,7 +527,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //沙漠气候
-                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
@@ -556,7 +556,7 @@ public class Chunk : MonoBehaviour
                                 {
 
                                     //是否是菌丝体
-                                    if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Marsh)
+                                    if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Marsh)
                                     {
                                         UpdateBlock(x, y, z, VoxelData.Mycelium) ;
                                     }
@@ -591,7 +591,7 @@ public class Chunk : MonoBehaviour
                         else if (y > noiseHigh - 7)
                         {
                             //沙漠判断
-                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -605,7 +605,7 @@ public class Chunk : MonoBehaviour
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
                         {
                             //沙漠判断
-                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -722,9 +722,9 @@ public class Chunk : MonoBehaviour
         //对一个chunk进行遍历
         for (int y = 0; y < 4; y++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            for (int x = 0; x < TerrainData.ChunkWidth; x++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < TerrainData.ChunkWidth; z++)
                 {
                     if (y == 0)
                     {
@@ -761,11 +761,11 @@ public class Chunk : MonoBehaviour
     void CreateData_Dessert()
     {
         //对一个chunk进行遍历
-        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        for (int y = 0; y < TerrainData.ChunkHeight; y++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            for (int x = 0; x < TerrainData.ChunkWidth; x++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < TerrainData.ChunkWidth; z++)
                 {
 
 
@@ -854,7 +854,7 @@ public class Chunk : MonoBehaviour
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
                         {
                             //沙漠判断
-                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -965,11 +965,11 @@ public class Chunk : MonoBehaviour
 
 
         //对一个chunk进行遍历
-        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        for (int y = 0; y < TerrainData.ChunkHeight; y++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            for (int x = 0; x < TerrainData.ChunkWidth; x++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < TerrainData.ChunkWidth; z++)
                 {
 
                     //地形噪声
@@ -1217,9 +1217,9 @@ public class Chunk : MonoBehaviour
         while (_Forest_treecount-- != 0)
         {
 
-            int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
-            int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
-            int random_y = VoxelData.ChunkHeight;
+            int random_x = rand.Next(2, TerrainData.ChunkWidth - 2);
+            int random_z = rand.Next(2, TerrainData.ChunkWidth - 2);
+            int random_y = TerrainData.ChunkHeight;
             int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
             //如果可以生成树桩
@@ -1234,7 +1234,7 @@ public class Chunk : MonoBehaviour
                 for (int i = 0; i <= random_Tree_High; i++)
                 {
 
-                    if (random_y + i >= VoxelData.ChunkHeight - 1)
+                    if (random_y + i >= TerrainData.ChunkHeight - 1)
                     {
 
                         Debug.Log($"random_y:{random_y},i={i}");
@@ -1292,11 +1292,11 @@ public class Chunk : MonoBehaviour
 
 
         //对一个chunk进行遍历
-        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        for (int y = 0; y < TerrainData.ChunkHeight; y++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            for (int x = 0; x < TerrainData.ChunkWidth; x++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < TerrainData.ChunkWidth; z++)
                 {
 
 
@@ -1490,7 +1490,7 @@ public class Chunk : MonoBehaviour
                         else if (y > noiseHigh - 7)
                         {
                             //沙漠判断
-                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -1504,7 +1504,7 @@ public class Chunk : MonoBehaviour
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
                         {
                             //沙漠判断
-                            if (world.GetBiomeType(x, z, myposition) == VoxelData.Biome_Dessert)
+                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -1592,9 +1592,9 @@ public class Chunk : MonoBehaviour
         while (_Forest_treecount-- != 0)
         {
 
-            int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
-            int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
-            int random_y = VoxelData.ChunkHeight;
+            int random_x = rand.Next(2, TerrainData.ChunkWidth - 2);
+            int random_z = rand.Next(2, TerrainData.ChunkWidth - 2);
+            int random_y = TerrainData.ChunkHeight;
             int random_Tree_High = rand.Next(7, 15);
 
             //如果可以生成树桩
@@ -1606,7 +1606,7 @@ public class Chunk : MonoBehaviour
                 for (int i = 0; i <= random_Tree_High; i++)
                 {
 
-                    if (random_y + i >= VoxelData.ChunkHeight - 1)
+                    if (random_y + i >= TerrainData.ChunkHeight - 1)
                     {
 
                         Debug.Log($"random_y:{random_y},i={i}");
@@ -1665,15 +1665,15 @@ public class Chunk : MonoBehaviour
     void CreateTree(int _x, int _z)
     {
         //密林群系
-        if (world.GetBiomeType(_x, _z, myposition) == VoxelData.Biome_Forest)
+        if (world.GetBiomeType(_x, _z, myposition) == TerrainData.Biome_Forest)
         {
             //[确定XZ]xoz上随便选择5个点
             while (Forest_treecount-- != 0)
             {
 
-                int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
-                int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
-                int random_y = VoxelData.ChunkHeight;
+                int random_x = rand.Next(2, TerrainData.ChunkWidth - 2);
+                int random_z = rand.Next(2, TerrainData.ChunkWidth - 2);
+                int random_y = TerrainData.ChunkHeight;
                 int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
                 //如果可以生成树桩
@@ -1685,7 +1685,7 @@ public class Chunk : MonoBehaviour
                     for (int i = 0; i <= random_Tree_High; i++)
                     {
 
-                        if (random_y + i >= VoxelData.ChunkHeight - 1)
+                        if (random_y + i >= TerrainData.ChunkHeight - 1)
                         {
 
                             Debug.Log($"random_y:{random_y},i={i}");
@@ -1718,9 +1718,9 @@ public class Chunk : MonoBehaviour
             while (count-- != 0)
             {
 
-                int random_x = rand.Next(2, VoxelData.ChunkWidth - 2);
-                int random_z = rand.Next(2, VoxelData.ChunkWidth - 2);
-                int random_y = VoxelData.ChunkHeight;
+                int random_x = rand.Next(2, TerrainData.ChunkWidth - 2);
+                int random_z = rand.Next(2, TerrainData.ChunkWidth - 2);
+                int random_y = TerrainData.ChunkHeight;
                 int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
                 //如果可以生成树桩
@@ -1732,7 +1732,7 @@ public class Chunk : MonoBehaviour
                     for (int i = 0; i <= random_Tree_High; i++)
                     {
 
-                        if (random_y + i >= VoxelData.ChunkHeight - 1)
+                        if (random_y + i >= TerrainData.ChunkHeight - 1)
                         {
 
                             Debug.Log($"random_y:{random_y},i={i}");
@@ -1810,7 +1810,7 @@ public class Chunk : MonoBehaviour
             CreateLeaves(_x, _y + 1, _z);
 
             //生成雪的判定
-            if (((_y + 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < VoxelData.ChunkHeight))
+            if (((_y + 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < TerrainData.ChunkHeight))
             {
                 UpdateBlock(_x, _y + 2, _z, VoxelData.SnowPower) ;
             }
@@ -1828,7 +1828,7 @@ public class Chunk : MonoBehaviour
             CreateLeaves(_x, _y + 1, _z - 1);
 
             //生成雪的判定
-            if (((_y + 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < VoxelData.ChunkHeight))
+            if (((_y + 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < TerrainData.ChunkHeight))
             {
                 UpdateBlock(_x, _y + 2, _z + 1, VoxelData.SnowPower);
                 UpdateBlock(_x - 1, _y + 2, _z, VoxelData.SnowPower);
@@ -1846,7 +1846,7 @@ public class Chunk : MonoBehaviour
         CreateLeaves(_x, _y, _z + 1);
 
         //生成雪的判定
-        if (((_y) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 1) < VoxelData.ChunkHeight) && GetBlock(_x - 1, _y + 1, _z).voxelType != VoxelData.Leaves)
+        if (((_y) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 1) < TerrainData.ChunkHeight) && GetBlock(_x - 1, _y + 1, _z).voxelType != VoxelData.Leaves)
         {
 
             UpdateBlock(_x - 1, _y + 1, _z, VoxelData.SnowPower);
@@ -1955,7 +1955,7 @@ public class Chunk : MonoBehaviour
                     {
 
                         //判断树干是否太高
-                        if (_y + treehigh + 3 > VoxelData.ChunkHeight - 1)
+                        if (_y + treehigh + 3 > TerrainData.ChunkHeight - 1)
                         {
 
                             return -1;
@@ -1981,7 +1981,7 @@ public class Chunk : MonoBehaviour
                 _y--;
 
                 //如果树顶超过最大高度，不生成
-                //else if (random_y + random_Tree_High >= VoxelData.ChunkHeight)
+                //else if (random_y + random_Tree_High >= TerrainData.ChunkHeight)
                 //{
                 //    needTree = false;
                 //    break;
@@ -2152,13 +2152,13 @@ public class Chunk : MonoBehaviour
     //    ClearMeshData();
 
     //    //刷新自己
-    //    for (int _y = 0; _y < VoxelData.ChunkHeight; _y++)
+    //    for (int _y = 0; _y < TerrainData.ChunkHeight; _y++)
     //    {
 
-    //        for (int _x = 0; _x < VoxelData.ChunkWidth; _x++)
+    //        for (int _x = 0; _x < TerrainData.ChunkWidth; _x++)
     //        {
 
-    //            for (int _z = 0; _z < VoxelData.ChunkWidth; _z++)
+    //            for (int _z = 0; _z < TerrainData.ChunkWidth; _z++)
     //            {
 
     //                //修改VoxelMap
@@ -2357,13 +2357,13 @@ public class Chunk : MonoBehaviour
         ClearMeshData();
 
         //刷新自己
-        for (int _y = 0; _y < VoxelData.ChunkHeight; _y++)
+        for (int _y = 0; _y < TerrainData.ChunkHeight; _y++)
         {
 
-            for (int _x = 0; _x < VoxelData.ChunkWidth; _x++)
+            for (int _x = 0; _x < TerrainData.ChunkWidth; _x++)
             {
 
-                for (int _z = 0; _z < VoxelData.ChunkWidth; _z++)
+                for (int _z = 0; _z < TerrainData.ChunkWidth; _z++)
                 {
 
                     //会变化的特殊方块
@@ -2494,13 +2494,13 @@ public class Chunk : MonoBehaviour
         ClearMeshData();
 
         //刷新自己
-        for (int _y = 0; _y < VoxelData.ChunkHeight; _y++)
+        for (int _y = 0; _y < TerrainData.ChunkHeight; _y++)
         {
 
-            for (int _x = 0; _x < VoxelData.ChunkWidth; _x++)
+            for (int _x = 0; _x < TerrainData.ChunkWidth; _x++)
             {
 
-                for (int _z = 0; _z < VoxelData.ChunkWidth; _z++)
+                for (int _z = 0; _z < TerrainData.ChunkWidth; _z++)
                 {
 
                     //会变化的特殊方块
@@ -2714,7 +2714,7 @@ public class Chunk : MonoBehaviour
         int z = (int)_relaVec.z;
 
         //防止过高
-        if (y >= VoxelData.ChunkHeight - 2)
+        if (y >= TerrainData.ChunkHeight - 2)
         {
 
             return;
@@ -2830,7 +2830,7 @@ public class Chunk : MonoBehaviour
 
 
         //如果目标出界
-        if (_Targetx < 0 || _Targetx > VoxelData.ChunkWidth - 1 || _Targety < 0 || _Targety > VoxelData.ChunkHeight - 1 || _Targetz < 0 || _Targetz > VoxelData.ChunkWidth - 1)
+        if (_Targetx < 0 || _Targetx > TerrainData.ChunkWidth - 1 || _Targety < 0 || _Targety > TerrainData.ChunkHeight - 1 || _Targetz < 0 || _Targetz > TerrainData.ChunkWidth - 1)
         {
 
             //if (ThisChunkLocation == new Vector3(100f,0f,99f))
@@ -2842,7 +2842,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //Front
-                if (_Targetz > VoxelData.ChunkWidth - 1)
+                if (_Targetz > TerrainData.ChunkWidth - 1)
                 {
 
                     //如果能查到
@@ -2910,7 +2910,7 @@ public class Chunk : MonoBehaviour
                         //[已废弃，代码统一到一个函数里了]
                         //水的流动
                         //如果自己是水且对面是空气，则把对面变成水
-                        //if (voxelMap[x, y, z + 1] == VoxelData.Water && chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1] == VoxelData.Air)
+                        //if (voxelMap[x, y, z + 1] == VoxelData.Water && chunktemp.voxelMap[x, y, TerrainData.ChunkWidth - 1] == VoxelData.Air)
                         //{
                         //    chunktemp.voxelMap[x, y, 0] = VoxelData.Water;
 
@@ -2921,7 +2921,7 @@ public class Chunk : MonoBehaviour
 
                         //如果target是空气，则返回false
                         //target是水
-                        //if (((world.blocktypes[chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1]].isTransparent || chunktemp.voxelMap[x, y, VoxelData.ChunkWidth - 1] == VoxelData.Water) && (!world.blocktypes[voxelMap[x, y, z + 1]].isTransparent && voxelMap[x, y, z + 1] != VoxelData.Water)))
+                        //if (((world.blocktypes[chunktemp.voxelMap[x, y, TerrainData.ChunkWidth - 1]].isTransparent || chunktemp.voxelMap[x, y, TerrainData.ChunkWidth - 1] == VoxelData.Water) && (!world.blocktypes[voxelMap[x, y, z + 1]].isTransparent && voxelMap[x, y, z + 1] != VoxelData.Water)))
                         //{
                         //    return false;
                         //}
@@ -2931,7 +2931,7 @@ public class Chunk : MonoBehaviour
                         //}
 
 
-                        return CheckSelfAndTarget(GetBlock(_Targetx, _Targety, _Targetz + 1).voxelType, chunktemp.GetBlock(_Targetx, _Targety, VoxelData.ChunkWidth - 1).voxelType, _p);
+                        return CheckSelfAndTarget(GetBlock(_Targetx, _Targety, _Targetz + 1).voxelType, chunktemp.GetBlock(_Targetx, _Targety, TerrainData.ChunkWidth - 1).voxelType, _p);
 
 
                     }
@@ -2966,7 +2966,7 @@ public class Chunk : MonoBehaviour
                         //[已废弃，代码统一到一个函数里了]
                         //水的流动
                         //如果自己是水且对面是空气，则把对面变成水
-                        //if (voxelMap[x + 1, y, z] == VoxelData.Water && chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z] == VoxelData.Air)
+                        //if (voxelMap[x + 1, y, z] == VoxelData.Water && chunktemp.voxelMap[TerrainData.ChunkWidth - 1, y, z] == VoxelData.Air)
                         //{
                         //    chunktemp.voxelMap[x, y, 0] = VoxelData.Water;
 
@@ -2975,7 +2975,7 @@ public class Chunk : MonoBehaviour
 
                         //如果target是空气，则返回false
                         //target是水
-                        //if (((world.blocktypes[chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z]].isTransparent || chunktemp.voxelMap[VoxelData.ChunkWidth - 1, y, z] == VoxelData.Water) && (!world.blocktypes[voxelMap[x + 1, y, z]].isTransparent && voxelMap[x + 1, y, z] != VoxelData.Water)))
+                        //if (((world.blocktypes[chunktemp.voxelMap[TerrainData.ChunkWidth - 1, y, z]].isTransparent || chunktemp.voxelMap[TerrainData.ChunkWidth - 1, y, z] == VoxelData.Water) && (!world.blocktypes[voxelMap[x + 1, y, z]].isTransparent && voxelMap[x + 1, y, z] != VoxelData.Water)))
                         //{
                         //    return false;
                         //}
@@ -2984,7 +2984,7 @@ public class Chunk : MonoBehaviour
                         //    return true;
                         //}
 
-                        return CheckSelfAndTarget(GetBlock(_Targetx + 1, _Targety, _Targetz).voxelType, chunktemp.GetBlock(VoxelData.ChunkWidth - 1, _Targety, _Targetz).voxelType, _p);
+                        return CheckSelfAndTarget(GetBlock(_Targetx + 1, _Targety, _Targetz).voxelType, chunktemp.GetBlock(TerrainData.ChunkWidth - 1, _Targety, _Targetz).voxelType, _p);
 
                     }
                     else
@@ -3006,7 +3006,7 @@ public class Chunk : MonoBehaviour
 
 
                 //Right
-                if (_Targetx > VoxelData.ChunkWidth - 1)
+                if (_Targetx > TerrainData.ChunkWidth - 1)
                 {
 
                     //如果能查到
@@ -3542,9 +3542,9 @@ public class Chunk : MonoBehaviour
                             //    bool Z排碰到障碍物 = false;
 
                             //    //运行后获得当前方块可以踏步的范围
-                            //    for (_xx = 0; _xx < VoxelData.ChunkWidth; _xx++)
+                            //    for (_xx = 0; _xx < TerrainData.ChunkWidth; _xx++)
                             //    {
-                            //        for (__z = 0; __z < VoxelData.ChunkWidth; __z++)
+                            //        for (__z = 0; __z < TerrainData.ChunkWidth; __z++)
                             //        {
 
 
@@ -3602,7 +3602,7 @@ public class Chunk : MonoBehaviour
                             //            }
 
                             //            //如果出界则停止
-                            //            if (_x + _xx == VoxelData.ChunkWidth)
+                            //            if (_x + _xx == TerrainData.ChunkWidth)
                             //            {
                             //                break;
                             //            }
@@ -4154,11 +4154,11 @@ public class Chunk : MonoBehaviour
     public void InitializeVoxelMap_state()
     {
         // 遍历三维数组中的每一个元素
-        for (int x = 0; x < VoxelData.ChunkWidth; x++)
+        for (int x = 0; x < TerrainData.ChunkWidth; x++)
         {
-            for (int y = 0; y < VoxelData.ChunkHeight; y++)
+            for (int y = 0; y < TerrainData.ChunkHeight; y++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < TerrainData.ChunkWidth; z++)
                 {
                     // 只重置 VoxelStruct 的非voxelType部分
                     //voxelMap[x, y, z].up = true;
@@ -4272,7 +4272,7 @@ public class Chunk : MonoBehaviour
 
 
         //如果目标出界
-        if (_x < 0 || _x > VoxelData.ChunkWidth - 1 || _y < 0 || _y > VoxelData.ChunkHeight - 1 || _z < 0 || _z > VoxelData.ChunkWidth - 1)
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
         {
 
             print("UpdateBlockTypec参数出界！");
@@ -4290,7 +4290,7 @@ public class Chunk : MonoBehaviour
     {
 
         //如果目标出界
-        if (_x < 0 || _x > VoxelData.ChunkWidth - 1 || _y < 0 || _y > VoxelData.ChunkHeight - 1 || _z < 0 || _z > VoxelData.ChunkWidth - 1)
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
         {
 
             //print("UpdateBlockTypec参数出界！");
@@ -4313,7 +4313,7 @@ public class Chunk : MonoBehaviour
 
 
         //如果目标出界
-        if (_x < 0 || _x > VoxelData.ChunkWidth - 1 || _y < 0 || _y > VoxelData.ChunkHeight - 1 || _z < 0 || _z > VoxelData.ChunkWidth - 1)
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
         {
 
             print("UpdateBlockTypec参数出界！");
@@ -4336,7 +4336,7 @@ public class Chunk : MonoBehaviour
 
 
         //如果目标出界
-        if (_x < 0 || _x > VoxelData.ChunkWidth - 1 || _y < 0 || _y > VoxelData.ChunkHeight - 1 || _z < 0 || _z > VoxelData.ChunkWidth - 1)
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
         {
 
             print("UpdateBlockTypec参数出界！");
@@ -4366,7 +4366,7 @@ public class Chunk : MonoBehaviour
         TargetChunkDirection = Vector3.zero;
         TargeChunkPosition = new Vector3(_x, _y, _z);
 
-        float width = VoxelData.ChunkWidth;
+        float width = TerrainData.ChunkWidth;
 
         //计算相对Chunk
         TargetChunkDirection += new Vector3((int)(_x / width), 0f, 0f);
@@ -4377,7 +4377,7 @@ public class Chunk : MonoBehaviour
         {
             TargeChunkPosition.x = (_x % width + width) % width;
         }
-        else if (_x > VoxelData.ChunkWidth - 1)
+        else if (_x > TerrainData.ChunkWidth - 1)
         {
             TargeChunkPosition.x = _x % width;
         }
@@ -4388,7 +4388,7 @@ public class Chunk : MonoBehaviour
         {
             TargeChunkPosition.z = (_z % width + width) % width;
         }
-        else if (_z > VoxelData.ChunkWidth - 1)
+        else if (_z > TerrainData.ChunkWidth - 1)
         {
             TargeChunkPosition.z = _z % width;
         }
@@ -4408,7 +4408,7 @@ public class Chunk : MonoBehaviour
     //        int _p;
 
     //        //Front
-    //        if (_z > VoxelData.ChunkWidth - 1)
+    //        if (_z > TerrainData.ChunkWidth - 1)
     //        {
     //            _p = 1;
     //            //如果能查到
@@ -4437,7 +4437,7 @@ public class Chunk : MonoBehaviour
     //            //如果能查到
     //            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
     //            {
-    //                return chunktemp.voxelMap[_x, _y, VoxelData.ChunkWidth - 1];
+    //                return chunktemp.voxelMap[_x, _y, TerrainData.ChunkWidth - 1];
 
     //            }
     //            else
@@ -4458,7 +4458,7 @@ public class Chunk : MonoBehaviour
     //            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
     //            {
 
-    //                return chunktemp.voxelMap[VoxelData.ChunkWidth - 1, _y, _z];
+    //                return chunktemp.voxelMap[TerrainData.ChunkWidth - 1, _y, _z];
 
     //            }
     //            else
@@ -4471,7 +4471,7 @@ public class Chunk : MonoBehaviour
     //        }
 
     //        //Right
-    //        if (_x > VoxelData.ChunkWidth - 1)
+    //        if (_x > TerrainData.ChunkWidth - 1)
     //        {
     //            _p = 5;
     //            //如果能查到
@@ -4491,7 +4491,7 @@ public class Chunk : MonoBehaviour
     //        }
 
     //        //Up不需要考虑
-    //        //if (_y > VoxelData.ChunkHeight - 1)
+    //        //if (_y > TerrainData.ChunkHeight - 1)
     //        //{
     //        //    return new VoxelStruct();
     //        //}
@@ -4524,7 +4524,7 @@ public class Chunk : MonoBehaviour
         if (isOutOfRange(_x, _y, _z))
         {
             //上下出界不用管
-            if (_y < 0 || _y > VoxelData.ChunkWidth - 1)
+            if (_y < 0 || _y > TerrainData.ChunkWidth - 1)
             {
                 return new VoxelStruct();
             }
@@ -4573,10 +4573,10 @@ public class Chunk : MonoBehaviour
         int _z = (int)_TargetPos.z;
 
         //如果目标出界
-        if (_x < 0 || _x > VoxelData.ChunkWidth - 1 || _y < 0 || _y > VoxelData.ChunkHeight - 1 || _z < 0 || _z > VoxelData.ChunkWidth - 1)
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
         {
             //Front
-            if (_z > VoxelData.ChunkWidth - 1)
+            if (_z > TerrainData.ChunkWidth - 1)
             {
 
                 //如果能查到
@@ -4600,7 +4600,7 @@ public class Chunk : MonoBehaviour
                 //如果能查到
                 if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
-                    return chunktemp.voxelMap[_x, _y, VoxelData.ChunkWidth - 1];
+                    return chunktemp.voxelMap[_x, _y, TerrainData.ChunkWidth - 1];
 
                 }
                 else
@@ -4621,7 +4621,7 @@ public class Chunk : MonoBehaviour
                 if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
-                    return chunktemp.voxelMap[VoxelData.ChunkWidth - 1, _y, _z];
+                    return chunktemp.voxelMap[TerrainData.ChunkWidth - 1, _y, _z];
 
                 }
                 else
@@ -4634,7 +4634,7 @@ public class Chunk : MonoBehaviour
             }
 
             //Right
-            if (_x > VoxelData.ChunkWidth - 1)
+            if (_x > TerrainData.ChunkWidth - 1)
             {
 
                 //如果能查到
@@ -4654,7 +4654,7 @@ public class Chunk : MonoBehaviour
             }
 
             //Up不需要考虑
-            //if (_y > VoxelData.ChunkHeight - 1)
+            //if (_y > TerrainData.ChunkHeight - 1)
             //{
             //    return new VoxelStruct();
             //}
@@ -4684,10 +4684,10 @@ public class Chunk : MonoBehaviour
     {
 
         //如果目标出界
-        if (_x < 0 || _x > VoxelData.ChunkWidth - 1 || _y < 0 || _y > VoxelData.ChunkHeight - 1 || _z < 0 || _z > VoxelData.ChunkWidth - 1)
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
         {
             //Front
-            if (_z > VoxelData.ChunkWidth - 1)
+            if (_z > TerrainData.ChunkWidth - 1)
             {
 
                 //如果能查到
@@ -4711,7 +4711,7 @@ public class Chunk : MonoBehaviour
                 //如果能查到
                 if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
-                    return chunktemp.voxelMap[_x, _y, VoxelData.ChunkWidth - 1];
+                    return chunktemp.voxelMap[_x, _y, TerrainData.ChunkWidth - 1];
 
                 }
                 else
@@ -4732,7 +4732,7 @@ public class Chunk : MonoBehaviour
                 if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
-                    return chunktemp.voxelMap[VoxelData.ChunkWidth - 1, _y, _z];
+                    return chunktemp.voxelMap[TerrainData.ChunkWidth - 1, _y, _z];
 
                 }
                 else
@@ -4745,7 +4745,7 @@ public class Chunk : MonoBehaviour
             }
 
             //Right
-            if (_x > VoxelData.ChunkWidth - 1)
+            if (_x > TerrainData.ChunkWidth - 1)
             {
 
                 //如果能查到
@@ -4830,7 +4830,7 @@ public class Chunk : MonoBehaviour
     bool isOutOfRange(int _x, int _y, int _z)
     {
 
-        if (_x < 0 || _x > VoxelData.ChunkWidth - 1 || _y < 0 || _y > VoxelData.ChunkHeight - 1 || _z < 0 || _z > VoxelData.ChunkWidth - 1)
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
         {
             return true;
         }
@@ -4849,7 +4849,7 @@ public class Chunk : MonoBehaviour
         int _y = (int)pos.y;
         int _z = (int)pos.z;
 
-        if (_x < 0 || _x > VoxelData.ChunkWidth - 1 || _y < 0 || _y > VoxelData.ChunkHeight - 1 || _z < 0 || _z > VoxelData.ChunkWidth - 1)
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
         {
 
             return true;
@@ -4877,7 +4877,7 @@ public class Chunk : MonoBehaviour
             _bool = true;
 
         }
-        if (x == VoxelData.ChunkWidth - 1)
+        if (x == TerrainData.ChunkWidth - 1)
         {
             Orient += new Vector3(1f, 0f, 0f);
             _bool = true;
@@ -4889,7 +4889,7 @@ public class Chunk : MonoBehaviour
             _bool = true;
 
         }
-        if (y == VoxelData.ChunkHeight - 1)
+        if (y == TerrainData.ChunkHeight - 1)
         {
             Orient += new Vector3(0f, 1f, 0f);
             _bool = true;
@@ -4901,7 +4901,7 @@ public class Chunk : MonoBehaviour
             _bool = true;
 
         }
-        if (z == VoxelData.ChunkWidth - 1)
+        if (z == TerrainData.ChunkWidth - 1)
         {
             Orient += new Vector3(0f, 0f, 1f);
             _bool = true;
@@ -4917,11 +4917,11 @@ public class Chunk : MonoBehaviour
 
     void InitVoxelStruct()
     {
-        for (int x = 0; x < VoxelData.ChunkWidth; x++)
+        for (int x = 0; x < TerrainData.ChunkWidth; x++)
         {
-            for (int y = 0; y < VoxelData.ChunkHeight; y++)
+            for (int y = 0; y < TerrainData.ChunkHeight; y++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < TerrainData.ChunkWidth; z++)
                 {
                     voxelMap[x, y, z] = new VoxelStruct(); // 初始化每个元素
                 }

@@ -528,7 +528,7 @@ public class DevelopModeWorld : MonoBehaviour
         //高原
         if (_B >= 三维密度Density3d)
         {
-            BiomeType = VoxelData.Biome_Plateau;
+            BiomeType = TerrainData.Biome_Plateau;
             BiomeIntensity = Mathf.InverseLerp(三维密度Density3d, 1f, _B);
         }
         else
@@ -536,7 +536,7 @@ public class DevelopModeWorld : MonoBehaviour
             
             if (_C >= 干燥程度Aridity)
             {
-                BiomeType = VoxelData.Biome_Dessert;
+                BiomeType = TerrainData.Biome_Dessert;
                 BiomeIntensity = Mathf.InverseLerp(干燥程度Aridity, 1f, _C);
             }
             //草原
@@ -544,18 +544,18 @@ public class DevelopModeWorld : MonoBehaviour
             {
                 if (_D >= 空气湿度MoistureLevel)
                 {
-                    BiomeType = VoxelData.Biome_Marsh;
+                    BiomeType = TerrainData.Biome_Marsh;
                     BiomeIntensity = Mathf.InverseLerp(空气湿度MoistureLevel, 1f, _D);
                 }
                 else
                 {
-                    BiomeType = VoxelData.Biome_Plain;
+                    BiomeType = TerrainData.Biome_Plain;
                     BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
                 }
             }
             else
             {
-                BiomeType = VoxelData.Biome_Plain;
+                BiomeType = TerrainData.Biome_Plain;
                 BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
             }
 
@@ -656,7 +656,7 @@ public class DevelopModeWorld : MonoBehaviour
     public Vector3 GetChunkLocation(Vector3 vec)
     {
 
-        return new Vector3((vec.x - vec.x % VoxelData.ChunkWidth) / VoxelData.ChunkWidth, 0, (vec.z - vec.z % VoxelData.ChunkWidth) / VoxelData.ChunkWidth);
+        return new Vector3((vec.x - vec.x % TerrainData.ChunkWidth) / TerrainData.ChunkWidth, 0, (vec.z - vec.z % TerrainData.ChunkWidth) / TerrainData.ChunkWidth);
 
     }
 
@@ -664,7 +664,7 @@ public class DevelopModeWorld : MonoBehaviour
     public Vector3 GetRealChunkLocation(Vector3 vec)
     {
 
-        return new Vector3(16f * ((vec.x - vec.x % VoxelData.ChunkWidth) / VoxelData.ChunkWidth), 0, 16f * ((vec.z - vec.z % VoxelData.ChunkWidth) / VoxelData.ChunkWidth));
+        return new Vector3(16f * ((vec.x - vec.x % TerrainData.ChunkWidth) / TerrainData.ChunkWidth), 0, 16f * ((vec.z - vec.z % TerrainData.ChunkWidth) / TerrainData.ChunkWidth));
 
     }
 
@@ -674,7 +674,7 @@ public class DevelopModeWorld : MonoBehaviour
     public Vector3 GetRelalocation(Vector3 vec)
     {
 
-        return new Vector3(Mathf.FloorToInt(vec.x % VoxelData.ChunkWidth), Mathf.FloorToInt(vec.y), Mathf.FloorToInt(vec.z % VoxelData.ChunkWidth));
+        return new Vector3(Mathf.FloorToInt(vec.x % TerrainData.ChunkWidth), Mathf.FloorToInt(vec.y), Mathf.FloorToInt(vec.z % TerrainData.ChunkWidth));
 
     }
 

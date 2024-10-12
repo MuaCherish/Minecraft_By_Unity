@@ -80,7 +80,7 @@ public class MusicManager : MonoBehaviour
             Audio_envitonment = gameObject.AddComponent<AudioSource>();
         }
         
-        Audio_envitonment.clip = audioclips[VoxelData.bgm_menu];
+        Audio_envitonment.clip = audioclips[MusicData.bgm_menu];
         Audio_envitonment.volume = 0.4f;
         Audio_envitonment.loop = false;
         Audio_envitonment.Play();
@@ -122,7 +122,7 @@ public class MusicManager : MonoBehaviour
         {
             Audio_player_diving = gameObject.AddComponent<AudioSource>();
         }
-        Audio_player_diving.clip = audioclips[VoxelData.dive];
+        Audio_player_diving.clip = audioclips[MusicData.dive];
         Audio_player_diving.volume = 0.4f;
         Audio_player_diving.loop = true;
 
@@ -139,12 +139,12 @@ public class MusicManager : MonoBehaviour
         {
             Audio_Player_moving_swiming = gameObject.AddComponent<AudioSource>();
         }
-        Audio_Player_moving_swiming.clip = audioclips[VoxelData.moving_water];
+        Audio_Player_moving_swiming.clip = audioclips[MusicData.moving_water];
         Audio_Player_moving_swiming.volume = 0.4f;
         Audio_Player_moving_swiming.loop = true;
 
         //walking
-        footstepInterval = VoxelData.walkSpeed;
+        footstepInterval = PlayerData.walkSpeed;
         fadetoStopenvironment = null;
         environmentCoroutine = null;
     }
@@ -188,7 +188,7 @@ public class MusicManager : MonoBehaviour
     //---------------------------------- envitonment ----------------------------------------
     public void PlaySound_Click()
     {
-        Audio_Click.PlayOneShot(audioclips[VoxelData.click]);
+        Audio_Click.PlayOneShot(audioclips[MusicData.click]);
     }
 
     void Fun_environment()
@@ -268,21 +268,21 @@ public class MusicManager : MonoBehaviour
             {
                 if (bgm_sequence == 1)
                 {
-                    Audio_envitonment.clip = audioclips[VoxelData.bgm_3];
+                    Audio_envitonment.clip = audioclips[MusicData.bgm_3];
                     Audio_envitonment.volume = 0.5f;
                     Audio_envitonment.Play();
                     bgm_sequence = 2;
                 }
                 else if (bgm_sequence == 2)
                 {
-                    Audio_envitonment.clip = audioclips[VoxelData.bgm_2];
+                    Audio_envitonment.clip = audioclips[MusicData.bgm_2];
                     Audio_envitonment.volume = 0.5f;
                     Audio_envitonment.Play();
                     bgm_sequence = 3;
                 }
                 else if (bgm_sequence == 3)
                 {
-                    Audio_envitonment.clip = audioclips[VoxelData.bgm_1];
+                    Audio_envitonment.clip = audioclips[MusicData.bgm_1];
                     Audio_envitonment.volume = 0.5f;
                     Audio_envitonment.Play();
                     bgm_sequence = 1;
@@ -322,7 +322,7 @@ public class MusicManager : MonoBehaviour
                 if (Input.GetMouseButton(0))
                 {
                     //如果打中
-                    if (player.point_Block_type != VoxelData.notHit)
+                    if (player.point_Block_type != PlayerData.notHit)
                     {
                         isbroking = true;
 
@@ -550,7 +550,7 @@ public class MusicManager : MonoBehaviour
 
         if (leg_blocktype != previous_leg_blocktype)
         {
-            Audio_player_falling.PlayOneShot(audioclips[VoxelData.fall_water]);
+            Audio_player_falling.PlayOneShot(audioclips[MusicData.fall_water]);
             previous_leg_blocktype = leg_blocktype;
         }
 
@@ -559,7 +559,7 @@ public class MusicManager : MonoBehaviour
     //播放摔落音效
     public void PlaySound_fallGround()
     {
-        Audio_player_falling.PlayOneShot(audioclips[VoxelData.fall_high]);
+        Audio_player_falling.PlayOneShot(audioclips[MusicData.fall_high]);
     }
 
     //播放潜水音效
@@ -604,11 +604,11 @@ public class MusicManager : MonoBehaviour
 
         if (i == 0)
         {
-            Audio_Click.PlayOneShot(audioclips[VoxelData.absorb_1]);
+            Audio_Click.PlayOneShot(audioclips[MusicData.absorb_1]);
         }
         else
         {
-            Audio_Click.PlayOneShot(audioclips[VoxelData.absorb_2]);
+            Audio_Click.PlayOneShot(audioclips[MusicData.absorb_2]);
         }
     }
 

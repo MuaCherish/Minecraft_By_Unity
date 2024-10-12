@@ -212,7 +212,7 @@ public class TestWorld : MonoBehaviour
         //高原
         if (_B >= 三维密度Density3d)
         {
-            BiomeType = VoxelData.Biome_Plateau;
+            BiomeType = TerrainData.Biome_Plateau;
             BiomeIntensity = Mathf.InverseLerp(三维密度Density3d, 1f, _B);
         }
         else
@@ -220,7 +220,7 @@ public class TestWorld : MonoBehaviour
 
             if (_C >= 干燥程度Aridity)
             {
-                BiomeType = VoxelData.Biome_Dessert;
+                BiomeType = TerrainData.Biome_Dessert;
                 BiomeIntensity = Mathf.InverseLerp(干燥程度Aridity, 1f, _C);
             }
             //草原
@@ -228,18 +228,18 @@ public class TestWorld : MonoBehaviour
             {
                 if (_D >= 空气湿度MoistureLevel)
                 {
-                    BiomeType = VoxelData.Biome_Marsh;
+                    BiomeType = TerrainData.Biome_Marsh;
                     BiomeIntensity = Mathf.InverseLerp(空气湿度MoistureLevel, 1f, _D);
                 }
                 else
                 {
-                    BiomeType = VoxelData.Biome_Plain;
+                    BiomeType = TerrainData.Biome_Plain;
                     BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
                 }
             }
             else
             {
-                BiomeType = VoxelData.Biome_Plain;
+                BiomeType = TerrainData.Biome_Plain;
                 BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
             }
 

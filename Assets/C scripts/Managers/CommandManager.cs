@@ -13,7 +13,7 @@ public class CommandManager : MonoBehaviour
     #region 状态
 
     [Foldout("状态", true)]
-    [Header("状态")]
+    [Header("控制台是否激活")]
     [ReadOnly]public bool isConsoleActive = false; // 标志位，跟踪控制台的激活状态
 
     #endregion
@@ -26,7 +26,7 @@ public class CommandManager : MonoBehaviour
 
     private void Start()
     {
-        managerhub = VoxelData.GetManagerhub();
+        managerhub = GlobalData.GetManagerhub();
         world = managerhub.world;
     }
 

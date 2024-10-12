@@ -22,7 +22,7 @@ public class DevelopModeVoxelChunk : MonoBehaviour
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = world.material_VoxelChunk;
         chunkObject.transform.SetParent(world.ChunkPATH.transform);
-        chunkObject.transform.position = new Vector3(thisPosition.x * VoxelData.ChunkWidth, 0f, thisPosition.z * VoxelData.ChunkWidth);
+        chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = "VoxelChunk--" + thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
 
@@ -45,31 +45,31 @@ public class DevelopModeVoxelChunk : MonoBehaviour
         ClearMesh();
 
         Mesh mesh = new Mesh();
-        Vector3[] vertices = new Vector3[(VoxelData.ChunkWidth + 1) * (VoxelData.ChunkWidth + 1)];
+        Vector3[] vertices = new Vector3[(TerrainData.ChunkWidth + 1) * (TerrainData.ChunkWidth + 1)];
         Vector2[] uv = new Vector2[vertices.Length];
 
-        for (int z = 0; z <= VoxelData.ChunkWidth; z++)
+        for (int z = 0; z <= TerrainData.ChunkWidth; z++)
         {
-            for (int x = 0; x <= VoxelData.ChunkWidth; x++)
+            for (int x = 0; x <= TerrainData.ChunkWidth; x++)
             {
-                vertices[z * (VoxelData.ChunkWidth + 1) + x] = new Vector3(x, Mathf.FloorToInt(world.GetTotalNoiseHigh_Biome(x, z, myposition)), z);
-                uv[z * (VoxelData.ChunkWidth + 1) + x] = new Vector2((float)x / VoxelData.ChunkWidth, (float)z / VoxelData.ChunkWidth);
+                vertices[z * (TerrainData.ChunkWidth + 1) + x] = new Vector3(x, Mathf.FloorToInt(world.GetTotalNoiseHigh_Biome(x, z, myposition)), z);
+                uv[z * (TerrainData.ChunkWidth + 1) + x] = new Vector2((float)x / TerrainData.ChunkWidth, (float)z / TerrainData.ChunkWidth);
             }
         }
 
         mesh.vertices = vertices;
         mesh.uv = uv;
          
-        int[] triangles = new int[VoxelData.ChunkWidth * VoxelData.ChunkWidth * 6];
+        int[] triangles = new int[TerrainData.ChunkWidth * TerrainData.ChunkWidth * 6];
         int index = 0;
 
-        for (int z = 0; z < VoxelData.ChunkWidth; z++)
+        for (int z = 0; z < TerrainData.ChunkWidth; z++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            for (int x = 0; x < TerrainData.ChunkWidth; x++)
             {
-                int topLeft = z * (VoxelData.ChunkWidth + 1) + x;
+                int topLeft = z * (TerrainData.ChunkWidth + 1) + x;
                 int topRight = topLeft + 1;
-                int bottomLeft = (z + 1) * (VoxelData.ChunkWidth + 1) + x;
+                int bottomLeft = (z + 1) * (TerrainData.ChunkWidth + 1) + x;
                 int bottomRight = bottomLeft + 1;
 
                 triangles[index++] = topLeft;

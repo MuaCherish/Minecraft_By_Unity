@@ -21,7 +21,7 @@ public class TimeManager : MonoBehaviour
 
     private void Start()
     {
-        managerhub = VoxelData.GetManagerhub();
+        managerhub = GlobalData.GetManagerhub();
     }
 
     #endregion
@@ -61,6 +61,7 @@ public class TimeManager : MonoBehaviour
     {
         CurrentTime = 12;
     }
+
 
     //设置系统时间
     public void SetTime(float _time)
