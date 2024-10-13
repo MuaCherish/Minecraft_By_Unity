@@ -6,6 +6,7 @@ using System.Threading;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using static UnityEngine.GraphicsBuffer;
+using UnityEngine.UIElements;
 //using static UnityEditor.PlayerSettings;
 //using static UnityEditor.Progress;
 //using static UnityEditor.PlayerSettings;
@@ -2781,15 +2782,25 @@ public class Chunk : MonoBehaviour
             {
                 if (thisType == VoxelData.Grass)
                 {
-                    managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, VoxelData.Soil, false);
+                    managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, new BlockItem(VoxelData.Soil, 1), false);
                 }
                 else
                 {
-                    managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, thisType, false);
+                    managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, new BlockItem(thisType, 1), false);
                 }
                 
 
             }
+
+            //树叶掉落苹果
+            if (thisType == VoxelData.Leaves)
+            {
+                if (managerhub.world.GetProbability(30))
+                {
+                    managerhub.backpackManager.CreateDropBox(new Vector3(Mathf.FloorToInt(_EditList[i].editPos.x), Mathf.FloorToInt(_EditList[i].editPos.y), Mathf.FloorToInt(_EditList[i].editPos.z)), new BlockItem(VoxelData.Apple, 1), false);
+                }
+            }
+
 
 
             // 设置方块类型 

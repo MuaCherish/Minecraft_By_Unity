@@ -8,6 +8,9 @@ public class FloatingCube : MonoBehaviour
     public ManagerHub managerhub;
     public GameObject eyes;
 
+    //MyItem
+    BlockItem myItem;
+
     //参数
     public float destroyTime;
     public float rotationSpeed = 30f; // 旋转速度
@@ -15,13 +18,13 @@ public class FloatingCube : MonoBehaviour
     public float absorbDistance;
     public Coroutine MoveToPlayerCoroutine;
     public float moveDuration;
-    public byte point_Block_type;
+    //public byte point_Block_type;
     public float ColdTimeToAbsorb = 1f;
 
     //材质
     public bool isGround; // 是否在地面上
 
-    public void InitWorld(ManagerHub _managerhub,byte _point_Block_type)
+    public void InitWorld(ManagerHub _managerhub,BlockItem _InitItem)
     {
         managerhub = _managerhub;
         destroyTime = _managerhub.backpackManager.dropblock_destroyTime;
@@ -29,7 +32,8 @@ public class FloatingCube : MonoBehaviour
         gravity = _managerhub.backpackManager.drop_gravity;
         moveDuration = _managerhub.backpackManager.moveToplayer_duation;
 
-        point_Block_type = _point_Block_type;
+        //point_Block_type = _point_Block_type;
+        myItem = new BlockItem(_InitItem._blocktype, _InitItem._number);
 
         managerhub.backpackManager = _managerhub.backpackManager;
         managerhub.musicManager = _managerhub.musicManager;
@@ -130,9 +134,9 @@ public class FloatingCube : MonoBehaviour
         
 
         //背包系统计数
-        if (point_Block_type != VoxelData.BedRock)
+        if (myItem._blocktype != VoxelData.BedRock)
         {
-            byte _point_Block_type = point_Block_type;
+            byte _point_Block_type = myItem._blocktype;
 
             //草块变泥土
             if (_point_Block_type == VoxelData.Grass)
@@ -140,7 +144,7 @@ public class FloatingCube : MonoBehaviour
                 _point_Block_type = VoxelData.Soil;
             }
 
-            managerhub.backpackManager.update_slots(0, _point_Block_type);
+            managerhub.backpackManager.update_slots(0, _point_Block_type, myItem._number);
         }
 
         //切换手中物品动画
@@ -159,7 +163,7 @@ public class FloatingCube : MonoBehaviour
         //是否可被吸收
         while (true)
         {
-            if (((transform.position - eyes.transform.position).magnitude < absorbDistance) && managerhub.backpackManager.CheckSlotsFull(point_Block_type) == false)
+            if (((transform.position - eyes.transform.position).magnitude < absorbDistance) && managerhub.backpackManager.CheckSlotsFull(myItem._blocktype) == false)
             {
                 Absorbable();
             }

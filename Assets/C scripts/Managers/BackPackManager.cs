@@ -220,6 +220,13 @@ public class BackPackManager : MonoBehaviour
 
                 }
 
+                //物品栏发不下了，则用背包物品栏
+                else if (_index == -1)
+                {
+                    //print("添加到背包物品栏");
+                    AddBlockToBackPackSlots(new BlockItem(blocktype, _number)) ;
+                }
+
             }
 
 
@@ -305,6 +312,16 @@ public class BackPackManager : MonoBehaviour
     /// <summary>
     /// 按Q扔物品
     /// </summary>
+    /// 
+
+    //获取到准确的玩家眼睛丢出点
+    public Vector3 GetPlayerEyesToThrow()
+    {
+        Transform Eyes = managerhub.player.GetEyesPosition();
+        Vector3 _ThrowOrigin = Eyes.transform.forward * 0.3f + new Vector3(Eyes.transform.position.x, Eyes.transform.position.y - 0.3f, Eyes.transform.position.z);
+        return _ThrowOrigin;
+    }
+
     public void ThrowDropBox()
     {
         Transform Eyes = managerhub.player.GetEyesPosition();
@@ -314,7 +331,7 @@ public class BackPackManager : MonoBehaviour
         if (slots[managerhub.player.selectindex].blockId != 255 && slots[managerhub.player.selectindex].number > 0)
         {
             //创造掉落物
-            CreateDropBox(_ThrowOrigin, slots[managerhub.player.selectindex].blockId, true);
+            CreateDropBox(_ThrowOrigin, new BlockItem(slots[managerhub.player.selectindex].blockId, 1), true);
 
             //物品栏减一
             update_slots(1, 0);
@@ -330,45 +347,76 @@ public class BackPackManager : MonoBehaviour
     //返回当前物品栏是否可以再装物品
     public bool CheckSlotsFull(byte _targetType)
     {
-        bool hasEmptySlot = false;
-        for (int i = 0;i < slots.Length; i++)
+        if (managerhub.world.game_mode == GameMode.Creative)
         {
-            byte targetType = _targetType;
-
-            //草块变泥土
-            if (_targetType == VoxelData.Grass)
+            bool hasEmptySlot = false;
+            for (int i = 0; i < slots.Length; i++)
             {
-                targetType = VoxelData.Soil;
+                byte targetType = _targetType;
+
+                //草块变泥土
+                if (_targetType == VoxelData.Grass)
+                {
+                    targetType = VoxelData.Soil;
+                }
+
+
+                //检测到相同的材质
+                if (slots[i].blockId == targetType)
+                {
+                    //可以合并
+                    return false;
+                }
+
+                //检测空的slot
+                if (slots[i].number == 0)
+                {
+                    hasEmptySlot = true;
+                }
             }
 
-
-            //检测到相同的材质
-            if (slots[i].blockId == targetType)
+            //如果没有相同材质，但是由空的slot
+            if (hasEmptySlot)
             {
-                //可以合并
+                //没满
                 return false;
             }
-
-            //检测空的slot
-            if (slots[i].number == 0)
+            else
             {
-                hasEmptySlot = true;
+                //满了
+                return true;
             }
         }
 
-        //如果没有相同材质，但是由空的slot
-        if (hasEmptySlot)
-        {
-            //没满
-            return false;
-        }
         else
         {
-            //满了
-            return true;
+            return false;
         }
 
     }
+
+
+    //用于去生存模式背包物品栏将物品放进去
+    public Transform 生存模式背包物品栏;
+    void AddBlockToBackPackSlots(BlockItem _targetItem)
+    {
+        if (managerhub.world.game_mode == GameMode.Survival)
+        {
+            foreach (Transform item in 生存模式背包物品栏)
+            {
+                SlotBlockItem slotScript = item.GetComponent<SlotBlockItem>();
+
+                if (slotScript.MyItem._blocktype == _targetItem._blocktype || slotScript.MyItem._blocktype == 255)
+                {
+                    //print("添加了一个物品");
+                    slotScript.AddBlock(_targetItem);
+                    break;
+                }
+            }
+        }
+        
+    }
+
 
     //---------------------------------------------------------------------------------------------------------------------
 
@@ -408,7 +456,7 @@ public class BackPackManager : MonoBehaviour
 
 
     //创造掉落物(坐标,类型)
-    public void CreateDropBox(Vector3 _pos, byte _blocktype, bool _needThrow)
+    public void CreateDropBox(Vector3 _pos, BlockItem _InitItem, bool _needThrow)
     {
         World world = managerhub.world;
         Transform Eyes = managerhub.player.GetEyesPosition();
@@ -419,8 +467,8 @@ public class BackPackManager : MonoBehaviour
         float z_offset = UnityEngine.Random.Range(2, 8) / 10f;
 
         //创建父类
-        GameObject DropBlock = new GameObject(managerhub.world.blocktypes[_blocktype].blockName);
-        DropBlock.AddComponent<FloatingCube>().InitWorld(managerhub, _blocktype);
+        GameObject DropBlock = new GameObject(managerhub.world.blocktypes[_InitItem._blocktype].blockName);
+        DropBlock.AddComponent<FloatingCube>().InitWorld(managerhub, _InitItem);
         DropBlock.transform.SetParent(GameObject.Find("Environment/DropBlocks").transform);
 
 
@@ -433,9 +481,9 @@ public class BackPackManager : MonoBehaviour
         //2d挤压物体
 
         //如果不是2d挤压物体
-        if (managerhub.world.blocktypes[_blocktype].is2d )
+        if (managerhub.world.blocktypes[_InitItem._blocktype].is2d )
         {
-            managerhub.textureTo3D.ProcessSprite(managerhub.world.blocktypes[_blocktype].sprite, DropBlock.transform, 2, false);
+            managerhub.textureTo3D.ProcessSprite(managerhub.world.blocktypes[_InitItem._blocktype].sprite, DropBlock.transform, 2, false);
 
 
         }
@@ -444,42 +492,42 @@ public class BackPackManager : MonoBehaviour
 
             //Top
             GameObject _Top = new GameObject("Top");
-            _Top.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].top_sprit;
+            _Top.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].top_sprit;
             _Top.transform.SetParent(DropBlock.transform);
             _Top.transform.localPosition = new Vector3(0, 0.16f, 0);
             _Top.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
 
             //Buttom
             GameObject _Buttom = new GameObject("Buttom");
-            _Buttom.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].buttom_sprit;
+            _Buttom.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].buttom_sprit;
             _Buttom.transform.SetParent(DropBlock.transform);
             _Buttom.transform.localPosition = new Vector3(0, 0, 0);
             _Buttom.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
 
             //Left
             GameObject _Left = new GameObject("Left");
-            _Left.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Left.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].sprite;
             _Left.transform.SetParent(DropBlock.transform);
             _Left.transform.localPosition = new Vector3(-0.08f, 0.08f, 0);
             _Left.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
 
             //Right
             GameObject _Right = new GameObject("Right");
-            _Right.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Right.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].sprite;
             _Right.transform.SetParent(DropBlock.transform);
             _Right.transform.localPosition = new Vector3(0.08f, 0.08f, 0);
             _Right.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
 
             //Forward
             GameObject _Forward = new GameObject("Forward");
-            _Forward.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Forward.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].sprite;
             _Forward.transform.SetParent(DropBlock.transform);
             _Forward.transform.localPosition = new Vector3(0, 0.08f, 0.08f);
             _Forward.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
             //Back
             GameObject _Back = new GameObject("Back");
-            _Back.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_blocktype].sprite;
+            _Back.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].sprite;
             _Back.transform.SetParent(DropBlock.transform);
             _Back.transform.localPosition = new Vector3(0, 0.08f, -0.08f);
             _Back.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));

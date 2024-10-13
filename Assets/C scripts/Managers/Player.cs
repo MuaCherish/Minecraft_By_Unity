@@ -370,6 +370,8 @@ public class Player : MonoBehaviour
             AchieveInput();
 
 
+            //AdjustPlayerToGround();
+
             // 每隔一段时间检查一次
             if (Time.time >= isInCave_nextCheckTime)
             {
@@ -487,7 +489,19 @@ public class Player : MonoBehaviour
 
     //--------------------------------- 玩家操作 --------------------------------------
 
-
+    //调整玩家坐标防止脚底穿模
+    
+    //private void AdjustPlayerToGround()
+    //{
+    //    if (isGrounded && hasExec_AdjustPlayerToGround)
+    //    {
+    //        print("调整一次坐标");
+    //        Vector3 myposition = transform.position;
+    //        Vector3 Vec = world.GetRelalocation(foot.position);
+    //        transform.position = new Vector3(myposition.x, Vec.y + 1.95f, myposition.z);
+    //        hasExec_AdjustPlayerToGround = false;
+    //    }
+    //}
 
 
     //数据计算
@@ -1296,15 +1310,12 @@ public class Player : MonoBehaviour
             if (world.blocktypes[theBlockwhichBeBrokenType].candropBlock)
             {
                 //树叶掉落苹果
-                if (theBlockwhichBeBrokenType == VoxelData.Leaves && managerhub.world.GetProbability(30))
+                if (theBlockwhichBeBrokenType == VoxelData.Leaves)
                 {
-                    backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), VoxelData.Apple, false);
-
-                }
-                else
-                {
-                    backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), point_Block_type, false);
-
+                    if (managerhub.world.GetProbability(30))
+                    {
+                        backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)), new BlockItem(VoxelData.Apple, 1), false);
+                    }
                 }
 
             }
@@ -1513,82 +1524,68 @@ public class Player : MonoBehaviour
 
 
     //实现操作
+    bool hasExec_AdjustPlayerToGround = true;
     private void AchieveInput()
     {
-
-        //重力实现
+        // 重力实现
         if (jumpRequest)
         {
-
             if (isSwiming)
             {
-
                 verticalMomentum = water_jumpforce;
-
             }
             else
             {
-
                 verticalMomentum = jumpForce;
-
             }
 
             isGrounded = false;
             jumpRequest = false;
-
+            hasExec_AdjustPlayerToGround = true; // 在跳跃时重置调整标记
         }
 
+        // 位置调整，防止穿模
+        if (isGrounded && hasExec_AdjustPlayerToGround)
+        {
+            Vector3 myposition = transform.position;
+            Vector3 Vec = world.GetRelalocation(foot.position); // 获取脚部应有的Y坐标
+            if (Vec.y + 1.95f > myposition.y) // 只调整向上的情况，防止跳跃时干扰
+            {
+                transform.position = new Vector3(myposition.x, Vec.y + 1.95f, myposition.z);
+                //print("调整一次坐标");
+            }
+            hasExec_AdjustPlayerToGround = false; // 调整完毕，防止每帧执行
+        }
 
-        //下蹲实现
-        //0.81~0.388
+        // 下蹲实现
         if (isSquating && !isFlying)
         {
-
             float high = cam.localPosition.y - squatSpeed * Time.deltaTime;
-
             if (high <= 0.388f)
             {
-
                 high = 0.388f;
-
             }
-
             cam.localPosition = new Vector3(cam.localPosition.x, high, cam.localPosition.z);
-
         }
         else
         {
-
             float high = cam.localPosition.y + squatSpeed * Time.deltaTime;
-
             if (high >= 0.81f)
             {
-
                 high = 0.81f;
-
             }
-
             cam.localPosition = new Vector3(cam.localPosition.x, high, cam.localPosition.z);
-
         }
 
-
-        //选择方块实现
+        // 选择方块实现
         if (selectindex >= 0 && selectindex <= 9)
         {
-
             selectblock.GetComponent<RectTransform>().anchoredPosition = new Vector2(PlayerData.SelectLocation_x[selectindex], 0);
-
         }
 
-
-
-
-        //视角和移动实现
+        // 视角和移动实现
         transform.Rotate(Vector3.up * mouseHorizontal);
-        //cam.Rotate(Vector3.right * -mouseVertical);
         cam.localRotation = Quaternion.Euler(Camera_verticalInput, 0, 0);
-
 
         if (isFlying)
         {
@@ -1611,7 +1608,6 @@ public class Player : MonoBehaviour
         }
 
         transform.Translate(velocity, Space.World);
-
     }
 
 

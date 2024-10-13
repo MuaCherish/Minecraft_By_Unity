@@ -9,6 +9,7 @@ public class Entity : MonoBehaviour
     
     [Header("状态")]
     public ManagerHub managerhub;
+    public GameObject foot;
     public bool debug_ShowHitBox;
     public bool debug_ShowCollisionBox;
     public bool jumpRequest;
@@ -64,15 +65,16 @@ public class Entity : MonoBehaviour
     {
         if (managerhub.world.game_state == Game_State.Playing)
         {
-            if (jumptopleyerr == null)
-            {
-                jumptopleyerr = StartCoroutine(alwaysJumpToPlayer());
-            }
+            //if (jumptopleyerr == null)
+            //{
+            //    jumptopleyerr = StartCoroutine(alwaysJumpToPlayer());
+            //}
 
             update_block();
 
             CalculateVelocity();
             AchieveVelocity();
+            AdjustToGround();
 
             if (debug_ShowHitBox)
             {
@@ -555,6 +557,24 @@ public class Entity : MonoBehaviour
             velocity.y = checkUpSpeed(velocity.y);   // 向上移动，检查是否碰到顶部
     }
 
+    bool hasExec_AdjustPlayerToGround = true;
+    public float offset;
+    private void AdjustToGround()
+    {
+        // 位置调整，防止穿模
+        if (isGrounded && hasExec_AdjustPlayerToGround)
+        {
+            Vector3 myposition = transform.position;
+            Vector3 Vec = managerhub.world.GetRelalocation(foot.transform.position); // 获取脚部应有的Y坐标
+            if (Vec.y + offset > myposition.y) // 只调整向上的情况，防止跳跃时干扰
+            {
+                transform.position = new Vector3(myposition.x, Vec.y + offset, myposition.z);
+                //print("调整一次坐标");
+            }
+            hasExec_AdjustPlayerToGround = false; // 调整完毕，防止每帧执行
+        }
+    }
+
     private void AchieveVelocity()
     {
         if (jumpRequest)
@@ -563,6 +583,7 @@ public class Entity : MonoBehaviour
 
             isGrounded = false;
             jumpRequest = false;
+            hasExec_AdjustPlayerToGround = true;
         }
 
         // 根据计算出的速度移动实体

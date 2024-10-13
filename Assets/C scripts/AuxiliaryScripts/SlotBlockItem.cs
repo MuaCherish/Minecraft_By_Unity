@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -89,20 +90,41 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             {
                 //print("slot被点击");
                 managerhub.canvasManager.hasClickedSlot = true;
-                
 
-                //执行交换SwapBlock的逻辑              
-                //相同累加数字
-                if (MyItem._blocktype == managerhub.canvasManager.SwapBlock._data._blocktype)
+
+                //MyItem不为空
+                if (MyItem._blocktype != 255)
                 {
-                    MyItem._number += managerhub.canvasManager.SwapBlock._data._number;
+                    //执行交换SwapBlock的逻辑              
+                    //相同累加数字
+                    if (MyItem._blocktype == managerhub.canvasManager.SwapBlock._data._blocktype)
+                    {
+                        MyItem._number += managerhub.canvasManager.SwapBlock._data._number;
+                    }
+                    //不同则交换方块
+                    else
+                    {
+                        BlockItem temp = new BlockItem(MyItem._blocktype, MyItem._number);
+
+                        //自己改变
+                        MyItem._blocktype = managerhub.canvasManager.SwapBlock._data._blocktype;
+                        MyItem._number = managerhub.canvasManager.SwapBlock._data._number;
+
+                        //将自己提取出来
+                        managerhub.canvasManager.DestroySwapBlock();
+                        managerhub.canvasManager.CreateSwapBlock(new BlockItem(temp._blocktype, temp._number));
+                        UpdateBlockItem(true);
+                        return;
+                    }
                 }
-                //不同则改变类型
+
+                //MyItem是空的
                 else
                 {
                     MyItem._blocktype = managerhub.canvasManager.SwapBlock._data._blocktype;
                     MyItem._number = managerhub.canvasManager.SwapBlock._data._number;
                 }
+                
 
                 UpdateBlockItem(true);
 
@@ -116,6 +138,29 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         
     }
+
+
+    //添加方块
+    public void AddBlock(BlockItem _targetItem)
+    {
+        if (MyItem._blocktype == 255)
+        {
+            MyItem = new BlockItem(_targetItem._blocktype, _targetItem._number);
+        }
+        else
+        {
+            if (MyItem._blocktype == _targetItem._blocktype)
+            {
+                MyItem._number += _targetItem._number;
+            }
+        }
+
+        
+
+        UpdateBlockItem(true);
+    }
+
+
 
     /// <summary>
     /// 刷新背包物品栏
