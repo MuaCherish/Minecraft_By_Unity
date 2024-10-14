@@ -240,7 +240,7 @@ public class CanvasManager : MonoBehaviour
         {
             Show_Esc_Screen();
 
-            if (Input.GetKeyDown(KeyCode.E) && isOpenBackpack && !managerhub.commandManager.isConsoleActive)
+            if (Input.GetKeyDown(KeyCode.E) && isOpenBackpack && !managerhub.commandManager.isConsoleActive && !managerhub.player.isSpectatorMode)
             {
                 isPausing = false;
                 isOpenBackpack = false;
@@ -1179,7 +1179,7 @@ public class CanvasManager : MonoBehaviour
         //EscScreen
         Show_Esc_Screen();
 
-        if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.commandManager.isConsoleActive)
+        if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.commandManager.isConsoleActive && !managerhub.player.isSpectatorMode)
         {
             isOpenBackpack = true;
             SwitchUI_Player(CanvasData.uiplayer_生存背包);
@@ -1257,7 +1257,7 @@ public class CanvasManager : MonoBehaviour
         //EscScreen
         Show_Esc_Screen();
 
-        if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.commandManager.isConsoleActive)
+        if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.commandManager.isConsoleActive && !managerhub.player.isSpectatorMode)
         {
             isOpenBackpack = true;
             SwitchUI_Player(CanvasData.uiplayer_创造背包);
@@ -1684,7 +1684,7 @@ public class CanvasManager : MonoBehaviour
     //Ese_Screen
     void Show_Esc_Screen()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !managerhub.player.isSpectatorMode)
         {
             // 执行暂停
             if (!isPausing)
@@ -2006,6 +2006,17 @@ public class CanvasManager : MonoBehaviour
 
 
     //------------------------------------ 工具类 -------------------------------------------
+
+    public GameObject CanvasMainScreen;
+    public GameObject SpectatorScreen;
+
+    public void SpectatorMode(bool _open)
+    {
+        CanvasMainScreen.SetActive(!_open);
+        SpectatorScreen.SetActive(_open);
+    }
+
+
     //void HideCursor()
     //{
     //    // 将鼠标锁定在屏幕中心

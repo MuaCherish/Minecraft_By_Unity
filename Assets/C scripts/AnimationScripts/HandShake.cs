@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class HandShake : MonoBehaviour
 {
@@ -6,35 +7,42 @@ public class HandShake : MonoBehaviour
     private Animation animationComponent;
     public World world;
     public Player player;
-    private float timer = 0f;
     public CanvasManager canvasmanager;
+
+    // 新增的变量
+    private float timer = 0f;
+    [Header("动画开始播放的冷却")] public float MovingColdTime = 0.2f;
+    [Header("回到初始位置的持续时间")] public float InitHandDuration = 0.1f;
+    private Vector3 initialPosition;
+    private Quaternion initialRotation;
+    private bool isReturningToIdle = false;
 
     void Start()
     {
         animationComponent = GetComponent<Animation>();
+        // 保存初始位置和旋转
+        initialPosition = transform.localPosition;
+        initialRotation = transform.localRotation;
     }
 
-
-    //bool hasExec_isMoving = true;
+    bool hasExec_isMoving = true;
     void FixedUpdate()
     {
         if (world.game_state == Game_State.Playing)
         {
-
             if (canvasmanager.isPausing)
             {
                 return;
             }
 
-            //if (player.isMoving)
-            //{
-            //    hasExec_isMoving = true;
-            //}
+            if (player.isInputing)
+            {
+                hasExec_isMoving = true;
+            }
 
             // 左键按下时播放一次动画
             if (Input.GetKey(KeyCode.Mouse0))
             {
-                //Debug.Log("HandShake Mouse0");
                 PlayFirstAnimation();
             }
             //右键
@@ -51,24 +59,22 @@ public class HandShake : MonoBehaviour
                     return;
                 }
 
-                if (player.isMoving)
+                if (player.isInputing)
                 {
-                    if ((timer > 0.2f) && !BackPackManager.isChanging)
+                    if ((timer > MovingColdTime) && !BackPackManager.isChanging)
                     {
                         PlaySecondAnimation();
                     }
-
                 }
+                //停止移动时手臂归位
                 else
                 {
-                    //if (hasExec_isMoving)
-                    //{
-                    //    //print("手臂归位");
-                    //    animationComponent.Stop("HandMoving");
-                    //    player.InitHandTransform();
-                    //    hasExec_isMoving = false;
-                    //}
-                    
+                    if (hasExec_isMoving && !isReturningToIdle)
+                    {
+                        StopSecondAnimation();
+                        StartCoroutine(ReturnToIdle());
+                        hasExec_isMoving = false;
+                    }
                 }
 
                 timer += Time.deltaTime;
@@ -76,13 +82,11 @@ public class HandShake : MonoBehaviour
         }
     }
 
-    //第一个动画
+    // 第一个动画
     void PlayFirstAnimation()
     {
-        // 如果 Animation 组件不为空并且第一个动画存在
         if (animationComponent != null && animationComponent.GetClip("HandWave") != null)
         {
-            // 播放第一个动画
             animationComponent.Play("HandWave");
         }
         else
@@ -91,13 +95,11 @@ public class HandShake : MonoBehaviour
         }
     }
 
-    //第二个动画
+    // 第二个动画
     void PlaySecondAnimation()
     {
-        // 如果 Animation 组件不为空并且第二个动画存在
         if (animationComponent != null && animationComponent.GetClip("HandMoving") != null)
         {
-            // 播放第二个动画
             animationComponent.Play("HandMoving");
         }
         else
@@ -106,4 +108,38 @@ public class HandShake : MonoBehaviour
         }
     }
 
+    // 停止第二个动画
+    void StopSecondAnimation()
+    {
+        if (animationComponent != null && animationComponent.IsPlaying("HandMoving"))
+        {
+            animationComponent.Stop("HandMoving");
+        }
+    }
+
+    // 协程：返回到初始位置
+    private IEnumerator ReturnToIdle()
+    {
+        isReturningToIdle = true;
+        float elapsedTime = 0f;
+        float duration = InitHandDuration;
+
+        Vector3 startPosition = transform.localPosition;
+        Quaternion startRotation = transform.localRotation;
+
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            transform.localPosition = Vector3.Lerp(startPosition, initialPosition, t);
+            transform.localRotation = Quaternion.Slerp(startRotation, initialRotation, t);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // 确保最终位置和旋转是准确的
+        transform.localPosition = initialPosition;
+        transform.localRotation = initialRotation;
+
+        isReturningToIdle = false;
+    }
 }

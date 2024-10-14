@@ -36,7 +36,7 @@ public class CommandManager : MonoBehaviour
         if (world.game_state == Game_State.Playing || world.game_state == Game_State.Pause)
         {
             // 按下T键且控制台未激活时才激活控制台
-            if (Input.GetKeyDown(KeyCode.T) && !isConsoleActive)
+            if (Input.GetKeyDown(KeyCode.T) && !isConsoleActive && !managerhub.player.isSpectatorMode)
             {
                 ActivateConsole();
             }
@@ -571,6 +571,46 @@ public class CommandManager : MonoBehaviour
                 Entity_Slim.transform.position = managerhub.player.transform.position;
                 Entity_Slim.SetActive(true);
                 return "<系统消息> " + "已添加史莱姆";
+
+            // 旁观者模式
+            case 10:
+                string pattern10 = @"\/spectatormode\s+(\d)";
+
+                Match match10 = Regex.Match(_input, pattern10);
+
+                if (match10.Success)
+                {
+                    string fogSetting = match10.Groups[1].Value;
+
+                    if (int.TryParse(fogSetting, out int fogValue))
+                    {
+                        if (fogValue == 0)
+                        {
+                            managerhub.player.SpectatorMode(false);
+                            return "<系统消息> " + "旁观者模式已关闭";
+                        }
+                        else if (fogValue == 1)
+                        {
+                            managerhub.player.SpectatorMode(true);
+                            return "<系统消息> " + "旁观者模式已开启";
+                        }
+                        else
+                        {
+                            _color = Color.red;
+                            return "<系统消息> " + "/spectatormode参数错误";
+                        }
+                    }
+                    else
+                    {
+                        _color = Color.red;
+                        return "<系统消息> " + "spectatormode转换失败";
+                    }
+                }
+                else
+                {
+                    _color = Color.red;
+                    return "<系统消息> " + "spectatormode转换失败";
+                }
             
 
             //没有找到

@@ -9,9 +9,7 @@ public class Player : MonoBehaviour
 {
 
     //玩家状态
-    [Foldout("玩家状态", true)]
-    [Header("玩家状态")]
-    
+    [Foldout("玩家状态", true)]    
     [ReadOnly] public bool isGrounded;
     [ReadOnly] public bool isSprinting;
     [ReadOnly] public bool isSwiming;
@@ -23,6 +21,12 @@ public class Player : MonoBehaviour
     [ReadOnly] public bool isPause;
     [ReadOnly] public bool isBroking;
     [ReadOnly] public bool isFirstBrokeBlock;  //创造模式点击可以瞬间销毁方块
+    [ReadOnly] public bool isInputing;  //输入停止
+    [ReadOnly] public bool NotCheckPlayerCollision;
+
+    [Foldout("玩家Buff", true)]
+    [ReadOnly] public bool isSpectatorMode; 
+
 
     [Foldout("Transforms", true)]
     [Header("Transforms")]
@@ -167,8 +171,10 @@ public class Player : MonoBehaviour
     [Header("飞行模式")]
     private float lastJumpTime;
     public float doubleTapInterval = 0.5f; // 飞行双击时间间隔
-    public float flyVelocity = 0.1f; //上下飞行速度
-    public int jump_press = 0;
+    public float flyVelocity_Verticle = 0.1f; //上下飞行速度
+    public float flyVelocity_Horizon_mult = 1.5f; //水平飞行速度
+    public float flyLerpTime = 0.3f;
+    public bool jump_press = false;
 
 
     //碰撞检测的坐标
@@ -309,7 +315,11 @@ public class Player : MonoBehaviour
                 lifemanager.UpdatePlayerBlood(100, true, true);
             }
 
-            placeCursorBlocks();
+            if (!isSpectatorMode)
+            {
+                placeCursorBlocks();
+            }
+            
 
         }
 
@@ -338,7 +348,8 @@ public class Player : MonoBehaviour
 
             //计算碰撞点
             CollisionNumber = 0;
-            if (!isFlying)
+
+            if (!NotCheckPlayerCollision)
             {
                 update_block();
             }
@@ -507,6 +518,12 @@ public class Player : MonoBehaviour
     //数据计算
     private void CalculateVelocity()
     {
+        //飞行中落地
+        if (isGrounded && isFlying && !NotCheckPlayerCollision)
+        {
+            isFlying = false;
+            StartCoroutine(expandchangeview(false));
+        }
 
         //玩家视角处理
         Camera_verticalInput -= mouseVerticalspeed;
@@ -567,7 +584,7 @@ public class Player : MonoBehaviour
 
         //滑膜数据
         //前后
-        if (!isFlying)
+        if (!NotCheckPlayerCollision)
         {
             if ((velocity.z > 0 && front) || (velocity.z < 0 && back))
                 velocity.z = 0;
@@ -682,6 +699,28 @@ public class Player : MonoBehaviour
         float currentHorizontalInput = Input.GetAxis("Horizontal");
         float currentVerticalInput = Input.GetAxis("Vertical");
 
+
+        // 检查是否有输入
+        if (currentHorizontalInput != 0 || currentVerticalInput != 0)
+        {
+            isInputing = true; // 有输入
+        }
+        else
+        {
+            isInputing = false; // 没有输入
+        }
+
+
+        //飞行速度增加
+        if (isFlying)
+        {
+            //flyVelocity_Horizon_mult
+            currentHorizontalInput *= flyVelocity_Horizon_mult;
+            currentVerticalInput *= flyVelocity_Horizon_mult;
+
+        }
+
+
         // 使用 Mathf.Lerp 进行输入惯性平滑处理
         if (!isFlying) 
         {
@@ -730,6 +769,23 @@ public class Player : MonoBehaviour
         }
 
 
+        //旁观者模式
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            if (isSpectatorMode)
+            {
+                isSpectatorMode = false ;
+                SpectatorMode(false);
+            }
+            else
+            {
+                isSpectatorMode = true;
+                SpectatorMode(true);
+            }
+            
+        }
+
+
         if (Input.GetButtonDown("Sprint") && !isFlying)
         {
 
@@ -769,7 +825,7 @@ public class Player : MonoBehaviour
         }
             
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) && !managerhub.player.isSpectatorMode)
         {
 
             backpackmanager.ThrowDropBox();
@@ -777,41 +833,24 @@ public class Player : MonoBehaviour
         }
 
         //飞行模式
-        if (world.game_mode == GameMode.Creative)
+        if (world.game_mode == GameMode.Creative && !isSpectatorMode)
         {
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
 
-                jump_press++;
+                jump_press = true;
 
-                if (((Time.time - lastJumpTime) < doubleTapInterval) && jump_press == 1)
+                if (((Time.time - lastJumpTime) < doubleTapInterval) && jump_press)
                 {
-                    if (isSprinting)
-                    {
-                        isSprinting = false;
-                    }
-                   
-                    //改变视野
-                    if (!isFlying)
-                    {
-                        //扩大视野
-                        StartCoroutine(expandchangeview(true));
-                    }
-                    else
-                    {
-                        StartCoroutine(expandchangeview(false));
-                    }
-
-                    isFlying = !isFlying;
-                    jump_press = 0;
+                    FlyingMode(!isFlying);
 
                 }
 
                 else if ((Time.time - lastJumpTime) >= doubleTapInterval)
                 {
 
-                    jump_press = 0;
+                    jump_press = false;
 
                 }
 
@@ -861,7 +900,7 @@ public class Player : MonoBehaviour
 
 
         //如果点击鼠标左键
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !isSpectatorMode)
         {
             isFirstBrokeBlock = true;
 
@@ -881,7 +920,7 @@ public class Player : MonoBehaviour
 
         //左键销毁泥土
 
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0) && !isSpectatorMode)
         {
 
             //Debug.Log("Player Mouse0");
@@ -936,7 +975,7 @@ public class Player : MonoBehaviour
         }
 
         //右键放置泥土
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && !isSpectatorMode)
         {
 
             isPlacing = true;
@@ -1599,13 +1638,18 @@ public class Player : MonoBehaviour
         // 位置调整，防止穿模
         if (isGrounded && hasExec_AdjustPlayerToGround)
         {
-            Vector3 myposition = transform.position;
-            Vector3 Vec = world.GetRelalocation(foot.position); // 获取脚部应有的Y坐标
-            if (Vec.y + 1.95f > myposition.y) // 只调整向上的情况，防止跳跃时干扰
+            if (!world.blocktypes[world.GetBlockType(foot.position)].isDIYCollision)
             {
-                transform.position = new Vector3(myposition.x, Vec.y + 1.95f, myposition.z);
-                //print("调整一次坐标");
+                Vector3 myposition = transform.position;
+                Vector3 Vec = world.GetRelalocation(foot.position); // 获取脚部应有的Y坐标
+                if (Vec.y + 1.95f > myposition.y) // 只调整向上的情况，防止跳跃时干扰
+                {
+
+                    transform.position = new Vector3(myposition.x, Vec.y + 1.95f, myposition.z);
+                    //print("调整一次坐标");
+                }
             }
+
             hasExec_AdjustPlayerToGround = false; // 调整完毕，防止每帧执行
         }
 
@@ -1644,24 +1688,82 @@ public class Player : MonoBehaviour
             // 上升
             if (Input.GetKey(KeyCode.Space))
             {
-                velocity.y = flyVelocity * Time.deltaTime;
+                velocity.y = flyVelocity_Verticle * Time.deltaTime;
+
+                if (!NotCheckPlayerCollision)
+                {
+                    velocity.y = checkUpSpeed(velocity.y);
+                }
+                
             }
             // 下降
             else if (Input.GetKey(KeyCode.LeftControl))
             {
-                velocity.y = -flyVelocity * Time.deltaTime;
+                velocity.y = - flyVelocity_Verticle * Time.deltaTime;
+
+                if (!NotCheckPlayerCollision)
+                {
+                    velocity.y = checkDownSpeed(velocity.y);
+                }
             }
             // 松开按键，逐渐减速
-            else
-            {
-                // 通过插值函数逐渐减小速度
-                velocity.y = Mathf.Lerp(velocity.y, 0, Time.deltaTime * 0.3f);
-            }
+            //else
+            //{
+            //    // 通过插值函数逐渐减小速度
+            //    velocity.y = Mathf.Lerp(velocity.y, 0, Time.deltaTime * flyLerpTime);
+            //}
+            
         }
 
         transform.Translate(velocity, Space.World);
     }
 
+
+    //飞行模式
+    public void FlyingMode(bool _open)
+    {
+        if (isSprinting)
+        {
+            isSprinting = false;
+        }
+
+        //改变视野
+        StartCoroutine(expandchangeview(!_open));
+
+        isFlying = _open;
+
+        jump_press = false;
+    }
+
+
+    //旁观者模式
+    public void SpectatorMode(bool _open)
+    {
+        if (_open)
+        {
+            //关闭碰撞
+            NotCheckPlayerCollision = true;
+
+            //开启飞行模式
+            FlyingMode(true);
+
+            //关闭UI
+            managerhub.canvasManager.SpectatorMode(true);
+        }
+        else
+        {
+            //关闭碰撞
+            NotCheckPlayerCollision = false;
+
+            //关闭飞行模式
+            FlyingMode(false);
+
+            //打开UI
+            managerhub.canvasManager.SpectatorMode(false);
+        }
+
+
+    }
 
 
     //初始化玩家坐标
