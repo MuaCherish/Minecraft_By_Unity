@@ -14,35 +14,64 @@ public class HandShake : MonoBehaviour
         animationComponent = GetComponent<Animation>();
     }
 
+
+    //bool hasExec_isMoving = true;
     void FixedUpdate()
     {
         if (world.game_state == Game_State.Playing)
         {
 
-            if (!canvasmanager.isPausing)
+            if (canvasmanager.isPausing)
             {
-                // 左键按下时播放一次动画
-                if (Input.GetKey(KeyCode.Mouse0))
+                return;
+            }
+
+            //if (player.isMoving)
+            //{
+            //    hasExec_isMoving = true;
+            //}
+
+            // 左键按下时播放一次动画
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                //Debug.Log("HandShake Mouse0");
+                PlayFirstAnimation();
+            }
+            //右键
+            else if (Input.GetMouseButtonDown(1))
+            {
+                timer = 0f;
+                PlayFirstAnimation();
+            }
+            //如果玩家移动 && 没有切换方块 就播放移动动画
+            else
+            {
+                if (player.isFlying)
                 {
-                    //Debug.Log("HandShake Mouse0");
-                    PlayFirstAnimation();
+                    return;
                 }
-                //右键
-                else if (Input.GetMouseButtonDown(1))
+
+                if (player.isMoving)
                 {
-                    timer = 0f;
-                    PlayFirstAnimation();
-                }
-                //如果玩家移动 && 没有切换方块 就播放移动动画
-                else
-                {
-                    if (player.isMoving && (timer > 0.2f) && !BackPackManager.isChanging)
+                    if ((timer > 0.2f) && !BackPackManager.isChanging)
                     {
                         PlaySecondAnimation();
                     }
 
-                    timer += Time.deltaTime;
                 }
+                else
+                {
+                    //if (hasExec_isMoving)
+                    //{
+                    //    //print("手臂归位");
+                    //    animationComponent.Stop("HandMoving");
+                    //    player.InitHandTransform();
+                    //    hasExec_isMoving = false;
+                    //}
+                    
+                }
+
+                timer += Time.deltaTime;
             }
         }
     }

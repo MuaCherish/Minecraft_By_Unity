@@ -88,9 +88,7 @@ public class DebugManager : MonoBehaviour
     [Foldout("调试屏幕", true)]
     [Header("摄像机引用")] public Camera FirstPersonCamera;
     [Header("调试屏幕引用引用")] public GameObject DebugScreen;
-    [Header("左文本引用")] public TextMeshProUGUI LeftText;
-    [Header("右文本引用")] public TextMeshProUGUI RightText;
-
+    [Header("文本引用")] public TextMeshProUGUI[] TextScreens;
 
 
 
@@ -114,42 +112,46 @@ public class DebugManager : MonoBehaviour
         }
 
         //update
-        //LeftText.text += $"\n";
-        LeftText.text = $"<color={fpsColor}>帧数: {fps:F2}</color>\n";
-        LeftText.text += $"当前时间: {managerHub.timeManager.GetCurrentTime():F2}时\n";
-        LeftText.text += $"\n";
-        LeftText.text += $"[Player]\n";
-        LeftText.text += $"速度: {managerHub.player.velocity}\n";
-        LeftText.text += $"朝向: {CalculateFacing()}\n";
-        LeftText.text += $"实际朝向: {managerHub.player.FactFacing}\n";
-        LeftText.text += $"实际运动方向: {managerHub.player.ActualMoveDirection}\n";
+        //TextScreens[0].text += $"\n";
+        TextScreens[0].text = $"<color={fpsColor}>帧数: {fps:F2}</color>\n";
+        TextScreens[0].text += $"当前时间: {managerHub.timeManager.GetCurrentTime():F2}时\n";
+        TextScreens[0].text += $"\n";
+
+
+        TextScreens[0].text += $"[Player]\n";
+        TextScreens[0].text += $"速度: {managerHub.player.velocity}\n";
+        TextScreens[0].text += $"朝向: {CalculateFacing()}\n";
+        TextScreens[0].text += $"实际朝向: {managerHub.player.FactFacing}\n";
+        TextScreens[0].text += $"实际运动方向: {managerHub.player.ActualMoveDirection}\n";
         //LeftText.text += $"新的运动方向: {managerHub.player.momentum}\n";
-        LeftText.text += $"输入: {managerHub.player.keyInput}\n";
-        LeftText.text += $"眼睛坐标: {managerHub.player.cam.position}\n";
-        LeftText.text += $"实时重力: {managerHub.player.verticalMomentum}\n";
+        TextScreens[0].text += $"输入: {managerHub.player.keyInput}\n";
+        TextScreens[0].text += $"眼睛坐标: {managerHub.player.cam.position}\n";
+        TextScreens[0].text += $"实时重力: {managerHub.player.verticalMomentum}\n";
         //LeftText.text += $"绝对坐标: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))}\n";
         //LeftText.text += $"相对坐标: {managerHub.world.GetRelalocation(footlocation)}\n";
-        LeftText.text += $"已保存方块数量: {managerHub.world.EditNumber.Count}\n";
-        LeftText.text += $"碰撞点检测个数:{managerHub.player.CollisionNumber}\n";
+        TextScreens[0].text += $"已保存方块数量: {managerHub.world.EditNumber.Count}\n";
+        TextScreens[0].text += $"碰撞点检测个数:{managerHub.player.CollisionNumber}\n";
         //LeftText.text += $"生存模式玩家走过的路程: {managerHub.player.accumulatedDistance:F2}m\n";
-        LeftText.text += $"\n";
-        LeftText.text += $"[Chunk]\n";
-        LeftText.text += $"区块坐标: {managerHub.world.GetChunkLocation(footlocation)}\n";
-        LeftText.text += $"初始化区块平均渲染时间: {CaculateChunkRenderTime()}\n";
-        LeftText.text += $"\n";
-        //LeftText.text += $"[Noise]\n";
+        TextScreens[0].text += $"\n";
 
 
+        TextScreens[0].text += $"[Chunk]\n";
+        TextScreens[0].text += $"区块坐标: {managerHub.world.GetChunkLocation(footlocation)}\n";
+        TextScreens[0].text += $"初始化区块平均渲染时间: {CaculateChunkRenderTime()}\n";
+        TextScreens[0].text += $"\n";
 
 
-        //RightText.text += $"\n"; 
-        RightText.text = $"[System]\n";
-        RightText.text += $"实时渲染面数; {CameraOnPreRender(FirstPersonCamera)}\n";
-        RightText.text += $"\n";
-        RightText.text += $"[Position]\n";
-        RightText.text += $"foot绝对坐标: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))} \n";
-        RightText.text += $"foot相对坐标: {managerHub.world.GetRelalocation(footlocation)} \n";
-        RightText.text += $"foot坐标类型: {managerHub.world.GetBlockType(footlocation)} \n";
+        TextScreens[0].text += $"[FootPosition]\n";
+        TextScreens[0].text += $"foot绝对坐标: {(new Vector3(footlocation.x, footlocation.y, footlocation.z))} \n";
+        TextScreens[01].text += $"foot相对坐标: {managerHub.world.GetRelalocation(footlocation)} \n";
+        TextScreens[0].text += $"foot坐标类型: {managerHub.world.GetBlockType(footlocation)} \n";
+        TextScreens[0].text += $"\n";
+
+        TextScreens[0].text += $"[System]\n";
+        TextScreens[0].text += $"实时渲染面数; {CameraOnPreRender(FirstPersonCamera)}\n";
+        TextScreens[0].text += $"\n";
+
+
     }
 
     
@@ -217,7 +219,7 @@ public class DebugManager : MonoBehaviour
     private string chunksPath = "Environment/Chunks"; // 需要查找的目录路径
 
     // 渲染面数
-    private int CameraOnPreRender(Camera camera)
+    private string CameraOnPreRender(Camera camera)
     {
         int triangleCount = 0;
 
@@ -245,8 +247,18 @@ public class DebugManager : MonoBehaviour
             }
         }
 
-        return triangleCount;
+        // 根据三角形数返回不同格式的字符串
+        if (triangleCount < 10000)
+        {
+            return triangleCount.ToString(); // 返回实际数值
+        }
+        else
+        {
+            // 返回以 'w' 为单位的格式，如 12w 表示12万
+            return $"{triangleCount / 10000}w";
+        }
     }
+
 
 
 

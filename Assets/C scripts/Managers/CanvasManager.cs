@@ -246,6 +246,9 @@ public class CanvasManager : MonoBehaviour
                 isOpenBackpack = false;
                 SwitchUI_Player(-1);
                 managerhub.world.game_state = Game_State.Playing;
+
+                //print("E 关闭背包");
+                CheckSwapBlockAndDropOut();
             }
 
             //LayintSwapBlock();
@@ -929,7 +932,7 @@ public class CanvasManager : MonoBehaviour
             {
                 isPausing = true;
                 ToggleMouseVisibilityAndLock(false);
-                UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_玩家互动ui前黑色背景]._object.SetActive(true);
+                UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_其他界面]._object.SetActive(true);
                 UIManager[CanvasData.ui玩家].childs[_index]._object.SetActive(true);
                 UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_准心]._object.SetActive(false);
                 managerhub.world.game_state = Game_State.Pause;
@@ -938,14 +941,21 @@ public class CanvasManager : MonoBehaviour
         //关闭UI
         else
         {
-            foreach (Transform item in UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_玩家互动ui前黑色背景]._object.transform)
+            int index = 0;
+            foreach (Transform item in UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_其他界面]._object.transform)
             {
+                //不关闭黑色背景
+                if (index == 0)
+                {
+                    continue;
+                }
                 item.gameObject.SetActive(false);
+                index++;
             }
 
             // 将父对象设为不可见
             UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_准心]._object.SetActive(true);
-            UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_玩家互动ui前黑色背景]._object.SetActive(false);
+            UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_其他界面]._object.SetActive(false);
         }
 
 
@@ -1447,6 +1457,17 @@ public class CanvasManager : MonoBehaviour
     }
 
 
+    //检查手上是否还有swapblock，如果有就扔出去
+    void CheckSwapBlockAndDropOut()
+    {
+        if (SwapBlock != null)
+        {
+            managerhub.backpackManager.CreateDropBox(managerhub.backpackManager.GetPlayerEyesToThrow(), SwapBlock._data, true);
+            DestroySwapBlock();
+        }
+    }
+
+
     //创建SwapBlock
     public Transform 生存模式背包Parent;
     public Transform 创造模式背包Parent;
@@ -1683,6 +1704,8 @@ public class CanvasManager : MonoBehaviour
                 if (isOpenBackpack)
                 {
                     isOpenBackpack = false;
+                    //print("Esc 关闭背包");
+                    CheckSwapBlockAndDropOut();
                 }
 
                 switch (UIBuffer.Peek())

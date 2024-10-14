@@ -28,6 +28,7 @@ public class BlockType
 
     [Header("工具参数")]
     public bool isTool;         //区分功能性
+    public bool canBreakBlockWithMouse1 = true;  //左键可破坏方块 
     public bool isNeedRotation; //true后会做一定的旋转
 
 

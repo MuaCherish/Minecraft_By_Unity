@@ -34,7 +34,7 @@ public static class CanvasData
     public static readonly int uiplayer_熔炉 = 4;
     public static readonly int uiplayer_书籍 = 5;
     public static readonly int uiplayer_创造背包 = 6;
-    public static readonly int uiplayer_玩家互动ui前黑色背景 = 7;
+    public static readonly int uiplayer_其他界面 = 7;
     public static readonly int uiplayer_准心 = 8;
 
 }

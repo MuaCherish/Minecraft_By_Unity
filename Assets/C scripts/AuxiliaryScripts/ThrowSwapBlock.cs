@@ -19,7 +19,7 @@ public class ThrowSwapBlock : MonoBehaviour, IPointerDownHandler
         {
             managerhub = GlobalData.GetManagerhub();
         }
-
+        //print("黑色背景被点击");
         //判断swapblock是否存在
         if (managerhub.canvasManager.SwapBlock != null)
         {

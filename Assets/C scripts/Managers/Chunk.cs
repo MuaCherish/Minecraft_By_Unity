@@ -2778,16 +2778,26 @@ public class Chunk : MonoBehaviour
 
 
             //µÙ¬‰ŒÔ
-            if (thisType != VoxelData.Air && thisType != VoxelData.TNT && GetProbability(30))
+            if (thisType != VoxelData.Air && 
+                thisType != VoxelData.TNT &&
+                thisType != VoxelData.Door_Up
+                )
             {
-                if (thisType == VoxelData.Grass)
+
+
+                if (GetProbability(30))
                 {
-                    managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, new BlockItem(VoxelData.Soil, 1), false);
+                    if (thisType == VoxelData.Grass)
+                    {
+                        managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, new BlockItem(VoxelData.Soil, 1), false);
+                    }
+                    else
+                    {
+                        managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, new BlockItem(thisType, 1), false);
+                    }
                 }
-                else
-                {
-                    managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, new BlockItem(thisType, 1), false);
-                }
+
+                
                 
 
             }

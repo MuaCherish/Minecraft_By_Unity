@@ -128,9 +128,12 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
                 UpdateBlockItem(true);
 
-                //Destroy
-                managerhub.canvasManager.DestroySwapBlock();
+                
             }
+
+
+            //Destroy
+            managerhub.canvasManager.DestroySwapBlock();
 
             Cursor.visible = true;
         }

@@ -955,37 +955,6 @@ public class Player : MonoBehaviour
                 switch (_targettype)
                 {
                     
-                    //TNT
-                    case 17:
-
-                        if (_selecttype == VoxelData.Tool_Flint)
-                        {
-                            BlocksFunction.Boom(managerhub, _rayCast.hitPoint, 4);
-                            GameObject.Instantiate(particle_explosion, _rayCast.hitPoint_Previous, Quaternion.identity);
-                            musicmanager.PlaySound(MusicData.explore);
-
-                            // 玩家被炸飞
-                            Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
-                            float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
-
-                            //计算炸飞距离
-                            _Direction.y = Mathf.Lerp(0, 1, _value);
-                            float Distance = Mathf.Lerp(3, 0, _value);
-
-                            ForceMoving(_Direction, Distance, 0.1f);
-
-                            if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
-                            {
-                                managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
-                            }
-                        }
-
-                        
-
-                        //print($"_Direction:{_Direction}, _distance: {_distance}");
-
-                        break;
-                    
                     //唱片机
                     case 40:
                         if (_selecttype == VoxelData.Tool_MusicDiscs)
@@ -1095,6 +1064,31 @@ public class Player : MonoBehaviour
                         managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_书籍);
                         break;
 
+                    //打火石
+                    case 51:
+                        if (_targettype == VoxelData.TNT)
+                        {
+                            BlocksFunction.Boom(managerhub, _rayCast.hitPoint, 4);
+                            GameObject.Instantiate(particle_explosion, _rayCast.hitPoint_Previous, Quaternion.identity);
+                            musicmanager.PlaySound(MusicData.explore);
+
+                            // 玩家被炸飞
+                            Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
+                            float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
+
+                            //计算炸飞距离
+                            _Direction.y = Mathf.Lerp(0, 1, _value);
+                            float Distance = Mathf.Lerp(3, 0, _value);
+
+                            ForceMoving(_Direction, Distance, 0.1f);
+
+                            if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
+                            {
+                                managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
+                            }
+                        }
+                        break;
+
 
                     default:
                         break;
@@ -1198,13 +1192,21 @@ public class Player : MonoBehaviour
         //end.基岩
         if (theBlockwhichBeBrokenType == VoxelData.BedRock)
         {
-            
+            //print("时间无限");
             destroy_time = Mathf.Infinity;
 
         }
         else
         {
-            if (isSuperMining || _selecttype == VoxelData.Tool_Pickaxe)
+
+            //选择下标为0的情况下
+            if (_selecttype != 255 && world.blocktypes[_selecttype].canBreakBlockWithMouse1 == false)
+            {
+                destroy_time = Mathf.Infinity;
+                isFirstBrokeBlock = false;
+            }
+
+            else if (isSuperMining || _selecttype == VoxelData.Tool_Pickaxe)
             {
                 destroy_time = 0.25f;
             }
@@ -1357,6 +1359,56 @@ public class Player : MonoBehaviour
         //print($"相对坐标为：{world.GetRelalocation(position)}");
         //print($"方块类型为：{world.GetBlockType(position)}"); 
 
+    }
+
+
+    //用来控制手臂停止动画的
+    public GameObject HandsHold;
+    public Transform HandInit;
+    public float InitTime = 0.1f;
+    Coroutine InitHandCoroutine;
+       
+    public void InitHandTransform()
+    {
+        if (InitHandCoroutine == null)
+        {
+            print("启动协程");
+            InitHandCoroutine = StartCoroutine(_InitHandTransform());
+        }
+        
+    }
+
+    IEnumerator _InitHandTransform()
+    {
+        //给定时间内将_Hand过渡到HandInit
+        // 记录初始状态
+        Vector3 startPosition = HandsHold.transform.position;
+        Quaternion startRotation = HandsHold.transform.rotation;
+
+        // 目标状态
+        Vector3 targetPosition = HandInit.position;
+        Quaternion targetRotation = HandInit.rotation;
+
+        // 时间变量
+        float elapsedTime = 0f;
+
+        while (elapsedTime < InitTime)
+        {
+            // 插值计算位置和旋转
+            HandsHold.transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / InitTime);
+            HandsHold.transform.rotation = Quaternion.Lerp(startRotation, targetRotation, elapsedTime / InitTime);
+
+            // 增加已过去的时间
+            elapsedTime += Time.deltaTime;
+
+            // 等待下一帧
+            yield return null;
+        }
+
+        // 确保最后一次到达目标位置和旋转
+        HandsHold.transform.position = targetPosition;
+        HandsHold.transform.rotation = targetRotation;
+        InitHandCoroutine = null;
     }
 
 

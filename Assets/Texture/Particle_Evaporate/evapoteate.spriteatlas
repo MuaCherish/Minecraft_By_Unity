@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: evapoteate
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 0
+      generateMipMaps: 1
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 21300000, guid: cf4807d931414ad49ac6af9650bcfab2, type: 3}
+    - {fileID: 21300000, guid: 48cc3da9820108a48b1977e4595d816d, type: 3}
+    - {fileID: 21300000, guid: 16f96a07c7cefe24b8c6f094c3895674, type: 3}
+    - {fileID: 21300000, guid: da91336fea71b264caefa1999ca7f6f2, type: 3}
+    - {fileID: 21300000, guid: b5598411620c5334fa0bfa1a7e2712fd, type: 3}
+    - {fileID: 21300000, guid: 7d4b248e444b7204ba76522d69062e71, type: 3}
+    - {fileID: 21300000, guid: 165bcd5b584e7054d85d1fe4035a4886, type: 3}
+    - {fileID: 21300000, guid: c3785ba84ec149f419b2700405fc31f5, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - b5598411620c5334fa0bfa1a7e2712fd: 21300000
+    - 16f96a07c7cefe24b8c6f094c3895674: 21300000
+    - c3785ba84ec149f419b2700405fc31f5: 21300000
+    - 48cc3da9820108a48b1977e4595d816d: 21300000
+    - cf4807d931414ad49ac6af9650bcfab2: 21300000
+    - 165bcd5b584e7054d85d1fe4035a4886: 21300000
+    - 7d4b248e444b7204ba76522d69062e71: 21300000
+    - da91336fea71b264caefa1999ca7f6f2: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: b5598411620c5334fa0bfa1a7e2712fd, type: 3}
+  - {fileID: 21300000, guid: 16f96a07c7cefe24b8c6f094c3895674, type: 3}
+  - {fileID: 21300000, guid: c3785ba84ec149f419b2700405fc31f5, type: 3}
+  - {fileID: 21300000, guid: 48cc3da9820108a48b1977e4595d816d, type: 3}
+  - {fileID: 21300000, guid: cf4807d931414ad49ac6af9650bcfab2, type: 3}
+  - {fileID: 21300000, guid: 165bcd5b584e7054d85d1fe4035a4886, type: 3}
+  - {fileID: 21300000, guid: 7d4b248e444b7204ba76522d69062e71, type: 3}
+  - {fileID: 21300000, guid: da91336fea71b264caefa1999ca7f6f2, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - generic_4
+  - generic_2
+  - generic_7
+  - generic_1
+  - generic_0
+  - generic_6
+  - generic_5
+  - generic_3
+  m_RenderDataMap: {}
+  m_Tag: evapoteate
+  m_IsVariant: 0
