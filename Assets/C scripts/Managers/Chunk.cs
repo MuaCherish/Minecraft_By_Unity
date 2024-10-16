@@ -7,6 +7,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using static UnityEngine.GraphicsBuffer;
 using UnityEngine.UIElements;
+using static UnityEditor.PlayerSettings;
 //using static UnityEditor.PlayerSettings;
 //using static UnityEditor.Progress;
 //using static UnityEditor.PlayerSettings;
@@ -2713,6 +2714,7 @@ public class Chunk : MonoBehaviour
         int x = (int)_relaVec.x;
         int y = (int)_relaVec.y;
         int z = (int)_relaVec.z;
+        byte thisType = GetBlock(x, y, z).voxelType;
 
         //·ÀÖ¹¹ý¸ß
         if (y >= TerrainData.ChunkHeight - 2)
@@ -2736,8 +2738,45 @@ public class Chunk : MonoBehaviour
             UpdateBlockOriented(new Vector3(x, y, z), world.player.RealBacking);
         }
 
-        world.UpdateEditNumber(pos, targetBlocktype);
+        world.UpdateEditNumber(myposition + pos, targetBlocktype);
         EditForSomeBlocks(new Vector3(x, y, z), targetBlocktype);
+
+
+        //if (world.game_mode == GameMode.Survival)
+        //{
+        //    //µôÂäÎï
+        //    if (thisType != VoxelData.Air &&
+        //        thisType != VoxelData.TNT &&
+        //        thisType != VoxelData.Door_Up
+        //        )
+        //    {
+        //        print("´´½¨µôÂäÎï");
+
+        //        if (thisType == VoxelData.Grass)
+        //        {
+        //            managerhub.backpackManager.CreateDropBox(pos, new BlockItem(VoxelData.Soil, 1), false);
+        //        }
+        //        //Ê÷Ò¶µôÂäÆ»¹û
+        //        else if (thisType == VoxelData.Leaves)
+        //        {
+        //            if (managerhub.world.GetProbability(30))
+        //            {
+        //                managerhub.backpackManager.CreateDropBox(new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z)), new BlockItem(VoxelData.Apple, 1), false);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            managerhub.backpackManager.CreateDropBox(pos, new BlockItem(thisType, 1), false);
+        //        }
+
+
+                
+
+
+
+
+        //    }
+        //}
 
 
         UpdateChunkMesh_WithSurround(pos, true, false);
@@ -2791,25 +2830,28 @@ public class Chunk : MonoBehaviour
                     {
                         managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, new BlockItem(VoxelData.Soil, 1), false);
                     }
+                    //Ê÷Ò¶µôÂäÆ»¹û
+                    else if (thisType == VoxelData.Leaves)
+                    {
+                        if (managerhub.world.GetProbability(30))
+                        {
+                            managerhub.backpackManager.CreateDropBox(new Vector3(Mathf.FloorToInt(_EditList[i].editPos.x), Mathf.FloorToInt(_EditList[i].editPos.y), Mathf.FloorToInt(_EditList[i].editPos.z)), new BlockItem(VoxelData.Apple, 1), false);
+                        }
+                    }
                     else
                     {
                         managerhub.backpackManager.CreateDropBox(_EditList[i].editPos, new BlockItem(thisType, 1), false);
                     }
+
+                  
                 }
 
                 
-                
+
 
             }
 
-            //Ê÷Ò¶µôÂäÆ»¹û
-            if (thisType == VoxelData.Leaves)
-            {
-                if (managerhub.world.GetProbability(30))
-                {
-                    managerhub.backpackManager.CreateDropBox(new Vector3(Mathf.FloorToInt(_EditList[i].editPos.x), Mathf.FloorToInt(_EditList[i].editPos.y), Mathf.FloorToInt(_EditList[i].editPos.z)), new BlockItem(VoxelData.Apple, 1), false);
-                }
-            }
+            
 
 
 

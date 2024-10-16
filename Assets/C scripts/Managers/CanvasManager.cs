@@ -1957,12 +1957,25 @@ public class CanvasManager : MonoBehaviour
 
 
     //---------------------------------- 死亡与重生 -----------------------------------------
+
+    /// <summary>
+    /// 玩家死亡
+    /// </summary>
+
+    public GameObject Evaporation_Particle;
+    public GameObject ParticleParent;
     public void PlayerDead()
     {
         //DeadScreen.SetActive(true);
         SwitchToUI(CanvasData.ui死亡);
 
-       
+        // 创建实例，并将父对象设置为 particleParent
+        GameObject deadParticle = GameObject.Instantiate(
+            Evaporation_Particle,
+            managerhub.player.transform.position,
+            Quaternion.LookRotation(Vector3.up),
+            ParticleParent.transform  // 设置父对象
+        );
 
         world.game_state = Game_State.Dead;
     }

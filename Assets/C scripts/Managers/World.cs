@@ -1670,6 +1670,7 @@ public class World : MonoBehaviour
     }
 
 
+
     //Vector3 --> 大区块坐标
     public Vector3 GetChunkLocation(Vector3 vec)
     {
@@ -2387,6 +2388,11 @@ public class World : MonoBehaviour
     public List<EditStruct> WaitToAdd_EditList = new List<EditStruct>();
     public Coroutine updateEditNumberCoroutine;
 
+    /// <summary>
+    /// 注意返回绝对坐标
+    /// </summary>
+    /// <param name="RealPos"></param>
+    /// <param name="targetBlocktype"></param>
     public void UpdateEditNumber(Vector3 RealPos, byte targetBlocktype)
     {
         // 将修改细节推送至World里
@@ -2404,7 +2410,18 @@ public class World : MonoBehaviour
         else
         {
             // 如果不存在，添加新的EditStruct
-            EditNumber.Add(new EditStruct(intPos, targetBlocktype));
+            //print($"Edit更新: {intPos} --- {targetBlocktype}");
+            if (targetBlocktype != VoxelData.BedRock &&
+                intPos.y > 0
+                )
+            {
+                EditNumber.Add(new EditStruct(intPos, targetBlocktype));
+            }
+            else
+            {
+                print($"第一个editbunber函数处理到异常, pos.y = {intPos.y} , type = {targetBlocktype}");
+            }
+            
         }
     }
 
@@ -2433,8 +2450,18 @@ public class World : MonoBehaviour
             {
                 // 取出列表中的第一个元素
                 EditStruct edit = WaitToAdd_EditList[0];
-                // 将编辑项添加到 EditNumber 中
-                UpdateEditNumber(edit.editPos, edit.targetType);
+
+                //基岩跳过
+                if (edit.targetType != VoxelData.BedRock)
+                {
+                    // 将编辑项添加到 EditNumber 中
+                    UpdateEditNumber(edit.editPos, edit.targetType);
+                }
+                else
+                {
+                    print("处理到基岩");
+                }
+
                 // 从头部移除已处理的项
                 WaitToAdd_EditList.RemoveAt(0);
             }

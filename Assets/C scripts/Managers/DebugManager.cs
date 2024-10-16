@@ -71,6 +71,16 @@ public class DebugManager : MonoBehaviour
             if (isDebug)
             {
                 CaculateFPS();
+                ShowChunkBorder();
+            }
+            else
+            {
+                if (hasExec_ChunkBorder == false)
+                {
+                    hasExec_ChunkBorder = true;
+                    ChunkBorderObject.SetActive(false);
+                }
+               
             }
 
         }
@@ -95,6 +105,7 @@ public class DebugManager : MonoBehaviour
     void UpdateScreen()
     {
         Vector3 footlocation = managerHub.world.PlayerFoot.position;
+        
 
         // 根据 FPS 设置颜色
         string fpsColor;
@@ -143,7 +154,7 @@ public class DebugManager : MonoBehaviour
 
         TextScreens[0].text += $"[FootPosition]\n";
         TextScreens[0].text += $"foot绝对坐标: {(new Vector3(footlocation.x, footlocation.y, footlocation.z))} \n";
-        TextScreens[01].text += $"foot相对坐标: {managerHub.world.GetRelalocation(footlocation)} \n";
+        TextScreens[0].text += $"foot相对坐标: {managerHub.world.GetRelalocation(footlocation)} \n";
         TextScreens[0].text += $"foot坐标类型: {managerHub.world.GetBlockType(footlocation)} \n";
         TextScreens[0].text += $"\n";
 
@@ -312,6 +323,33 @@ public class DebugManager : MonoBehaviour
 
     #endregion
 
+
+    #region Chunk边界显示器
+
+    [Foldout("Chunk边界显示", true)]
+    bool hasExec_ChunkBorder = true;
+    public GameObject ChunkBorderObject;
+    public Vector3 _newChunkLocation; Vector3 _Previous_hunkLocation = Vector3.zero;
+
+    public void ShowChunkBorder()
+    {
+        if (hasExec_ChunkBorder)
+        {
+            ChunkBorderObject.SetActive(true);
+            hasExec_ChunkBorder = false;
+        }
+
+
+        _newChunkLocation = managerHub.world.GetChunkLocation(managerHub.player.transform.position) * 16f;
+
+        if (_newChunkLocation != _Previous_hunkLocation)
+        {
+            ChunkBorderObject.transform.position = _newChunkLocation;
+            _Previous_hunkLocation = _newChunkLocation;
+        }
+    }
+
+    #endregion
 
 }
 
