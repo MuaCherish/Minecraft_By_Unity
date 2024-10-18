@@ -1,3 +1,4 @@
+using Cloud;
 using Homebrew;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ public class ManagerHub : MonoBehaviour
     public World world;
     public Player player;
     public TextureTo3D textureTo3D;
+    public CloudManager cloudManager;
 
     [Foldout("开发者模式", true)]
     public bool 低区块模式; [HideInInspector] public bool hasExec_低区块模式 = true;

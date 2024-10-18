@@ -31,6 +31,7 @@ public class DebugManager : MonoBehaviour
     public void InitDebugManager()
     {
         isDebug = false;
+        isShowChunkBorder = false;
     }
 
     [Foldout("Debug²ÎÊý", true)]
@@ -64,13 +65,20 @@ public class DebugManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.F3))
             {
+                //RenderSettings.fog = isDebug;
                 isDebug = !isDebug;
                 DebugScreen.SetActive(!DebugScreen.activeSelf);
             }
 
-            if (isDebug)
+            //Border
+            if (Input.GetKeyDown(KeyCode.F4))
             {
-                CaculateFPS();
+                isShowChunkBorder = !isShowChunkBorder;
+
+            }
+
+            if (isShowChunkBorder)
+            {
                 ShowChunkBorder();
             }
             else
@@ -80,7 +88,12 @@ public class DebugManager : MonoBehaviour
                     hasExec_ChunkBorder = true;
                     ChunkBorderObject.SetActive(false);
                 }
-               
+            }
+
+
+            if (isDebug)
+            {
+                CaculateFPS();
             }
 
         }
@@ -330,6 +343,7 @@ public class DebugManager : MonoBehaviour
     bool hasExec_ChunkBorder = true;
     public GameObject ChunkBorderObject;
     public Vector3 _newChunkLocation; Vector3 _Previous_hunkLocation = Vector3.zero;
+    public bool isShowChunkBorder;
 
     public void ShowChunkBorder()
     {

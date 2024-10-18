@@ -410,7 +410,7 @@ public class MusicManager : MonoBehaviour
                 if (footBlocktype != VoxelData.Air)
                 {
                     //如果有专属音效
-                    if (world.blocktypes[footBlocktype].walk_clips[item] != null)
+                    if (footBlocktype != 255 && world.blocktypes[footBlocktype].walk_clips[item] != null)
                     {
                         if (item == 0)
                         {

@@ -15,7 +15,7 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 1
-  m_FogColor: {r: 0.7254902, g: 0.7882353, b: 0.84705883, a: 1}
+  m_FogColor: {r: 0.49803922, g: 0.65882355, b: 0.99607843, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.01
   m_LinearFogStart: 40
@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 2
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.70980394, g: 0.81960785, b: 1, a: 1}
+  m_SubtractiveShadowColor: {r: 0.49803922, g: 0.65882355, b: 0.99607843, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
   m_HaloStrength: 0.226
   m_FlareStrength: 1
@@ -2043,8 +2043,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 22826876}
-  - component: {fileID: 22826878}
   - component: {fileID: 22826879}
+  - component: {fileID: 22826880}
+  - component: {fileID: 22826878}
   m_Layer: 0
   m_Name: Time Manager
   m_TagString: Untagged
@@ -2079,21 +2080,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edde10e4b15a4bd4a92b3028af0feaa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentTime: 12
   isNight: 0
-  second_GameOneHour: 60
-  "\u5929\u5F00\u59CB\u53D8\u9ED1": {x: 15, y: 19}
-  "\u5929\u5F00\u59CB\u53D8\u4EAE": {x: 4, y: 8}
-  FogDayColor: {r: 0.7254902, g: 0.7882353, b: 0.84705883, a: 0}
-  FogNightColor: {r: 0.14117648, g: 0.16470589, b: 0.2, a: 0}
-  fogTransitionTime: 1.5
-  FogDayDistance: {x: 40, y: 80}
-  FogCaveDistance: {x: 0, y: 20}
-  SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
-  SkyboxRange: {x: 0.2, y: 1}
-  BlocksMaterial: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
-  BlocksDayColor: {r: 0.43529412, g: 0.47058824, b: 0.39215687, a: 1}
-  BlocksNightColor: {r: 0.27450982, g: 0.27450982, b: 0.27450982, a: 1}
+  timeStruct:
+    _time:
+      CurrentTime: 12
+      previous_CurrentTime: 12
+      value: 0
+      second_GameOneHour: 60
+      "\u5929\u5F00\u59CB\u53D8\u9ED1": {x: 15, y: 19}
+      "\u5929\u5F00\u59CB\u53D8\u4EAE": {x: 4, y: 8}
+    _fog:
+      SkyboxMaterial: {fileID: 2100000, guid: 81004caf833676648854f108702b5b1b, type: 2}
+      FogDayColor: {r: 0.49803922, g: 0.65882355, b: 0.99607843, a: 0}
+      FogNightColor: {r: 0.14117648, g: 0.16470589, b: 0.2, a: 0}
+      FogDayDistance: {x: 40, y: 80}
+      FogCaveDistance: {x: 0, y: 20}
+    _cloud:
+      CloudDayColor: {r: 1, g: 1, b: 1, a: 1}
+      CloudNightColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+    _Terrain:
+      BlocksMaterial: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
+      BlocksDayColor: {r: 0.43529412, g: 0.47058824, b: 0.39215687, a: 1}
+      BlocksNightColor: {r: 0.27450982, g: 0.27450982, b: 0.27450982, a: 1}
+  weatherLists:
+  - weather: 0
+    FogDayColor: {r: 0.49803922, g: 0.65882355, b: 0.99607843, a: 0}
+    FogNightColor: {r: 0.14117648, g: 0.16470589, b: 0.2, a: 0}
+  - weather: 1
+    FogDayColor: {r: 0.72156864, g: 0.7843138, b: 0.8431373, a: 0}
+    FogNightColor: {r: 0.14117648, g: 0.16470589, b: 0.2, a: 0}
+  isRandomWeather: 0
+  weather: 0
+  fogTransitionTime: 1
 --- !u!114 &22826879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2110,6 +2128,23 @@ MonoBehaviour:
   Sun: {fileID: 721510844}
   Moon: {fileID: 1599086483}
   radius: 320
+--- !u!114 &22826880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22826875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6800e67682c53a94a80c73eb1ab2ecd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CloudSprite: {fileID: 21300000, guid: ffeea47b44318b0409d049612a442781, type: 3}
+  parent: {fileID: 26264305}
+  cutSize: {x: 16, y: 16}
+  RenderSize: 4
+  WindDirect: {x: 0, y: 0, z: 0}
 --- !u!1 &23726926
 GameObject:
   m_ObjectHideFlags: 0
@@ -2357,6 +2392,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 26065807}
   m_CullTransparentMesh: 1
+--- !u!1 &26264305
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 26264306}
+  m_Layer: 0
+  m_Name: Clouds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &26264306
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 26264305}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 660013532}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &26531926
 GameObject:
   m_ObjectHideFlags: 0
@@ -21837,6 +21903,7 @@ MonoBehaviour:
   - {fileID: 157465766}
   ChunkBorderObject: {fileID: 194500103}
   _newChunkLocation: {x: 0, y: 0, z: 0}
+  isShowChunkBorder: 0
 --- !u!1 &439713263
 GameObject:
   m_ObjectHideFlags: 0
@@ -23605,90 +23672,6 @@ Transform:
   - {fileID: 699955242}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &477460491
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 477460493}
-  - component: {fileID: 477460492}
-  m_Layer: 0
-  m_Name: clouds
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!212 &477460492
-SpriteRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 477460491}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: ffeea47b44318b0409d049612a442781, type: 3}
-  m_Color: {r: 0.66666657, g: 0.66666657, b: 0.66666657, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 2.56, y: 2.56}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
---- !u!4 &477460493
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 477460491}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.70710576, y: -0, z: -0, w: 0.7071079}
-  m_LocalPosition: {x: 0, y: 256, z: 0}
-  m_LocalScale: {x: 1000, y: 1000, z: 1000}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 660013532}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &478917743
 GameObject:
   m_ObjectHideFlags: 0
@@ -34029,7 +34012,7 @@ Transform:
   m_Children:
   - {fileID: 721510844}
   - {fileID: 1599086483}
-  - {fileID: 477460493}
+  - {fileID: 26264306}
   m_Father: {fileID: 849052400}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &660519806
@@ -37405,7 +37388,7 @@ MonoBehaviour:
     isTool: 0
     canBreakBlockWithMouse1: 1
     isNeedRotation: 0
-    isDIYCollision: 1
+    isDIYCollision: 0
     CollosionRange:
       xRange: {x: 0.4, y: 0.6}
       yRange: {x: 0, y: 1}
@@ -45071,7 +45054,8 @@ MonoBehaviour:
   world: {fileID: 699955241}
   player: {fileID: 1504082080}
   textureTo3D: {fileID: 843154433}
-  "\u4F4E\u533A\u5757\u6A21\u5F0F": 0
+  cloudManager: {fileID: 22826880}
+  "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
   "hasExec_\u4F4E\u533A\u5757\u6A21\u5F0F": 1
   "\u65E0\u9ED1\u591C\u6A21\u5F0F": 0
   "hasExec_\u65E0\u9ED1\u591C\u6A21\u5F0F": 1
@@ -74228,8 +74212,7 @@ MonoBehaviour:
   flyLerpTime: 0.3
   jump_press: 0
   foot_BlockType: 4
-  foot_BlockType_temp: 4
-  isInCave_checkInterval: 3
+  isInCave_checkInterval: 1
   walkingDistance: 0
   inputInertia: 0.1
   Flying_inputInertia: 0.5

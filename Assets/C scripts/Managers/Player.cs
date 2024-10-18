@@ -221,11 +221,11 @@ public class Player : MonoBehaviour
 
 
     //玩家脚下坐标
-    public byte foot_BlockType = VoxelData.Air;
-    public byte foot_BlockType_temp = VoxelData.Air;
+    [Header("玩家脚下坐标")] public byte foot_BlockType = VoxelData.Air; private byte foot_BlockType_temp = VoxelData.Air;
+
 
     //用来检查isInCave
-    public float isInCave_checkInterval = 10f; private float isInCave_nextCheckTime = 10f;// 每0.5秒检查一次
+    [Header("洞穴状态检查间隔时间")] public float isInCave_checkInterval = 1f; private float isInCave_nextCheckTime = 1f;// 每0.5秒检查一次
 
 
     //--------------------------------- 周期函数 --------------------------------------
@@ -387,14 +387,8 @@ public class Player : MonoBehaviour
 
             //AdjustPlayerToGround();
 
-            // 每隔一段时间检查一次
-            if (Time.time >= isInCave_nextCheckTime)
-            {
-                //print($"{Time.time}");
-                CheckisInCave();
-                isInCave_nextCheckTime = Time.time + isInCave_checkInterval; // 设置下一次检查的时间
-            }
-
+            
+            DynamicState_isCave();
 
         }
 
@@ -453,6 +447,21 @@ public class Player : MonoBehaviour
     }
 
 
+
+
+    #region DynamicState_isCave
+
+    void DynamicState_isCave()
+    {
+        // 每隔一段时间检查一次
+        if (Time.time >= isInCave_nextCheckTime)
+        {
+            //print($"{Time.time}");
+            CheckisInCave();
+            isInCave_nextCheckTime = Time.time + isInCave_checkInterval; // 设置下一次检查的时间
+        }
+    }
+
     //更新isInCave状态
     public void CheckisInCave()
     {
@@ -468,13 +477,13 @@ public class Player : MonoBehaviour
 
 
         // 检查眼睛所在位置是否处于地表以下，将Fog改为近距离黑色迷雾
-        if (playerY < NoiseY || playerY < 0)
+        if (playerY < NoiseY || eyes.transform.position.y < 0)
         {
             if (!isInCave)
             {
                 //print("迷雾开启");
                 // 开始迷雾过渡到洞穴状态
-                managerhub.timeManager.Buff_CaveFog(true);
+                //managerhub.timeManager.Buff_CaveFog(true);
                 isInCave = true; 
             }
         }
@@ -484,15 +493,18 @@ public class Player : MonoBehaviour
             {
                 //print("迷雾关闭");
                 // 开始迷雾过渡到白天状态
-                if (!managerhub.timeManager.isNight)
-                {
-                    managerhub.timeManager.Buff_CaveFog(false);
-                }
+                //if (!managerhub.timeManager.isNight)
+                //{
+                //    managerhub.timeManager.Buff_CaveFog(false);
+                //}
                 
                 isInCave = false;
             }
         }
     }
+
+    #endregion
+
 
 
     //---------------------------------------------------------------------------------
@@ -505,7 +517,7 @@ public class Player : MonoBehaviour
     //--------------------------------- 玩家操作 --------------------------------------
 
     //调整玩家坐标防止脚底穿模
-    
+
     //private void AdjustPlayerToGround()
     //{
     //    if (isGrounded && hasExec_AdjustPlayerToGround)
