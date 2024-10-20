@@ -1,13 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public class SunMoving : MonoBehaviour
 {
+    public bool isOpenLightCast;
+
     [Header("引用")]
     public ManagerHub managerhub;
     public Transform Sun;
     public Transform Moon;
+    public Transform DirectionalLight;
+    public Transform DirectionalLightMain;
     private Vector3 playerPosition;
 
     [Header("太阳参数")]
@@ -26,6 +31,9 @@ public class SunMoving : MonoBehaviour
             {
                 hasExec_Update = false;
             }
+
+            DynamicLightCast();
+
 
             // 获取数据
             playerPosition = managerhub.player.transform.position;
@@ -46,6 +54,11 @@ public class SunMoving : MonoBehaviour
             // 让太阳一直面向玩家
             Sun.transform.LookAt(playerPosition);
 
+
+            
+
+            
+
             // 设置月亮的位置
             // 计算与太阳相对的角度
             float moonAngle = angle + 180f; // 与太阳相对
@@ -58,6 +71,60 @@ public class SunMoving : MonoBehaviour
 
             // 让月亮一直面向玩家
             Moon.transform.LookAt(playerPosition);
+        }
+    }
+
+
+
+
+
+    void DynamicLightCast()
+    {
+        if (isOpenLightCast)
+        {
+            if (managerhub.crepuscularScript != null && !managerhub.crepuscularScript.enabled)
+            {
+                managerhub.crepuscularScript.enabled = true;
+                DirectionalLightMain.gameObject.SetActive(false);
+            }
+
+            // 获取 Directional Light 的 Light 组件
+            // 使用 Mathf.Lerp 在不同时间平滑调整强度
+            // 设置灯光强度
+            Light directionalLight = DirectionalLight.GetComponent<Light>();
+            float newIntensity = Mathf.Lerp(0f, 1.7f, managerhub.timeManager.timeStruct._time.value);
+            directionalLight.intensity = newIntensity;
+
+
+            // 使用 Quaternion.LookRotation 使灯光 Z 轴对齐到方向向量
+            // 如果需要调整灯光的朝向，可以通过第二个参数传入一个自定义的“上”方向（默认为 Vector3.up）
+            // 计算从 Sun 到 Player 的方向向量
+            Vector3 Lightdirection = Vector3.zero;
+            if (!managerhub.timeManager.isNight)
+            {
+                Lightdirection = playerPosition - Sun.transform.position;
+            }
+            else
+            {
+                Lightdirection = playerPosition - Moon.transform.position;
+            }
+
+            DirectionalLight.transform.rotation = Quaternion.LookRotation(Lightdirection, Vector3.up);
+        }
+        else
+        {
+            if (managerhub.crepuscularScript != null && managerhub.crepuscularScript.enabled)
+            {
+                managerhub.crepuscularScript.enabled = false;
+                DirectionalLightMain.gameObject.SetActive(true);
+            }
+
+            // 获取 Directional Light 的 Light 组件
+            // 使用 Mathf.Lerp 在不同时间平滑调整强度
+            // 设置灯光强度
+            Light directionalLight = DirectionalLightMain.GetComponent<Light>();
+            float newIntensity = Mathf.Lerp(0f, 1.7f, managerhub.timeManager.timeStruct._time.value);
+            directionalLight.intensity = newIntensity;
         }
     }
 }

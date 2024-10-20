@@ -571,7 +571,7 @@ public class World : MonoBehaviour
             //print("玩家移动太快！Center_Now已更新");
             Init_Map_Thread_NoInit_Coroutine = StartCoroutine(Init_Map_Thread_NoInit());
 
-            managerhub.timeManager.UpdateDayFogDistance();
+            //managerhub.timeManager.UpdateDayFogDistance();
             HideFarChunks();
         }
     }

@@ -17,6 +17,7 @@ namespace Cloud
         [Header("云的渲染半径")] public float RenderSize = 4f;
         [Header("风向")] public Vector3 WindDirect;
 
+        public Dictionary<Vector3, GameObject> AllClouds = new Dictionary<Vector3, GameObject>();
 
         private ManagerHub managerhub;
         bool hasExec_Update = true;
@@ -46,12 +47,29 @@ namespace Cloud
                     parent.transform.position = new Vector3(managerhub.player.transform.position.x, 0f, managerhub.player.transform.position.z) ;
                     hasExec_Update = false;
                 }
+
+
             }
             else
             {
                 if (hasExec_Update == false)
                 {
                     hasExec_Update = true;
+                }
+            }
+        }
+
+
+        //由player调用
+        public void UpdateClouds()
+        {
+
+            //Remove
+            foreach (var item in AllClouds)
+            {
+                if ((item.Value.transform.position - managerhub.player.transform.position).magnitude > 160f)
+                {
+                    AllClouds.Remove(item.Key);
                 }
             }
         }
@@ -97,20 +115,27 @@ namespace Cloud
         // 生成一个带有SpriteRenderer的GameObject
         void GenerateCloud(Vector3 _pos)
         {
-            // 创建新的GameObject
-            GameObject cloudObject = new GameObject($"Cloud_{_pos}");
-            cloudObject.transform.SetParent(parent.transform);
 
-            // 给GameObject添加SpriteRenderer组件，并设置Sprite
-            SpriteRenderer spriteRenderer = cloudObject.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = GetRandomCutCloudSprite();
+            if (!AllClouds.ContainsKey(_pos))
+            {
+                // 创建新的GameObject
+                GameObject cloudObject = new GameObject($"Cloud_{_pos}");
+                cloudObject.transform.SetParent(parent.transform);
 
-            // 设置位置
-            cloudObject.transform.position = new Vector3(_pos.x * 160f, 128f, _pos.z * 160f);
+                // 给GameObject添加SpriteRenderer组件，并设置Sprite
+                SpriteRenderer spriteRenderer = cloudObject.AddComponent<SpriteRenderer>();
+                spriteRenderer.sprite = GetRandomCutCloudSprite();
 
-            cloudObject.transform.rotation = Quaternion.Euler(new Vector3(-90f, 0f, 0f));
+                // 设置位置
+                cloudObject.transform.position = new Vector3(_pos.x * 160f, 128f, _pos.z * 160f);
+                cloudObject.transform.rotation = Quaternion.Euler(new Vector3(-90f, 0f, 0f));
+                cloudObject.transform.localScale = new Vector3(1000f, 1000f, 1000f);
 
-            cloudObject.transform.localScale = new Vector3(1000f, 1000f, 1000f);
+                AllClouds.Add(_pos, cloudObject);
+            }
+
+           
+
         }
     }
 

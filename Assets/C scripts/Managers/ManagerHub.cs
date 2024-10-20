@@ -21,6 +21,8 @@ public class ManagerHub : MonoBehaviour
     public Player player;
     public TextureTo3D textureTo3D;
     public CloudManager cloudManager;
+    public Crepuscular crepuscularScript;
+    public SunMoving sunMoving;
 
     [Foldout("开发者模式", true)]
     public bool 低区块模式; [HideInInspector] public bool hasExec_低区块模式 = true;

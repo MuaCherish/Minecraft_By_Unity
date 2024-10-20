@@ -2001,10 +2001,10 @@ public class CanvasManager : MonoBehaviour
 
         world.HideFarChunks();
 
-        if (managerhub.timeManager.gameObject.activeSelf)
-        {
-            managerhub.timeManager.Buff_CaveFog(false);
-        }
+        //if (managerhub.timeManager.gameObject.activeSelf)
+        //{
+        //    managerhub.timeManager.Buff_CaveFog(false);
+        //}
         
 
 

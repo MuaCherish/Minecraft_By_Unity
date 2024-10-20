@@ -611,7 +611,52 @@ public class CommandManager : MonoBehaviour
                     _color = Color.red;
                     return "<系统消息> " + "spectatormode转换失败";
                 }
-            
+
+            //poslightcast
+            case 11:
+                managerhub.sunMoving.isOpenLightCast = !managerhub.sunMoving.isOpenLightCast;
+
+                return "<系统消息> " + "已切换光线后处理";
+
+            //TimeSpeed
+            case 12:
+                string pattern12 = @"\/timespeed\s+(\d+)";
+
+                // 使用正则表达式匹配数字
+                Match match12 = Regex.Match(_input, pattern12);
+
+                if (match12.Success)
+                {
+                    string numberString = match12.Groups[1].Value;
+
+                    if (float.TryParse(numberString, out float number))
+                    {
+                        //Debug.Log("提取并转换的数字: " + number);
+
+                        if (number > 0)
+                        {
+                            managerhub.timeManager.timeStruct._time.second_GameOneHour = number;
+
+
+                            return "<系统消息> " + $"已更新时间流速";
+                        }
+                        else
+                        {
+                            return "<系统消息> " + "流速不可为零或者负数";
+                        }
+                    }
+                    else
+                    {
+                        return "<系统消息> " + "<number>转换失败";
+                    }
+
+                }
+                else
+                {
+                    _color = Color.red;
+                    return "<系统消息> " + "<number>转换失败";
+                }
+
 
             //没有找到
             default:
