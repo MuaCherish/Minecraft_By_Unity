@@ -253,18 +253,18 @@ public class DebugManager : MonoBehaviour
         foreach (Transform chunk in chunks)
         {
             MeshRenderer meshRenderer = chunk.GetComponent<MeshRenderer>();
-            if (meshRenderer != null && meshRenderer.isVisible)  // 确保物体在摄像机视野内
+            if (meshRenderer != null && meshRenderer.isVisible) // 确保物体有Renderer且可见
             {
-                // 使用 WorldToViewportPoint 来检查物体是否在视野内
-                Vector3 viewportPoint = camera.WorldToViewportPoint(chunk.position);
-                if (viewportPoint.x >= 0 && viewportPoint.x <= 1 &&
-                    viewportPoint.y >= 0 && viewportPoint.y <= 1 &&
-                    viewportPoint.z > 0) // 确保物体在摄像头前方
+                // 获取MeshRenderer的包围盒
+                Bounds bounds = meshRenderer.bounds;
+
+                // 使用包围盒检测是否在视野内
+                if (IsInView(camera, bounds))
                 {
+                    // 获取MeshFilter并累加三角形数
                     MeshFilter meshFilter = chunk.GetComponent<MeshFilter>();
                     if (meshFilter != null && meshFilter.sharedMesh != null)
                     {
-                        // 累加三角形数
                         triangleCount += meshFilter.sharedMesh.triangles.Length / 3; // 每个三角形由3个顶点组成
                     }
                 }
@@ -278,11 +278,19 @@ public class DebugManager : MonoBehaviour
         }
         else
         {
-            // 返回以 'w' 为单位的格式，如 12w 表示12万
-            return $"{triangleCount / 10000}w";
+            return $"{(triangleCount / 10000f):0.#}w"; // 返回以 'w' 为单位的格式
         }
     }
 
+    // 辅助函数：检测包围盒是否在摄像机视野内
+    private bool IsInView(Camera camera, Bounds bounds)
+    {
+        // 获取摄像机的裁剪平面
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(camera);
+
+        // 检测包围盒是否与视锥体相交
+        return GeometryUtility.TestPlanesAABB(planes, bounds);
+    }
 
 
 

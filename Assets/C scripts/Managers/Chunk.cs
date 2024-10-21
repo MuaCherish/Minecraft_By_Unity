@@ -7,6 +7,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using static UnityEngine.GraphicsBuffer;
 using UnityEngine.UIElements;
+using static UnityEditor.PlayerSettings;
 //using static UnityEditor.PlayerSettings;
 //using static UnityEditor.Progress;
 //using static UnityEditor.PlayerSettings;
@@ -2704,7 +2705,7 @@ public class Chunk : MonoBehaviour
 
     //编辑方块
     //接收绝对坐标
-    public void EditData(Vector3 pos, byte targetBlocktype) 
+    public void EditData(Vector3 pos, byte targetBlocktype)
     {
 
         //ClearFInd_Direvtion();
@@ -2769,8 +2770,14 @@ public class Chunk : MonoBehaviour
         //        }
 
 
-                
 
+        managerhub.musicManager.PlaySound_Broken(targetBlocktype);
+
+        //破坏粒子效果
+        GameObject particleInstance = Instantiate(managerhub.player.Particle_Broken);
+        particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
+        particleInstance.transform.position = new Vector3((int) pos.x + 0.5f, (int)pos.y + 0.7f, (int)pos.z + 0.5f);
+        particleInstance.GetComponent<ParticleCollision>().Particle_PLay(thisType);
 
 
 
@@ -2778,7 +2785,7 @@ public class Chunk : MonoBehaviour
         //}
 
 
-        UpdateChunkMesh_WithSurround(pos, true, false);
+        UpdateChunkMesh_WithSurround(_relaVec, true, false);
     }
 
     
@@ -2845,12 +2852,17 @@ public class Chunk : MonoBehaviour
                   
                 }
 
-                
 
+                managerhub.musicManager.PlaySound_Broken(_EditList[i].targetType);
 
+                //破坏粒子效果
+                GameObject particleInstance = Instantiate(managerhub.player.Particle_Broken);
+                particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
+                particleInstance.transform.position = new Vector3((int)_EditList[i].editPos.x + 0.5f, (int)_EditList[i].editPos.y + 0.7f, (int)_EditList[i].editPos.z + 0.5f);
+                particleInstance.GetComponent<ParticleCollision>().Particle_PLay(thisType);
             }
 
-            
+
 
 
 

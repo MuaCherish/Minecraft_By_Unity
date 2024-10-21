@@ -12,6 +12,7 @@ public class ParticleCollision : MonoBehaviour
         // 获取粒子系统组件
         _particleSystem = GetComponent<ParticleSystem>();
         managerhub = GameObject.Find("Manager/ManagerHub").GetComponent<ManagerHub>();
+        
     }
 
     public void Particle_PLay(byte _targetType)

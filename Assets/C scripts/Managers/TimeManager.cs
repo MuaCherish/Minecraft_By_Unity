@@ -110,7 +110,7 @@ public class TimeManager : MonoBehaviour
     
     public void InitTimeManager()
     {
-        timeStruct._time.CurrentTime = Random.Range(0f, 24f);
+        timeStruct._time.CurrentTime = Random.Range(6f, 17f);
 
         //if (isRandomWeather)
         //{
@@ -243,6 +243,7 @@ public class TimeManager : MonoBehaviour
             float t = timeStruct._time.value / 0.5f;  // 归一化比例 (0 ~ 1)
             ALerpColor = Color.Lerp(timeStruct._skybox.NightColor[0], timeStruct._skybox.SunSetColor[0], t);
             BLerpColor = Color.Lerp(timeStruct._skybox.NightColor[1], timeStruct._skybox.SunSetColor[1], t);
+            CloudColor = Color.Lerp(timeStruct._skybox.NightColor[1], timeStruct._skybox.SunSetColor[1], t - 0.1f);
         }
         // 0.5 ~ 1：从 SunSet 到 Day
         else if (timeStruct._time.value >= 0.5f && timeStruct._time.value <= 1f)
@@ -250,6 +251,7 @@ public class TimeManager : MonoBehaviour
             float t = (timeStruct._time.value - 0.5f) / 0.5f;  // 归一化比例 (0 ~ 1)
             ALerpColor = Color.Lerp(timeStruct._skybox.SunSetColor[0], timeStruct._skybox.DayColor[0], t);
             BLerpColor = Color.Lerp(timeStruct._skybox.SunSetColor[1], timeStruct._skybox.DayColor[1], t);
+            CloudColor = Color.Lerp(timeStruct._skybox.NightColor[1], timeStruct._skybox.SunSetColor[1], t - 0.1f);
         }
         else
         {
@@ -261,8 +263,8 @@ public class TimeManager : MonoBehaviour
         timeStruct._skybox.SkyboxMaterial.SetColor("_ColorB", BLerpColor);
 
         // 更新云的颜色
-        CloudColor = BLerpColor;
-        CloudColor.a = 1f;
+        
+        
     }
 
 
@@ -272,8 +274,8 @@ public class TimeManager : MonoBehaviour
     {
         //Color LerpCloudColor = Color.Lerp(timeStruct._cloud.CloudNightColor, timeStruct._cloud.CloudDayColor, timeStruct._time.value);
         //managerhub.cloudManager.SetCloudColor(LerpCloudColor);
-
-        managerhub.cloudManager.SetCloudColor(CloudColor);
+        CloudColor.a = 1f;
+        //managerhub.cloudManager.SetCloudColor(CloudColor);
     }
 
 
@@ -300,6 +302,7 @@ public class TimeManager : MonoBehaviour
     //}
 
     #endregion
+
 
     #region 天空盒
 

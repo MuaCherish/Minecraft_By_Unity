@@ -27,13 +27,13 @@ namespace Cloud
 
             managerhub = GlobalData.GetManagerhub();
             // 随机获取裁剪的云块并生成对应的GameObject
-            for (int x = -3; x <= 3; x++)
-            {
-                for (int z = -3; z <= 3; z++)
-                {
-                    GenerateCloud(new Vector3(x, 0, z));
-                }
-            }
+            //for (int x = -3; x <= 3; x++)
+            //{
+            //    for (int z = -3; z <= 3; z++)
+            //    {
+            //        GenerateCloud(new Vector3(x, 0, z));
+            //    }
+            //}
             //GenerateCloud(new Vector3(0, 0, 0));
             //GenerateCloud(new Vector3(1, 0, 0));
         }
@@ -44,7 +44,7 @@ namespace Cloud
             {
                 if (hasExec_Update)
                 {
-                    parent.transform.position = new Vector3(managerhub.player.transform.position.x, 0f, managerhub.player.transform.position.z) ;
+                    parent.transform.position = new Vector3(managerhub.player.transform.position.x, 128f, managerhub.player.transform.position.z) ;
                     hasExec_Update = false;
                 }
 

@@ -25,6 +25,7 @@ public class BlockType
     public bool IsOriented;     //是否跟随玩家朝向
     public bool isinteractable; //是否可被右键触发
     public bool is2d;           //用来区分显示
+    public bool isFlower;           //是否会被覆盖
 
     [Header("工具参数")]
     public bool isTool;         //区分功能性

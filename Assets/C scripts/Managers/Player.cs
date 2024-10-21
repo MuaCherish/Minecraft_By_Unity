@@ -3,6 +3,7 @@ using Homebrew;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.LowLevel;
+using static UnityEditor.PlayerSettings;
 
 
 public class Player : MonoBehaviour
@@ -1028,8 +1029,18 @@ public class Player : MonoBehaviour
                         {
                             //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
                             world.Allchunks[world.GetChunkLocation(_rayCast.hitPoint)].EditData(_rayCast.hitPoint, VoxelData.Air);
-                            BlocksFunction.Smoke(managerhub, _rayCast.hitPoint, 2.5f);
+                            BlocksFunction.Smoke(managerhub, _rayCast.hitPoint, 3);
                             managerhub.backpackManager.update_slots(1, 56);
+
+                            // 玩家被炸飞
+                            Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
+                            float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
+
+                            //计算炸飞距离
+                            _Direction.y = Mathf.Lerp(0, 1, _value);
+                            float Distance = Mathf.Lerp(3, 0, _value);
+
+                            ForceMoving(_Direction, Distance, 0.1f);
                         }
                         break;
                     
@@ -1072,7 +1083,16 @@ public class Player : MonoBehaviour
 
 
                         //Edit
-                        world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(world.GetRelalocation(_rayCast.hitPoint_Previous), backpackmanager.slots[selectindex].blockId);
+                        if(managerhub.world.blocktypes[point_Block_type].isFlower)
+                        {
+                            world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(world.GetRelalocation(_rayCast.hitPoint), backpackmanager.slots[selectindex].blockId);
+
+                        }
+                        else
+                        {
+                            world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(world.GetRelalocation(_rayCast.hitPoint_Previous), backpackmanager.slots[selectindex].blockId);
+
+                        }
 
 
                         //EditNumber
@@ -1213,8 +1233,8 @@ public class Player : MonoBehaviour
     //public float DEbug_DIstance;
 
     // 等待2秒后执行销毁泥土的方法
-    public float Broking_Offset = 0.1f;
-    public Vector3 previous_Broking_Normal;
+    //public float Broking_Offset = 0.1f;
+    //public Vector3 previous_Broking_Normal;
     IEnumerator DestroySoilWithDelay(RayCastStruct _HitSrtuct)
     {
 
@@ -1234,53 +1254,7 @@ public class Player : MonoBehaviour
         }
 
         //破坏中粒子系统
-        GameObject BrokingparticleInstance = Instantiate(Particle_Broking);
-        BrokingparticleInstance.transform.parent = particel_Broken_transform;
-        BrokingparticleInstance.GetComponent<ParticleCollision>().Particle_PLay(theBlockwhichBeBrokenType);
-
-        //动态改变破坏方向
-        Vector3 _PosCenter = new Vector3((int)_HitSrtuct.hitPoint.x + 0.5f, (int)_HitSrtuct.hitPoint.y + 0.5f, (int)_HitSrtuct.hitPoint.z + 0.5f);
-
-        // 计算旋转，使用 hitNormal 作为物体的“前方向”对齐
-        // 根据法线判断方向，并生成对应的旋转 vec
-        Vector3 vec = Vector3.zero;
-        previous_Broking_Normal = _HitSrtuct.hitNormal;
-        switch (_HitSrtuct.hitNormal)
-        {
-            case Vector3 v when v == Vector3.up:       // (0, 1, 0)
-                vec = new Vector3(0f, 90f, 0f);                 // 朝前方向
-                break;
-
-            case Vector3 v when v == Vector3.down:     // (0, -1, 0)
-                vec = new Vector3(0f, 90f, 0f);                         // 同样朝前方向
-                break;
-
-            case Vector3 v when v == Vector3.right:    // (1, 0, 0)
-                vec = new Vector3(90f, 0f, 0f);                            // 朝上方向
-                break;
-
-            case Vector3 v when v == Vector3.left:     // (-1, 0, 0)
-                vec = new Vector3(-90f, 0f, 0f);                             // 朝下方向
-                break;
-
-            case Vector3 v when v == Vector3.forward:  // (0, 0, 1)
-                vec = new Vector3(0f, 0f, 90f);                          // 朝右方向
-                break;
-
-            case Vector3 v when v == Vector3.back:     // (0, 0, -1)
-                vec = new Vector3(0f, 0f, -90f);                          // 朝左方向
-                break;
-        }
-
-        // 计算旋转并应用到破坏粒子实例上
-        BrokingparticleInstance.transform.rotation = Quaternion.LookRotation(vec);
-
-
-
-
-        BrokingparticleInstance.transform.position = _PosCenter + _HitSrtuct.hitNormal * Broking_Offset;
-        //Broking_Animation.textureSheetAnimation.SetSprite(0, world.blocktypes[theBlockwhichBeBrokenType].buttom_sprit);
-
+        brokingBox.Particle_PLay(point_Block_type);
         //Broking_Animation.Play();
 
         // 记录协程开始执行时的时间
@@ -1300,7 +1274,7 @@ public class Player : MonoBehaviour
         {
 
             //选择下标为0的情况下
-            if (_selecttype != 255 && world.blocktypes[_selecttype].canBreakBlockWithMouse1 == false)
+            if (_selecttype != 255 && world.blocktypes[_selecttype].canBreakBlockWithMouse1 == false && managerhub.world.game_mode == GameMode.Survival)
             {
                 destroy_time = Mathf.Infinity;
                 isFirstBrokeBlock = false;
@@ -1317,48 +1291,14 @@ public class Player : MonoBehaviour
         while (Time.time - startTime < destroy_time)
         {
 
-            RayCastStruct _rayCastStruct = NewRayCast();
-            if (previous_Broking_Normal != _rayCastStruct.hitNormal)
+            if (managerhub.world.blocktypes[point_Block_type].DestroyTime == 0f)
             {
-                print("改变旋转");
-
-                switch (_rayCastStruct.hitNormal)
-                {
-                    case Vector3 v when v == Vector3.up:       // (0, 1, 0)
-                        vec = new Vector3(0f, 90f, 0f);                 // 朝前方向
-                        break;
-
-                    case Vector3 v when v == Vector3.down:     // (0, -1, 0)
-                        vec = new Vector3(0f, 90f, 0f);                         // 同样朝前方向
-                        break;
-
-                    case Vector3 v when v == Vector3.right:    // (1, 0, 0)
-                        vec = new Vector3(90f, 0f, 0f);                            // 朝上方向
-                        break;
-
-                    case Vector3 v when v == Vector3.left:     // (-1, 0, 0)
-                        vec = new Vector3(-90f, 0f, 0f);                             // 朝下方向
-                        break;
-
-                    case Vector3 v when v == Vector3.forward:  // (0, 0, 1)
-                        vec = new Vector3(0f, 0f, 90f);                          // 朝右方向
-                        break;
-
-                    case Vector3 v when v == Vector3.back:     // (0, 0, -1)
-                        vec = new Vector3(0f, 0f, -90f);                          // 朝左方向
-                        break;
-                }
-
-                // 计算旋转并应用到破坏粒子实例上
-                BrokingparticleInstance.transform.rotation = Quaternion.LookRotation(vec);
-                BrokingparticleInstance.transform.position = _PosCenter + _rayCastStruct.hitNormal * Broking_Offset;
-
-                previous_Broking_Normal = _rayCastStruct.hitNormal;
+                break;
             }
 
 
 
-            if (isFirstBrokeBlock && managerhub.world.game_mode == GameMode.Creative && theBlockwhichBeBrokenType != VoxelData.BedRock)
+            if (isFirstBrokeBlock && managerhub.world.game_mode == GameMode.Creative)
             {
                 isFirstBrokeBlock = false;
                 break;
@@ -1412,7 +1352,7 @@ public class Player : MonoBehaviour
                 //音效暂停
                 musicmanager.Audio_player_broke.Stop();
 
-                BrokingparticleInstance.GetComponent<ParticleSystem>().Stop();
+                brokingBox.gameObject.GetComponent<ParticleSystem>().Stop();
                 //Broking_Animation.Stop();
 
                 yield break;
@@ -1429,14 +1369,14 @@ public class Player : MonoBehaviour
         // 执行销毁泥土的逻辑
         isDestroying = false;
 
-        BrokingparticleInstance.GetComponent<ParticleSystem>().Stop();
-        musicmanager.PlaySound_Broken(theBlockwhichBeBrokenType);
+        brokingBox.gameObject.GetComponent<ParticleSystem>().Stop();
+        //musicmanager.PlaySound_Broken(theBlockwhichBeBrokenType);
 
-        //破坏粒子效果
-        GameObject particleInstance = Instantiate(Particle_Broken);
-        particleInstance.transform.parent = particel_Broken_transform;
-        particleInstance.transform.position = _PosCenter;
-        particleInstance.GetComponent<ParticleCollision>().Particle_PLay(theBlockwhichBeBrokenType);
+        ////破坏粒子效果
+        //GameObject particleInstance = Instantiate(Particle_Broken);
+        //particleInstance.transform.parent = particel_Broken_transform;
+        ////particleInstance.transform.position = _PosCenter;
+        //particleInstance.GetComponent<ParticleCollision>().Particle_PLay(theBlockwhichBeBrokenType);
 
         elapsedTime = 0.0f;
         musicmanager.isbroking = false;
@@ -1492,7 +1432,7 @@ public class Player : MonoBehaviour
 
         //World
         var chunkObject = world.GetChunkObject(_HitSrtuct.hitPoint);
-        chunkObject.EditData(world.GetRelalocation(_HitSrtuct.hitPoint), VoxelData.Air);
+        chunkObject.EditData(_HitSrtuct.hitPoint, VoxelData.Air);
         //world.UpdateEditNumber(position, VoxelData.Air);
 
 
@@ -1642,65 +1582,57 @@ public class Player : MonoBehaviour
 
     //放置高亮方块
     [ReadOnly]public Vector3 LastHighLightBlockPos;
+    [ReadOnly]public Vector3 LastHighLightBlock_Normal;
     private void placeCursorBlocks()
     {
         //如果成功放置，则不需要再更新，直到玩家改变方块isChangeBlock == true或者world.GetBlockType(pos)发生改变
 
-        float step = checkIncrement;
-        Vector3 lastPos = new Vector3();
+        RayCastStruct _rayCast = NewRayCast();
 
-        while (step < reach)
+        //如果可以放置
+        if (_rayCast.isHit)
         {
+            int posX = Mathf.FloorToInt(_rayCast.hitPoint.x);
+            int posY = Mathf.FloorToInt(_rayCast.hitPoint.y);
+            int posZ = Mathf.FloorToInt(_rayCast.hitPoint.z);
+            Vector3 NowHighLightBlockPos = new Vector3(posX, posY, posZ);
+            point_Block_type = world.GetBlockType(_rayCast.hitPoint);
 
-            Vector3 pos = cam.position + (cam.forward * step);
 
-            //异常检测
-            if (pos.y < 0)
+            //如果不一样则重新放置
+            if (NowHighLightBlockPos != LastHighLightBlockPos)
             {
-                pos = new Vector3(pos.x,0, pos.z);
+                //print("不一样");
+                updateHightLightBlock(NowHighLightBlockPos);
+                updateBrokingBox(_rayCast);
+                LastHighLightBlockPos = NowHighLightBlockPos;
             }
 
-
-            //如果可以放置
-            if (world.RayCheckForVoxel(pos))
+            //如果不一样则重新放置
+            if (_rayCast.hitNormal != LastHighLightBlock_Normal)
             {
-                int posX = Mathf.FloorToInt(pos.x);
-                int posY = Mathf.FloorToInt(pos.y);
-                int posZ = Mathf.FloorToInt(pos.z);
-                point_Block_type = world.GetBlockType(pos);
-                
+                updateBrokingBox(_rayCast);
 
-                //如果不一样则重新放置
-                if (new Vector3(posX, posY, posZ) != LastHighLightBlockPos)
-                {
-                    //print("不一样");
-                    updateHightLightBlock(posX, posY, posZ);
-                    LastHighLightBlockPos = new Vector3(posX, posY, posZ);
-                }
-
-               
-
-                return;
-
+                LastHighLightBlock_Normal = _rayCast.hitNormal;
             }
 
-
-            point_Block_type = PlayerData.notHit;
-            lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
-
-            step += checkIncrement;
+            return;
 
         }
+        else
+        {
+            HighlightBlock.gameObject.SetActive(false);
+        }
 
-        HighlightBlock.gameObject.SetActive(false);
+        
 
     }
 
-    void updateHightLightBlock(int posX, int posY,int posZ)
+    void updateHightLightBlock(Vector3 _v)
     {
         //print("更新高亮方块");
 
-        HighlightBlock.position = new Vector3(posX + 0.5f, posY + 0.5f, posZ + 0.5f);
+        HighlightBlock.position = new Vector3(_v.x + 0.5f, _v.y + 0.5f, _v.z + 0.5f);
         HighlightBlock.localScale = new Vector3(1f, 1f, 1f);
 
 
@@ -1711,13 +1643,107 @@ public class Player : MonoBehaviour
             float offsetX = _collisionRange.xRange.y - _collisionRange.xRange.x;
             float offsetY = _collisionRange.yRange.y - _collisionRange.yRange.x;
             float offsetZ = _collisionRange.zRange.y - _collisionRange.zRange.x;
-            HighlightBlock.position = new Vector3(posX + _collisionRange.xRange.y - offsetX / 2f, posY + _collisionRange.yRange.y - offsetY / 2f, posZ + (_collisionRange.zRange.y - offsetZ / 2f));
+            HighlightBlock.position = new Vector3(_v.x + _collisionRange.xRange.y - offsetX / 2f, _v.y + _collisionRange.yRange.y - offsetY / 2f, _v.z + (_collisionRange.zRange.y - offsetZ / 2f));
             HighlightBlock.localScale = new Vector3(offsetX, offsetY, offsetZ); ;
 
         }
 
+
+
+        //updateBrokingBox(_rayCast);
+
+
         HighlightBlock.gameObject.SetActive(true);
     }
+
+    public ParticleCollision brokingBox;
+    public float brokingbox额外多出来的部分 = 0.15f;
+    void updateBrokingBox(RayCastStruct _rayCast)
+    {
+        //brokingBox.Particle_PLay(point_Block_type);
+
+        //动态改变破坏方向
+        Vector3 _PosCenter = new Vector3((int)_rayCast.hitPoint.x + 0.5f, (int)_rayCast.hitPoint.y + 0.5f, (int)_rayCast.hitPoint.z + 0.5f);
+
+        // 计算旋转，使用 hitNormal 作为物体的“前方向”对齐
+        // 根据法线判断方向，并生成对应的旋转 vec
+        //Vector3 vec = Vector3.zero;
+        //previous_Broking_Normal = _rayCast.hitNormal;
+        Vector3 _scale = Vector3.one;
+        switch (_rayCast.hitNormal)
+        {
+            case Vector3 v when v == Vector3.up:       // (0, 1, 0)
+                _scale = new Vector3(1f, 1f, 0.1f);
+                break;
+
+            case Vector3 v when v == Vector3.down:     // (0, -1, 0)
+                _scale = new Vector3(1f, 1f, 0.1f);
+                break;
+
+            case Vector3 v when v == Vector3.right:    // (1, 0, 0)
+                _scale = new Vector3(0.1f, 1f, 1f);
+                break;
+
+            case Vector3 v when v == Vector3.left:     // (-1, 0, 0)
+                _scale = new Vector3(0.1f, 1f, 1f);
+                break;
+
+            case Vector3 v when v == Vector3.forward:  // (0, 0, 1)
+                _scale = new Vector3(1f, 0.1f, 1f);
+                break;
+
+            case Vector3 v when v == Vector3.back:     // (0, 0, -1)
+                _scale = new Vector3(1f, 0.1f, 1f);
+                break;
+        }
+        ParticleSystem particleSystem = brokingBox.gameObject.GetComponent<ParticleSystem>();
+
+        // 获取 shape 模块并进行修改
+        var shapeModule = particleSystem.shape;
+        shapeModule.scale = _scale;  // 直接修改副本变量的属性
+
+        // 计算旋转并应用到破坏粒子实例上
+        //BrokingparticleInstance.transform.rotation = Quaternion.LookRotation(vec);
+
+        //pos
+        float _brokingOffset = 0.5f;
+
+        if (managerhub.world.blocktypes[point_Block_type].isDIYCollision)
+        {
+            //managerhub.world.blocktypes[point_Block_type].CollosionRange.xRange
+
+            switch (_rayCast.hitNormal)
+            {
+                case Vector3 v when v == Vector3.up:       // (0, 1, 0)
+                    _brokingOffset = managerhub.world.blocktypes[point_Block_type].CollosionRange.yRange.y - 0.5f;
+                    break;
+
+                case Vector3 v when v == Vector3.down:     // (0, -1, 0)
+                    _brokingOffset = managerhub.world.blocktypes[point_Block_type].CollosionRange.yRange.x - 0.5f;
+                    break;
+
+                case Vector3 v when v == Vector3.right:    // (1, 0, 0)
+                    _brokingOffset = managerhub.world.blocktypes[point_Block_type].CollosionRange.xRange.y - 0.5f;
+                    break;
+
+                case Vector3 v when v == Vector3.left:     // (-1, 0, 0)
+                    _brokingOffset = managerhub.world.blocktypes[point_Block_type].CollosionRange.xRange.x - 0.5f;
+                    break;
+
+                case Vector3 v when v == Vector3.forward:  // (0, 0, 1)
+                    _brokingOffset = managerhub.world.blocktypes[point_Block_type].CollosionRange.zRange.y - 0.5f;
+                    break;
+
+                case Vector3 v when v == Vector3.back:     // (0, 0, -1)
+                    _brokingOffset = managerhub.world.blocktypes[point_Block_type].CollosionRange.zRange.x - 0.5f;
+                    break;
+            }
+
+        }
+
+        brokingBox.gameObject.transform.position = _PosCenter + _rayCast.hitNormal * (_brokingOffset + brokingbox额外多出来的部分);
+    }
+
 
 
     //实现操作
