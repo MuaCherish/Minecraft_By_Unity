@@ -3,15 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public static class PlayerData
 {
-    //Select
-    public static readonly float[] SelectLocation_x = new float[9]
-    {
-
-        46f,126f,206f,286f,366f,445f,526f,606f,686f,
-
-    };
+    
 
     //地形参数
     /*

@@ -2,6 +2,7 @@ using Homebrew;
 using System.Collections;
 using UnityEngine;
 using Cloud;
+using static UnityEngine.Rendering.DebugUI;
 
 public enum Enum_Weather
 {
@@ -110,13 +111,13 @@ public class TimeManager : MonoBehaviour
     
     public void InitTimeManager()
     {
-        timeStruct._time.CurrentTime = Random.Range(6f, 17f);
-
+        timeStruct._time.CurrentTime = Random.Range(8f, 15f);
+        timeStruct._Water.WatersMaterial.SetFloat("__2", timeStruct._Water.LightnessRange.y);
         //if (isRandomWeather)
         //{
         //    weather = (Enum_Weather)Random.Range(0, System.Enum.GetValues(typeof(Enum_Weather)).Length);
         //}
-        
+
     }
 
     public float GetCurrentTime()
@@ -178,6 +179,7 @@ public class TimeManager : MonoBehaviour
                 SetSkyBoxColor();
                 SetCloudColor();
                 SetTerrainColor();
+                SetWaterColor();
 
             }
 
@@ -215,6 +217,7 @@ public class TimeManager : MonoBehaviour
                 SetSkyBoxColor();
                 SetCloudColor();
                 SetTerrainColor();
+                SetWaterColor();
             }
 
 
@@ -251,7 +254,7 @@ public class TimeManager : MonoBehaviour
             float t = (timeStruct._time.value - 0.5f) / 0.5f;  // 归一化比例 (0 ~ 1)
             ALerpColor = Color.Lerp(timeStruct._skybox.SunSetColor[0], timeStruct._skybox.DayColor[0], t);
             BLerpColor = Color.Lerp(timeStruct._skybox.SunSetColor[1], timeStruct._skybox.DayColor[1], t);
-            CloudColor = Color.Lerp(timeStruct._skybox.NightColor[1], timeStruct._skybox.SunSetColor[1], t - 0.1f);
+            CloudColor = Color.Lerp(timeStruct._skybox.SunSetColor[1], timeStruct._skybox.DayColor[1], t - 0.1f);
         }
         else
         {
@@ -275,7 +278,7 @@ public class TimeManager : MonoBehaviour
         //Color LerpCloudColor = Color.Lerp(timeStruct._cloud.CloudNightColor, timeStruct._cloud.CloudDayColor, timeStruct._time.value);
         //managerhub.cloudManager.SetCloudColor(LerpCloudColor);
         CloudColor.a = 1f;
-        //managerhub.cloudManager.SetCloudColor(CloudColor);
+        managerhub.cloudManager.SetCloudColor(CloudColor);
     }
 
 
@@ -285,7 +288,11 @@ public class TimeManager : MonoBehaviour
     }
 
 
+    void SetWaterColor()
+    {
 
+        timeStruct._Water.WatersMaterial.SetFloat("__2", Mathf.Lerp(timeStruct._Water.LightnessRange.x, timeStruct._Water.LightnessRange.y, timeStruct._time.value));
+    }
 
 
     //根据渲染范围更新迷雾距离

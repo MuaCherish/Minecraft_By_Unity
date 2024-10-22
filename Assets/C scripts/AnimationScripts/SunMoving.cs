@@ -14,6 +14,7 @@ public class SunMoving : MonoBehaviour
     public Transform DirectionalLight;
     public Transform DirectionalLightMain;
     private Vector3 playerPosition;
+    public GameObject SkyParent;
 
     [Header("太阳参数")]
     private float time; // time在0~24之间，其中12的时候time在玩家正上方
@@ -29,6 +30,7 @@ public class SunMoving : MonoBehaviour
             // 一次性代码
             if (hasExec_Update)
             {
+                SkyParent.SetActive(true);
                 hasExec_Update = false;
             }
 
@@ -71,6 +73,14 @@ public class SunMoving : MonoBehaviour
 
             // 让月亮一直面向玩家
             Moon.transform.LookAt(playerPosition);
+        }
+        else
+        {
+            if (SkyParent.activeSelf)
+            {
+                SkyParent.SetActive(false);
+            }
+            
         }
     }
 

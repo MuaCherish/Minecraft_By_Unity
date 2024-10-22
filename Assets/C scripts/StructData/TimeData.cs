@@ -11,6 +11,8 @@ public class TimeManagertruct
     [Header("Skybox参数")] public Time_SkyBoxStruct _skybox;
     //[Header("Cloud参数")] public Time_CloudStruct _cloud;
     [Header("Terrain参数")] public Time_TerrainStruct _Terrain;
+    [Header("Water参数")] public Time_WaterStruct _Water;
+
 }
 
 #region 时间参数
@@ -50,6 +52,13 @@ public class Time_TerrainStruct
     [Header("地形材质引用")] public Material BlocksMaterial;
     [Header("白天颜色")] public Color BlocksDayColor;
     [Header("晚上颜色")] public Color BlocksNightColor;
+}
+
+[Serializable]
+public class Time_WaterStruct
+{
+    [Header("水面材质引用")] public Material WatersMaterial;
+    [Header("亮度范围")] public Vector2 LightnessRange = new Vector2(0f, 1f);
 }
 
 #endregion

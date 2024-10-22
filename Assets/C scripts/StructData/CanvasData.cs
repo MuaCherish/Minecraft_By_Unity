@@ -4,6 +4,15 @@ using UnityEngine;
 
 public static class CanvasData 
 {
+    //Select
+    public static readonly float[] SelectLocation_x = new float[9]
+    {
+
+        46f,126f,206f,286f,366f,445f,526f,606f,686f,
+
+    };
+
+
     //canvas宏定义
     public static readonly int ui菜单 = 0;
     public static readonly int ui多人游戏 = 1;

@@ -117,7 +117,7 @@ public static class BlocksFunction
 
         // 调用 EditBlock 函数，将空气方块替换为烟雾方块
         //Debug.Log($"{_editNumber.Count}");
-        managerhub.world.EditBlock(_editNumber);
+        managerhub.world.EditBlock(_editNumber, 0.3f);
     }
 
 

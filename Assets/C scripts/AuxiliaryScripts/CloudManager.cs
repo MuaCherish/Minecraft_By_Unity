@@ -1,6 +1,7 @@
 using Homebrew;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Cloud
 {
@@ -9,15 +10,21 @@ namespace Cloud
         [Foldout("云的引用")]
         [Header("云")] public Sprite CloudSprite; // 256x256 的Sprite
         [Header("位置")] public GameObject parent;
+        [Header("云的颜色")]public Material[] cloudMaterials = new Material[2];
 
         [Foldout("Sprite处理")]
         [Header("裁切大小")] public Vector2Int cutSize = new Vector2Int(16, 16); // 裁切尺寸（16x16）
 
         [Foldout("云的设置")]
-        [Header("云的渲染半径")] public float RenderSize = 4f;
-        [Header("风向")] public Vector3 WindDirect;
+        //[Header("云的渲染半径")] public float RenderSize = 4f;
+        [Header("风向")] [ReadOnly] public Vector3 WindDirect;
+        [Header("风速")] public float windSpeed = 1.0f;
 
-        public Dictionary<Vector3, GameObject> AllClouds = new Dictionary<Vector3, GameObject>();
+
+
+
+
+        
 
         private ManagerHub managerhub;
         bool hasExec_Update = true;
@@ -26,16 +33,20 @@ namespace Cloud
 
 
             managerhub = GlobalData.GetManagerhub();
-            // 随机获取裁剪的云块并生成对应的GameObject
-            //for (int x = -3; x <= 3; x++)
-            //{
-            //    for (int z = -3; z <= 3; z++)
-            //    {
-            //        GenerateCloud(new Vector3(x, 0, z));
-            //    }
-            //}
-            //GenerateCloud(new Vector3(0, 0, 0));
-            //GenerateCloud(new Vector3(1, 0, 0));
+
+            // 在XOZ平面上随机生成一个单位向量作为初始方向
+            WindDirect = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
+        
+        // 随机获取裁剪的云块并生成对应的GameObject
+        //for (int x = -3; x <= 3; x++)
+        //{
+        //    for (int z = -3; z <= 3; z++)
+        //    {
+        //        GenerateCloud(new Vector3(x, 0, z));
+        //    }
+        //}
+        //GenerateCloud(new Vector3(0, 0, 0));
+        //GenerateCloud(new Vector3(1, 0, 0));
         }
 
         private void Update()
@@ -48,7 +59,7 @@ namespace Cloud
                     hasExec_Update = false;
                 }
 
-
+                CloudMoving();
             }
             else
             {
@@ -60,83 +71,105 @@ namespace Cloud
         }
 
 
-        //由player调用
-        public void UpdateClouds()
+        
+        void CloudMoving()
         {
+            // 按照速度和方向移动parent
+            parent.transform.position += WindDirect * windSpeed * Time.deltaTime;
 
-            //Remove
-            foreach (var item in AllClouds)
-            {
-                if ((item.Value.transform.position - managerhub.player.transform.position).magnitude > 160f)
-                {
-                    AllClouds.Remove(item.Key);
-                }
-            }
         }
+
+
+        
 
 
         //设置颜色
         public void SetCloudColor(Color _color)
         {
-            foreach (Transform item in parent.transform)
+            foreach (var item in cloudMaterials)
             {
-                item.gameObject.GetComponent<SpriteRenderer>().color = _color;
+                item.color = _color;
             }
         }
 
 
-        // 随机裁剪一部分云块并返回一个新的Sprite
-        Sprite GetRandomCutCloudSprite()
-        {
-            Texture2D texture = CloudSprite.texture;
 
-            // 计算最大可选位置，确保不越界
-            int maxX = texture.width - cutSize.x;
-            int maxY = texture.height - cutSize.y;
 
-            // 随机选择裁剪的起始位置
-            int startX = Random.Range(0, maxX);
-            int startY = Random.Range(0, maxY);
+        #region 区块云（弃案）
 
-            // 裁剪区域
-            Rect rect = new Rect(startX, startY, cutSize.x, cutSize.y);
+        //public Dictionary<Vector3, GameObject> AllClouds = new Dictionary<Vector3, GameObject>();
 
-            // 创建一个新的Sprite，使用裁剪的纹理区域
-            Sprite cutSprite = Sprite.Create(
-                texture,
-                rect,
-                new Vector2(0.5f, 0.5f),  // 使Sprite居中
-                100f                      // 像素单位比例
-            );
+        ////由player调用
+        //public void UpdateClouds()
+        //{
 
-            return cutSprite;
-        }
+        //    //Remove
+        //    foreach (var item in AllClouds)
+        //    {
+        //        if ((item.Value.transform.position - managerhub.player.transform.position).magnitude > 160f)
+        //        {
+        //            AllClouds.Remove(item.Key);
+        //        }
+        //    }
+        //}
 
-        // 生成一个带有SpriteRenderer的GameObject
-        void GenerateCloud(Vector3 _pos)
-        {
+        //// 随机裁剪一部分云块并返回一个新的Sprite
+        //Sprite GetRandomCutCloudSprite()
+        //{
+        //    Texture2D texture = CloudSprite.texture;
 
-            if (!AllClouds.ContainsKey(_pos))
-            {
-                // 创建新的GameObject
-                GameObject cloudObject = new GameObject($"Cloud_{_pos}");
-                cloudObject.transform.SetParent(parent.transform);
+        //    // 计算最大可选位置，确保不越界
+        //    int maxX = texture.width - cutSize.x;
+        //    int maxY = texture.height - cutSize.y;
 
-                // 给GameObject添加SpriteRenderer组件，并设置Sprite
-                SpriteRenderer spriteRenderer = cloudObject.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = GetRandomCutCloudSprite();
+        //    // 随机选择裁剪的起始位置
+        //    int startX = Random.Range(0, maxX);
+        //    int startY = Random.Range(0, maxY);
 
-                // 设置位置
-                cloudObject.transform.position = new Vector3(_pos.x * 160f, 128f, _pos.z * 160f);
-                cloudObject.transform.rotation = Quaternion.Euler(new Vector3(-90f, 0f, 0f));
-                cloudObject.transform.localScale = new Vector3(1000f, 1000f, 1000f);
+        //    // 裁剪区域
+        //    Rect rect = new Rect(startX, startY, cutSize.x, cutSize.y);
 
-                AllClouds.Add(_pos, cloudObject);
-            }
+        //    // 创建一个新的Sprite，使用裁剪的纹理区域
+        //    Sprite cutSprite = Sprite.Create(
+        //        texture,
+        //        rect,
+        //        new Vector2(0.5f, 0.5f),  // 使Sprite居中
+        //        100f                      // 像素单位比例
+        //    );
 
-           
+        //    return cutSprite;
+        //}
 
-        }
+        //// 生成一个带有SpriteRenderer的GameObject
+        //void GenerateCloud(Vector3 _pos)
+        //{
+
+        //    if (!AllClouds.ContainsKey(_pos))
+        //    {
+        //        // 创建新的GameObject
+        //        GameObject cloudObject = new GameObject($"Cloud_{_pos}");
+        //        cloudObject.transform.SetParent(parent.transform);
+
+        //        // 给GameObject添加SpriteRenderer组件，并设置Sprite
+        //        SpriteRenderer spriteRenderer = cloudObject.AddComponent<SpriteRenderer>();
+        //        spriteRenderer.sprite = GetRandomCutCloudSprite();
+
+        //        // 设置位置
+        //        cloudObject.transform.position = new Vector3(_pos.x * 160f, 128f, _pos.z * 160f);
+        //        cloudObject.transform.rotation = Quaternion.Euler(new Vector3(-90f, 0f, 0f));
+        //        cloudObject.transform.localScale = new Vector3(1000f, 1000f, 1000f);
+
+        //        AllClouds.Add(_pos, cloudObject);
+        //    }
+
+
+
+        //}
+
+
+        #endregion
+
+
     }
 
 }

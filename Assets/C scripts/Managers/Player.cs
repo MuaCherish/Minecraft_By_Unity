@@ -3,7 +3,7 @@ using Homebrew;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.LowLevel;
-using static UnityEditor.PlayerSettings;
+
 
 
 public class Player : MonoBehaviour
@@ -1029,18 +1029,18 @@ public class Player : MonoBehaviour
                         {
                             //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
                             world.Allchunks[world.GetChunkLocation(_rayCast.hitPoint)].EditData(_rayCast.hitPoint, VoxelData.Air);
-                            BlocksFunction.Smoke(managerhub, _rayCast.hitPoint, 3);
+                            BlocksFunction.Smoke(managerhub, _rayCast.hitPoint, 2.5f);
                             managerhub.backpackManager.update_slots(1, 56);
 
                             // 玩家被炸飞
-                            Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
-                            float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
+                            //Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
+                            //float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
 
-                            //计算炸飞距离
-                            _Direction.y = Mathf.Lerp(0, 1, _value);
-                            float Distance = Mathf.Lerp(3, 0, _value);
+                            ////计算炸飞距离
+                            //_Direction.y = Mathf.Lerp(0, 1, _value);
+                            //float Distance = Mathf.Lerp(3, 0, _value);
 
-                            ForceMoving(_Direction, Distance, 0.1f);
+                            //ForceMoving(_Direction, Distance, 0.1f);
                         }
                         break;
                     
@@ -1145,9 +1145,16 @@ public class Player : MonoBehaviour
                     case 51:
                         if (_targettype == VoxelData.TNT)
                         {
+                            //爆炸蒸汽粒子
                             BlocksFunction.Boom(managerhub, _rayCast.hitPoint, 4);
                             GameObject.Instantiate(particle_explosion, _rayCast.hitPoint_Previous, Quaternion.identity);
                             musicmanager.PlaySound(MusicData.explore);
+
+                            //爆炸粒子效果
+                            GameObject particleInstance = Instantiate(Particle_TNT_Prefeb);
+                            particleInstance.transform.parent = particel_Broken_transform;
+                            particleInstance.transform.position = new Vector3((int)_rayCast.hitPoint.x + 0.5f, (int)_rayCast.hitPoint.y + 0.5f, (int)_rayCast.hitPoint.z + 0.5f);
+                            particleInstance.GetComponent<ParticleCollision>().Particle_Play(_targettype);
 
                             // 玩家被炸飞
                             Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
@@ -1235,6 +1242,7 @@ public class Player : MonoBehaviour
     // 等待2秒后执行销毁泥土的方法
     //public float Broking_Offset = 0.1f;
     //public Vector3 previous_Broking_Normal;
+    public GameObject Particle_TNT_Prefeb;
     IEnumerator DestroySoilWithDelay(RayCastStruct _HitSrtuct)
     {
 
@@ -1254,7 +1262,7 @@ public class Player : MonoBehaviour
         }
 
         //破坏中粒子系统
-        brokingBox.Particle_PLay(point_Block_type);
+        brokingBox.Particle_Play(point_Block_type);
         //Broking_Animation.Play();
 
         // 记录协程开始执行时的时间
@@ -1274,7 +1282,7 @@ public class Player : MonoBehaviour
         {
 
             //选择下标为0的情况下
-            if (_selecttype != 255 && world.blocktypes[_selecttype].canBreakBlockWithMouse1 == false && managerhub.world.game_mode == GameMode.Survival)
+            if (_selecttype != 255 && world.blocktypes[_selecttype].canBreakBlockWithMouse1 == false)
             {
                 destroy_time = Mathf.Infinity;
                 isFirstBrokeBlock = false;
@@ -1291,19 +1299,34 @@ public class Player : MonoBehaviour
         while (Time.time - startTime < destroy_time)
         {
 
-            if (managerhub.world.blocktypes[point_Block_type].DestroyTime == 0f)
+            //提前破坏
+            if (managerhub.world.game_mode == GameMode.Creative && isFirstBrokeBlock)
             {
-                break;
-            }
-
-
-
-            if (isFirstBrokeBlock && managerhub.world.game_mode == GameMode.Creative)
-            {
+                // Creative 模式下第一次破坏方块，直接退出
                 isFirstBrokeBlock = false;
                 break;
-                
             }
+
+            if (_selecttype != 255)
+            {
+                var selectedBlockType = managerhub.world.blocktypes[_selecttype];
+
+                // 如果选中的方块类型可以用鼠标左键破坏
+                if (selectedBlockType.canBreakBlockWithMouse1)
+                {
+                    // 如果当前方块的销毁时间为0，直接退出
+                    if (managerhub.world.blocktypes[point_Block_type].DestroyTime == 0f)
+                    {
+                        break;
+                    }
+
+                    // 其他逻辑可以继续放在这里...
+                }
+            }
+
+
+
+
 
             // 计算材质插值
             elapsedTime += Time.deltaTime;
@@ -1808,7 +1831,7 @@ public class Player : MonoBehaviour
         // 选择方块实现
         if (selectindex >= 0 && selectindex <= 9)
         {
-            selectblock.GetComponent<RectTransform>().anchoredPosition = new Vector2(PlayerData.SelectLocation_x[selectindex], 0);
+            selectblock.GetComponent<RectTransform>().anchoredPosition = new Vector2(CanvasData.SelectLocation_x[selectindex], 0);
         }
 
         // 视角和移动实现
@@ -2924,7 +2947,7 @@ public class Player : MonoBehaviour
 
     }
 
-
+    //bool hasExecHigbox = true;
     void Draw_HitBox()
     {
         Vector3 _selfPos = transform.position;
@@ -2944,6 +2967,20 @@ public class Player : MonoBehaviour
         Vector3 _eyes_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _eyesPos.y, _selfPos.z + (playerWidth / 2) + extend_delta);
         Vector3 _eyes_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _eyesPos.y, _selfPos.z - (playerWidth / 2) - extend_delta);
         Vector3 _eyes_右下 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _eyesPos.y, _selfPos.z - (playerWidth / 2) - extend_delta);
+
+        //if (hasExecHigbox)
+        //{
+        //    Vector3 center = (_back_左下 + _front_右上) / 2f;
+        //    float width = (_front_右下 - _front_左下).magnitude;
+        //    float height = (_front_右上 - _front_右下).magnitude;
+
+        //     print($"中心坐标: {center}");
+        //    print($"宽: {width}");
+        //    print($"高: {height}");
+
+        //    hasExecHigbox = false;
+        //}
+
 
         //头顶正方形
         Debug.DrawLine(_front_左上, _front_右上, Color.white);
@@ -2971,6 +3008,9 @@ public class Player : MonoBehaviour
     }
 
 
+
+
+
     //-------------------------------------------------------------------------------------
 
 
@@ -2979,6 +3019,58 @@ public class Player : MonoBehaviour
 
 
     //----------------------------------- 玩家状态 -------------------------------------------
+
+    
+
+
+    //HitBoxCheck
+    //给定一个正方体（给定中心点+宽高）
+    //计算与玩家判定箱（给定中心点+宽高）是否重叠，如果重叠，则返回（玩家判定箱 - 给定中心点）的向量
+    //返回值指向外部
+    public Vector3 CheckHitBox(Vector3 _targetCenter, float _targetWidth, float _targetHeight)
+    {
+        // 玩家判定箱，假设已知
+        //Vector3 _selfPos = transform.position;
+        //Vector3 _front_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
+        //Vector3 _back_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
+
+        Vector3 _selfCenter = transform.position;
+        float _selfWidth = playerWidth;
+        float _selfHeight = playerHeight;
+
+        // 计算玩家的边界
+        float selfMinX = _selfCenter.x - _selfWidth / 2;
+        float selfMaxX = _selfCenter.x + _selfWidth / 2;
+        float selfMinY = _selfCenter.y - _selfHeight / 2;
+        float selfMaxY = _selfCenter.y + _selfHeight / 2;
+
+        // 计算目标的边界
+        float targetMinX = _targetCenter.x - _targetWidth / 2;
+        float targetMaxX = _targetCenter.x + _targetWidth / 2;
+        float targetMinY = _targetCenter.y - _targetHeight / 2;
+        float targetMaxY = _targetCenter.y + _targetHeight / 2;
+
+        // 判定箱算法
+        bool isCollision = selfMaxX >= targetMinX && selfMinX <= targetMaxX &&
+                           selfMaxY >= targetMinY && selfMinY <= targetMaxY;
+
+        // 返回
+        if (isCollision)
+        {
+            // 计算重叠方向
+            Vector3 overlapDirection = (_selfCenter - _targetCenter).normalized;
+
+            //print($"发生碰撞, Length = {(_selfCenter - _targetCenter).magnitude}");
+
+            return overlapDirection;
+        }
+        else
+        {
+            return Vector3.zero;
+        }
+    }
+
+
 
     //玩家强制移动
     public void ForceMoving(Vector3 moveDirection, float moveDistance, float moveTime)

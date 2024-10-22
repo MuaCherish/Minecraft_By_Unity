@@ -1221,54 +1221,68 @@ public class World : MonoBehaviour
     //渲染协程池
     void RenderCoroutineManager()
     {
-
+        // 如果等待渲染的队列不为空，并且没有正在运行的渲染协程
         if (WaitToRender.Count != 0 && Render_Coroutine == null)
         {
-
             //print($"启动渲染协程");
             Render_Coroutine = StartCoroutine(Render_0());
-
         }
-
-
     }
 
-    //一条渲染协程
+    // 一条渲染协程
     IEnumerator Render_0()
     {
+        bool hasError = false;  // 标记是否发生异常
 
         while (true)
         {
-
-            //Queue
-            WaitToRender.TryDequeue(out Chunk chunktemp);
-
-            //print($"{GetChunkLocation(chunktemp.myposition)}开始渲染");
-
-            //CreateMesh
-            if (chunktemp.isReadyToRender)
+            try
             {
+                // 尝试从队列中取出要渲染的Chunk
+                if (WaitToRender.TryDequeue(out Chunk chunktemp))
+                {
+                    //print($"{GetChunkLocation(chunktemp.myposition)}开始渲染");
 
-                chunktemp.CreateMesh();
+                    // 如果Chunk已经准备好渲染，调用CreateMesh
+                    if (chunktemp.isReadyToRender)
+                    {
+                        chunktemp.CreateMesh();
+                    }
+                }
 
+                // 如果队列为空，停止协程
+                if (WaitToRender.Count == 0)
+                {
+                    //print($"队列为空，停止协程");
+                    Render_Coroutine = null;
+                    RenderLock = false;
+                    break;
+                }
+            }
+            catch (System.Exception ex)
+            {
+                // 捕获异常，防止协程因异常终止
+                Debug.LogError($"渲染协程出错: {ex.Message}\n{ex.StackTrace}");
+
+                hasError = true;  // 标记发生错误
+                break;  // 退出当前循环，等待后重新启动
             }
 
-            //Empty
-            if (WaitToRender.Count == 0)
-            {
-
-                //print($"队列为空，停止协程");
-                Render_Coroutine = null;
-                RenderLock = false;
-                break;
-
-            }
-
+            // 正常情况等待一段时间以控制渲染频率
             yield return new WaitForSeconds(RenderDelay);
-
         }
 
+        // 如果发生了异常，等待并重启协程
+        if (hasError)
+        {
+            Render_Coroutine = null;  // 重置协程状态
+            yield return new WaitForSeconds(1f);  // 等待一段时间
+            RenderCoroutineManager();  // 重新启动渲染协程
+        }
     }
+
+
+
 
     //单位为ms，根据每次渲染，动态改变渲染时间
     //void dynamicRandertime(float nowtime)
@@ -2544,7 +2558,7 @@ public class World : MonoBehaviour
         }
 
         //如果是自定义碰撞
-        if (blocktypes[targetBlock].isDIYCollision)
+        if (blocktypes[targetBlock].isSolid && blocktypes[targetBlock].isDIYCollision)
         {
             realLocation = CollisionOffset(realLocation, targetBlock);
             Vector3 OffsetrelaLocation = GetRelalocation(realLocation);

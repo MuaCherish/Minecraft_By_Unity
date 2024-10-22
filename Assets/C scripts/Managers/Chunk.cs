@@ -3,11 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.VisualScripting;
-using static UnityEngine.GraphicsBuffer;
-using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
 //using static UnityEditor.PlayerSettings;
 //using static UnityEditor.Progress;
 //using static UnityEditor.PlayerSettings;
@@ -2770,14 +2765,43 @@ public class Chunk : MonoBehaviour
         //        }
 
 
+        //挤开玩家
+        Vector3 _targetCenter = new Vector3((int)pos.x, (int)pos.y, (int)pos.z);
+        CollosionRange _collosionRange = managerhub.world.blocktypes[thisType].CollosionRange;
+        float _width = _collosionRange.zRange.y - _collosionRange.zRange.x;
+        float _hight = _collosionRange.yRange.y - _collosionRange.yRange.x;
+        _targetCenter.x += (_collosionRange.xRange.x + _collosionRange.xRange.y) / 2f;
+        _targetCenter.y += (_collosionRange.yRange.x + _collosionRange.yRange.y) / 2f;
+        _targetCenter.z += (_collosionRange.zRange.x + _collosionRange.zRange.y) / 2f;
+        Vector3 isShoveDirection = managerhub.player.CheckHitBox(_targetCenter, _width, _hight);
 
-        managerhub.musicManager.PlaySound_Broken(targetBlocktype);
+        if (isShoveDirection != Vector3.zero)
+        {
+            //print("挤到玩家");
+            managerhub.player.ForceMoving(isShoveDirection, 1f, 0.1f);
+        }
+
+        //Music
+        managerhub.musicManager.PlaySound_Broken(thisType);
 
         //破坏粒子效果
         GameObject particleInstance = Instantiate(managerhub.player.Particle_Broken);
         particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
-        particleInstance.transform.position = new Vector3((int) pos.x + 0.5f, (int)pos.y + 0.7f, (int)pos.z + 0.5f);
-        particleInstance.GetComponent<ParticleCollision>().Particle_PLay(thisType);
+
+        //pos
+        if (world.blocktypes[thisType].isDIYCollision)
+        {
+            float Xmax = world.blocktypes[thisType].CollosionRange.xRange.y;
+            float Ymax = world.blocktypes[thisType].CollosionRange.yRange.y;
+            float Zmax = world.blocktypes[thisType].CollosionRange.zRange.y;
+            particleInstance.transform.position = new Vector3((int)pos.x + Xmax / 2f, (int)pos.y + Ymax / 2f + 0.2f, (int)pos.z + Zmax / 2f);
+        }
+        else
+        {
+            particleInstance.transform.position = new Vector3((int)pos.x + 0.5f, (int)pos.y + 0.5f + 0.2f, (int)pos.z + 0.5f);
+        }
+        
+        particleInstance.GetComponent<ParticleCollision>().Particle_Play(thisType);
 
 
 
@@ -2792,6 +2816,10 @@ public class Chunk : MonoBehaviour
     public void EditData(List<EditStruct> _EditList) 
     {
         //print($"EditData:{_EditList.Count}");
+
+        bool hasExec_PlaySound = true;
+
+
 
         for (int i = 0; i < _EditList.Count; i++)
         {
@@ -2853,16 +2881,43 @@ public class Chunk : MonoBehaviour
                 }
 
 
-                managerhub.musicManager.PlaySound_Broken(_EditList[i].targetType);
-
                 //破坏粒子效果
-                GameObject particleInstance = Instantiate(managerhub.player.Particle_Broken);
-                particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
-                particleInstance.transform.position = new Vector3((int)_EditList[i].editPos.x + 0.5f, (int)_EditList[i].editPos.y + 0.7f, (int)_EditList[i].editPos.z + 0.5f);
-                particleInstance.GetComponent<ParticleCollision>().Particle_PLay(thisType);
+                if (GetProbability(10))
+                {
+                    GameObject particleInstance = Instantiate(managerhub.player.Particle_Broken);
+                    particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
+                    //pos
+                    if (world.blocktypes[thisType].isDIYCollision)
+                    {
+                        float Xmax = world.blocktypes[thisType].CollosionRange.xRange.y;
+                        float Ymax = world.blocktypes[thisType].CollosionRange.yRange.y;
+                        float Zmax = world.blocktypes[thisType].CollosionRange.zRange.y;
+                        particleInstance.transform.position = new Vector3((int)_EditList[i].editPos.x + Xmax / 2f, (int)_EditList[i].editPos.y + Ymax / 2f + 0.2f, (int)_EditList[i].editPos.z + Zmax / 2f);
+                    }
+                    else
+                    {
+                        particleInstance.transform.position = new Vector3((int)_EditList[i].editPos.x + 0.5f, (int)_EditList[i].editPos.y + 0.5f + 0.2f, (int)_EditList[i].editPos.z + 0.5f);
+                    }
+                    particleInstance.GetComponent<ParticleCollision>().Particle_Play(thisType);
+
+                }
+
+
+
             }
 
 
+            //Music
+            if (hasExec_PlaySound)
+            {
+                managerhub.musicManager.PlaySound_Broken(_EditList[i].targetType);
+                hasExec_PlaySound = false;
+            }
+            
+
+
+
+            
 
 
 
