@@ -3,12 +3,24 @@ using System.Collections.Generic;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
+
+public struct AlgoBlockStruct
+{
+    public List<EditStruct> _branch;
+}
+
+
 public static class BlocksFunction
 {
+    public static float TNT_explore_Radius = 4f;
+    public static float Smoke_Radius = 2.5f;
+    public static ManagerHub managerhub;
+
 
     //爆炸算法
-    public static void Boom(ManagerHub managerhub, Vector3 _originPos, float _r)
+    public static void Boom(Vector3 _originPos)
     {
+        managerhub = GlobalData.GetManagerhub();
 
         // 将原始位置转换为整数
         _originPos = new Vector3((int)_originPos.x, (int)_originPos.y, (int)_originPos.z);
@@ -16,12 +28,12 @@ public static class BlocksFunction
         List<EditStruct> _editNumber = new List<EditStruct>();
 
         // 计算范围内的起始和结束坐标
-        int startX = Mathf.FloorToInt(_originPos.x - _r);
-        int endX = Mathf.FloorToInt(_originPos.x + _r);
-        int startY = Mathf.FloorToInt(_originPos.y - _r + 1);
-        int endY = Mathf.FloorToInt(_originPos.y + _r);
-        int startZ = Mathf.FloorToInt(_originPos.z - _r);
-        int endZ = Mathf.FloorToInt(_originPos.z + _r);
+        int startX = Mathf.FloorToInt(_originPos.x - TNT_explore_Radius);
+        int endX = Mathf.FloorToInt(_originPos.x + TNT_explore_Radius);
+        int startY = Mathf.FloorToInt(_originPos.y - TNT_explore_Radius + 1);
+        int endY = Mathf.FloorToInt(_originPos.y + TNT_explore_Radius);
+        int startZ = Mathf.FloorToInt(_originPos.z - TNT_explore_Radius);
+        int endZ = Mathf.FloorToInt(_originPos.z + TNT_explore_Radius);
 
         for (int x = startX; x <= endX; x++)
         {
@@ -34,10 +46,10 @@ public static class BlocksFunction
 
                     // 检查该坐标是否在球形半径范围内
                     // 且不能是水
-                    if (Vector3.Distance(_originPos, currentPos) <= _r && managerhub.world.GetBlockType(currentPos) != VoxelData.Water)
+                    if (Vector3.Distance(_originPos, currentPos) <= TNT_explore_Radius && managerhub.world.GetBlockType(currentPos) != VoxelData.Water)
                     {
                         // 如果该坐标属于爆炸边缘位置
-                        if (Vector3.Distance(_originPos, currentPos) >= (_r - 0.5f))
+                        if (Vector3.Distance(_originPos, currentPos) >= (TNT_explore_Radius - 0.5f))
                         {
                             // 只有 40% 几率添加空气
                             if (Random.value <= 0.4f)
@@ -62,8 +74,10 @@ public static class BlocksFunction
 
 
     //烟雾算法
-    public static void Smoke(ManagerHub managerhub, Vector3 _originPos, float _r)
+    public static void Smoke(Vector3 _originPos)
     {
+        managerhub = GlobalData.GetManagerhub();
+
         _originPos = new Vector3((int)_originPos.x, (int)_originPos.y, (int)_originPos.z);
         List<Vector3> directions = new List<Vector3>
     {
@@ -96,7 +110,7 @@ public static class BlocksFunction
                 {
                     Vector3 neighborPos = currentPos + direction;
                     // 如果相邻方块未访问过并且在半径范围内
-                    if (!visited.Contains(neighborPos) && Vector3.Distance(_originPos, neighborPos) <= _r)
+                    if (!visited.Contains(neighborPos) && Vector3.Distance(_originPos, neighborPos) <= Smoke_Radius)
                     {
                         if (!managerhub.world.blocktypes[managerhub.world.GetBlockType(neighborPos)].isSolid)
                         {
@@ -121,5 +135,46 @@ public static class BlocksFunction
     }
 
 
-    
+    //获得半径内所有TNT的坐标
+    public static void GetAllTNTPositions(Vector3 _originPos, out List<Vector3> positions)
+    {
+
+        managerhub = GlobalData.GetManagerhub();
+
+        positions = new List<Vector3>();
+
+        // 将原始位置转换为整数
+        _originPos = new Vector3((int)_originPos.x, (int)_originPos.y, (int)_originPos.z);
+
+        // 计算范围内的起始和结束坐标
+        int startX = Mathf.FloorToInt(_originPos.x - TNT_explore_Radius);
+        int endX = Mathf.FloorToInt(_originPos.x + TNT_explore_Radius);
+        int startY = Mathf.FloorToInt(_originPos.y - TNT_explore_Radius);
+        int endY = Mathf.FloorToInt(_originPos.y + TNT_explore_Radius);
+        int startZ = Mathf.FloorToInt(_originPos.z - TNT_explore_Radius);
+        int endZ = Mathf.FloorToInt(_originPos.z + TNT_explore_Radius);
+
+        // 遍历指定范围内的坐标
+        for (int x = startX; x <= endX; x++)
+        {
+            for (int y = startY; y <= endY; y++)
+            {
+                for (int z = startZ; z <= endZ; z++)
+                {
+                    Vector3 currentPos = new Vector3(x, y, z);
+
+                    // 检查坐标是否在指定半径内
+                    if (Vector3.Distance(_originPos, currentPos) <= TNT_explore_Radius)
+                    {
+                        // 检查该位置的方块类型是否为 TNT
+                        if (managerhub.world.GetBlockType(currentPos) == VoxelData.TNT)
+                        {
+                            positions.Add(currentPos);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

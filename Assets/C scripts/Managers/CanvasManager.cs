@@ -1186,10 +1186,10 @@ public class CanvasManager : MonoBehaviour
         }
 
         //Debug面板
-        if (Input.GetKeyDown(KeyCode.F3))
-        {
-            //Debug_Screen.SetActive(!Debug_Screen.activeSelf);
-        }
+        //if (Input.GetKeyDown(KeyCode.F3))
+        //{
+        //    //Debug_Screen.SetActive(!Debug_Screen.activeSelf);
+        //}
 
 
         //SwimmingScreen
@@ -1261,6 +1261,7 @@ public class CanvasManager : MonoBehaviour
         {
             isOpenBackpack = true;
             SwitchUI_Player(CanvasData.uiplayer_创造背包);
+            UpdateBackPackButton(0);
             UpdateBackPackSlot(BlockClassfy.全部方块);
         }
 
@@ -1706,6 +1707,7 @@ public class CanvasManager : MonoBehaviour
                     isOpenBackpack = false;
                     //print("Esc 关闭背包");
                     CheckSwapBlockAndDropOut();
+                    //UpdateBackPackButton(0);
                 }
 
                 switch (UIBuffer.Peek())

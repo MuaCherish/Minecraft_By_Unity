@@ -26,6 +26,7 @@ public class BlockType
     public bool isinteractable; //是否可被右键触发
     public bool is2d;           //用来区分显示
     public bool isFlower;           //是否会被覆盖
+    public bool NotSuspended;    //不可悬空放置
 
     [Header("工具参数")]
     public bool isTool;         //区分功能性

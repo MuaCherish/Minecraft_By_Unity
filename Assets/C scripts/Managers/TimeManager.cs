@@ -40,9 +40,9 @@ public class TimeManager : MonoBehaviour
 
     }
 
-    
 
-
+    [Foldout("引用", true)]
+    [Header("高空引用")] public GameObject SkyParent;
     private void Update()
     {
         // 启动条件
@@ -56,7 +56,7 @@ public class TimeManager : MonoBehaviour
             if (haeExec_Update)
             {
                 //UpdateDayFogDistance();
-
+                SkyParent.SetActive(true);
                 haeExec_Update = false;
             }
 
@@ -111,6 +111,7 @@ public class TimeManager : MonoBehaviour
     
     public void InitTimeManager()
     {
+        //timeStruct._time.CurrentTime = 12f;
         timeStruct._time.CurrentTime = Random.Range(8f, 15f);
         timeStruct._Water.WatersMaterial.SetFloat("__2", timeStruct._Water.LightnessRange.y);
         //if (isRandomWeather)
@@ -180,6 +181,7 @@ public class TimeManager : MonoBehaviour
                 SetCloudColor();
                 SetTerrainColor();
                 SetWaterColor();
+                SetLight();
 
             }
 
@@ -213,7 +215,7 @@ public class TimeManager : MonoBehaviour
                 //    RenderSettings.fogColor = LerpFogColor;
                 //}
 
-
+                SetLight();
                 SetSkyBoxColor();
                 SetCloudColor();
                 SetTerrainColor();
@@ -233,7 +235,10 @@ public class TimeManager : MonoBehaviour
     }
 
 
-
+    void SetLight()
+    {
+        managerhub.sunMoving.SetLightInten();
+    }
 
     void SetSkyBoxColor()
     {

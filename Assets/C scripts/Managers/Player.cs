@@ -228,6 +228,8 @@ public class Player : MonoBehaviour
     //用来检查isInCave
     [Header("洞穴状态检查间隔时间")] public float isInCave_checkInterval = 1f; private float isInCave_nextCheckTime = 1f;// 每0.5秒检查一次
 
+    //TNT实体
+    public GameObject Entity_TNT;
 
     //--------------------------------- 周期函数 --------------------------------------
 
@@ -1029,7 +1031,7 @@ public class Player : MonoBehaviour
                         {
                             //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
                             world.Allchunks[world.GetChunkLocation(_rayCast.hitPoint)].EditData(_rayCast.hitPoint, VoxelData.Air);
-                            BlocksFunction.Smoke(managerhub, _rayCast.hitPoint, 2.5f);
+                            BlocksFunction.Smoke(_rayCast.hitPoint);
                             managerhub.backpackManager.update_slots(1, 56);
 
                             // 玩家被炸飞
@@ -1085,12 +1087,12 @@ public class Player : MonoBehaviour
                         //Edit
                         if(managerhub.world.blocktypes[point_Block_type].isFlower)
                         {
-                            world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(world.GetRelalocation(_rayCast.hitPoint), backpackmanager.slots[selectindex].blockId);
+                            world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(_rayCast.hitPoint, backpackmanager.slots[selectindex].blockId);
 
                         }
                         else
                         {
-                            world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(world.GetRelalocation(_rayCast.hitPoint_Previous), backpackmanager.slots[selectindex].blockId);
+                            world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(_rayCast.hitPoint_Previous, backpackmanager.slots[selectindex].blockId);
 
                         }
 
@@ -1145,31 +1147,12 @@ public class Player : MonoBehaviour
                     case 51:
                         if (_targettype == VoxelData.TNT)
                         {
-                            //爆炸蒸汽粒子
-                            BlocksFunction.Boom(managerhub, _rayCast.hitPoint, 4);
-                            GameObject.Instantiate(particle_explosion, _rayCast.hitPoint_Previous, Quaternion.identity);
-                            musicmanager.PlaySound(MusicData.explore);
+                            //消除方块
+                            var chunkObject = world.GetChunkObject(_rayCast.hitPoint);
+                            chunkObject.EditData(_rayCast.hitPoint, VoxelData.Air);
 
-                            //爆炸粒子效果
-                            GameObject particleInstance = Instantiate(Particle_TNT_Prefeb);
-                            particleInstance.transform.parent = particel_Broken_transform;
-                            particleInstance.transform.position = new Vector3((int)_rayCast.hitPoint.x + 0.5f, (int)_rayCast.hitPoint.y + 0.5f, (int)_rayCast.hitPoint.z + 0.5f);
-                            particleInstance.GetComponent<ParticleCollision>().Particle_Play(_targettype);
+                            CreateTNT(_rayCast.hitPoint, false);
 
-                            // 玩家被炸飞
-                            Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
-                            float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
-
-                            //计算炸飞距离
-                            _Direction.y = Mathf.Lerp(0, 1, _value);
-                            float Distance = Mathf.Lerp(3, 0, _value);
-
-                            ForceMoving(_Direction, Distance, 0.1f);
-
-                            if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
-                            {
-                                managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
-                            }
                         }
                         break;
 
@@ -1236,6 +1219,10 @@ public class Player : MonoBehaviour
 
 
     }
+
+
+
+
 
     //public float DEbug_DIstance;
 
@@ -2716,6 +2703,12 @@ public class Player : MonoBehaviour
     }
 
 
+    //获得居中方块
+    public Vector3 GetCenterPoint(Vector3 _pos)
+    {
+        return new Vector3((int)_pos.x + 0.5f, (int)_pos.y + 0.5f, (int)_pos.z + 0.5f);
+    }
+
 
     //射线检测——返回打中的方块的相对坐标
     //没打中就是(0,0,0)
@@ -3020,39 +3013,35 @@ public class Player : MonoBehaviour
 
     //----------------------------------- 玩家状态 -------------------------------------------
 
-    
 
-
-    //HitBoxCheck
-    //给定一个正方体（给定中心点+宽高）
-    //计算与玩家判定箱（给定中心点+宽高）是否重叠，如果重叠，则返回（玩家判定箱 - 给定中心点）的向量
-    //返回值指向外部
+    //判定算法
     public Vector3 CheckHitBox(Vector3 _targetCenter, float _targetWidth, float _targetHeight)
     {
         // 玩家判定箱，假设已知
-        //Vector3 _selfPos = transform.position;
-        //Vector3 _front_右上 = new Vector3(_selfPos.x + (playerWidth / 2) + extend_delta, _selfPos.y + (playerHeight / 2), _selfPos.z + (playerWidth / 2) + extend_delta);
-        //Vector3 _back_左下 = new Vector3(_selfPos.x - (playerWidth / 2) - extend_delta, _selfPos.y - (playerHeight / 2), _selfPos.z - (playerWidth / 2) - extend_delta);
-
         Vector3 _selfCenter = transform.position;
-        float _selfWidth = playerWidth;
-        float _selfHeight = playerHeight;
+        float _selfWidth = playerWidth; // 玩家宽度（底边正方形的边长）
+        float _selfHeight = playerHeight - 0.1f; // 玩家高度
 
         // 计算玩家的边界
         float selfMinX = _selfCenter.x - _selfWidth / 2;
         float selfMaxX = _selfCenter.x + _selfWidth / 2;
         float selfMinY = _selfCenter.y - _selfHeight / 2;
         float selfMaxY = _selfCenter.y + _selfHeight / 2;
+        float selfMinZ = _selfCenter.z - _selfWidth / 2; // 假设深度与宽度相同
+        float selfMaxZ = _selfCenter.z + _selfWidth / 2;
 
         // 计算目标的边界
         float targetMinX = _targetCenter.x - _targetWidth / 2;
         float targetMaxX = _targetCenter.x + _targetWidth / 2;
         float targetMinY = _targetCenter.y - _targetHeight / 2;
         float targetMaxY = _targetCenter.y + _targetHeight / 2;
+        float targetMinZ = _targetCenter.z - _targetWidth / 2; // 假设目标深度与宽度相同
+        float targetMaxZ = _targetCenter.z + _targetWidth / 2;
 
         // 判定箱算法
         bool isCollision = selfMaxX >= targetMinX && selfMinX <= targetMaxX &&
-                           selfMaxY >= targetMinY && selfMinY <= targetMaxY;
+                           selfMaxY >= targetMinY && selfMinY <= targetMaxY &&
+                           selfMaxZ >= targetMinZ && selfMinZ <= targetMaxZ; // 增加 Z 轴的碰撞检测
 
         // 返回
         if (isCollision)
@@ -3060,7 +3049,8 @@ public class Player : MonoBehaviour
             // 计算重叠方向
             Vector3 overlapDirection = (_selfCenter - _targetCenter).normalized;
 
-            //print($"发生碰撞, Length = {(_selfCenter - _targetCenter).magnitude}");
+            // 这里可以添加调试信息
+            // Debug.Log($"发生碰撞, Length = {(_selfCenter - _targetCenter).magnitude}");
 
             return overlapDirection;
         }
@@ -3069,8 +3059,6 @@ public class Player : MonoBehaviour
             return Vector3.zero;
         }
     }
-
-
 
     //玩家强制移动
     public void ForceMoving(Vector3 moveDirection, float moveDistance, float moveTime)
@@ -3211,6 +3199,12 @@ public class Player : MonoBehaviour
     }
 
 
+    public void CreateTNT(Vector3 _point, bool _acybytnt)
+    {
+        //创建TNT实体
+        GameObject tnt = GameObject.Instantiate(Entity_TNT);
+        tnt.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
+    }
 
     //记录玩家状态
     void GetPlayerState()

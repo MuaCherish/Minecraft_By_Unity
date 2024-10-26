@@ -11,16 +11,24 @@ public class SunMoving : MonoBehaviour
     public ManagerHub managerhub;
     public Transform Sun;
     public Transform Moon;
-    public Transform DirectionalLight;
-    public Transform DirectionalLightMain;
+    public Transform DirectionalLight; Light directionalLight;
+    public Transform DirectionalLightMain; Light directionalLightMain;
     private Vector3 playerPosition;
-    public GameObject SkyParent;
+
 
     [Header("太阳参数")]
     private float time; // time在0~24之间，其中12的时候time在玩家正上方
     public float radius; // 距离玩家多远
 
     private bool hasExec_Update = true;
+
+
+    private void Awake()
+    {
+        directionalLightMain = DirectionalLightMain.GetComponent<Light>();
+        directionalLight = DirectionalLight.GetComponent<Light>();
+    }
+
 
     private void Update()
     {
@@ -30,7 +38,6 @@ public class SunMoving : MonoBehaviour
             // 一次性代码
             if (hasExec_Update)
             {
-                SkyParent.SetActive(true);
                 hasExec_Update = false;
             }
 
@@ -76,10 +83,7 @@ public class SunMoving : MonoBehaviour
         }
         else
         {
-            if (SkyParent.activeSelf)
-            {
-                SkyParent.SetActive(false);
-            }
+
             
         }
     }
@@ -101,9 +105,8 @@ public class SunMoving : MonoBehaviour
             // 获取 Directional Light 的 Light 组件
             // 使用 Mathf.Lerp 在不同时间平滑调整强度
             // 设置灯光强度
-            Light directionalLight = DirectionalLight.GetComponent<Light>();
-            float newIntensity = Mathf.Lerp(0f, 1.7f, managerhub.timeManager.timeStruct._time.value);
-            directionalLight.intensity = newIntensity;
+            
+            
 
 
             // 使用 Quaternion.LookRotation 使灯光 Z 轴对齐到方向向量
@@ -129,12 +132,27 @@ public class SunMoving : MonoBehaviour
                 DirectionalLightMain.gameObject.SetActive(true);
             }
 
-            // 获取 Directional Light 的 Light 组件
-            // 使用 Mathf.Lerp 在不同时间平滑调整强度
-            // 设置灯光强度
-            Light directionalLight = DirectionalLightMain.GetComponent<Light>();
-            float newIntensity = Mathf.Lerp(0f, 1.7f, managerhub.timeManager.timeStruct._time.value);
+            
+            
+        }
+    }
+
+    /// <summary>
+    /// 改变灯光
+    /// </summary>
+    /// <param name="_value"></param>
+    public void SetLightInten()
+    {
+        float newIntensity = Mathf.Lerp(0f, 1.7f, managerhub.timeManager.timeStruct._time.value);
+
+        if (!isOpenLightCast)
+        {
+            directionalLightMain.intensity = newIntensity;
+        }
+        else
+        {
             directionalLight.intensity = newIntensity;
         }
+        
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
+using System.Linq;
 //using static UnityEditor.PlayerSettings;
 //using static UnityEditor.Progress;
 //using static UnityEditor.PlayerSettings;
@@ -2273,22 +2274,30 @@ public class Chunk : MonoBehaviour
 
         //出界判断
         //不能浮空的方块(灌木丛 + 竹子 + 细雪) 
-        if (GetBlock(_x, _y - 1, _z).voxelType == VoxelData.Air)
+        //if (GetBlock(_x, _y - 1, _z).voxelType == VoxelData.Air)
+        //{
+        //    //且自己是不能悬空的方块
+        //    if (GetBlock(_x, _y, _z).voxelType == VoxelData.Bush || GetBlock(_x, _y, _z).voxelType == VoxelData.Bamboo || GetBlock(_x, _y, _z).voxelType == VoxelData.SnowPower)
+        //    {
+
+        //        UpdateBlock(_x, _y, _z, VoxelData.Air);
+        //    }
+
+        //    //门
+        //    if (GetBlock(_x, _y, _z).voxelType == VoxelData.Door_Down)
+        //    {
+
+        //        UpdateBlock(_x, _y, _z, VoxelData.Air);
+        //        UpdateBlock(_x, _y + 1, _z, VoxelData.Air);
+        //    }
+        //}
+
+        if (
+            world.blocktypes[GetBlock(_x, _y, _z).voxelType].NotSuspended &&
+            GetBlock(_x, _y - 1, _z).voxelType == VoxelData.Air
+            )
         {
-            //且自己是不能悬空的方块
-            if (GetBlock(_x, _y, _z).voxelType == VoxelData.Bush || GetBlock(_x, _y, _z).voxelType == VoxelData.Bamboo || GetBlock(_x, _y, _z).voxelType == VoxelData.SnowPower)
-            {
-
-                UpdateBlock(_x, _y, _z, VoxelData.Air);
-            }
-
-            //门
-            if (GetBlock(_x, _y, _z).voxelType == VoxelData.Door_Down)
-            {
-
-                UpdateBlock(_x, _y, _z, VoxelData.Air);
-                UpdateBlock(_x, _y + 1, _z, VoxelData.Air);
-            }
+            UpdateBlock(_x, _y, _z, VoxelData.Air);
         }
 
         //上门
@@ -2733,7 +2742,7 @@ public class Chunk : MonoBehaviour
             UpdateBlockOriented(new Vector3(x, y, z), world.player.RealBacking);
         }
 
-        world.UpdateEditNumber(myposition + pos, targetBlocktype);
+        world.UpdateEditNumber(pos, targetBlocktype);
         EditForSomeBlocks(new Vector3(x, y, z), targetBlocktype);
 
 
@@ -2789,19 +2798,24 @@ public class Chunk : MonoBehaviour
         particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
 
         //pos
-        if (world.blocktypes[thisType].isDIYCollision)
+
+        if (thisType != VoxelData.TNT)
         {
-            float Xmax = world.blocktypes[thisType].CollosionRange.xRange.y;
-            float Ymax = world.blocktypes[thisType].CollosionRange.yRange.y;
-            float Zmax = world.blocktypes[thisType].CollosionRange.zRange.y;
-            particleInstance.transform.position = new Vector3((int)pos.x + Xmax / 2f, (int)pos.y + Ymax / 2f + 0.2f, (int)pos.z + Zmax / 2f);
-        }
-        else
-        {
-            particleInstance.transform.position = new Vector3((int)pos.x + 0.5f, (int)pos.y + 0.5f + 0.2f, (int)pos.z + 0.5f);
+            if (world.blocktypes[thisType].isDIYCollision)
+            {
+                float Xmax = world.blocktypes[thisType].CollosionRange.xRange.y;
+                float Ymax = world.blocktypes[thisType].CollosionRange.yRange.y;
+                float Zmax = world.blocktypes[thisType].CollosionRange.zRange.y;
+                particleInstance.transform.position = new Vector3((int)pos.x + Xmax / 2f, (int)pos.y + Ymax / 2f + 0.2f, (int)pos.z + Zmax / 2f);
+            }
+            else
+            {
+                particleInstance.transform.position = new Vector3((int)pos.x + 0.5f, (int)pos.y + 0.5f + 0.2f, (int)pos.z + 0.5f);
+            }
+
+            particleInstance.GetComponent<ParticleCollision>().Particle_Play(thisType);
         }
         
-        particleInstance.GetComponent<ParticleCollision>().Particle_Play(thisType);
 
 
 
@@ -2882,7 +2896,7 @@ public class Chunk : MonoBehaviour
 
 
                 //破坏粒子效果
-                if (GetProbability(10))
+                if (GetProbability(10) && thisType != VoxelData.TNT)
                 {
                     GameObject particleInstance = Instantiate(managerhub.player.Particle_Broken);
                     particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
@@ -4251,6 +4265,34 @@ public class Chunk : MonoBehaviour
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
         mesh.uv = uvs.ToArray();
+
+        // 确保 vertices 和 uvs 的数量是三的倍数
+        //int vertexCount = vertices.Count;
+        //int uvCount = uvs.Count;
+        //if (vertexCount % 3 != 0 || uvCount % 3 != 0)
+        //{
+        //    // 记录日志
+        //    Debug.LogWarning("Vertices or UVs count is not a multiple of three. Adjusting the count.");
+
+        //    // 裁剪 vertices 和 uvs 数组
+        //    int newSize = Mathf.Min(vertexCount, uvCount) / 3 * 3; // 取最小值并确保是三的倍数
+        //    if (newSize > 0)
+        //    {
+        //        mesh.vertices = vertices.Take(newSize).ToArray();
+        //        mesh.uv = uvs.Take(newSize).ToArray();
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError("Vertices and UVs are empty after adjustment. Mesh will not be created.");
+        //        return; // 退出或处理错误情况
+        //    }
+        //}
+        //else
+        //{
+        //    // 如果数量都是三的倍数，正常赋值
+        //    mesh.vertices = vertices.ToArray();
+        //    mesh.uv = uvs.ToArray();
+        //}
         //mesh.triangles = triangles.ToArray();
 
         //使用双材质
