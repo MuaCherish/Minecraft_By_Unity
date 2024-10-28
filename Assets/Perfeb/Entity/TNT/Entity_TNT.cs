@@ -60,21 +60,22 @@ public class Entity_TNT : MonoBehaviour
     {
         transform.position = _pos;
 
+        if (managerhub == null)
+        {
+            managerhub = GlobalData.GetManagerhub();
+
+        }
+        managerhub.musicManager.PlaySoundClip(MusicData.TNT_Fuse);
+
         if (_ActByTNT)
         {
-            FuseDuration = Random.Range(1f, 2f);
+            FuseDuration = Random.Range(1f, 3f);
         }
 
-        StartCoroutine(TNTJumpCoroutine());
+        TNTjump();
         StartCoroutine(TNTBlink());
     }
 
-    IEnumerator TNTJumpCoroutine()
-    {
-        yield return null;
-
-        TNTjump();
-    }
 
 
 
@@ -153,14 +154,15 @@ public class Entity_TNT : MonoBehaviour
         if (_customDirection.HasValue) // 如果有传入自定义方向
         {
             direction = _customDirection.Value; // 使用自定义方向
-            Velocity_Component.AddForce(direction); // 直接施加力，不需要标准化
+            Velocity_Component.AddForce(direction, 1); // 直接施加力，不需要标准化
         }
         else
         {
-            direction = Random.onUnitSphere * 0.5f; // 使用随机方向
-            direction.y = jumpheight; // 设置Y轴为jumpheight
-            Vector3 direct = direction.normalized; // 标准化向量
-            Velocity_Component.AddForce(direct * forcevalue); // 施加力
+            //direction = Random.onUnitSphere * 0.5f; // 使用随机方向
+            //direction.y = jumpheight; // 设置Y轴为jumpheight
+            //Vector3 direct = direction.normalized; // 标准化向量
+            //Velocity_Component.AddForce(direct, forcevalue); // 施加力
+            Velocity_Component.EntityRandomJump(forcevalue);
         }
     }
 

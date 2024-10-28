@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using NewGame;
 using System.Threading;
-using static UnityEditor.Searcher.SearcherWindow.Alignment;
-using static UnityEditor.PlayerSettings;
 using Unity.Collections;
 using Unity.Jobs;
 

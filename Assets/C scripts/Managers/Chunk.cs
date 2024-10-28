@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 using System.Linq;
-//using static UnityEditor.PlayerSettings;
-//using static UnityEditor.Progress;
-//using static UnityEditor.PlayerSettings;
-//using System.Diagnostics;
 
 
 
@@ -2746,34 +2742,6 @@ public class Chunk : MonoBehaviour
         EditForSomeBlocks(new Vector3(x, y, z), targetBlocktype);
 
 
-        //if (world.game_mode == GameMode.Survival)
-        //{
-        //    //掉落物
-        //    if (thisType != VoxelData.Air &&
-        //        thisType != VoxelData.TNT &&
-        //        thisType != VoxelData.Door_Up
-        //        )
-        //    {
-        //        print("创建掉落物");
-
-        //        if (thisType == VoxelData.Grass)
-        //        {
-        //            managerhub.backpackManager.CreateDropBox(pos, new BlockItem(VoxelData.Soil, 1), false);
-        //        }
-        //        //树叶掉落苹果
-        //        else if (thisType == VoxelData.Leaves)
-        //        {
-        //            if (managerhub.world.GetProbability(30))
-        //            {
-        //                managerhub.backpackManager.CreateDropBox(new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z)), new BlockItem(VoxelData.Apple, 1), false);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            managerhub.backpackManager.CreateDropBox(pos, new BlockItem(thisType, 1), false);
-        //        }
-
-
         //挤开玩家
         Vector3 _targetCenter = new Vector3((int)pos.x, (int)pos.y, (int)pos.z);
         CollosionRange _collosionRange = managerhub.world.blocktypes[thisType].CollosionRange;
@@ -2793,36 +2761,14 @@ public class Chunk : MonoBehaviour
         //Music
         managerhub.musicManager.PlaySound_Broken(thisType);
 
+
         //破坏粒子效果
-        GameObject particleInstance = Instantiate(managerhub.player.Particle_Broken);
-        particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
+        DropBrokenParticle(pos, thisType);
 
-        //pos
-
-        if (thisType != VoxelData.TNT)
-        {
-            if (world.blocktypes[thisType].isDIYCollision)
-            {
-                float Xmax = world.blocktypes[thisType].CollosionRange.xRange.y;
-                float Ymax = world.blocktypes[thisType].CollosionRange.yRange.y;
-                float Zmax = world.blocktypes[thisType].CollosionRange.zRange.y;
-                particleInstance.transform.position = new Vector3((int)pos.x + Xmax / 2f, (int)pos.y + Ymax / 2f + 0.2f, (int)pos.z + Zmax / 2f);
-            }
-            else
-            {
-                particleInstance.transform.position = new Vector3((int)pos.x + 0.5f, (int)pos.y + 0.5f + 0.2f, (int)pos.z + 0.5f);
-            }
-
-            particleInstance.GetComponent<ParticleCollision>().Particle_Play(thisType);
-        }
+        //掉落物
+        DropBlock(pos, thisType);
         
-
-
-
-        //    }
-        //}
-
-
+        //更新区块
         UpdateChunkMesh_WithSurround(_relaVec, true, false);
     }
 
@@ -2872,7 +2818,7 @@ public class Chunk : MonoBehaviour
             {
 
 
-                if (GetProbability(30))
+                if (GetProbability(5))
                 {
                     if (thisType == VoxelData.Grass)
                     {
@@ -2881,7 +2827,7 @@ public class Chunk : MonoBehaviour
                     //树叶掉落苹果
                     else if (thisType == VoxelData.Leaves)
                     {
-                        if (managerhub.world.GetProbability(30))
+                        if (UsefulFunction.GetProbability(30))
                         {
                             managerhub.backpackManager.CreateDropBox(new Vector3(Mathf.FloorToInt(_EditList[i].editPos.x), Mathf.FloorToInt(_EditList[i].editPos.y), Mathf.FloorToInt(_EditList[i].editPos.z)), new BlockItem(VoxelData.Apple, 1), false);
                         }
@@ -2946,6 +2892,61 @@ public class Chunk : MonoBehaviour
     }
 
 
+
+    //掉落粒子效果
+    void DropBrokenParticle(Vector3 _pos, byte _beBrokenType)
+    {
+        //条件返回 - 自己是空气说明是放置，不需要掉落粒子
+        if (_beBrokenType == VoxelData.Air)
+            return;
+
+        GameObject particleInstance = Instantiate(managerhub.player.Particle_Broken);
+        particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
+
+        if (world.blocktypes[_beBrokenType].isDIYCollision)
+        {
+            float Xmax = world.blocktypes[_beBrokenType].CollosionRange.xRange.y;
+            float Ymax = world.blocktypes[_beBrokenType].CollosionRange.yRange.y;
+            float Zmax = world.blocktypes[_beBrokenType].CollosionRange.zRange.y;
+            particleInstance.transform.position = new Vector3((int)_pos.x + Xmax / 2f, (int)_pos.y + Ymax / 2f + 0.2f, (int)_pos.z + Zmax / 2f);
+        }
+        else
+        {
+            particleInstance.transform.position = new Vector3((int)_pos.x + 0.5f, (int)_pos.y + 0.5f + 0.2f, (int)_pos.z + 0.5f);
+        }
+
+        particleInstance.GetComponent<ParticleCollision>().Particle_Play(_beBrokenType);
+    }
+
+    // 掉落物判断
+    void DropBlock(Vector3 _pos, byte _beBrokenType)
+    {
+        //条件返回 - 创造模式没有掉落物
+        if (world.game_mode == GameMode.Creative)
+            return;
+
+        //条件返回 - 得能掉掉落物
+        if (!world.blocktypes[_beBrokenType].candropBlock)
+            return;
+
+        //树叶掉落苹果
+        if (_beBrokenType == VoxelData.Leaves && UsefulFunction.GetProbability(15))
+        {
+            managerhub.backpackManager.CreateDropBox(UsefulFunction.GetCenterVector3(_pos), new BlockItem(VoxelData.Apple, 1), false);
+            return;
+        }
+
+        //草地掉落泥土
+        if (_beBrokenType == VoxelData.Grass)
+        {
+            managerhub.backpackManager.CreateDropBox(UsefulFunction.GetIntVector3(_pos), new BlockItem(VoxelData.Soil, 1), false);
+            return;
+        }
+
+
+        //Else
+        managerhub.backpackManager.CreateDropBox(UsefulFunction.GetIntVector3(_pos), new BlockItem(_beBrokenType, 1), false);
+    }
 
 
 

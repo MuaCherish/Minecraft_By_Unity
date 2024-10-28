@@ -309,6 +309,12 @@ public class MusicManager : MonoBehaviour
 
 
     //-------------------------------- place and Broke --------------------------------------
+
+    public void PlaySoundClip(int _id)
+    {
+        Audio_Click.PlayOneShot(audioclips[_id]);
+    }
+
     void FUN_PlaceandBroke()
     {
         //place and broke

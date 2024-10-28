@@ -1,3 +1,4 @@
+using MCEntity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -455,10 +456,15 @@ public class BackPackManager : MonoBehaviour
     }
 
 
-    //创造掉落物(坐标,类型)
+    /// <summary>
+    /// 创造掉落物(坐标,类型)
+    /// </summary>
+    /// <param name="_pos">必须为Int坐标，不需要Center坐标</param>
+    /// <param name="_InitItem"></param>
+    /// <param name="_needThrow"></param>
+    public GameObject NewDropBlock;
     public void CreateDropBox(Vector3 _pos, BlockItem _InitItem, bool _needThrow)
     {
-        World world = managerhub.world;
         Transform Eyes = managerhub.player.GetEyesPosition();
 
         //刷新偏移
@@ -467,91 +473,30 @@ public class BackPackManager : MonoBehaviour
         float z_offset = UnityEngine.Random.Range(2, 8) / 10f;
 
         //创建父类
-        GameObject DropBlock = new GameObject(managerhub.world.blocktypes[_InitItem._blocktype].blockName);
-        DropBlock.AddComponent<FloatingCube>().InitWorld(managerhub, _InitItem);
+        GameObject DropBlock = GameObject.Instantiate(NewDropBlock);
         DropBlock.transform.SetParent(GameObject.Find("Environment/DropBlocks").transform);
-
-
-        // 创造物体
-
-        //具有多面的立方体
-
-        //只有单面的立方体
-
-        //2d挤压物体
-
-        //如果不是2d挤压物体
-        if (managerhub.world.blocktypes[_InitItem._blocktype].is2d )
-        {
-            managerhub.textureTo3D.ProcessSprite(managerhub.world.blocktypes[_InitItem._blocktype].sprite, DropBlock.transform, 2, false);
-
-
-        }
-        else
-        {
-
-            //Top
-            GameObject _Top = new GameObject("Top");
-            _Top.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].top_sprit;
-            _Top.transform.SetParent(DropBlock.transform);
-            _Top.transform.localPosition = new Vector3(0, 0.16f, 0);
-            _Top.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
-
-            //Buttom
-            GameObject _Buttom = new GameObject("Buttom");
-            _Buttom.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].buttom_sprit;
-            _Buttom.transform.SetParent(DropBlock.transform);
-            _Buttom.transform.localPosition = new Vector3(0, 0, 0);
-            _Buttom.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
-
-            //Left
-            GameObject _Left = new GameObject("Left");
-            _Left.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].sprite;
-            _Left.transform.SetParent(DropBlock.transform);
-            _Left.transform.localPosition = new Vector3(-0.08f, 0.08f, 0);
-            _Left.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
-
-            //Right
-            GameObject _Right = new GameObject("Right");
-            _Right.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].sprite;
-            _Right.transform.SetParent(DropBlock.transform);
-            _Right.transform.localPosition = new Vector3(0.08f, 0.08f, 0);
-            _Right.transform.localRotation = Quaternion.Euler(new Vector3(0, 90, 0));
-
-            //Forward
-            GameObject _Forward = new GameObject("Forward");
-            _Forward.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].sprite;
-            _Forward.transform.SetParent(DropBlock.transform);
-            _Forward.transform.localPosition = new Vector3(0, 0.08f, 0.08f);
-            _Forward.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
-
-            //Back
-            GameObject _Back = new GameObject("Back");
-            _Back.AddComponent<SpriteRenderer>().sprite = world.blocktypes[_InitItem._blocktype].sprite;
-            _Back.transform.SetParent(DropBlock.transform);
-            _Back.transform.localPosition = new Vector3(0, 0.08f, -0.08f);
-            _Back.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
-        }
-        
 
 
         //是否扔出去
         if (_needThrow)
         {
-            DropBlock.transform.position = new Vector3(_pos.x, _pos.y, _pos.z);
-            Rigidbody rd = DropBlock.AddComponent<Rigidbody>();
-            //rd.isKinematic = true;
-            rd.velocity = Eyes.transform.forward * throwForce;
+            Vector3 _position = Eyes.position;
+            DropBlock.GetComponent<DropBlock>().OnStartEntity(_position, _InitItem, false);
+
+            Vector3 direct = Eyes.forward; direct.y = 0.5f;
+            DropBlock.GetComponent<MC_Velocity_Component>().AddForce(direct, throwForce);
         }
         else
         {
-            DropBlock.transform.position = new Vector3(_pos.x + x_offset, _pos.y + y_offset, _pos.z + z_offset);
+            Vector3 _p = new Vector3(_pos.x + x_offset, _pos.y + y_offset, _pos.z + z_offset);
+            DropBlock.GetComponent<DropBlock>().OnStartEntity(_p, _InitItem, true);
         }
 
-        //最后放大本体
-        DropBlock.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 
     }
+
+
+
 
     //切换物品
     bool ToolAlive = false;

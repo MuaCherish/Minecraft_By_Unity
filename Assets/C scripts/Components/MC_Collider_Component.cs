@@ -11,7 +11,7 @@ namespace MCEntity
 
         #region 状态
         [Foldout("状态", true)]
-        public bool isGround;
+        [ReadOnly] public bool isGround = false;
 
         void ReferUpdate()
         {
@@ -55,14 +55,12 @@ namespace MCEntity
 
         // 判定箱设置
         [Foldout("判定箱", true)]
-        [Header("待删除，地面检测")] public float GroundY = 0f;
         [Header("绘制判定箱")] public bool isDrawHitBox; private bool hasExec_isDrawHitBox = true;
-        [Header("判定箱眼睛高度")] public float hitBoxEyes = 0.8f;
+        [Header("判定箱眼睛相对高度")] public float hitBoxEyes = 0.8f;
         [Header("判定箱宽度")] public float hitBoxWidth = 1f;
         [Header("判定箱高度")] public float hitBoxHeight = 1f;
         private GameObject lineObject;
         private Mesh mesh;
-        World world;
 
         // 前方碰撞检测
         public bool collider_Front
@@ -144,19 +142,13 @@ namespace MCEntity
         {
             get
             {
-                if (
-                    managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(0f, -0.01f, 0f)) ||
+                if (isCollisionLocked) return false;
+
+                return managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(0f, -0.01f, 0f)) ||
                     managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(0f, -0.01f, 0f)) ||
                     managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(0f, -0.01f, 0f)) ||
                     managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(0f, -0.01f, 0f)) ||
-                    TryCheckMore_SubdivisionCollition(new Vector3(0f, -1f, 0f)))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                    TryCheckMore_SubdivisionCollition(new Vector3(0f, -1f, 0f));
 
             }
         }
@@ -224,7 +216,6 @@ namespace MCEntity
 
 
         //引用Update
-        public float DebugValue;
         private void ReferUpdateHitBox()
         {
             //位置修正
@@ -232,7 +223,6 @@ namespace MCEntity
             {
                 // 计算新的 y 位置，避免物体陷入地下
                 float newYPosition = (int)selfPos.y + hitBoxHeight / 2f;
-                DebugValue = (int)selfPos.y;
                 // 创建一个新的位置
                 Vector3 newPosition = new Vector3(transform.position.x, newYPosition, transform.position.z);
 
@@ -302,10 +292,10 @@ namespace MCEntity
                 positions[7] = positions[3] + Vector3.up * hitBoxHeight; // 后左上
 
                 // 眼睛
-                positions[8] = positions[0] + Vector3.up * hitBoxEyes; // 前左上
-                positions[9] = positions[1] + Vector3.up * hitBoxEyes; // 前右上
-                positions[10] = positions[2] + Vector3.up * hitBoxEyes; // 后右上
-                positions[11] = positions[3] + Vector3.up * hitBoxEyes; // 后左上
+                positions[8] = positions[0] + Vector3.up * hitBoxHeight * hitBoxEyes; // 前左上
+                positions[9] = positions[1] + Vector3.up * hitBoxHeight * hitBoxEyes; // 前右上
+                positions[10] = positions[2] + Vector3.up * hitBoxHeight * hitBoxEyes; // 后右上
+                positions[11] = positions[3] + Vector3.up * hitBoxHeight * hitBoxEyes; // 后左上
 
                 // 创建线段索引
                 int[] indices = new int[]
@@ -358,10 +348,61 @@ namespace MCEntity
             return false;
         }
 
+        /// <summary>
+        /// 获取基于Block的目标方向点
+        /// </summary>
+        /// <param name="_direct">方向向量</param>
+        /// <returns>目标点</returns>
+        public Vector3 GetBlockDirectPoint(Vector3 _direct)
+        {
+            // 确保方向向量为单位向量
+            _direct.Normalize();
+
+            // 根据方向返回相应的目标点
+            if (_direct == Vector3.forward) // Front
+            {
+                return selfPos + Vector3.forward;
+            }
+            else if (_direct == Vector3.back) // Back
+            {
+                return selfPos + Vector3.back;
+            }
+            else if (_direct == Vector3.left) // Left
+            {
+                return selfPos + Vector3.left;
+            }
+            else if (_direct == Vector3.right) // Right
+            {
+                return selfPos + Vector3.right;
+            }
+            else if (_direct == Vector3.up) // Up
+            {
+                return selfPos + Vector3.up;
+            }
+            else if (_direct == Vector3.down) // Down
+            {
+                return selfPos + Vector3.down;
+            }
+            else
+            {
+                Debug.LogError("GetDirectionPoint输入不正确");
+                return Vector3.zero; // 返回零向量表示错误
+            }
+        }
+
+
         //自身坐标
         public Vector3 selfPos
         {
             get { return transform.position; }
+        }
+
+        public Vector3 EyesPoint
+        {
+            get
+            {
+                return transform.position + Vector3.up * hitBoxHeight * hitBoxEyes;
+            }
         }
 
         //脚下点

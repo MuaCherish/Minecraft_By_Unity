@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     [ReadOnly] public bool isInCave; // 玩家是否在矿洞内
     [ReadOnly] public bool isPause;
     [ReadOnly] public bool isBroking;
-    [ReadOnly] public bool isFirstBrokeBlock;  //创造模式点击可以瞬间销毁方块
+    [ReadOnly] public bool isFirstBrokeBlock = true;  //创造模式点击可以瞬间销毁方块
     [ReadOnly] public bool isInputing;  //输入停止
     [ReadOnly] public bool NotCheckPlayerCollision;
 
@@ -935,7 +935,7 @@ public class Player : MonoBehaviour
             hasExec_isChangedBlock = true;
             musicmanager.isbroking = false;
             musicmanager.Audio_player_broke.Stop();
-            isFirstBrokeBlock = false;
+            isFirstBrokeBlock = true;
         }
 
         //左键销毁泥土
@@ -1087,7 +1087,7 @@ public class Player : MonoBehaviour
                         //Edit
                         if(managerhub.world.blocktypes[point_Block_type].isFlower)
                         {
-                            world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(_rayCast.hitPoint, backpackmanager.slots[selectindex].blockId);
+                            world.GetChunkObject(_rayCast.hitPoint).EditData(_rayCast.hitPoint, backpackmanager.slots[selectindex].blockId);
 
                         }
                         else
@@ -1241,7 +1241,7 @@ public class Player : MonoBehaviour
         //    print("point_Block_type == 255");
         //    yield break;
         //}
-        byte theBlockwhichBeBrokenType = point_Block_type;
+        byte theBlockwhichBeBrokenType = managerhub.world.GetBlockType(_HitSrtuct.hitPoint);
 
         if (theBlockwhichBeBrokenType == 255)
         {
@@ -1254,62 +1254,20 @@ public class Player : MonoBehaviour
 
         // 记录协程开始执行时的时间
         float startTime = Time.time;
-        float destroy_time = world.blocktypes[world.GetBlockType(_HitSrtuct.hitPoint)].DestroyTime;
 
-        //挖掘时间修改
-        //1. 创造模式
-        //end.基岩
-        if (theBlockwhichBeBrokenType == VoxelData.BedRock)
-        {
-            //print("时间无限");
-            destroy_time = Mathf.Infinity;
-
-        }
-        else
-        {
-
-            //选择下标为0的情况下
-            if (_selecttype != 255 && world.blocktypes[_selecttype].canBreakBlockWithMouse1 == false)
-            {
-                destroy_time = Mathf.Infinity;
-                isFirstBrokeBlock = false;
-            }
-
-            else if (isSuperMining || _selecttype == VoxelData.Tool_Pickaxe)
-            {
-                destroy_time = 0.25f;
-            }
-        }
-        
+        //获取挖掘时间
+        float destroy_time = GetDestroyTime(_selecttype, theBlockwhichBeBrokenType);
 
         // 等待
         while (Time.time - startTime < destroy_time)
         {
 
-            //提前破坏
-            if (managerhub.world.game_mode == GameMode.Creative && isFirstBrokeBlock)
-            {
-                // Creative 模式下第一次破坏方块，直接退出
-                isFirstBrokeBlock = false;
-                break;
-            }
-
-            if (_selecttype != 255)
-            {
-                var selectedBlockType = managerhub.world.blocktypes[_selecttype];
-
-                // 如果选中的方块类型可以用鼠标左键破坏
-                if (selectedBlockType.canBreakBlockWithMouse1)
-                {
-                    // 如果当前方块的销毁时间为0，直接退出
-                    if (managerhub.world.blocktypes[point_Block_type].DestroyTime == 0f)
-                    {
-                        break;
-                    }
-
-                    // 其他逻辑可以继续放在这里...
-                }
-            }
+            //是否跳过等待
+            //if (CheckToJumpBrokenTime(_selecttype, theBlockwhichBeBrokenType))
+            //{
+                
+            //    break;
+            //}
 
 
 
@@ -1395,66 +1353,66 @@ public class Player : MonoBehaviour
         HighLightMaterial.color = new Color(0, 0, 0, 0);
         HighLightMaterial.mainTexture = DestroyTextures[0];
 
-        //生存模式
-        if (world.game_mode == GameMode.Survival)
-        {
 
-            //掉落物判断
-            if (world.blocktypes[theBlockwhichBeBrokenType].candropBlock)
-            {
-                //树叶掉落苹果
-                if (theBlockwhichBeBrokenType == VoxelData.Leaves)
-                {
-                    if (managerhub.world.GetProbability(15))
-                    {
-                        backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(_HitSrtuct.hitPoint.x), Mathf.FloorToInt(_HitSrtuct.hitPoint.y), Mathf.FloorToInt(_HitSrtuct.hitPoint.z)), new BlockItem(VoxelData.Apple, 1), false);
-                    }
-                }
-                else
-                {
-                    backpackmanager.CreateDropBox(new Vector3(Mathf.FloorToInt(_HitSrtuct.hitPoint.x), Mathf.FloorToInt(_HitSrtuct.hitPoint.y), Mathf.FloorToInt(_HitSrtuct.hitPoint.z)), new BlockItem(theBlockwhichBeBrokenType, 1), false);
-                }
-
-            }
-
-
-
-        }
-
-
-
-
-        //放进背包由掉落物执行
-        //canvasManager.Change_text_selectBlockname(point_Block_type);
-
-
-
-
-
-        //if (world.blocktypes[point_Block_type].Particle_Material == null)
-        //    particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[VoxelData.Soil].Particle_Material;
-        //else
-        //    particleInstance.GetComponent<ParticleSystemRenderer>().material = world.blocktypes[point_Block_type].Particle_Material;
-
-        //Destroy(particleInstance, 10.0f);
-
-        //Broking_Animation.Stop();
 
         //World
         var chunkObject = world.GetChunkObject(_HitSrtuct.hitPoint);
         chunkObject.EditData(_HitSrtuct.hitPoint, VoxelData.Air);
-        //world.UpdateEditNumber(position, VoxelData.Air);
-
-
-        
-        //EditNumber
-
-
-        //print($"绝对坐标为：{position}");
-        //print($"相对坐标为：{world.GetRelalocation(position)}");
-        //print($"方块类型为：{world.GetBlockType(position)}"); 
 
     }
+
+    //动态获得破坏时间
+    float GetDestroyTime(byte _SelectType, byte _beBrokenType)
+    {
+        //提前返回, 如果是宝剑则永远不会破坏方块
+        if (_SelectType != 255 && !managerhub.world.blocktypes[_SelectType].canBreakBlockWithMouse1)
+            return Mathf.Infinity;
+
+        //创造模式
+        if (managerhub.world.game_mode == GameMode.Creative)
+        {
+            //首次破坏
+            if (isFirstBrokeBlock)
+            {
+                isFirstBrokeBlock = false;
+                return 0f;
+            }
+
+            return 0.25f;
+        }
+
+        //生存模式   
+        if (managerhub.world.game_mode == GameMode.Survival)
+        {
+
+            //空手
+            if (_SelectType == 255)
+            {
+                //基岩无限时间
+                if (_beBrokenType == VoxelData.BedRock)
+                    return Mathf.Infinity;
+            }
+            //手中有方块
+            else
+            {
+                //基岩无限时间
+                if (_beBrokenType == VoxelData.BedRock)
+                    return Mathf.Infinity;
+                //稿子 
+                if (_SelectType == VoxelData.Tool_Pickaxe)
+                    return 0.25f;
+            }
+
+        }
+
+
+        return managerhub.world.blocktypes[_beBrokenType].DestroyTime;
+    }
+
+
+
+
+
 
 
     //用来控制手臂停止动画的
@@ -1911,7 +1869,6 @@ public class Player : MonoBehaviour
     //初始化玩家坐标
     public void InitPlayerLocation()
     {
-
         if (managerhub.world.isLoadSaving)
         {
             managerhub.world.Start_Position = managerhub.world.worldSetting.playerposition;
@@ -3020,7 +2977,7 @@ public class Player : MonoBehaviour
         // 玩家判定箱，假设已知
         Vector3 _selfCenter = transform.position;
         float _selfWidth = playerWidth; // 玩家宽度（底边正方形的边长）
-        float _selfHeight = playerHeight - 0.1f; // 玩家高度
+        float _selfHeight = playerHeight - 0.25f; // 玩家高度
 
         // 计算玩家的边界
         float selfMinX = _selfCenter.x - _selfWidth / 2;

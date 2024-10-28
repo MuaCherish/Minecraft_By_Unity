@@ -143,6 +143,8 @@ public class World : MonoBehaviour
     private List<Vector3> WatingToRemove_Chunks = new List<Vector3>();
     private Chunk obj;
 
+    //纹理集
+    public Texture2D BlocksatlasTexture;
 
     //协程
     [Header("Corountine-协程延迟时间")]
@@ -227,7 +229,7 @@ public class World : MonoBehaviour
 
     public void InitWorldManager()
     {
-
+        hasExec_RandomPlayerLocation = true;
         game_mode = GameMode.Survival;
 
 
@@ -484,6 +486,7 @@ public class World : MonoBehaviour
 
     //初始化地图
     public Coroutine Init_MapCoroutine;
+    bool hasExec_RandomPlayerLocation = true;
     IEnumerator Init_Map_Thread(bool _isInitPlayerLocation)
     {
         
@@ -497,7 +500,11 @@ public class World : MonoBehaviour
         }
         else
         {
-            player.RandomPlayerLocaiton();
+            if (hasExec_RandomPlayerLocation)
+            {
+                player.RandomPlayerLocaiton();
+                hasExec_RandomPlayerLocation = false;
+            }
             //print(PlayerFoot.transform.position);
             Center_Now = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, 0, GetRealChunkLocation(PlayerFoot.transform.position).z);
 
@@ -2670,22 +2677,6 @@ public class World : MonoBehaviour
     public Vector2 ComponentwiseMultiply(Vector2 a, Vector2 b)
     {
         return new Vector2(a.x * b.x, a.y * b.y);
-    }
-
-    // 返回一个概率值，范围在0~100，根据输入值越接近100，概率接近100%，越接近0，概率接近0%
-    public bool GetProbability(float input)
-    {
-        // 确保输入值在 0 到 100 之间
-        input = Mathf.Clamp(input, 0, 100);
-
-        // 生成一个 0 到 100 之间的随机数
-        float randomValue = UnityEngine.Random.Range(0f, 100f);
-
-        // 如果随机数小于等于输入值，则返回 true
-        //Debug.Log(randomValue);
-        bool a = randomValue < input;
-
-        return a;
     }
 
 

@@ -53,5 +53,16 @@ public static class MusicData
     public static readonly int absorb_1 = 17;
     public static readonly int absorb_2 = 18;
     public static readonly int explore = 19;
+    public static readonly int TNT_Fuse = 20;
+    //public static readonly int TNT_Fuse = 21;
+    //public static readonly int TNT_Fuse = 22;
+    //public static readonly int TNT_Fuse = 23;
+    //public static readonly int TNT_Fuse = 24;
+    //public static readonly int TNT_Fuse = 25;
+    //public static readonly int TNT_Fuse = 26;
+    //public static readonly int TNT_Fuse = 27;
+    //public static readonly int TNT_Fuse = 28;
+    //public static readonly int TNT_Fuse = 29;
+    //public static readonly int TNT_Fuse = 30;
 
 }

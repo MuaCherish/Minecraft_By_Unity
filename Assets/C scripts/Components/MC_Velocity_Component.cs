@@ -13,7 +13,7 @@ namespace MCEntity
         #region 状态
 
         [Foldout("状态", true)]
-        public bool isMoving;
+        [ReadOnly] public bool isMoving;
 
         void ReferUpdateState()
         {
@@ -28,6 +28,7 @@ namespace MCEntity
         }
 
         #endregion
+
 
         #region 周期函数 
 
@@ -156,18 +157,22 @@ namespace MCEntity
         void Caculate_Velocity()
         {
             // 条件返回
-            if (Collider_Component.isGround)
+            if (Collider_Component.isGround && Othermomentum == Vector3.zero)
             {
                 if (momentum.y <= force_gravity)
                 {
                     // 将垂直速度归零
                     velocity.y = 0f;
 
+
+                    CheckSliperVelocity();
+
                     // 水平速度缓慢减为0
                     // 使用线性衰减，Damping_Horizontal 是你可以定义的水平衰减因子
                     velocity.x = Mathf.MoveTowards(velocity.x, 0f, Damping_Horizontal * Time.deltaTime);
                     velocity.z = Mathf.MoveTowards(velocity.z, 0f, Damping_Horizontal * Time.deltaTime);
-                    
+
+                   
                     return;
                 }
                 
@@ -257,10 +262,16 @@ namespace MCEntity
         /// 设置动量
         /// </summary>
         /// <param name="_force">瞬时冲量</param>
-        public void AddForce(Vector3 _force)
+        public void AddForce(Vector3 _direct, float _value)
         {
             //print($"施加了{_force.magnitude}的力");
-            Othermomentum += _force;
+            StartCoroutine(waitFrameToAdd(_direct, _value));
+        }
+
+        IEnumerator waitFrameToAdd(Vector3 _direct, float _value)
+        {
+            yield return null;
+            Othermomentum += _direct * _value;
         }
 
 
@@ -274,7 +285,7 @@ namespace MCEntity
             if (Collider_Component.isGround)
             {
 
-                AddForce(force_jump * Vector3.up); // 添加跳跃的冲量
+                AddForce(Vector3.up, force_jump); // 添加跳跃的冲量
             }
         }
         public void EntityJump(Vector3 _direct)
@@ -285,8 +296,17 @@ namespace MCEntity
             if (Collider_Component.isGround)
             {
 
-                AddForce(force_jump * _direct); // 添加跳跃的冲量
+                AddForce(_direct, force_jump); // 添加跳跃的冲量
             }
+        }
+
+
+        public void EntityRandomJump(float _value)
+        {
+            Vector3 direction = Random.onUnitSphere * 0.5f; // 使用随机方向
+            direction.y = 0.9f; // 设置Y轴为jumpheight
+            Vector3 direct = direction.normalized; // 标准化向量
+            AddForce(direct, _value); // 施加力
         }
 
 
