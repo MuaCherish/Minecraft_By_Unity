@@ -2,69 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MCEntity;
-using Unity.VisualScripting;
 
 
-public class Entity_TNT : MonoBehaviour
+public class Entity_TNT : MC_Entity_Father
 {
-
 
 
     #region 周期函数
 
-    MC_Velocity_Component Velocity_Component;
-    MC_Collider_Component Collider_Component;
-    ManagerHub managerhub;
-
-    private void Awake()
+    protected override void Update()
     {
-        Velocity_Component = GetComponent<MC_Velocity_Component>();
-        Collider_Component = GetComponent<MC_Collider_Component>();
-
-        if (Velocity_Component == null)
-        {
-            print("TNT未包含Velocity_Component组件");
-        }
-
-        ExploreWhite = transform.Find("Crust").gameObject.GetComponent<MeshRenderer>().material;
-
-        // 获取Crust的Renderer组件
-        GameObject crust = transform.Find("Crust").gameObject;
-        if (crust != null)
-        {
-            crustRenderer = crust.GetComponent<Renderer>();
-            if (crustRenderer != null)
-            {
-                originalMaterial = crustRenderer.material; // 保存原始材质
-            }
-        }
-        else
-        {
-            Debug.LogError("未找到Crust对象");
-        }
+        base.Update();
     }
 
-    private void Start()
+    #endregion
+
+
+    #region 实现抽象父类
+
+    // 实现无参的抽象方法
+    public override void OnStartEntity()
     {
-        if (managerhub == null)
-        {
-            managerhub = GlobalData.GetManagerhub();
-        }
+        // 这里可以实现默认的逻辑
+        Debug.Log("Entity_TNT 的 OnStartEntity（无参数）被调用");
     }
 
-
-
-    // 初始化
-
+    // 带参数的重载方法
     public void OnStartEntity(Vector3 _pos, bool _ActByTNT)
     {
+        FindComponents();
+
+        InitTNT();
         transform.position = _pos;
 
-        if (managerhub == null)
-        {
-            managerhub = GlobalData.GetManagerhub();
-
-        }
         managerhub.musicManager.PlaySoundClip(MusicData.TNT_Fuse);
 
         if (_ActByTNT)
@@ -76,16 +46,13 @@ public class Entity_TNT : MonoBehaviour
         StartCoroutine(TNTBlink());
     }
 
-
-
-
-    public void OnEndEntity()
+    public override void OnEndEntity()
     {
         //数值
         Vector3 _center = managerhub.player.GetCenterPoint(transform.position);
 
-       
-        
+
+
         //爆炸粒子效果
         GameObject particle_explore = GameObject.Instantiate(managerhub.player.particle_explosion);
         particle_explore.transform.position = this.transform.position;
@@ -117,7 +84,7 @@ public class Entity_TNT : MonoBehaviour
         if (TNTpositions.Count != 0)
         {
             //print($"搜索到了{TNTpositions.Count}个TNT");
-            
+
             foreach (Vector3 item in TNTpositions)
             {
                 Vector3 _direct = (item - transform.position).normalized;
@@ -125,7 +92,7 @@ public class Entity_TNT : MonoBehaviour
 
                 //爆炸半径为4m
                 //如果force
-                float _force = Mathf.Lerp(500  ,10, value);
+                float _force = Mathf.Lerp(500, 10, value);
 
                 managerhub.player.CreateTNT(item, true);
             }
@@ -137,6 +104,27 @@ public class Entity_TNT : MonoBehaviour
         BlocksFunction.Boom(_center);
 
         Destroy(gameObject); // 销毁当前对象
+    }
+
+    //初始化
+    void InitTNT()
+    {
+        ExploreWhite = transform.Find("Crust").gameObject.GetComponent<MeshRenderer>().material;
+
+        // 获取Crust的Renderer组件
+        GameObject crust = transform.Find("Crust").gameObject;
+        if (crust != null)
+        {
+            crustRenderer = crust.GetComponent<Renderer>();
+            if (crustRenderer != null)
+            {
+                originalMaterial = crustRenderer.material; // 保存原始材质
+            }
+        }
+        else
+        {
+            Debug.LogError("未找到Crust对象");
+        }
     }
 
 
@@ -276,21 +264,19 @@ public class Entity_TNT : MonoBehaviour
     #endregion
 
 
-
     #region Debug
 
-    [Header("Debug")] public bool 点燃一次;
-    private void Update()
-    {
-        if (点燃一次)
-        {
-            OnStartEntity(transform.position, false);
-            点燃一次 = false;
-        }
-    }
+    //[Header("Debug")] public bool 点燃一次;
+    //private void Update()
+    //{
+    //    if (点燃一次)
+    //    {
+    //        OnStartEntity(transform.position, false);
+    //        点燃一次 = false;
+    //    }
+    //}
 
     #endregion
-
 
 
 }

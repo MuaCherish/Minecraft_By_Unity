@@ -4,9 +4,10 @@ using UnityEngine;
 //using UnityEngine.XR;
 using System.Collections;
 using UnityEngine.XR;
+using System.Collections.Generic;
 
 
-public class DropBlock: MonoBehaviour
+public class DropBlock: MC_Entity_Father
 {
 
     #region 周期函数
@@ -14,38 +15,41 @@ public class DropBlock: MonoBehaviour
     [Foldout("初始化参数", true)]
     [Header("初始化随机跳跃力度")] public float JumpValue = 40f;
     BlockItem myItem = new BlockItem(VoxelData.Air, 1);
-    ManagerHub managerhub;
-    MC_Collider_Component Collider_Component;
-    MC_Velocity_Component Velocity_Component;
 
-    private void Awake()
-    {
-        Collider_Component = GetComponent<MC_Collider_Component>();
-        Velocity_Component = GetComponent<MC_Velocity_Component>();
-    }
 
-    private void Start()
+    protected override void Update()
     {
-        
-    }
+        base.Update();
 
-    public bool Toggle_Start;
-    private void Update()
-    {
-        if (Toggle_Start)
-        {
-            OnStartEntity(transform.position, new BlockItem(VoxelData.Stone, 1), true);
-            Toggle_Start = false;
-        }
+        //if (Toggle_Start)
+        //{
+        //    OnStartEntity(transform.position, new BlockItem(VoxelData.Stone, 1), true);
+        //    Toggle_Start = false;
+        //}
         
         ReferUpdateFloating();
 
         ReferUpdateBeBuried();
     }
 
+
+
+    #endregion
+
+
+    #region 实现父类
+
+    public override void OnStartEntity()
+    {
+        // 这里可以实现默认的逻辑
+        Debug.Log("Entity_TNT 的 OnStartEntity（无参数）被调用");
+    }
+
     public void OnStartEntity(Vector3 _CenterPos, BlockItem _Item, bool _isRandomJump)
     {
-        Destroy(this, destroyTime);
+        FindComponents();
+
+        Destroy(this.gameObject, destroyTime);
 
         transform.position = _CenterPos;
         myItem = _Item;
@@ -54,16 +58,11 @@ public class DropBlock: MonoBehaviour
         {
             Velocity_Component.EntityRandomJump(JumpValue);
         }
-        
+
 
         if (FloatingCube == null)
         {
             FloatingCube = transform.Find("Body").gameObject;
-        }
-
-        if (managerhub == null)
-        {
-            managerhub = GlobalData.GetManagerhub();
         }
 
         GenMesh();
@@ -71,31 +70,29 @@ public class DropBlock: MonoBehaviour
         StartCoroutine(AbsorbCheck());
     }
 
-    public void OnEndEntity()
+
+    public override void OnEndEntity()
     {
         //播放音效
         managerhub.musicManager.PlaySound_Absorb();
 
-
-
         //背包系统计数
-        if (myItem._blocktype != VoxelData.BedRock)
+        byte _point_Block_type = myItem._blocktype;
+
+        //草块变泥土
+        if (_point_Block_type == VoxelData.Grass)
         {
-            byte _point_Block_type = myItem._blocktype;
-
-            //草块变泥土
-            if (_point_Block_type == VoxelData.Grass)
-            {
-                _point_Block_type = VoxelData.Soil;
-            }
-
-            managerhub.backpackManager.update_slots(0, _point_Block_type, myItem._number);
+            _point_Block_type = VoxelData.Soil;
         }
+
+        managerhub.backpackManager.update_slots(0, _point_Block_type, myItem._number);
 
 
         // 移动完成后销毁自身
         Destroy(gameObject);
     }
+
+
 
     #endregion
 
@@ -240,9 +237,14 @@ public class DropBlock: MonoBehaviour
         {
             if (hasExec_isGround)
             {
+                //保证随机性
+                floatingHeight = Random.Range(0.2f, 0.4f);
+                floatingSpeed = Random.Range(0.8f, 1.2f);
+
                 originalY = transform.position.y;
                 //print(originalY);
                 hasExec_isGround = false;
+                //print("开始漂浮");
             }
 
             // 计算上下漂浮的偏移量
@@ -282,12 +284,18 @@ public class DropBlock: MonoBehaviour
         //是否可被吸收
         while (true)
         {
-            Vector3 PlayerEyes = managerhub.player.eyesObject.transform.position;
 
-            if (((FloatingCube.transform.position - PlayerEyes).magnitude < absorbDistance) && managerhub.backpackManager.CheckSlotsFull(myItem._blocktype) == false)
+            if (managerhub.world.game_state == Game_State.Playing)
             {
-                Absorbable();
+                Vector3 PlayerEyes = managerhub.player.eyesObject.transform.position;
+
+                if (((FloatingCube.transform.position - PlayerEyes).magnitude < absorbDistance) && managerhub.backpackManager.CheckSlotsFull(myItem._blocktype) == false)
+                {
+                    Absorbable();
+                }
             }
+
+            
 
             yield return new WaitForFixedUpdate();
         }

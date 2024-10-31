@@ -17,6 +17,7 @@ public class MC_DebugEntity_Component : MonoBehaviour
 
     [Foldout("实体跳跃", true)]
     [Header("跳跃方向")] public Vector3 Jump_Direct; 
+    [Header("跳跃力度")] public float Jump_Value; 
     [Header("跳跃一次")] public bool Toggle_EntityOnceJump;
 
     [Foldout("实体移动", true)]
@@ -62,7 +63,7 @@ public class MC_DebugEntity_Component : MonoBehaviour
     {
         if (Toggle_EntityOnceJump)
         {
-            Velocity_Component.EntityJump(Jump_Direct);
+            Velocity_Component.AddForce(Jump_Direct, Jump_Value);
             Toggle_EntityOnceJump = false;
         }
 

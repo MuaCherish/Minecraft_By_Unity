@@ -2432,15 +2432,9 @@ public class World : MonoBehaviour
         {
             // 如果不存在，添加新的EditStruct
             //print($"Edit更新: {intPos} --- {targetBlocktype}");
-            if (targetBlocktype != VoxelData.BedRock &&
-                intPos.y > 0
-                )
+            if (intPos.y >= 0)
             {
                 EditNumber.Add(new EditStruct(intPos, targetBlocktype));
-            }
-            else
-            {
-                print($"第一个editbunber函数处理到异常, pos.y = {intPos.y} , type = {targetBlocktype}");
             }
             
         }

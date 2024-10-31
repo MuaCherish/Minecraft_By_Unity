@@ -2716,14 +2716,14 @@ public class Chunk : MonoBehaviour
         int z = (int)_relaVec.z;
         byte thisType = GetBlock(x, y, z).voxelType;
 
-        //防止过高
-        if (y >= TerrainData.ChunkHeight - 2)
+
+        //提前返回-不需要刷新
+        if (thisType == targetBlocktype)
         {
-
             return;
-
         }
 
+        //提前返回-数组越界
         if (isOutOfRange(x, y, z))
         {
             print($"EditData的pos越界: {pos}");

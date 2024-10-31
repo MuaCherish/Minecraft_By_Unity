@@ -89,8 +89,38 @@ namespace MCEntity
         [Foldout("速度和力参数", true)]
         [Header("实体移动速度")] public float speed_move = 1f;
         [Header("实体终端下降速度")] public float speedDown_ultimate = -10f;
+        [Header("实体水中终端速度")] public float WaterspeedDown_ultimate = -2f;
         [Header("实体跳跃力")] public float force_jump = 77f; 
         [Header("实体重力")] public float force_gravity = -9.8f;
+        [Header("实体水下重力")] public float force_Watergravity = -2f;
+        public float Ultimate_VerticalVelocity
+        {
+            get
+            {
+                if (Collider_Component.IsInTheWater(Collider_Component.FootPoint))
+                {
+                    return WaterspeedDown_ultimate;
+                }
+                else
+                {
+                    return speedDown_ultimate;
+                }
+            }
+        }
+        public Vector3 Gravity
+        {
+            get
+            {
+                if (Collider_Component.IsInTheWater(Collider_Component.FootPoint))
+                {
+                    return new Vector3(0, force_Watergravity, 0);
+                }
+                else
+                {
+                    return new Vector3(0, force_gravity, 0);
+                }
+            }
+        }
 
 
         //衰减系数
@@ -134,10 +164,10 @@ namespace MCEntity
             //        return; // 如果在地面上，不进行其他计算
             //    }
             //}
+            momentum = Vector3.zero;
 
             // 计算重力
-            Vector3 Force_gravity = new Vector3(0, force_gravity, 0); // 重力
-            momentum += Force_gravity;
+            momentum += Gravity;
 
             // 计算其他力
             if (Othermomentum != Vector3.zero)
@@ -147,9 +177,9 @@ namespace MCEntity
             }
 
             // 检查是否达到终端速度
-            if (momentum.y <= force_gravity)
+            if (momentum.y <= Gravity.y)
             {
-                momentum = new Vector3(0, force_gravity, 0);
+                momentum = Gravity;
             }
         }
 
@@ -159,7 +189,7 @@ namespace MCEntity
             // 条件返回
             if (Collider_Component.isGround && Othermomentum == Vector3.zero)
             {
-                if (momentum.y <= force_gravity)
+                if (momentum.y <= Gravity.y)
                 {
                     // 将垂直速度归零
                     velocity.y = 0f;
@@ -189,10 +219,10 @@ namespace MCEntity
             //---------------------------限值区域-----------------------
 
             // 检查是否达到终端速度并限制速度
-            if (velocity.y <= speedDown_ultimate)
+            if (velocity.y <= Ultimate_VerticalVelocity)
             {
                 // 强制速度为终端速度
-                velocity.y = speedDown_ultimate;
+                velocity.y = Ultimate_VerticalVelocity;
             }
 
             CheckSliperVelocity();
@@ -231,6 +261,7 @@ namespace MCEntity
 
         /// <summary>
         /// 添加速度
+        /// 无法立刻改变速度？调用一点点AddForce即可解除y的锁
         /// </summary>
         /// <param name="_v"></param>
         public void SetVelocity(string _para, float _value)
@@ -447,6 +478,8 @@ namespace MCEntity
 
 
         #endregion
+
+
 
 
         #region 工具 

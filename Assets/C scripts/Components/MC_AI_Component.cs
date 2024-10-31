@@ -1,3 +1,4 @@
+using Homebrew;
 using MCEntity;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,30 +13,37 @@ namespace MCEntity
         Idle,        //漫无目的的闲逛
         Chase,
         Attack,
-        Flee,        
+        Flee,
     }
 
     [RequireComponent(typeof(MC_Velocity_Component))]
+    [RequireComponent(typeof(MC_Collider_Component))]
     public class MC_AI_Component : MonoBehaviour
     {
+        [Foldout("能力", true)]
+        [Header("在水中会向上浮")] public bool AI_CanSwiming;
+
 
         #region 周期函数
 
         MC_Velocity_Component Velocity_Component;
+        MC_Collider_Component Collider_Component;
 
         private void Awake()
         {
             Velocity_Component = GetComponent<MC_Velocity_Component>();
+            Collider_Component = GetComponent<MC_Collider_Component>();
         }
 
         private void Start()
         {
-            myState = AIState.Idle; 
+            myState = AIState.Idle;
         }
 
         private void Update()
         {
             UpdateStateControler();
+            _ReferUpdateAICompetent();
         }
 
         #endregion
@@ -105,7 +113,7 @@ namespace MCEntity
             //{
             //    myState = AIState.攻击目标; // 到达目标后切换到攻击目标状态
             //}
-        } 
+        }
 
         //Flee
         private void HandleFleeState()
@@ -121,7 +129,25 @@ namespace MCEntity
         #endregion
 
 
+        #region AI能力
 
+        public float FloatingForce = 1f;
+
+        //该函数在Update中
+        void _ReferUpdateAICompetent()
+        {
+            if (AI_CanSwiming)
+            {
+                //如果中心入水，则尝试跳一下
+                if (Collider_Component.IsInTheWater(transform.position))
+                {
+                    Velocity_Component.AddForce(new Vector3(0f, 1f, 0f), FloatingForce);
+                }
+            }
+        }
+
+
+        #endregion
 
     }
 }

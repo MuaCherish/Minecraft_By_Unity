@@ -1,6 +1,8 @@
+using Homebrew;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using Unity.VisualScripting;
 //using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -8,9 +10,12 @@ using UnityEngine.UI;
 
 public class MusicManager : MonoBehaviour
 {
+
+    #region 旧设置
+
     //Transformers
-    [Header("Transforms")]
-    public World world;
+    [Foldout("引用", true)]
+    
     public Player player;
     public Transform eyes;
     public Transform leg;
@@ -62,24 +67,64 @@ public class MusicManager : MonoBehaviour
     [HideInInspector] public byte footBlocktype = VoxelData.Grass;
     [HideInInspector] public byte previous_foot_blocktype = VoxelData.Grass;
     [HideInInspector] public float footstepInterval; // 走路音效播放间隔
-    private float nextFoot; 
+    private float nextFoot;
 
 
-    //---------------------------------- 周期函数 ----------------------------------------
+
+    #region 周期函数
+
+    ManagerHub managerhub;
+    World world;
+
+    private void Awake()
+    {
+        managerhub = GlobalData.GetManagerhub();
+        world = managerhub.world;
+    }
+
 
     private void Start()
     {
         InitMusicManager();
     }
 
+ 
+    private void Update()
+    {
+        if (world.game_state == Game_State.Playing)
+        {
+            //脚步音效
+            PlaySound_Foot();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        Fun_environment();
+
+        FUN_PlaceandBroke();
+
+        FUN_Moving();
+
+
+        Fade_FallInto_Water();
+
+        if (world.game_state == Game_State.Playing)
+        {
+            UpdateFootBlockType();
+        }
+
+        
+    }
+
     public void InitMusicManager()
     {
         //environment
-        if(Audio_envitonment == null)
+        if (Audio_envitonment == null)
         {
             Audio_envitonment = gameObject.AddComponent<AudioSource>();
         }
-        
+
         Audio_envitonment.clip = audioclips[MusicData.bgm_menu];
         Audio_envitonment.volume = 0.4f;
         Audio_envitonment.loop = false;
@@ -149,36 +194,8 @@ public class MusicManager : MonoBehaviour
         environmentCoroutine = null;
     }
 
-    private void Update()
-    {
-        if (world.game_state == Game_State.Playing)
-        {
-            //脚步音效
-            PlaySound_Foot();
-        }
-    }
 
-    private void FixedUpdate()
-    {
-        Fun_environment();
-
-        FUN_PlaceandBroke();
-
-        FUN_Moving();
-
-
-        Fade_FallInto_Water();
-
-        if (world.game_state == Game_State.Playing)
-        {
-            UpdateFootBlockType();
-        }
-
-        
-    }
-
-
-    //---------------------------------------------------------------------------------------
+    #endregion 
 
 
 
@@ -402,7 +419,7 @@ public class MusicManager : MonoBehaviour
         }
     }
 
-    
+    #region 玩家脚步声实现
 
     //脚步声
     void PlaySound_Foot()
@@ -452,6 +469,8 @@ public class MusicManager : MonoBehaviour
         }
 
     }
+
+    #endregion
 
     //游泳音效
     void PlaySound_Swiming()
@@ -626,6 +645,168 @@ public class MusicManager : MonoBehaviour
     //---------------------------------------------------------------------------------------
 
 
+    #endregion
+
+
+
+
 
 
 }
+
+
+//待处理：
+//音乐管理器还是画个图比较好
+//提供于CanvasManager用于拖动的Change音量的函数
+//音量是按比例的，音效和背景音乐比例不一样怎么调整
+//是否需要用结构体管理音量pith这些东西
+public class NewMusicManager: MonoBehaviour
+{
+
+    #region 状态
+    public Dictionary<int, SoundsType> Sounds;
+    
+
+    #endregion
+
+
+    #region 周期函数
+
+    ManagerHub managerhub;
+
+    private void Start()
+    {
+        managerhub = GlobalData.GetManagerhub();
+        Initialized();
+    }
+
+    private void Update()
+    {
+        _ReferUpdateBackGroundMusic();
+    }
+
+    #endregion
+
+
+    #region 初始化
+
+    [Foldout("初始化", true)]
+    [Header("音乐池最大容量")] public int AudioSourcePoolCount;
+
+    //创建Gameobject并初始化
+    void Initialized()
+    {
+        //创建gameobject并挂载一定容量的的Source
+    }
+
+    #endregion
+
+
+    #region 背景音乐
+
+    //背景音乐一直占用0号位置
+    void _ReferUpdateBackGroundMusic()
+    {
+        if (managerhub.world.game_state == Game_State.Playing)
+        {
+            //随机选择背景音频并播放
+
+        }
+    }
+
+    #endregion
+
+
+
+
+    #region 音乐播放函数
+
+
+    //从对象池播放音频
+    //void PlaySound(int _id = 0, float volume = 1.0f, float pitch = 1.0f, int _index = -1)
+    //{
+    //    int idleIndex = (_index != -1) ? _index : FindPoolIndex();
+
+    //    // 设置音量和音高
+    //    //AudioSource source = audioPool[idleIndex];
+    //    //source.volume = volume;
+    //    //source.pitch = pitch;
+
+    //    // 播放音频
+    //}
+
+    /// <summary>
+    /// 播放音乐
+    /// </summary>
+    public void PlaySound(SoundsData _data)
+    {
+        switch (_data.soundsType)
+        {
+            //背景音
+            case SoundsType.BackGround:
+
+                //背景音则使用固定的index
+
+                //如果正在播放，则需要缓步切换
+                
+
+                break;
+
+            //音效
+            case SoundsType.OneShot:
+
+                //直接使用音效下标
+
+                //播放即可
+
+                break;
+
+            //长时
+            case SoundsType.LongTerm:
+
+                break;
+
+            //其他
+            default:
+                print("soundsType有误");
+                break;
+
+        }
+    }
+
+    /// <summary>
+    /// 在所给地点创建3d音频
+    /// </summary>
+    /// <param name="_pos"></param>
+    /// <param name="_id"></param>
+    public void Play3dSound(Vector3 _pos, int _id)
+    {
+
+    }
+
+    #endregion
+
+
+    #region 工具
+
+    //切换音乐
+    void SwitchSound()
+    {
+
+    }
+
+    //寻找可用对象池
+    int FindPoolIndex()
+    {
+
+        //检测-如果id属于背景音乐
+        return 0;
+        
+        //如果找到可用音频，则返回该下标
+    }
+
+    #endregion
+
+}
+
+

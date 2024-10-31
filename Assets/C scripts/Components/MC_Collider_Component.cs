@@ -517,6 +517,21 @@ namespace MCEntity
             isCollisionLocked = false;
         }
 
+        /// <summary>
+        /// 是否在水中
+        /// </summary>
+        public bool IsInTheWater(Vector3 _pos)
+        {
+            if (managerhub.world.GetBlockType(_pos) == VoxelData.Water)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         #endregion
 
 

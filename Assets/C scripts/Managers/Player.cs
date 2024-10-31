@@ -1019,7 +1019,7 @@ public class Player : MonoBehaviour
                     case 40:
                         if (_selecttype == VoxelData.Tool_MusicDiscs)
                         {
-                            managerhub.musicManager.Audio_envitonment.clip = managerhub.musicManager.audioclips[4];
+                            managerhub.musicManager.Audio_envitonment.clip = managerhub.musicManager.audioclips[MusicData.MusicBox];
                             managerhub.musicManager.Audio_envitonment.Play();
                             managerhub.backpackManager.update_slots(1, 50);
                         }
@@ -2976,7 +2976,7 @@ public class Player : MonoBehaviour
     {
         // 玩家判定箱，假设已知
         Vector3 _selfCenter = transform.position;
-        float _selfWidth = playerWidth; // 玩家宽度（底边正方形的边长）
+        float _selfWidth = playerWidth - 0.1f; // 玩家宽度（底边正方形的边长）
         float _selfHeight = playerHeight - 0.25f; // 玩家高度
 
         // 计算玩家的边界

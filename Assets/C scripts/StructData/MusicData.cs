@@ -2,6 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+[SerializeField]
+public struct SoundsData
+{
+    public SoundsType soundsType;
+}
+
+public enum SoundsType
+{
+    OneShot, // 短期音效，一次性播放
+    LongTerm, // 长期音效，持续播放
+    BackGround, //背景音
+}
+
+
+
 public static class MusicData
 {
 
@@ -54,10 +71,10 @@ public static class MusicData
     public static readonly int absorb_2 = 18;
     public static readonly int explore = 19;
     public static readonly int TNT_Fuse = 20;
-    //public static readonly int TNT_Fuse = 21;
-    //public static readonly int TNT_Fuse = 22;
-    //public static readonly int TNT_Fuse = 23;
-    //public static readonly int TNT_Fuse = 24;
+    public static readonly int Eat_0 = 21;
+    public static readonly int Eat_1 = 22;
+    public static readonly int Eat_2 = 23;
+    public static readonly int MusicBox = 24;
     //public static readonly int TNT_Fuse = 25;
     //public static readonly int TNT_Fuse = 26;
     //public static readonly int TNT_Fuse = 27;
