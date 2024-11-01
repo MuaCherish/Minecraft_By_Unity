@@ -11,7 +11,6 @@ using UnityEngine.UI;
 public class MusicManager : MonoBehaviour
 {
 
-    #region 旧设置
 
     //Transformers
     [Foldout("引用", true)]
@@ -62,12 +61,7 @@ public class MusicManager : MonoBehaviour
     [HideInInspector] public byte previous_leg_blocktype = VoxelData.Air;
 
 
-    //walk
-    int item = 0;   //用来区分左右脚的
-    [HideInInspector] public byte footBlocktype = VoxelData.Grass;
-    [HideInInspector] public byte previous_foot_blocktype = VoxelData.Grass;
-    [HideInInspector] public float footstepInterval; // 走路音效播放间隔
-    private float nextFoot;
+    
 
 
 
@@ -421,6 +415,13 @@ public class MusicManager : MonoBehaviour
 
     #region 玩家脚步声实现
 
+    //walk
+    int item = 0;   //用来区分左右脚的
+    [HideInInspector] public byte footBlocktype = VoxelData.Grass;
+    [HideInInspector] public byte previous_foot_blocktype = VoxelData.Grass;
+    [HideInInspector] public float footstepInterval; // 走路音效播放间隔
+    private float nextFoot;
+
     //脚步声
     void PlaySound_Foot()
     {
@@ -645,7 +646,7 @@ public class MusicManager : MonoBehaviour
     //---------------------------------------------------------------------------------------
 
 
-    #endregion
+
 
 
 
@@ -717,23 +718,7 @@ public class NewMusicManager: MonoBehaviour
     #endregion
 
 
-
-
     #region 音乐播放函数
-
-
-    //从对象池播放音频
-    //void PlaySound(int _id = 0, float volume = 1.0f, float pitch = 1.0f, int _index = -1)
-    //{
-    //    int idleIndex = (_index != -1) ? _index : FindPoolIndex();
-
-    //    // 设置音量和音高
-    //    //AudioSource source = audioPool[idleIndex];
-    //    //source.volume = volume;
-    //    //source.pitch = pitch;
-
-    //    // 播放音频
-    //}
 
     /// <summary>
     /// 播放音乐
@@ -789,21 +774,6 @@ public class NewMusicManager: MonoBehaviour
 
     #region 工具
 
-    //切换音乐
-    void SwitchSound()
-    {
-
-    }
-
-    //寻找可用对象池
-    int FindPoolIndex()
-    {
-
-        //检测-如果id属于背景音乐
-        return 0;
-        
-        //如果找到可用音频，则返回该下标
-    }
 
     #endregion
 

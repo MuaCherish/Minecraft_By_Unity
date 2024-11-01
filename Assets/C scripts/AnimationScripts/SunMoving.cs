@@ -99,6 +99,7 @@ public class SunMoving : MonoBehaviour
             if (managerhub.crepuscularScript != null && !managerhub.crepuscularScript.enabled)
             {
                 managerhub.crepuscularScript.enabled = true;
+                DirectionalLight.gameObject.SetActive(true);
                 DirectionalLightMain.gameObject.SetActive(false);
             }
 
@@ -129,6 +130,7 @@ public class SunMoving : MonoBehaviour
             if (managerhub.crepuscularScript != null && managerhub.crepuscularScript.enabled)
             {
                 managerhub.crepuscularScript.enabled = false;
+                DirectionalLight.gameObject.SetActive(false);
                 DirectionalLightMain.gameObject.SetActive(true);
             }
 
@@ -155,4 +157,15 @@ public class SunMoving : MonoBehaviour
         }
         
     }
+
+
+
+    public Material Mat_LightCast;
+    public void SetLightCastDensity()
+    {
+        float result = 4 * Mathf.Pow(managerhub.timeManager.timeStruct._time.value - 0.5f, 2);
+        Mat_LightCast.SetFloat("_Density", result);
+    }
+
+
 }

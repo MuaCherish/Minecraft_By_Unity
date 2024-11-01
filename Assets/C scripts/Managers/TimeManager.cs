@@ -113,7 +113,11 @@ public class TimeManager : MonoBehaviour
     {
         //timeStruct._time.CurrentTime = 12f;
         timeStruct._time.CurrentTime = Random.Range(8f, 15f);
+        timeStruct._time.value = 1;
         timeStruct._Water.WatersMaterial.SetFloat("__2", timeStruct._Water.LightnessRange.y);
+
+
+
         //if (isRandomWeather)
         //{
         //    weather = (Enum_Weather)Random.Range(0, System.Enum.GetValues(typeof(Enum_Weather)).Length);
@@ -177,11 +181,7 @@ public class TimeManager : MonoBehaviour
                     timeStruct._time.value = 0;
                 }
 
-                SetSkyBoxColor();
-                SetCloudColor();
-                SetTerrainColor();
-                SetWaterColor();
-                SetLight();
+                UpdateAll();
 
             }
 
@@ -214,12 +214,9 @@ public class TimeManager : MonoBehaviour
                 //{
                 //    RenderSettings.fogColor = LerpFogColor;
                 //}
+                UpdateAll();
 
-                SetLight();
-                SetSkyBoxColor();
-                SetCloudColor();
-                SetTerrainColor();
-                SetWaterColor();
+
             }
 
 
@@ -232,6 +229,16 @@ public class TimeManager : MonoBehaviour
                 yield break;
             }
         }
+    }
+
+    void UpdateAll()
+    {
+        SetLight();
+        SetSkyBoxColor();
+        SetCloudColor();
+        SetTerrainColor();
+        SetWaterColor();
+        SetLightCast();
     }
 
 
@@ -297,6 +304,15 @@ public class TimeManager : MonoBehaviour
     {
 
         timeStruct._Water.WatersMaterial.SetFloat("__2", Mathf.Lerp(timeStruct._Water.LightnessRange.x, timeStruct._Water.LightnessRange.y, timeStruct._time.value));
+    }
+
+
+    void SetLightCast()
+    {
+        if (managerhub.sunMoving.isOpenLightCast)
+        {
+            managerhub.sunMoving.SetLightCastDensity();
+        }
     }
 
 

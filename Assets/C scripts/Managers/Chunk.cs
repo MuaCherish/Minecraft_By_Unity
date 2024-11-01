@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 using System.Linq;
+using static UnityEngine.GraphicsBuffer;
+using System;
 
 
 
@@ -1225,33 +1227,14 @@ public class Chunk : MonoBehaviour
             if (random_y != -1f)
             {
 
-                for (int i = 0; i <= random_Tree_High; i++)
-                {
-
-                    if (random_y + i >= TerrainData.ChunkHeight - 1)
-                    {
-
-                        Debug.Log($"random_y:{random_y},i={i}");
-
-                    }
-
-                    else
-                    {
-
-                        UpdateBlock(random_x, random_y + i, random_z, VoxelData.Wood) ;
-
-                    }
-
-                }
-
-                //生成树叶
-                BuildLeaves(random_x, random_y + random_Tree_High, random_z);
+                GenerateTree(random_x, random_y, random_z, random_Tree_High);
 
             }
 
 
             //Debug.Log($"{random_x}, {random_y}, {random_z}");
         }
+
 
         //补充煤炭
         foreach (var item in Coals)
@@ -1277,6 +1260,63 @@ public class Chunk : MonoBehaviour
         //交给world来create
         world.WaitToCreateMesh.Enqueue(this);
 
+    }
+
+    /// <summary>
+    /// 生存树
+    /// </summary>
+    /// <param name="_x"></param>
+    /// <param name="_y"></param>
+    /// <param name="_z"></param>
+    public void GenerateTree(int _x, int _y, int _z, int _treeHigh)
+    {
+        
+
+        for (int i = 0; i <= _treeHigh; i++)
+        {
+
+            if (_y + i >= TerrainData.ChunkHeight - 1)
+            {
+
+                Debug.Log($"random_y:{_y},i={i}");
+
+            }
+
+            else
+            {
+                UpdateBlock(_x, _y + i, _z, VoxelData.Wood);
+            }
+
+        }
+
+        //生成树叶
+        BuildLeaves(_x, _y + _treeHigh, _z);
+    }
+
+    public void GenerateTree(int _x, int _y, int _z)
+    {
+        int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+
+
+        for (int i = 0; i <= random_Tree_High; i++)
+        {
+
+            if (_y + i >= TerrainData.ChunkHeight - 1)
+            {
+
+                Debug.Log($"random_y:{_y},i={i}");
+
+            }
+
+            else
+            {
+                UpdateBlock(_x, _y + i, _z, VoxelData.Wood);
+            }
+
+        }
+
+        //生成树叶
+        BuildLeaves(_x, _y + random_Tree_High, _z);
     }
 
 
@@ -2263,60 +2303,48 @@ public class Chunk : MonoBehaviour
 
 
 
-
-    //特殊方块变化
-    void updateSomeBlocks(int _x, int _y,int _z)
+    //这个函数作用于可自行生长出其他方块的方块
+    //特殊方块变化，注意这里必须以xyz为当前方块来判断，因为区块刷新是从下往上的
+    void updateSomeBlocks(int _x, int _y, int _z)
     {
 
-        //出界判断
-        //不能浮空的方块(灌木丛 + 竹子 + 细雪) 
-        //if (GetBlock(_x, _y - 1, _z).voxelType == VoxelData.Air)
-        //{
-        //    //且自己是不能悬空的方块
-        //    if (GetBlock(_x, _y, _z).voxelType == VoxelData.Bush || GetBlock(_x, _y, _z).voxelType == VoxelData.Bamboo || GetBlock(_x, _y, _z).voxelType == VoxelData.SnowPower)
-        //    {
-
-        //        UpdateBlock(_x, _y, _z, VoxelData.Air);
-        //    }
-
-        //    //门
-        //    if (GetBlock(_x, _y, _z).voxelType == VoxelData.Door_Down)
-        //    {
-
-        //        UpdateBlock(_x, _y, _z, VoxelData.Air);
-        //        UpdateBlock(_x, _y + 1, _z, VoxelData.Air);
-        //    }
-        //}
-
-        if (
-            world.blocktypes[GetBlock(_x, _y, _z).voxelType].NotSuspended &&
+       
+        //悬浮方块
+        if (world.blocktypes[GetBlock(_x, _y, _z).voxelType].NotSuspended &&
             GetBlock(_x, _y - 1, _z).voxelType == VoxelData.Air
             )
         {
             UpdateBlock(_x, _y, _z, VoxelData.Air);
         }
 
-        //上门
-        if (GetBlock(_x, _y, _z).voxelType == VoxelData.Door_Up && GetBlock(_x, _y - 1, _z).voxelType != VoxelData.Door_Down)
+        //上门必须依赖下门
+        if (GetBlock(_x, _y, _z).voxelType == VoxelData.Door_Up)
         {
-            UpdateBlock(_x, _y, _z, VoxelData.Air);
+
+            if (GetBlock(_x, _y - 1, _z).voxelType != VoxelData.Door_Down)
+            {
+                UpdateBlock(_x, _y, _z, VoxelData.Air);
+            }
+           
         }
 
         //下门
-        if (GetBlock(_x, _y, _z).voxelType == VoxelData.Door_Down && GetBlock(_x, _y + 1, _z).voxelType == VoxelData.Air)
+        if (GetBlock(_x, _y, _z).voxelType == VoxelData.Door_Down)
         {
-
-            UpdateBlock(_x, _y + 1, _z, VoxelData.Door_Up);
+            if (GetBlock(_x, _y + 1, _z).voxelType == VoxelData.Air)
+            {
+                UpdateBlock(_x, _y + 1, _z, VoxelData.Door_Up);
+            }
+            
         }
-
-
-
 
     }
 
+    //这个函数依赖于玩家立即破坏会跟随着破坏的方块
     //放置或破坏时会变化的特殊方块
     public void EditForSomeBlocks(Vector3 _pos, byte _target)
     {
+
         //如果打掉上门，则两个都会消失
         if (_target == VoxelData.Air && GetBlock((int)_pos.x, (int)_pos.y - 1, (int)_pos.z).voxelType == VoxelData.Door_Down)
         {
@@ -2716,29 +2744,23 @@ public class Chunk : MonoBehaviour
         int z = (int)_relaVec.z;
         byte thisType = GetBlock(x, y, z).voxelType;
 
-
-        //提前返回-不需要刷新
-        if (thisType == targetBlocktype)
+        //提前返回
+        if (NeedReturn(thisType, targetBlocktype, _relaVec))
         {
             return;
         }
 
-        //提前返回-数组越界
-        if (isOutOfRange(x, y, z))
-        {
-            print($"EditData的pos越界: {pos}");
-            return;
-        }
-
+        //更新数据
         UpdateBlock(x, y, z, targetBlocktype);
 
-        //判断朝向
+        //更新朝向
         if (world.blocktypes[targetBlocktype].IsOriented)
-        {
             UpdateBlockOriented(new Vector3(x, y, z), world.player.RealBacking);
-        }
 
+        //保存数据
         world.UpdateEditNumber(pos, targetBlocktype);
+
+
         EditForSomeBlocks(new Vector3(x, y, z), targetBlocktype);
 
 
@@ -2772,6 +2794,22 @@ public class Chunk : MonoBehaviour
         UpdateChunkMesh_WithSurround(_relaVec, true, false);
     }
 
+    bool NeedReturn(byte _this, byte _target, Vector3 _vec)
+    {
+        //把门顶掉的问题
+        if (!managerhub.world.blocktypes[_this].CanBeCover && _target != VoxelData.Air)
+            return true;
+
+        //出界判断
+        if (UsefulFunction.isOutOfChunkRange(_vec))
+            return true;
+
+        //前后相等不需要刷新
+        if (_this == _target)
+            return true;
+
+        return false;
+    }
     
     public void EditData(List<EditStruct> _EditList) 
     {

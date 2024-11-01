@@ -806,7 +806,7 @@ public class Player : MonoBehaviour
         }
 
 
-        if (Input.GetButtonDown("Sprint") && !isFlying)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !isFlying)
         {
 
             isSprinting = true;
@@ -819,7 +819,7 @@ public class Player : MonoBehaviour
             isSprinting = false;
         }
             
-        if (Input.GetButtonUp("Sprint") && !isFlying)
+        if (Input.GetKeyUp(KeyCode.LeftShift) && !isFlying)
         {
 
             isSprinting = false;
@@ -1008,7 +1008,7 @@ public class Player : MonoBehaviour
             byte _selecttype = managerhub.backpackManager.slots[selectindex].blockId;
 
             //右键可互动方块
-            if (_targettype < world.blocktypes.Length && world.blocktypes[_targettype].isinteractable)
+            if (_targettype < world.blocktypes.Length && world.blocktypes[_targettype].isinteractable && !isSquating)
             {
                 //print("isinteractable");
 
@@ -1061,7 +1061,18 @@ public class Player : MonoBehaviour
                         managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_箱子);
                         break;
 
+                    //树苗
+                    //case 57:
 
+                    //    if (_selecttype == VoxelData.Tool_BoneMeal)
+                    //    {
+                    //        print("tree");
+                    //        Chunk chunktemp = world.GetChunkObject(_rayCast.hitPoint);
+                    //        chunktemp.GenerateTree((int)_rayCast.hitPoint.x, (int)_rayCast.hitPoint.y, (int)_rayCast.hitPoint.z);
+                    //        chunktemp.EditData(_rayCast.hitPoint, VoxelData.Wood);
+                    //    }
+
+                        //break;
 
                 }
 
@@ -1085,7 +1096,7 @@ public class Player : MonoBehaviour
 
 
                         //Edit
-                        if(managerhub.world.blocktypes[point_Block_type].isFlower)
+                        if(managerhub.world.blocktypes[point_Block_type].CanBeCover)
                         {
                             world.GetChunkObject(_rayCast.hitPoint).EditData(_rayCast.hitPoint, backpackmanager.slots[selectindex].blockId);
 
@@ -1257,6 +1268,7 @@ public class Player : MonoBehaviour
 
         //获取挖掘时间
         float destroy_time = GetDestroyTime(_selecttype, theBlockwhichBeBrokenType);
+        //print(destroy_time);
 
         // 等待
         while (Time.time - startTime < destroy_time)

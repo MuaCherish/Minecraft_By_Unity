@@ -22,6 +22,12 @@ public enum SoundsType
 public static class MusicData
 {
 
+    //管理器宏定义
+    public static readonly int AudioSource_FootStep = 0;
+    public static readonly int AudioSource_SwitchWater = 1;
+    public static readonly int AudioSource_Swimming = 2;
+
+
     //音乐宏定义
     //宏定义
     /*

@@ -20,7 +20,7 @@ public class TimeManagertruct
 [Serializable]
 public class Time_TimeStruct
 {
-    [Header("当前时间"), Range(0, 24)] public float CurrentTime = 12; [HideInInspector] public float previous_CurrentTime = 12; [ReadOnly] public float value;
+    [Header("当前时间"), Range(0, 24)] public float CurrentTime = 12; [HideInInspector] public float previous_CurrentTime = 12; [ReadOnly] public float value = 1;
     [Header("游戏内一小时 = 现实多少秒")] public float second_GameOneHour = 60; // 现实中多少秒过完游戏内一小时
 
     [Header("白天过渡范围")] public Vector2 天开始变黑;

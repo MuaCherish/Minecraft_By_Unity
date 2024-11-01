@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Windows;
+using static UnityEditor.PlayerSettings;
 
 //实用函数
 public static class UsefulFunction
@@ -42,7 +43,7 @@ public static class UsefulFunction
     /// <returns></returns>
     public static Vector3 GetRelaPos(Vector3 _pos)
     {
-        return Vector3.zero;
+        return new Vector3(Mathf.FloorToInt(_pos.x % TerrainData.ChunkWidth), Mathf.FloorToInt(_pos.y) % TerrainData.ChunkHeight, Mathf.FloorToInt(_pos.z % TerrainData.ChunkWidth));
     }
 
     /// <summary>
@@ -93,5 +94,48 @@ public static class UsefulFunction
 
     #endregion
 
+
+    #region 出界判断
+
+    /// <summary>
+    /// 绝对或者相对坐标判断是否出界
+    /// </summary>
+    /// <param name="_pos"></param>
+    /// <returns></returns>
+    public static bool isOutOfChunkRange(Vector3 _pos)
+    {
+        //获取相对坐标
+        Vector3 _vec = GetRelaPos(_pos);
+
+        //是否出界
+        int _x = (int)_vec.x;
+        int _y = (int)_vec.y;
+        int _z = (int)_vec.z;
+
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
+            return true;
+        else
+            return false;
+    }
+
+    /// <summary>
+    /// 单个值判断
+    /// </summary>
+    /// <param name="_x"></param>
+    /// <param name="_y"></param>
+    /// <param name="_z"></param>
+    /// <returns></returns>
+    public static bool isOutOfChunkRange(int _x, int _y, int _z)
+    {
+        //是否出界
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
+            return true;
+        else
+            return false;
+
+    }
+
+
+    #endregion  
 
 }
