@@ -2989,7 +2989,7 @@ public class Player : MonoBehaviour
         // 玩家判定箱，假设已知
         Vector3 _selfCenter = transform.position;
         float _selfWidth = playerWidth - 0.1f; // 玩家宽度（底边正方形的边长）
-        float _selfHeight = playerHeight - 0.25f; // 玩家高度
+        float _selfHeight = playerHeight - 1.3f; // 玩家高度
 
         // 计算玩家的边界
         float selfMinX = _selfCenter.x - _selfWidth / 2;

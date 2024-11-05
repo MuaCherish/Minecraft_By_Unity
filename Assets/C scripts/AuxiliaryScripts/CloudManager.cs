@@ -93,6 +93,10 @@ namespace Cloud
         }
 
 
+        public void SetCloudSpeed()
+        {
+
+        }
 
 
         #region Çø¿éÔÆ£¨Æú°¸£©

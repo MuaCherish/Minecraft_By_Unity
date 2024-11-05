@@ -410,7 +410,15 @@ namespace MCEntity
         {
             get
             {
-                return selfPos - Vector3.down * hitBoxHeight - new Vector3(0f, 0.01f, 0f);
+                return selfPos + Vector3.down * hitBoxHeight / 2f - new Vector3(0f, 0.01f, 0f);
+            }
+        }
+
+        public byte FootBlockType
+        {
+            get
+            {
+                return managerhub.world.GetBlockType(FootPoint);
             }
         }
 

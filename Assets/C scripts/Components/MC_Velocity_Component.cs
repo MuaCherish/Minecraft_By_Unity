@@ -15,7 +15,7 @@ namespace MCEntity
         [Foldout("状态", true)]
         [ReadOnly] public bool isMoving;
 
-        void ReferUpdateState()
+        void _ReferUpdate_UpdateState()
         {
             if(velocity != Vector3.zero)
             {
@@ -33,21 +33,11 @@ namespace MCEntity
         #region 周期函数 
 
         MC_Collider_Component Collider_Component;
-        //public ManagerHub managerhub;
 
         private void Awake()
         {
             Collider_Component = GetComponent<MC_Collider_Component>();
             
-            //if (managerhub == null)
-            //{
-            //    //managerhub = Global.FindManagerhub();
-            //}
-            //else
-            //{
-            //    Debug.LogError("Velocity_Component.Managerhub == null");
-            //}
-
         }
 
         private void Start()
@@ -61,14 +51,113 @@ namespace MCEntity
 
         private void FixedUpdate()
         {
-            FixedUpdateCaculate();
-            //UpdateDebug();
+            _ReferFixedUpdate_Caculate();
         }
 
         private void Update()
         {
-            ReferUpdateState();
+            _ReferUpdate_UpdateState();
         }
+
+        #endregion
+
+
+        #region 公开函数
+
+
+        /// <summary>
+        /// 添加速度
+        /// 无法立刻改变速度？调用一点点AddForce即可解除y的锁
+        /// </summary>
+        /// <param name="_v"></param>
+        public void SetVelocity(string _para, float _value)
+        {
+            switch (_para)
+            {
+                case "x":
+                    velocity.x = _value;
+                    break;
+                case "y":
+                    velocity.y = _value;
+                    break;
+                case "z":
+                    velocity.z = _value;
+                    break;
+                default:
+                    print("SetVelocity参数错误");
+                    break;
+            }
+
+            CheckSliperVelocity();
+
+
+        }
+
+
+        /// <summary>
+        /// 实体停止
+        /// </summary>
+        public void StopVelocity()
+        {
+            velocity = Vector3.zero;
+        }
+
+
+        /// <summary>
+        /// 设置动量
+        /// </summary>
+        /// <param name="_force">瞬时冲量</param>
+        public void AddForce(Vector3 _direct, float _value)
+        {
+            //print($"施加了{_force.magnitude}的力");
+            StartCoroutine(waitFrameToAddOtherForce(_direct, _value));
+        }
+
+        
+        /// <summary>
+        /// 实体向上跳跃一次
+        /// </summary>
+        /// <param name="_force">瞬时冲量</param>
+        public void EntityJump()
+        {
+            // 仅在地面上时进行跳跃
+            if (Collider_Component.isGround)
+            {
+
+                AddForce(Vector3.up, force_jump); // 添加跳跃的冲量
+            }
+        }
+
+
+        /// <summary>
+        /// 实体给定方向跳跃一次
+        /// </summary>
+        /// <param name="_direct"></param>
+        public void EntityJump(Vector3 _direct)
+        {
+            _direct = _direct.normalized;
+
+            // 仅在地面上时进行跳跃
+            if (Collider_Component.isGround)
+            {
+
+                AddForce(_direct, force_jump); // 添加跳跃的冲量
+            }
+        }
+
+
+        /// <summary>
+        /// 实体随机跳跃一次
+        /// </summary>
+        /// <param name="_value"></param>
+        public void EntityRandomJump(float _value)
+        {
+            Vector3 direction = Random.onUnitSphere * 0.5f; // 使用随机方向
+            direction.y = 0.9f; // 设置Y轴为jumpheight
+            Vector3 direct = direction.normalized; // 标准化向量
+            AddForce(direct, _value); // 施加力
+        }
+
 
         #endregion
 
@@ -93,6 +182,8 @@ namespace MCEntity
         [Header("实体跳跃力")] public float force_jump = 77f; 
         [Header("实体重力")] public float force_gravity = -9.8f;
         [Header("实体水下重力")] public float force_Watergravity = -2f;
+        
+        //动态终端速度
         public float Ultimate_VerticalVelocity
         {
             get
@@ -107,6 +198,8 @@ namespace MCEntity
                 }
             }
         }
+        
+        //动态重力
         public Vector3 Gravity
         {
             get
@@ -137,7 +230,7 @@ namespace MCEntity
         }
 
         //Update引用
-        private void FixedUpdateCaculate()
+        private void _ReferFixedUpdate_Caculate()
         {
             Caculate();
             ApplyPosition();
@@ -187,7 +280,9 @@ namespace MCEntity
         void Caculate_Velocity()
         {
             // 条件返回
-            if (Collider_Component.isGround && Othermomentum == Vector3.zero)
+            if (Collider_Component.isGround && 
+                Othermomentum == Vector3.zero 
+                )
             {
                 if (momentum.y <= Gravity.y)
                 {
@@ -250,95 +345,9 @@ namespace MCEntity
 
 
 
-        /// <summary>
-        /// 实体停止
-        /// </summary>
-        public void StopVelocity()
-        {
-            velocity = Vector3.zero;
-        }
 
 
-        /// <summary>
-        /// 添加速度
-        /// 无法立刻改变速度？调用一点点AddForce即可解除y的锁
-        /// </summary>
-        /// <param name="_v"></param>
-        public void SetVelocity(string _para, float _value)
-        {
-            switch (_para)
-            {
-                case "x":
-                    velocity.x = _value;
-                    break;
-                case "y":
-                    velocity.y = _value;
-                    break;
-                case "z":
-                    velocity.z = _value;
-                    break;
-                default:
-                    print("SetVelocity参数错误");
-                    break;
-            }
-
-            CheckSliperVelocity();
-
-
-        }
-
-
-
-        /// <summary>
-        /// 设置动量
-        /// </summary>
-        /// <param name="_force">瞬时冲量</param>
-        public void AddForce(Vector3 _direct, float _value)
-        {
-            //print($"施加了{_force.magnitude}的力");
-            StartCoroutine(waitFrameToAdd(_direct, _value));
-        }
-
-        IEnumerator waitFrameToAdd(Vector3 _direct, float _value)
-        {
-            yield return null;
-            Othermomentum += _direct * _value;
-        }
-
-
-        /// <summary>
-        /// 实体跳跃
-        /// </summary>
-        /// <param name="_force">瞬时冲量</param>
-        public void EntityJump()
-        {
-            // 仅在地面上时进行跳跃
-            if (Collider_Component.isGround)
-            {
-
-                AddForce(Vector3.up, force_jump); // 添加跳跃的冲量
-            }
-        }
-        public void EntityJump(Vector3 _direct)
-        {
-            _direct = _direct.normalized;
-
-            // 仅在地面上时进行跳跃
-            if (Collider_Component.isGround)
-            {
-
-                AddForce(_direct, force_jump); // 添加跳跃的冲量
-            }
-        }
-
-
-        public void EntityRandomJump(float _value)
-        {
-            Vector3 direction = Random.onUnitSphere * 0.5f; // 使用随机方向
-            direction.y = 0.9f; // 设置Y轴为jumpheight
-            Vector3 direct = direction.normalized; // 标准化向量
-            AddForce(direct, _value); // 施加力
-        }
+        
 
 
         #endregion
@@ -480,8 +489,6 @@ namespace MCEntity
         #endregion
 
 
-
-
         #region 工具 
 
         /// <summary>
@@ -493,7 +500,13 @@ namespace MCEntity
         }
 
 
-        
+        //等待一帧添加OtherForce
+        IEnumerator waitFrameToAddOtherForce(Vector3 _direct, float _value)
+        {
+            yield return null;
+            Othermomentum += _direct * _value;
+        }
+
 
 
         #endregion

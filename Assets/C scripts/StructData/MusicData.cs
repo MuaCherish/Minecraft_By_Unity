@@ -4,28 +4,12 @@ using UnityEngine;
 
 
 
-[SerializeField]
-public struct SoundsData
-{
-    public SoundsType soundsType;
-}
-
-public enum SoundsType
-{
-    OneShot, // 短期音效，一次性播放
-    LongTerm, // 长期音效，持续播放
-    BackGround, //背景音
-}
-
-
 
 public static class MusicData
 {
 
     //管理器宏定义
-    public static readonly int AudioSource_FootStep = 0;
-    public static readonly int AudioSource_SwitchWater = 1;
-    public static readonly int AudioSource_Swimming = 2;
+    public static readonly int AudioSource_Swimming = 0;
 
 
     //音乐宏定义

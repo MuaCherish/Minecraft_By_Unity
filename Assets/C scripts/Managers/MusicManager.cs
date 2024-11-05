@@ -1,25 +1,17 @@
 using Homebrew;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using Unity.VisualScripting;
-//using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.UI;
+
 
 public class MusicManager : MonoBehaviour
 {
 
+    #region 周期函数
 
-    //Transformers
-    [Foldout("引用", true)]
-    
-    public Player player;
-    public Transform eyes;
-    public Transform leg;
-    public Transform foot;
-    public BackPackManager backPackManager;
+    ManagerHub managerhub;
+    World world;
+    Player player;
+
 
     //片段
     [Header("音乐片段")]
@@ -43,37 +35,13 @@ public class MusicManager : MonoBehaviour
     [HideInInspector]
     public AudioSource Audio_Player_moving_swiming;
 
-    //协程
-    private Coroutine fadetoStopenvironment;
-    private Coroutine environmentCoroutine;
 
-    //envitonment
-    private bool isPausing = false;
-
-    //place and broke
-    [ReadOnly]public bool isbroking = false;
-
-    //moving
-    [Header("玩家/leg/foot状态")]
-    [HideInInspector] public bool hasExec_isGround = true;
-    [HideInInspector] public bool hasExec_isSwiming = true;
-    [HideInInspector] public byte leg_blocktype;
-    [HideInInspector] public byte previous_leg_blocktype = VoxelData.Air;
-
-
-    
-
-
-
-    #region 周期函数
-
-    ManagerHub managerhub;
-    World world;
 
     private void Awake()
     {
         managerhub = GlobalData.GetManagerhub();
         world = managerhub.world;
+        player = managerhub.player;
     }
 
 
@@ -94,8 +62,6 @@ public class MusicManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Fun_environment();
-
         FUN_PlaceandBroke();
 
         FUN_Moving();
@@ -184,147 +150,79 @@ public class MusicManager : MonoBehaviour
 
         //walking
         footstepInterval = PlayerData.walkSpeed;
-        fadetoStopenvironment = null;
-        environmentCoroutine = null;
     }
 
 
-    #endregion 
+    #endregion
 
 
+    #region OneShot
+
+    //place and broke
+    [ReadOnly] public bool isbroking = false;
 
 
+    //播放吸收音效
+    public void PlaySound_Absorb()
+    {
+        int i = UnityEngine.Random.Range(0, 2);
 
+        if (i == 0)
+        {
+            Audio_Click.PlayOneShot(audioclips[MusicData.absorb_1]);
+        }
+        else
+        {
+            Audio_Click.PlayOneShot(audioclips[MusicData.absorb_2]);
+        }
+    }
 
-    //---------------------------------- envitonment ----------------------------------------
+    public void PlaySound(int _clip)
+    {
+        Audio_Click.PlayOneShot(audioclips[_clip]);
+    }
+    //播放摔落音效
+    public void PlaySound_fallGround()
+    {
+        Audio_player_falling.PlayOneShot(audioclips[MusicData.fall_high]);
+    }
     public void PlaySound_Click()
     {
         Audio_Click.PlayOneShot(audioclips[MusicData.click]);
     }
 
-    void Fun_environment()
-    {
-        if (world.game_state == Game_State.Loading)
-        {
-            if (fadetoStopenvironment == null)
-            {
-                fadetoStopenvironment = StartCoroutine(Fade_Stop_Environment());
-            }
-
-
-            //if (Input.GetKeyDown(KeyCode.Escape))
-            //{
-            //    isPausing = !isPausing;
-
-            //    if (isPausing)
-            //    {
-            //        Audio_player_diving.volume = 0f;
-            //        Audio_player_moving.volume = 0f;
-            //        Audio_envitonment.Pause();
-            //    }
-            //    else
-            //    {
-            //        Audio_player_diving.volume = 0.5f;
-            //        Audio_player_moving.volume = 0.7f;
-            //        Audio_envitonment.UnPause();
-            //    }
-
-            //}
-
-
-
-
-
-
-        }
-        else if (world.game_state == Game_State.Playing)
-        {
-            if (environmentCoroutine == null)
-            {
-                environmentCoroutine = StartCoroutine(envitonment_Playing());
-            }
-        }
-
-        
-
-
-    }
-
-    IEnumerator Fade_Stop_Environment()
-    {
-        float backup_volume = Audio_envitonment.volume;
-
-        for (float i = backup_volume; i >= 0; i -= 0.01f)
-        {
-            Audio_envitonment.volume = i;
-            yield return null;
-        }
-
-        Audio_envitonment.Stop();
-        Audio_envitonment.volume = backup_volume;
-
-    }
-
-    IEnumerator envitonment_Playing()
-    {
-
-        yield return new WaitForSeconds(3f);
-
-        int bgm_sequence = 1;
-
-        while (true)
-        {
-            // 当音乐播放完毕 && 没有暂停 才切换音乐
-            if (!Audio_envitonment.isPlaying && !isPausing)
-            {
-                if (bgm_sequence == 1)
-                {
-                    Audio_envitonment.clip = audioclips[MusicData.bgm_3];
-                    Audio_envitonment.volume = 0.5f;
-                    Audio_envitonment.Play();
-                    bgm_sequence = 2;
-                }
-                else if (bgm_sequence == 2)
-                {
-                    Audio_envitonment.clip = audioclips[MusicData.bgm_2];
-                    Audio_envitonment.volume = 0.5f;
-                    Audio_envitonment.Play();
-                    bgm_sequence = 3;
-                }
-                else if (bgm_sequence == 3)
-                {
-                    Audio_envitonment.clip = audioclips[MusicData.bgm_1];
-                    Audio_envitonment.volume = 0.5f;
-                    Audio_envitonment.Play();
-                    bgm_sequence = 1;
-                }
-            }
-
-            if (Audio_envitonment.isPlaying)
-            {
-                yield return null;
-            }
-            else
-            {
-                yield return new WaitForSeconds(100f);
-            }
-            
-        }
-    }
-
-    //---------------------------------------------------------------------------------------
-
-
-
-
-
-
-    //-------------------------------- place and Broke --------------------------------------
-
     public void PlaySoundClip(int _id)
     {
         Audio_Click.PlayOneShot(audioclips[_id]);
     }
+
+    public void PlaySound_Broken(byte pointblock)
+    {
+        if (world.blocktypes[pointblock].broken_clip != null)
+        {
+
+            Audio_player_place.PlayOneShot(world.blocktypes[pointblock].broken_clip);
+        }
+        else
+        {
+            Audio_player_place.PlayOneShot(world.blocktypes[VoxelData.Stone].broken_clip);
+        }
+    }
+
+    public void PlaySoung_Place()
+    {
+        if (managerhub.backpackManager.istheindexHaveBlock(player.selectindex))
+        {
+            Audio_player_place.PlayOneShot(world.blocktypes[managerhub.backpackManager.slots[player.selectindex].blockId].broken_clip);
+        }
+
+    }
+
+
+    #endregion
+
+
+    #region Broking
 
     void FUN_PlaceandBroke()
     {
@@ -351,11 +249,12 @@ public class MusicManager : MonoBehaviour
                         {
                             Audio_player_broke.clip = world.blocktypes[VoxelData.Stone].broking_clip;
                         }
-                        
+
 
                         Audio_player_broke.Play();
                     }
-                    else{
+                    else
+                    {
                         Audio_player_broke.Stop();
                     }
                 }
@@ -366,36 +265,65 @@ public class MusicManager : MonoBehaviour
         }
     }
 
-    public void PlaySound_Broken(byte pointblock)
+
+    #endregion
+
+
+    #region 游泳，入水，潜水
+
+    //moving
+    [Header("玩家/leg/foot状态")]
+    [HideInInspector] public bool hasExec_isGround = true;
+    [HideInInspector] public bool hasExec_isSwiming = true;
+    [HideInInspector] public byte leg_blocktype;
+    [HideInInspector] public byte previous_leg_blocktype = VoxelData.Air;
+
+    public Transform eyes;
+    public Transform leg;
+    public Transform foot;
+
+
+    //当脚下方块切换的时候触发
+    void UpdateFootBlockType()
     {
-        if (world.blocktypes[pointblock].broken_clip != null)
+        footBlocktype = world.GetBlockType(foot.position);
+
+        if (footBlocktype != previous_foot_blocktype)
         {
-            
-            Audio_player_place.PlayOneShot(world.blocktypes[pointblock].broken_clip);
+            previous_foot_blocktype = footBlocktype;
+        }
+    }
+
+    //播放潜水音效
+    void playsound_diving()
+    {
+        if (world.GetBlockType(eyes.position) == VoxelData.Water && !Audio_player_diving.isPlaying)
+        {
+            Audio_player_diving.Play();
+        }
+
+        if (world.GetBlockType(eyes.position) != VoxelData.Water)
+        {
+            Audio_player_diving.Stop();
+        }
+    }
+
+
+    //将给定type分类为Air和water
+    byte classifytype()
+    {
+        byte a = world.GetBlockType(leg.position);
+
+        if (a == VoxelData.Water)
+        {
+            return VoxelData.Water;
         }
         else
         {
-            Audio_player_place.PlayOneShot(world.blocktypes[VoxelData.Stone].broken_clip);
+            return VoxelData.Air;
         }
     }
 
-    public void PlaySoung_Place()
-    {
-        if (backPackManager.istheindexHaveBlock(player.selectindex))
-        {
-            Audio_player_place.PlayOneShot(world.blocktypes[backPackManager.slots[player.selectindex].blockId].broken_clip);
-        }
-        
-    }
-
-    //---------------------------------------------------------------------------------------
-    
-
-
-
-
-
-    //------------------------------------ moving -------------------------------------------
     void FUN_Moving()
     {
         if (world.game_state == Game_State.Playing)
@@ -412,66 +340,6 @@ public class MusicManager : MonoBehaviour
             playsound_diving();
         }
     }
-
-    #region 玩家脚步声实现
-
-    //walk
-    int item = 0;   //用来区分左右脚的
-    [HideInInspector] public byte footBlocktype = VoxelData.Grass;
-    [HideInInspector] public byte previous_foot_blocktype = VoxelData.Grass;
-    [HideInInspector] public float footstepInterval; // 走路音效播放间隔
-    private float nextFoot;
-
-    //脚步声
-    void PlaySound_Foot()
-    {
-        // 如果玩家移动并且音频未播放，并且玩家在地面上，则播放音频
-        if (player.isMoving && player.isGrounded && !player.isSquating)
-        {
-            if (Time.time >= nextFoot)
-            {
-                //如果不是空气则播放
-                if (footBlocktype != VoxelData.Air)
-                {
-                    //如果有专属音效
-                    if (footBlocktype != 255 && world.blocktypes[footBlocktype].walk_clips[item] != null)
-                    {
-                        if (item == 0)
-                        {
-                            Audio_player_moving.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
-                            item = 1;
-                        }
-                        else
-                        {
-                            Audio_player_moving.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
-                            item = 0;
-                        }
-                    }
-                    //如果没有专属走路音效，则默认播放石头音效
-                    else
-                    {
-                        if (item == 0)
-                        {
-                            Audio_player_moving.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
-                            item = 1;
-                        }
-                        else
-                        {
-                            Audio_player_moving.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
-                            item = 0;
-                        }
-                    }
-                }
-                
-                
-
-                nextFoot = Time.time + footstepInterval;
-            }
-        }
-
-    }
-
-    #endregion
 
     //游泳音效
     void PlaySound_Swiming()
@@ -554,24 +422,10 @@ public class MusicManager : MonoBehaviour
         }
     }
 
-    //将给定type分类为Air和water
-    byte classifytype()
-    {
-        byte a = world.GetBlockType(leg.position);
-
-        if (a == VoxelData.Water)
-        {
-            return VoxelData.Water;
-        }
-        else
-        {
-            return VoxelData.Air;
-        }
-    }
-
     //如果玩家状态发生切换的时候换成落水音效
     void ifmovingStateSwitch()
     {
+
         leg_blocktype = classifytype();
 
         if (leg_blocktype != previous_leg_blocktype)
@@ -582,200 +436,71 @@ public class MusicManager : MonoBehaviour
 
     }
 
-    //播放摔落音效
-    public void PlaySound_fallGround()
-    {
-        Audio_player_falling.PlayOneShot(audioclips[MusicData.fall_high]);
-    }
 
-    //播放潜水音效
-    void playsound_diving()
-    {
-        if (world.GetBlockType(eyes.position) == VoxelData.Water && !Audio_player_diving.isPlaying)
-        {
-            Audio_player_diving.Play();
-        }
-
-        if (world.GetBlockType(eyes.position) != VoxelData.Water)
-        {
-            Audio_player_diving.Stop();
-        }
-    }
-
-
-    //--------------------------------------------------------------------------------------
-
-
-
-
-
-
-    //------------------------------------ 工具类 -------------------------------------------
-
-    //当脚下方块切换的时候触发
-    void UpdateFootBlockType()
-    {
-        footBlocktype = world.GetBlockType(foot.position); 
-         
-        if (footBlocktype != previous_foot_blocktype)
-        {
-            previous_foot_blocktype = footBlocktype;
-        }
-    }
-
-    //播放吸收音效
-    public void PlaySound_Absorb()
-    {
-        int i = UnityEngine.Random.Range(0, 2);
-
-        if (i == 0)
-        {
-            Audio_Click.PlayOneShot(audioclips[MusicData.absorb_1]);
-        }
-        else
-        {
-            Audio_Click.PlayOneShot(audioclips[MusicData.absorb_2]);
-        }
-    }
-
-    public void PlaySound(int _clip)
-    {
-        Audio_Click.PlayOneShot(audioclips[_clip]);
-    }
-
-    //---------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-}
-
-
-//待处理：
-//音乐管理器还是画个图比较好
-//提供于CanvasManager用于拖动的Change音量的函数
-//音量是按比例的，音效和背景音乐比例不一样怎么调整
-//是否需要用结构体管理音量pith这些东西
-public class NewMusicManager: MonoBehaviour
-{
-
-    #region 状态
-    public Dictionary<int, SoundsType> Sounds;
-    
 
     #endregion
 
 
-    #region 周期函数
+    #region 玩家脚步声实现
 
-    ManagerHub managerhub;
+    //walk
+    int item = 0;   //用来区分左右脚的
+    [HideInInspector] public byte footBlocktype = VoxelData.Grass;
+    [HideInInspector] public byte previous_foot_blocktype = VoxelData.Grass;
+    [HideInInspector] public float footstepInterval; // 走路音效播放间隔
+    private float nextFoot;
 
-    private void Start()
+    //脚步声
+    void PlaySound_Foot()
     {
-        managerhub = GlobalData.GetManagerhub();
-        Initialized();
-    }
-
-    private void Update()
-    {
-        _ReferUpdateBackGroundMusic();
-    }
-
-    #endregion
-
-
-    #region 初始化
-
-    [Foldout("初始化", true)]
-    [Header("音乐池最大容量")] public int AudioSourcePoolCount;
-
-    //创建Gameobject并初始化
-    void Initialized()
-    {
-        //创建gameobject并挂载一定容量的的Source
-    }
-
-    #endregion
-
-
-    #region 背景音乐
-
-    //背景音乐一直占用0号位置
-    void _ReferUpdateBackGroundMusic()
-    {
-        if (managerhub.world.game_state == Game_State.Playing)
+        // 如果玩家移动并且音频未播放，并且玩家在地面上，则播放音频
+        if (player.isMoving && player.isGrounded && !player.isSquating)
         {
-            //随机选择背景音频并播放
-
-        }
-    }
-
-    #endregion
-
-
-    #region 音乐播放函数
-
-    /// <summary>
-    /// 播放音乐
-    /// </summary>
-    public void PlaySound(SoundsData _data)
-    {
-        switch (_data.soundsType)
-        {
-            //背景音
-            case SoundsType.BackGround:
-
-                //背景音则使用固定的index
-
-                //如果正在播放，则需要缓步切换
+            if (Time.time >= nextFoot)
+            {
+                //如果不是空气则播放
+                if (footBlocktype != VoxelData.Air)
+                {
+                    //如果有专属音效
+                    if (footBlocktype != 255 && world.blocktypes[footBlocktype].walk_clips[item] != null)
+                    {
+                        if (item == 0)
+                        {
+                            Audio_player_moving.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
+                            item = 1;
+                        }
+                        else
+                        {
+                            Audio_player_moving.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
+                            item = 0;
+                        }
+                    }
+                    //如果没有专属走路音效，则默认播放石头音效
+                    else
+                    {
+                        if (item == 0)
+                        {
+                            Audio_player_moving.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
+                            item = 1;
+                        }
+                        else
+                        {
+                            Audio_player_moving.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
+                            item = 0;
+                        }
+                    }
+                }
+                
                 
 
-                break;
-
-            //音效
-            case SoundsType.OneShot:
-
-                //直接使用音效下标
-
-                //播放即可
-
-                break;
-
-            //长时
-            case SoundsType.LongTerm:
-
-                break;
-
-            //其他
-            default:
-                print("soundsType有误");
-                break;
-
+                nextFoot = Time.time + footstepInterval;
+            }
         }
-    }
-
-    /// <summary>
-    /// 在所给地点创建3d音频
-    /// </summary>
-    /// <param name="_pos"></param>
-    /// <param name="_id"></param>
-    public void Play3dSound(Vector3 _pos, int _id)
-    {
 
     }
 
     #endregion
 
-
-    #region 工具
-
-
-    #endregion
 
 }
 

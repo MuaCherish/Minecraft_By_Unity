@@ -16,7 +16,8 @@ public class MC_Music_Component : MonoBehaviour
 
     #region 状态
 
-
+    [Foldout("状态", true)]
+    [Header("是否在水中")] public bool isInTheWater;
 
     #endregion
 
@@ -44,8 +45,7 @@ public class MC_Music_Component : MonoBehaviour
         if (managerhub.world.game_state == Game_State.Playing)
         {
             _ReferUpdate_FootStep();
-            _ReferUpdate_SwitchWater();
-            _ReferUpdate_Swimming();
+            _ReferUpdate_Water();
         }
     }
 
@@ -92,8 +92,16 @@ public class MC_Music_Component : MonoBehaviour
             sourceTemp.maxDistance = MaxDistanceToHear;
 
             // 其他参数配置（可选）
-            sourceTemp.rolloffMode = AudioRolloffMode.Linear; // 设置音量随距离衰减模式
-            sourceTemp.dopplerLevel = 0; // 禁用多普勒效应
+            //sourceTemp.rolloffMode = AudioRolloffMode.Linear; // 设置音量随距离衰减模式
+            //sourceTemp.dopplerLevel = 0; // 禁用多普勒效应
+
+            //配置音量等设置
+
+            //配置Clip
+            if (i == MusicData.AudioSource_Swimming)
+            {
+                sourceTemp.clip = managerhub.musicManager.audioclips[MusicData.fall_water];
+            }
 
             MainAudioSources[i] = sourceTemp;
         }
@@ -142,13 +150,11 @@ public class MC_Music_Component : MonoBehaviour
         // 提前返回 - 玩家静止或在空中
         if (!Velocity_Component.isMoving || !Collider_Component.isGround) return;
 
-        byte footBlocktype = managerhub.world.GetBlockType(Collider_Component.FootPoint);
-
         // 检查是否到达下一个播放时间
         if (Time.time >= nextFoot)
         {
             // 获取播放的音效，优先使用专属音效，否则默认石头音效
-            AudioClip clipToPlay = GetFootstepClip(footBlocktype);
+            AudioClip clipToPlay = GetFootstepClip(Collider_Component.FootBlockType);
 
             // 播放音效并切换item
             MainAudioSources[0].PlayOneShot(clipToPlay);
@@ -177,23 +183,37 @@ public class MC_Music_Component : MonoBehaviour
     #endregion 
 
 
-    #region 水面切换音效实现
+    #region 水面切换音效和游泳实现
 
-    void _ReferUpdate_SwitchWater()
+
+    void _ReferUpdate_Water()
     {
+        bool isCurrentlyInWater = Collider_Component.FootBlockType == VoxelData.Water;
+
+        // 切换入水/出水状态
+        if (isCurrentlyInWater != isInTheWater)
+        {
+            // 播放音效
+            MainAudioSources[0].PlayOneShot(managerhub.musicManager.audioclips[MusicData.fall_water]);
+
+            isInTheWater = isCurrentlyInWater;
+        }
+
+        //游泳
+        if (isInTheWater && Velocity_Component.isMoving)
+        {
+            MainAudioSources[MusicData.AudioSource_Swimming].Play();
+        }
+        else
+        {
+            if (MainAudioSources[MusicData.AudioSource_Swimming].isPlaying)
+            {
+                MainAudioSources[MusicData.AudioSource_Swimming].Stop();
+            }
+        }
 
     }
 
-    #endregion
-
-
-    #region 游泳音效实现
-
-
-    void _ReferUpdate_Swimming()
-    {
-
-    }
 
     #endregion
 
