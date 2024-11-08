@@ -18,8 +18,8 @@ public class MusicManager : MonoBehaviour
     public AudioClip[] audioclips;
 
     //音源
-    [HideInInspector]
-    public AudioSource Audio_envitonment;
+    //[HideInInspector]
+    //public AudioSource Audio_envitonment;
     [HideInInspector]
     public AudioSource Audio_player_place;
     [HideInInspector]
@@ -80,15 +80,15 @@ public class MusicManager : MonoBehaviour
     public void InitMusicManager()
     {
         //environment
-        if (Audio_envitonment == null)
-        {
-            Audio_envitonment = gameObject.AddComponent<AudioSource>();
-        }
+        //if (Audio_envitonment == null)
+        //{
+        //    Audio_envitonment = gameObject.AddComponent<AudioSource>();
+        //}
 
-        Audio_envitonment.clip = audioclips[MusicData.bgm_menu];
-        Audio_envitonment.volume = 0.4f;
-        Audio_envitonment.loop = false;
-        Audio_envitonment.Play();
+        //Audio_envitonment.clip = audioclips[MusicData.bgm_menu];
+        //Audio_envitonment.volume = 0.4f;
+        //Audio_envitonment.loop = false;
+        //Audio_envitonment.Play();
 
         //place
         if (Audio_player_place == null)
@@ -162,59 +162,14 @@ public class MusicManager : MonoBehaviour
     [ReadOnly] public bool isbroking = false;
 
 
-    //播放吸收音效
-    public void PlaySound_Absorb()
-    {
-        int i = UnityEngine.Random.Range(0, 2);
-
-        if (i == 0)
-        {
-            Audio_Click.PlayOneShot(audioclips[MusicData.absorb_1]);
-        }
-        else
-        {
-            Audio_Click.PlayOneShot(audioclips[MusicData.absorb_2]);
-        }
-    }
-
-    public void PlaySound(int _clip)
-    {
-        Audio_Click.PlayOneShot(audioclips[_clip]);
-    }
-    //播放摔落音效
-    public void PlaySound_fallGround()
-    {
-        Audio_player_falling.PlayOneShot(audioclips[MusicData.fall_high]);
-    }
-    public void PlaySound_Click()
-    {
-        Audio_Click.PlayOneShot(audioclips[MusicData.click]);
-    }
-
-    public void PlaySoundClip(int _id)
-    {
-        Audio_Click.PlayOneShot(audioclips[_id]);
-    }
-
-    public void PlaySound_Broken(byte pointblock)
-    {
-        if (world.blocktypes[pointblock].broken_clip != null)
-        {
-
-            Audio_player_place.PlayOneShot(world.blocktypes[pointblock].broken_clip);
-        }
-        else
-        {
-            Audio_player_place.PlayOneShot(world.blocktypes[VoxelData.Stone].broken_clip);
-        }
-    }
-
     public void PlaySoung_Place()
     {
         if (managerhub.backpackManager.istheindexHaveBlock(player.selectindex))
         {
-            Audio_player_place.PlayOneShot(world.blocktypes[managerhub.backpackManager.slots[player.selectindex].blockId].broken_clip);
+            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[managerhub.backpackManager.slots[player.selectindex].blockId].broken_clip);
+
         }
+
 
     }
 
@@ -430,7 +385,7 @@ public class MusicManager : MonoBehaviour
 
         if (leg_blocktype != previous_leg_blocktype)
         {
-            Audio_player_falling.PlayOneShot(audioclips[MusicData.fall_water]);
+            managerhub.NewmusicManager.PlayOneShot(MusicData.fall_water);
             previous_leg_blocktype = leg_blocktype;
         }
 
@@ -466,12 +421,12 @@ public class MusicManager : MonoBehaviour
                     {
                         if (item == 0)
                         {
-                            Audio_player_moving.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
+                            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
                             item = 1;
                         }
                         else
                         {
-                            Audio_player_moving.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
+                            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
                             item = 0;
                         }
                     }
@@ -480,12 +435,12 @@ public class MusicManager : MonoBehaviour
                     {
                         if (item == 0)
                         {
-                            Audio_player_moving.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
+                            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
                             item = 1;
                         }
                         else
                         {
-                            Audio_player_moving.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
+                            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
                             item = 0;
                         }
                     }

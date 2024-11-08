@@ -17143,7 +17143,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 325552235}
-  - component: {fileID: 325552237}
   - component: {fileID: 325552238}
   m_Layer: 0
   m_Name: Music Manager
@@ -17164,66 +17163,10 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 775452361}
   m_Father: {fileID: 475922108}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &325552237
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 325552234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdc161cd79a9120449f2ba6d11af91f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioclips:
-  - {fileID: 8300000, guid: 2e6043ce8604c1643854644f89e3bebd, type: 3}
-  - {fileID: 8300000, guid: e52f848daf7fded428def2ba3389a90b, type: 3}
-  - {fileID: 8300000, guid: 773ada525be96cc4a86bde268f1e8e71, type: 3}
-  - {fileID: 8300000, guid: eca9d60a74398c04b933635bf45a61c3, type: 3}
-  - {fileID: 8300000, guid: d56f66aca076c4c4cb0176e36febb058, type: 3}
-  - {fileID: 8300000, guid: a4d3797a076e5ea449a760fdf852bcb6, type: 3}
-  - {fileID: 8300000, guid: 3b110f34bcf43c5429f4838acad6b05c, type: 3}
-  - {fileID: 8300000, guid: 8ca616b5ebaec6a489a447000d6ff3b4, type: 3}
-  - {fileID: 8300000, guid: d5016f1f93fa4e84c85689b5df15a7de, type: 3}
-  - {fileID: 8300000, guid: bf2c2f8977e7d5e42b5e08c60c9e81b6, type: 3}
-  - {fileID: 8300000, guid: fb065b6966328b74eb25eaecfb40a9e2, type: 3}
-  - {fileID: 8300000, guid: cf2fd7cb1b4da644983ecee1b67e2c68, type: 3}
-  - {fileID: 8300000, guid: 894ac3762c35a0840b3669c9b6217121, type: 3}
-  - {fileID: 8300000, guid: 932ff0fde01bf994a865289a4144a1a7, type: 3}
-  - {fileID: 8300000, guid: 9212733cedec09f409d1a79261456847, type: 3}
-  - {fileID: 8300000, guid: f24ee401997043549a40acf2e3da30ed, type: 3}
-  - {fileID: 8300000, guid: 7f120468f9c73a443a0018abdc68106f, type: 3}
-  - {fileID: 8300000, guid: a10bc6775f79bbb4389e36d81a427043, type: 3}
-  - {fileID: 8300000, guid: 8456cd3a3f736d84fae8191c7b0bd4b7, type: 3}
-  - {fileID: 8300000, guid: 31ffe0b575593b543bb2f5d4a5e96b97, type: 3}
-  - {fileID: 8300000, guid: 13a6fda538ad3ac4e978d7a97c31c114, type: 3}
-  - {fileID: 8300000, guid: 15fb6fe49365a48498a7936a90c5344f, type: 3}
-  - {fileID: 8300000, guid: 6bfbb7ef0efdf044dae97ffc21ffe80c, type: 3}
-  - {fileID: 8300000, guid: 53a3c7ac6afcd0a4d88fca5fb60b46d0, type: 3}
-  - {fileID: 8300000, guid: aca7a8899e7eaf34491ddfd6c3970884, type: 3}
-  Audio_envitonment: {fileID: 0}
-  Audio_player_place: {fileID: 0}
-  Audio_player_broke: {fileID: 0}
-  Audio_player_moving: {fileID: 0}
-  Audio_player_falling: {fileID: 0}
-  Audio_player_diving: {fileID: 0}
-  Audio_Click: {fileID: 0}
-  Audio_Player_moving_swiming: {fileID: 0}
-  isbroking: 0
-  hasExec_isGround: 1
-  hasExec_isSwiming: 1
-  leg_blocktype: 0
-  previous_leg_blocktype: 4
-  eyes: {fileID: 1727421507}
-  leg: {fileID: 1232828276}
-  foot: {fileID: 656216633}
-  footBlocktype: 2
-  previous_foot_blocktype: 4
-  footstepInterval: 0.7
 --- !u!114 &325552238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17262,6 +17205,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6bfbb7ef0efdf044dae97ffc21ffe80c, type: 3}
   - {fileID: 8300000, guid: 53a3c7ac6afcd0a4d88fca5fb60b46d0, type: 3}
   - {fileID: 8300000, guid: aca7a8899e7eaf34491ddfd6c3970884, type: 3}
+  FadeDuration: 3
 --- !u!1 &328216470
 GameObject:
   m_ObjectHideFlags: 0
@@ -24521,6 +24465,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 843154431}
+  - {fileID: 562568452}
   - {fileID: 2136429364}
   - {fileID: 1026571031}
   - {fileID: 2031280224}
@@ -29592,6 +29537,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 558273298}
   m_CullTransparentMesh: 1
+--- !u!1 &562568451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 562568452}
+  - component: {fileID: 562568453}
+  m_Layer: 0
+  m_Name: Loader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &562568452
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562568451}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 475922108}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &562568453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562568451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9baa3ee360927894b8a9b2d2a8f762da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &563106963
 GameObject:
   m_ObjectHideFlags: 0
@@ -43978,6 +43967,94 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 768166856}
   m_CullTransparentMesh: 1
+--- !u!1 &775452360
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 775452361}
+  - component: {fileID: 775452362}
+  m_Layer: 0
+  m_Name: Old Music Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &775452361
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775452360}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 325552235}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &775452362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775452360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdc161cd79a9120449f2ba6d11af91f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioclips:
+  - {fileID: 8300000, guid: 2e6043ce8604c1643854644f89e3bebd, type: 3}
+  - {fileID: 8300000, guid: e52f848daf7fded428def2ba3389a90b, type: 3}
+  - {fileID: 8300000, guid: 773ada525be96cc4a86bde268f1e8e71, type: 3}
+  - {fileID: 8300000, guid: eca9d60a74398c04b933635bf45a61c3, type: 3}
+  - {fileID: 8300000, guid: d56f66aca076c4c4cb0176e36febb058, type: 3}
+  - {fileID: 8300000, guid: a4d3797a076e5ea449a760fdf852bcb6, type: 3}
+  - {fileID: 8300000, guid: 3b110f34bcf43c5429f4838acad6b05c, type: 3}
+  - {fileID: 8300000, guid: 8ca616b5ebaec6a489a447000d6ff3b4, type: 3}
+  - {fileID: 8300000, guid: d5016f1f93fa4e84c85689b5df15a7de, type: 3}
+  - {fileID: 8300000, guid: bf2c2f8977e7d5e42b5e08c60c9e81b6, type: 3}
+  - {fileID: 8300000, guid: fb065b6966328b74eb25eaecfb40a9e2, type: 3}
+  - {fileID: 8300000, guid: cf2fd7cb1b4da644983ecee1b67e2c68, type: 3}
+  - {fileID: 8300000, guid: 894ac3762c35a0840b3669c9b6217121, type: 3}
+  - {fileID: 8300000, guid: 932ff0fde01bf994a865289a4144a1a7, type: 3}
+  - {fileID: 8300000, guid: 9212733cedec09f409d1a79261456847, type: 3}
+  - {fileID: 8300000, guid: f24ee401997043549a40acf2e3da30ed, type: 3}
+  - {fileID: 8300000, guid: 7f120468f9c73a443a0018abdc68106f, type: 3}
+  - {fileID: 8300000, guid: a10bc6775f79bbb4389e36d81a427043, type: 3}
+  - {fileID: 8300000, guid: 8456cd3a3f736d84fae8191c7b0bd4b7, type: 3}
+  - {fileID: 8300000, guid: 31ffe0b575593b543bb2f5d4a5e96b97, type: 3}
+  - {fileID: 8300000, guid: 13a6fda538ad3ac4e978d7a97c31c114, type: 3}
+  - {fileID: 8300000, guid: 15fb6fe49365a48498a7936a90c5344f, type: 3}
+  - {fileID: 8300000, guid: 6bfbb7ef0efdf044dae97ffc21ffe80c, type: 3}
+  - {fileID: 8300000, guid: 53a3c7ac6afcd0a4d88fca5fb60b46d0, type: 3}
+  - {fileID: 8300000, guid: aca7a8899e7eaf34491ddfd6c3970884, type: 3}
+  Audio_player_place: {fileID: 0}
+  Audio_player_broke: {fileID: 0}
+  Audio_player_moving: {fileID: 0}
+  Audio_player_falling: {fileID: 0}
+  Audio_player_diving: {fileID: 0}
+  Audio_Click: {fileID: 0}
+  Audio_Player_moving_swiming: {fileID: 0}
+  isbroking: 0
+  hasExec_isGround: 1
+  hasExec_isSwiming: 1
+  leg_blocktype: 0
+  previous_leg_blocktype: 4
+  eyes: {fileID: 1727421507}
+  leg: {fileID: 1232828276}
+  foot: {fileID: 656216633}
+  footBlocktype: 2
+  previous_foot_blocktype: 4
+  footstepInterval: 0.7
 --- !u!1 &779720575
 GameObject:
   m_ObjectHideFlags: 0
@@ -46472,7 +46549,8 @@ MonoBehaviour:
   commandManager: {fileID: 2031280225}
   debugManager: {fileID: 438324209}
   lifeManager: {fileID: 1066840322}
-  musicManager: {fileID: 325552237}
+  NewmusicManager: {fileID: 325552238}
+  OldMusicManager: {fileID: 775452362}
   timeManager: {fileID: 22826878}
   world: {fileID: 699955241}
   player: {fileID: 1504082080}
@@ -53050,11 +53128,12 @@ MonoBehaviour:
   Right: 0
   Up: 0
   Down: 0
-  Jump_Direct: {x: 0, y: 0, z: 0}
-  Jump_Value: 0
+  Jump_Direct: {x: 0, y: 1, z: 0}
+  Jump_Value: 270
   Toggle_EntityOnceJump: 0
   Debug_radious: 5
   Toggle_EntityOnceMove: 0
+  EntityControlerEnable: 1
 --- !u!114 &975489407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -53068,17 +53147,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isMoving: 0
+  isJumpRequest: 0
   velocity: {x: 0, y: 0, z: 0}
   momentum: {x: 0, y: 0, z: 0}
   Othermomentum: {x: 0, y: 0, z: 0}
-  mass: 1
-  speed_move: 1
-  speedDown_ultimate: -10
+  mass: 0.3
+  speed_move: 1.8
+  speedDown_ultimate: -20
   WaterspeedDown_ultimate: -2
-  force_jump: 77
+  force_jump: 140
   force_gravity: -9.8
   force_Watergravity: -2
-  Damping_Horizontal: 20
+  JumpColdTime: 0.1
+  Damping_Horizontal: 10
 --- !u!114 &975489408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55328,7 +55409,7 @@ MonoBehaviour:
   partSystem: {fileID: 1727421512}
   world: {fileID: 699955241}
   Camera: {fileID: 1727421507}
-  musicmanager: {fileID: 325552237}
+  musicmanager: {fileID: 0}
   player: {fileID: 1504082080}
   selectblockname: {fileID: 1136584653}
   BackPackManager: {fileID: 2136429365}
@@ -76434,7 +76515,7 @@ MonoBehaviour:
   managerhub: {fileID: 843154432}
   commandManager: {fileID: 2031280225}
   world: {fileID: 699955241}
-  musicmanager: {fileID: 325552237}
+  musicmanager: {fileID: 0}
   backpackmanager: {fileID: 2136429365}
   lifemanager: {fileID: 1066840322}
   particle_explosion: {fileID: 2895232346133327969, guid: 83c43639f81e51441ba9eb22ff444316, type: 3}
@@ -91571,7 +91652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 8a2580812d58b14448587d735b3d15d4, type: 2}
-  light: {fileID: 593827498}
+  _light: {fileID: 0}
 --- !u!114 &1727421515
 MonoBehaviour:
   m_ObjectHideFlags: 0

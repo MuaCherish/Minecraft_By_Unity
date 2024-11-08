@@ -7,7 +7,7 @@ using UnityEngine.XR;
 using System.Collections.Generic;
 
 
-public class DropBlock: MC_Entity_Father
+public class DropBlock: MC_Entity_Base
 {
 
     #region 周期函数
@@ -74,7 +74,14 @@ public class DropBlock: MC_Entity_Father
     public override void OnEndEntity()
     {
         //播放音效
-        managerhub.musicManager.PlaySound_Absorb();
+        if (UnityEngine.Random.Range(0, 2) == 0)
+        {
+            managerhub.NewmusicManager.PlayOneShot(MusicData.absorb_1);
+        }
+        else
+        {
+            managerhub.NewmusicManager.PlayOneShot(MusicData.absorb_2);
+        }
 
         //背包系统计数
         byte _point_Block_type = myItem._blocktype;

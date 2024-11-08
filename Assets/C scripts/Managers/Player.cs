@@ -810,7 +810,7 @@ public class Player : MonoBehaviour
         {
 
             isSprinting = true;
-            musicmanager.footstepInterval = PlayerData.sprintSpeed;
+            managerhub.OldMusicManager.footstepInterval = PlayerData.sprintSpeed;
 
         }
 
@@ -823,7 +823,7 @@ public class Player : MonoBehaviour
         {
 
             isSprinting = false;
-            musicmanager.footstepInterval = PlayerData.walkSpeed;
+            managerhub.OldMusicManager.footstepInterval = PlayerData.walkSpeed;
 
         }
 
@@ -924,7 +924,7 @@ public class Player : MonoBehaviour
         {
             isFirstBrokeBlock = true;
 
-
+            //print(OnLoadResource.Instance.Goods[1]);
         }
 
         //如果松开鼠标左键，isChanger还原
@@ -933,8 +933,8 @@ public class Player : MonoBehaviour
 
             isChangeBlock = false;
             hasExec_isChangedBlock = true;
-            musicmanager.isbroking = false;
-            musicmanager.Audio_player_broke.Stop();
+            managerhub.OldMusicManager.isbroking = false;
+            managerhub.OldMusicManager.Audio_player_broke.Stop();
             isFirstBrokeBlock = true;
         }
 
@@ -963,7 +963,7 @@ public class Player : MonoBehaviour
             {
                 //print("CHangedBlock");
                 isChangeBlock = true;
-                musicmanager.isbroking = false;
+                managerhub.OldMusicManager.isbroking = false;
                 OldPointLocation = pointvector;
 
             }
@@ -1019,8 +1019,9 @@ public class Player : MonoBehaviour
                     case 40:
                         if (_selecttype == VoxelData.Tool_MusicDiscs)
                         {
-                            managerhub.musicManager.Audio_envitonment.clip = managerhub.musicManager.audioclips[MusicData.MusicBox];
-                            managerhub.musicManager.Audio_envitonment.Play();
+
+                            managerhub.NewmusicManager.SwitchBackgroundMusic(MusicData.MusicBox);
+
                             managerhub.backpackManager.update_slots(1, 50);
                         }
                         break;
@@ -1087,7 +1088,7 @@ public class Player : MonoBehaviour
                 {
 
                     //music
-                    musicmanager.PlaySoung_Place();
+                    managerhub.OldMusicManager.PlaySoung_Place();
 
                     if (backpackmanager.istheindexHaveBlock(selectindex))
                     {
@@ -1323,14 +1324,14 @@ public class Player : MonoBehaviour
                 elapsedTime = 0.0f;
                 isDestroying = false;
                 isChangeBlock = false;
-                musicmanager.isbroking = false;
+                managerhub.OldMusicManager.isbroking = false;
 
                 //材质还原
                 HighLightMaterial.color = new Color(0, 0, 0, 0);
                 HighLightMaterial.mainTexture = DestroyTextures[0];
 
                 //音效暂停
-                musicmanager.Audio_player_broke.Stop();
+                managerhub.OldMusicManager.Audio_player_broke.Stop();
 
                 brokingBox.gameObject.GetComponent<ParticleSystem>().Stop();
                 //Broking_Animation.Stop();
@@ -1359,7 +1360,7 @@ public class Player : MonoBehaviour
         //particleInstance.GetComponent<ParticleCollision>().Particle_PLay(theBlockwhichBeBrokenType);
 
         elapsedTime = 0.0f;
-        musicmanager.isbroking = false;
+        managerhub.OldMusicManager.isbroking = false;
 
         //材质还原
         HighLightMaterial.color = new Color(0, 0, 0, 0);
@@ -2989,7 +2990,7 @@ public class Player : MonoBehaviour
         // 玩家判定箱，假设已知
         Vector3 _selfCenter = transform.position;
         float _selfWidth = playerWidth - 0.1f; // 玩家宽度（底边正方形的边长）
-        float _selfHeight = playerHeight - 1.3f; // 玩家高度
+        float _selfHeight = playerHeight - 1.8f; // 玩家高度
 
         // 计算玩家的边界
         float selfMinX = _selfCenter.x - _selfWidth / 2;

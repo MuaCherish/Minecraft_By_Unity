@@ -100,7 +100,7 @@ public class MC_Music_Component : MonoBehaviour
             //≈‰÷√Clip
             if (i == MusicData.AudioSource_Swimming)
             {
-                sourceTemp.clip = managerhub.musicManager.audioclips[MusicData.fall_water];
+                sourceTemp.clip = managerhub.NewmusicManager.audioclips[MusicData.fall_water];
             }
 
             MainAudioSources[i] = sourceTemp;
@@ -194,7 +194,7 @@ public class MC_Music_Component : MonoBehaviour
         if (isCurrentlyInWater != isInTheWater)
         {
             // ≤•∑≈“Ù–ß
-            MainAudioSources[0].PlayOneShot(managerhub.musicManager.audioclips[MusicData.fall_water]);
+            MainAudioSources[0].PlayOneShot(managerhub.NewmusicManager.audioclips[MusicData.fall_water]);
 
             isInTheWater = isCurrentlyInWater;
         }

@@ -2781,7 +2781,15 @@ public class Chunk : MonoBehaviour
         }
 
         //Music
-        managerhub.musicManager.PlaySound_Broken(thisType);
+        if (world.blocktypes[thisType].broken_clip != null)
+        {
+
+            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[thisType].broken_clip);
+        }
+        else
+        {
+            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[VoxelData.Stone].broken_clip);
+        }
 
 
         //ÆÆ»µÁ£×ÓÐ§¹û
@@ -2908,7 +2916,7 @@ public class Chunk : MonoBehaviour
             //Music
             if (hasExec_PlaySound)
             {
-                managerhub.musicManager.PlaySound_Broken(_EditList[i].targetType);
+                managerhub.NewmusicManager.PlayOneShot(_EditList[i].targetType);
                 hasExec_PlaySound = false;
             }
             

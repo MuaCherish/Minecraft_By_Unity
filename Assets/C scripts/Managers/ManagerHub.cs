@@ -15,7 +15,9 @@ public class ManagerHub : MonoBehaviour
     public CommandManager commandManager;
     public DebugManager debugManager;
     public LifeManager lifeManager;
-    public MusicManager musicManager;
+    //public MusicManager musicManager;
+    public NewMusicManager NewmusicManager;
+    public MusicManager OldMusicManager;
     public TimeManager timeManager;
     public World world;
     public Player player;

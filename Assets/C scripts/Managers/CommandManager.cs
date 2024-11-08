@@ -416,7 +416,7 @@ public class CommandManager : MonoBehaviour
                             // 更新背包内容，例如插入 type 数量为 number 的物品
                             managerhub.backpackManager.update_slots(0, type, number);
                             //managerhub.backpackManager.ChangeBlockInHand();
-                            managerhub.musicManager.PlaySound_Absorb();
+                            managerhub.NewmusicManager.PlayOneShot(MusicData.absorb_1);
                             return "<系统消息> " + "给与玩家方块";
                         }
                         else

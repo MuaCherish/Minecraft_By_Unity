@@ -154,7 +154,7 @@ public class LifeManager : MonoBehaviour
         //受伤效果
         if (isShakeHead)   //解决初始化尖叫的问题
         {
-            managerhub.musicManager.PlaySound_fallGround();
+            managerhub.NewmusicManager.PlayOneShot(MusicData.fall_high);
             StartCoroutine(managerhub.player.Animation_Behurt());
         }
 

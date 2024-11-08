@@ -13,19 +13,19 @@ public class Steve : MonoBehaviour
 
     [Header("State")]
     public EntityState currentState;
-    private bool isHurtOnCooldown = false;  // 标识受伤状态是否处于冷却中
+    //private bool isHurtOnCooldown = false;  // 标识受伤状态是否处于冷却中
     public float hurtCooldownDuration = 2f;  // 受伤状态的冷却时间
 
     [Header("Animators")]
-    public Animation animation;
+    public Animation _animation;
 
 
     // 播放所有Animator的指定动画
     private void PlayAnimation()
     {
-        if (animation != null)
+        if (_animation != null)
         {
-            if (animation.Play("LeftHandMoving"))
+            if (_animation.Play("LeftHandMoving"))
             {
                 print("Playing LeftHandMoving");
             }
@@ -122,17 +122,17 @@ public class Steve : MonoBehaviour
     }
 
     // 处理角色受伤的逻辑，并实现冷却机制
-    private IEnumerator Entity_Hurted()
-    {
-        isHurtOnCooldown = true;
-        Debug.Log("Steve is hurt");
+    //private IEnumerator Entity_Hurted()
+    //{
+    //    isHurtOnCooldown = true;
+    //    Debug.Log("Steve is hurt");
 
-        // 处理受伤时的逻辑，例如动画播放、生命值减少等
+    //    // 处理受伤时的逻辑，例如动画播放、生命值减少等
 
-        yield return new WaitForSeconds(hurtCooldownDuration);
+    //    yield return new WaitForSeconds(hurtCooldownDuration);
 
-        // 冷却时间结束，重新允许进入受伤状态
-        isHurtOnCooldown = false;
-        Debug.Log("Hurt cooldown ended");
-    }
+    //    // 冷却时间结束，重新允许进入受伤状态
+    //    isHurtOnCooldown = false;
+    //    Debug.Log("Hurt cooldown ended");
+    //}
 }

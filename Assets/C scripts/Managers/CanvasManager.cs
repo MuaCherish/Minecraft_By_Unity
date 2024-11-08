@@ -349,7 +349,7 @@ public class CanvasManager : MonoBehaviour
             UIManager[_TargetID].canvas.SetActive(true);
 
             //Music得在根据目标面板进行特殊判断前面
-            musicmanager.PlaySound_Click();
+            managerhub.NewmusicManager.PlayOneShot(MusicData.click);
         }
 
 
@@ -381,7 +381,7 @@ public class CanvasManager : MonoBehaviour
 
 
             //Music
-            musicmanager.PlaySound_Click();
+            managerhub.NewmusicManager.PlayOneShot(MusicData.click);
 
             //print($"上一级UI: {previousUIID}, 缓冲区大小: {UIBuffer.Count()}");
         }
@@ -735,8 +735,8 @@ public class CanvasManager : MonoBehaviour
                     world.game_mode = GameMode.Survival;
                     UIManager[CanvasData.ui初始化_新建世界].childs[2]._object.GetComponent<TextMeshProUGUI>().text = "游戏模式：生存";
                 }
-
-                musicmanager.PlaySound_Click();
+                
+                managerhub.NewmusicManager.PlayOneShot(MusicData.click);
                 break;
 
             //保存世界类型
@@ -781,7 +781,7 @@ public class CanvasManager : MonoBehaviour
 
 
 
-                musicmanager.PlaySound_Click();
+                managerhub.NewmusicManager.PlayOneShot(MusicData.click);
                 break;
 
             default:
@@ -861,7 +861,7 @@ public class CanvasManager : MonoBehaviour
                 value = UIManager[CanvasData.ui选项细节].childs[7]._object.GetComponent<Slider>().value;
 
                 //Update
-                musicmanager.Audio_envitonment.volume = Mathf.Lerp(0f, 1f, value);
+                managerhub.NewmusicManager.SetAudioBackGroundVolumn(Mathf.Lerp(0f, 1f, value));
 
                 break;
 
@@ -984,7 +984,7 @@ public class CanvasManager : MonoBehaviour
     public void SaveAndQuitGame()
     {
         //music
-        musicmanager.PlaySound_Click();
+        managerhub.NewmusicManager.PlayOneShot(MusicData.click);
 
         world.ClassifyWorldData();
 
@@ -1011,7 +1011,7 @@ public class CanvasManager : MonoBehaviour
     public void JustQuitGame()
     {
         //music
-        musicmanager.PlaySound_Click();
+        managerhub.NewmusicManager.PlayOneShot(MusicData.click);
 
         Application.Quit();
     }

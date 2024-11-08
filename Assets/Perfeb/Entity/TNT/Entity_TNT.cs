@@ -4,7 +4,7 @@ using UnityEngine;
 using MCEntity;
 
 
-public class Entity_TNT : MC_Entity_Father
+public class Entity_TNT : MC_Entity_Base
 {
 
 
@@ -35,7 +35,7 @@ public class Entity_TNT : MC_Entity_Father
         InitTNT();
         transform.position = _pos;
 
-        managerhub.musicManager.PlaySoundClip(MusicData.TNT_Fuse);
+        managerhub.NewmusicManager.PlayOneShot(MusicData.TNT_Fuse);
 
         if (_ActByTNT)
         {
@@ -75,7 +75,7 @@ public class Entity_TNT : MC_Entity_Father
         }
 
         //Music
-        managerhub.musicManager.PlaySound(MusicData.explore);
+        managerhub.NewmusicManager.PlayOneShot(MusicData.explore);
 
 
         //激活范围内的所有TNT

@@ -14,16 +14,34 @@ namespace MCEntity
 
         [Foldout("状态", true)]
         [ReadOnly] public bool isMoving;
+        [ReadOnly] public bool isJumpRequest;
 
         void _ReferUpdate_UpdateState()
         {
-            if(velocity != Vector3.zero)
+            // 更新移动状态
+            isMoving = (velocity != Vector3.zero);
+
+            if (Collider_Component.isGround)
             {
-                isMoving = true;
+                // 在地面时更新冷却计时器
+                if (jumpCooldownTimer <= 0)
+                {
+                    // 冷却时间完成，允许跳跃请求
+                    isJumpRequest = true;
+                }
+                else
+                {
+                    // 冷却计时器减少
+                    jumpCooldownTimer -= Time.deltaTime;
+                }
             }
             else
             {
-                isMoving= false;
+                // 离开地面时，重置跳跃请求
+                isJumpRequest = false;
+
+                // 当离开地面时重新设置冷却计时器
+                jumpCooldownTimer = JumpColdTime;
             }
         }
 
@@ -63,6 +81,19 @@ namespace MCEntity
 
 
         #region 公开函数
+
+        /// <summary>
+        /// 实体旋转
+        /// </summary>
+        /// <param name="targetDirection">目标旋转方向（单位向量）</param>
+        /// <param name="rotationSpeed">旋转速度（角度/秒）</param>
+        /// <param name="axis">旋转轴（仅用于固定轴旋转）</param>
+        /// <param name="angle">旋转的角度（仅用于固定轴旋转，可以是正值或负值）</param>
+        /// <param name="isInstant">是否立即完成旋转</param>
+        public void EntityRotation(Vector3? targetDirection = null, float rotationSpeed = 0, Vector3? axis = null, float angle = 0, bool isInstant = false)
+        {
+            
+        }
 
 
         /// <summary>
@@ -111,19 +142,24 @@ namespace MCEntity
         {
             //print($"施加了{_force.magnitude}的力");
             StartCoroutine(waitFrameToAddOtherForce(_direct, _value));
+
+            // 计算瞬时加速度
+            //Vector3 instantAcceleration = _direct.normalized * (_value / mass);
+
+            //// 将加速度直接应用于速度
+            //velocity += instantAcceleration;
         }
 
         
         /// <summary>
         /// 实体向上跳跃一次
         /// </summary>
-        /// <param name="_force">瞬时冲量</param>
         public void EntityJump()
         {
             // 仅在地面上时进行跳跃
-            if (Collider_Component.isGround)
+            if (Collider_Component.isGround && isJumpRequest)
             {
-
+                //print($"momentum:{momentum}, velocity: {velocity}");
                 AddForce(Vector3.up, force_jump); // 添加跳跃的冲量
             }
         }
@@ -138,14 +174,14 @@ namespace MCEntity
             _direct = _direct.normalized;
 
             // 仅在地面上时进行跳跃
-            if (Collider_Component.isGround)
+            if (Collider_Component.isGround && isJumpRequest)
             {
 
                 AddForce(_direct, force_jump); // 添加跳跃的冲量
             }
         }
 
-
+         
         /// <summary>
         /// 实体随机跳跃一次
         /// </summary>
@@ -176,13 +212,19 @@ namespace MCEntity
 
         //速度和力参数
         [Foldout("速度和力参数", true)]
-        [Header("实体移动速度")] public float speed_move = 1f;
-        [Header("实体终端下降速度")] public float speedDown_ultimate = -10f;
+        [Header("实体移动速度")] public float speed_move = 1.5f;
+        [Header("实体终端下降速度")] public float speedDown_ultimate = -20f;
         [Header("实体水中终端速度")] public float WaterspeedDown_ultimate = -2f;
-        [Header("实体跳跃力")] public float force_jump = 77f; 
-        [Header("实体重力")] public float force_gravity = -9.8f;
+        [Header("实体跳跃力")] public float force_jump = 270f; 
+        [Header("实体重力")] public float force_gravity = -13f;
         [Header("实体水下重力")] public float force_Watergravity = -2f;
+        [Header("实体跳跃冷却")] public float JumpColdTime = 0.3f;  private float jumpCooldownTimer = 0f;   // 计时器
         
+        //衰减系数
+        [Foldout("衰减系数", true)]
+        [Header("水平摩擦系数 (越小越滑)")] public float Damping_Horizontal = 10f;
+
+
         //动态终端速度
         public float Ultimate_VerticalVelocity
         {
@@ -216,10 +258,7 @@ namespace MCEntity
         }
 
 
-        //衰减系数
-        [Foldout("衰减系数", true)]
-        [Header("水平摩擦系数 (越小越滑)")] public float Damping_Horizontal = 20f;
-
+        
         
         // 初始化函数
         private void Initialize()
@@ -267,6 +306,7 @@ namespace MCEntity
             {
                 momentum += Othermomentum;
                 Othermomentum = Vector3.zero;
+                print($"施加了力，Moment：{momentum}");
             }
 
             // 检查是否达到终端速度
@@ -294,8 +334,8 @@ namespace MCEntity
 
                     // 水平速度缓慢减为0
                     // 使用线性衰减，Damping_Horizontal 是你可以定义的水平衰减因子
-                    velocity.x = Mathf.MoveTowards(velocity.x, 0f, Damping_Horizontal * Time.deltaTime);
-                    velocity.z = Mathf.MoveTowards(velocity.z, 0f, Damping_Horizontal * Time.deltaTime);
+                    velocity.x = Mathf.MoveTowards(velocity.x, 0f, Damping_Horizontal * Time.fixedDeltaTime);
+                    velocity.z = Mathf.MoveTowards(velocity.z, 0f, Damping_Horizontal * Time.fixedDeltaTime);
 
                    
                     return;
@@ -309,7 +349,7 @@ namespace MCEntity
             Vector3 acceleration = momentum / mass; // 根据动量计算加速度
 
             // 更新速度
-            velocity += acceleration * Time.deltaTime ; // 使用加速度更新速度
+            velocity += acceleration * Time.fixedDeltaTime; // 使用加速度更新速度
 
             //---------------------------限值区域-----------------------
 
@@ -339,7 +379,7 @@ namespace MCEntity
         private void ApplyPosition()
         {
             // 更新位置，只使用速度
-            transform.position += velocity * Time.deltaTime;
+            transform.position += velocity * Time.fixedDeltaTime;
         }
 
 
@@ -347,7 +387,30 @@ namespace MCEntity
 
 
 
-        
+
+
+
+        #endregion
+
+
+        #region Entity旋转
+
+        private Vector3 targetDirection = Vector3.forward; // 默认朝向
+        private float rotationSpeed = 90f; // 默认旋转速度
+        private bool isInstantRotation = false; // 默认非瞬时旋转
+
+        /// <summary>
+        /// 设置旋转参数
+        /// </summary>
+        /// <param name="newTargetDirection">目标旋转方向（单位向量）</param>
+        /// <param name="newRotationSpeed">旋转速度（角度/秒）</param>
+        /// <param name="isInstant">是否立即完成旋转</param>
+        public void SetRotationParameters(Vector3 newTargetDirection, float newRotationSpeed, bool isInstant = false)
+        {
+            targetDirection = newTargetDirection.normalized; // 保存目标方向并归一化
+            rotationSpeed = newRotationSpeed;
+            isInstantRotation = isInstant;
+        }
 
 
         #endregion
