@@ -39,11 +39,17 @@ public class MC_DebugEntity_Component : MonoBehaviour
 
     private void Update()
     {
-        _ReferUpdate_EntityJumpAndMoving();
 
-        _ReferUpdate_RealCollision();
+        if (Collider_Component.managerhub.world.game_state == Game_State.Playing)
+        {
+            _ReferUpdate_EntityJumpAndMoving();
 
-        _ReferUpdate_EntityControler();
+            _ReferUpdate_RealCollision();
+
+            _ReferUpdate_EntityControler();
+        }
+
+       
     }
 
 

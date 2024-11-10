@@ -1002,176 +1002,181 @@ public class Player : MonoBehaviour
             isPlacing = true;
             RayCastStruct _rayCast = NewRayCast();
 
-            //Vector3 RayCast = RayCast_last();
-            //Vector3 _raycastNow = RayCast_now();
-            byte _targettype = world.GetBlockType(_rayCast.hitPoint);
-            byte _selecttype = managerhub.backpackManager.slots[selectindex].blockId;
-
-            //右键可互动方块
-            if (_targettype < world.blocktypes.Length && world.blocktypes[_targettype].isinteractable && !isSquating)
+            if (_rayCast.hitPoint != Vector3.zero)
             {
-                //print("isinteractable");
+                //Vector3 RayCast = RayCast_last();
+                //Vector3 _raycastNow = RayCast_now();
+                byte _targettype = world.GetBlockType(_rayCast.hitPoint);
+                byte _selecttype = managerhub.backpackManager.slots[selectindex].blockId;
 
-                switch (_targettype)
+                //右键可互动方块
+                if (_targettype < world.blocktypes.Length && world.blocktypes[_targettype].isinteractable && !isSquating)
                 {
-                    
-                    //唱片机
-                    case 40:
-                        if (_selecttype == VoxelData.Tool_MusicDiscs)
-                        {
+                    //print("isinteractable");
 
-                            managerhub.NewmusicManager.SwitchBackgroundMusic(MusicData.MusicBox);
-
-                            managerhub.backpackManager.update_slots(1, 50);
-                        }
-                        break;
-                   
-                    //DFS烟雾 
-                    case 42:
-                        if (_selecttype == VoxelData.Tool_BoneMeal)
-                        {
-                            //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
-                            world.Allchunks[world.GetChunkLocation(_rayCast.hitPoint)].EditData(_rayCast.hitPoint, VoxelData.Air);
-                            BlocksFunction.Smoke(_rayCast.hitPoint);
-                            managerhub.backpackManager.update_slots(1, 56);
-
-                            // 玩家被炸飞
-                            //Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
-                            //float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
-
-                            ////计算炸飞距离
-                            //_Direction.y = Mathf.Lerp(0, 1, _value);
-                            //float Distance = Mathf.Lerp(3, 0, _value);
-
-                            //ForceMoving(_Direction, Distance, 0.1f);
-                        }
-                        break;
-                    
-                    //工作台
-                    case 18:
-                        managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_工作台);
-                        break;
-
-                    //熔炉
-                    case 39:
-                        managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_熔炉);
-                        break;
-
-                    //箱子
-                    case 45:
-                        managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_箱子);
-                        break;
-
-                    //树苗
-                    //case 57:
-
-                    //    if (_selecttype == VoxelData.Tool_BoneMeal)
-                    //    {
-                    //        print("tree");
-                    //        Chunk chunktemp = world.GetChunkObject(_rayCast.hitPoint);
-                    //        chunktemp.GenerateTree((int)_rayCast.hitPoint.x, (int)_rayCast.hitPoint.y, (int)_rayCast.hitPoint.z);
-                    //        chunktemp.EditData(_rayCast.hitPoint, VoxelData.Wood);
-                    //    }
-
-                        //break;
-
-                }
-
-                return;
-            }
-
-            //如果是工具方块，则不进行方块的放置
-            if (_selecttype < managerhub.world.blocktypes .Length && !managerhub.world.blocktypes[_selecttype].isTool)
-            {
-                //如果打到 && 距离大于2f && 且不是脚底下
-                if (_rayCast.isHit && (_rayCast.hitPoint_Previous - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(_rayCast.hitPoint_Previous.x, _rayCast.hitPoint_Previous.y - 1f, _rayCast.hitPoint_Previous.z)))
-                {
-
-                    //music
-                    managerhub.OldMusicManager.PlaySoung_Place();
-
-                    if (backpackmanager.istheindexHaveBlock(selectindex))
+                    switch (_targettype)
                     {
 
+                        //唱片机
+                        case 40:
+                            if (_selecttype == VoxelData.Tool_MusicDiscs)
+                            {
 
+                                managerhub.NewmusicManager.SwitchBackgroundMusic(MusicData.MusicBox);
 
+                                managerhub.backpackManager.update_slots(1, 50);
+                            }
+                            break;
 
-                        //Edit
-                        if(managerhub.world.blocktypes[point_Block_type].CanBeCover)
-                        {
-                            world.GetChunkObject(_rayCast.hitPoint).EditData(_rayCast.hitPoint, backpackmanager.slots[selectindex].blockId);
+                        //DFS烟雾 
+                        case 42:
+                            if (_selecttype == VoxelData.Tool_BoneMeal)
+                            {
+                                //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
+                                world.Allchunks[world.GetChunkLocation(_rayCast.hitPoint)].EditData(_rayCast.hitPoint, VoxelData.Air);
+                                BlocksFunction.Smoke(_rayCast.hitPoint);
+                                managerhub.backpackManager.update_slots(1, 56);
 
-                        }
-                        else
-                        {
-                            world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(_rayCast.hitPoint_Previous, backpackmanager.slots[selectindex].blockId);
+                                // 玩家被炸飞
+                                //Vector3 _Direction = cam.transform.position - _rayCast.hitPoint;  //炸飞方向
+                                //float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
 
-                        }
+                                ////计算炸飞距离
+                                //_Direction.y = Mathf.Lerp(0, 1, _value);
+                                //float Distance = Mathf.Lerp(3, 0, _value);
 
+                                //ForceMoving(_Direction, Distance, 0.1f);
+                            }
+                            break;
 
-                        //EditNumber
-                        //world.UpdateEditNumber(_rayCast.hitPoint_Previous, backpackmanager.slots[selectindex].blockId);
+                        //工作台
+                        case 18:
+                            managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_工作台);
+                            break;
 
+                        //熔炉
+                        case 39:
+                            managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_熔炉);
+                            break;
 
-                        if (world.game_mode == GameMode.Survival)
-                        {
+                        //箱子
+                        case 45:
+                            managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_箱子);
+                            break;
 
-                            backpackmanager.update_slots(1, point_Block_type);
-                            //backpackmanager.ChangeBlockInHand();
+                            //树苗
+                            //case 57:
 
-                        }
+                            //    if (_selecttype == VoxelData.Tool_BoneMeal)
+                            //    {
+                            //        print("tree");
+                            //        Chunk chunktemp = world.GetChunkObject(_rayCast.hitPoint);
+                            //        chunktemp.GenerateTree((int)_rayCast.hitPoint.x, (int)_rayCast.hitPoint.y, (int)_rayCast.hitPoint.z);
+                            //        chunktemp.EditData(_rayCast.hitPoint, VoxelData.Wood);
+                            //    }
+
+                            //break;
 
                     }
 
-                    //print($"绝对坐标为：{RayCast_last()}");
-                    //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
-                    //print($"方块类型为：{world.GetBlockType(RayCast())}");
-
-
-
+                    return;
                 }
 
-            }
-
-            //执行工具方块的右键
-            else
-            {
-                switch (_selecttype)
+                //如果是工具方块，则不进行方块的放置
+                if (_selecttype < managerhub.world.blocktypes.Length && !managerhub.world.blocktypes[_selecttype].isTool)
                 {
-                    //苹果
-                    case 59:
-                        managerhub.lifeManager.UpdatePlayerFood(-4, true);
-                        managerhub.backpackManager.update_slots(1, VoxelData.Apple);
-                        break;
+                    //如果打到 && 距离大于2f && 且不是脚底下
+                    if (_rayCast.isHit && (_rayCast.hitPoint_Previous - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(_rayCast.hitPoint_Previous.x, _rayCast.hitPoint_Previous.y - 1f, _rayCast.hitPoint_Previous.z)))
+                    {
 
-                    //猪肉
-                    case 49:
-                        managerhub.lifeManager.UpdatePlayerFood(-8, true);
-                        managerhub.backpackManager.update_slots(1, VoxelData.Tool_Pork);
-                        break;
+                        //music
+                        managerhub.OldMusicManager.PlaySoung_Place();
 
-                    //书籍
-                    case 58:
-                        managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_书籍);
-                        break;
-
-                    //打火石
-                    case 51:
-                        if (_targettype == VoxelData.TNT)
+                        if (backpackmanager.istheindexHaveBlock(selectindex))
                         {
-                            //消除方块
-                            var chunkObject = world.GetChunkObject(_rayCast.hitPoint);
-                            chunkObject.EditData(_rayCast.hitPoint, VoxelData.Air);
 
-                            CreateTNT(_rayCast.hitPoint, false);
+
+
+
+                            //Edit
+                            if (managerhub.world.blocktypes[point_Block_type].CanBeCover)
+                            {
+                                world.GetChunkObject(_rayCast.hitPoint).EditData(_rayCast.hitPoint, backpackmanager.slots[selectindex].blockId);
+
+                            }
+                            else
+                            {
+                                world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(_rayCast.hitPoint_Previous, backpackmanager.slots[selectindex].blockId);
+
+                            }
+
+
+                            //EditNumber
+                            //world.UpdateEditNumber(_rayCast.hitPoint_Previous, backpackmanager.slots[selectindex].blockId);
+
+
+                            if (world.game_mode == GameMode.Survival)
+                            {
+
+                                backpackmanager.update_slots(1, point_Block_type);
+                                //backpackmanager.ChangeBlockInHand();
+
+                            }
 
                         }
-                        break;
+
+                        //print($"绝对坐标为：{RayCast_last()}");
+                        //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
+                        //print($"方块类型为：{world.GetBlockType(RayCast())}");
 
 
-                    default:
-                        break;
+
+                    }
+
                 }
+
+                //执行工具方块的右键
+                else
+                {
+                    switch (_selecttype)
+                    {
+                        //苹果
+                        case 59:
+                            managerhub.lifeManager.UpdatePlayerFood(-4, true);
+                            managerhub.backpackManager.update_slots(1, VoxelData.Apple);
+                            break;
+
+                        //猪肉
+                        case 49:
+                            managerhub.lifeManager.UpdatePlayerFood(-8, true);
+                            managerhub.backpackManager.update_slots(1, VoxelData.Tool_Pork);
+                            break;
+
+                        //书籍
+                        case 58:
+                            managerhub.canvasManager.SwitchUI_Player(CanvasData.uiplayer_书籍);
+                            break;
+
+                        //打火石
+                        case 51:
+                            if (_targettype == VoxelData.TNT)
+                            {
+                                //消除方块
+                                var chunkObject = world.GetChunkObject(_rayCast.hitPoint);
+                                chunkObject.EditData(_rayCast.hitPoint, VoxelData.Air);
+
+                                CreateTNT(_rayCast.hitPoint, false);
+
+                            }
+                            break;
+
+
+                        default:
+                            break;
+                    }
+                }
+
+
             }
 
 

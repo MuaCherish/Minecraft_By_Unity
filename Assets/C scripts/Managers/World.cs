@@ -1733,42 +1733,24 @@ public class World : MonoBehaviour
 
         if(Allchunks.TryGetValue(GetChunkLocation(pos), out Chunk chunktemp))
         {
-            if ((int)GetRelalocation(pos).y < 0)
-            {
-                //if (!managerhub.player.isInCave)
-                //{
-                //    managerhub.player.CheckisInCave();
-                //}
-               
-
-                return ERROR_CODE_OUTOFVOXELMAP;
-            }
-
-
-            if ((int)GetRelalocation(pos).y >= TerrainData.ChunkHeight)
-            {
-
-                //isBlock = false;
-                //isnearblock = false;
-                //print("玩家坐标异常！");
+            //提前返回-出界判断
+            if (UsefulFunction.isOutOfChunkRange(pos))
                 return ERROR_CODE_OUTOFVOXELMAP;
 
-            }
+            Vector3 _vec = UsefulFunction.GetRelaPos(pos);
 
-            byte block_type = chunktemp.voxelMap[(int)GetRelalocation(pos).x, (int)GetRelalocation(pos).y, (int)GetRelalocation(pos).z].voxelType;
+            byte block_type = chunktemp.GetBlock((int)_vec.x, (int)_vec.y, (int)_vec.z).voxelType;
 
             return block_type;
+
+        }
+        else
+        {
+            print($"GetBlockType: 坐标 {pos} 所在Chunk不存在");
+            return ERROR_CODE_OUTOFVOXELMAP;
         }
 
-        //如果玩家在刷新区外
-        //if (chunktemp == null)
-        //{
-        //    return VoxelData.notChunk;
-        //}
-
-        //如果玩家在区内，但Y值太高
-        //print($"找不到玩家脚下的Chunk {pos}");
-        return ERROR_CODE_OUTOFVOXELMAP;
+        
 
 
 

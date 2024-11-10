@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,32 @@ using UnityEngine.Windows;
 //实用函数
 public static class UsefulFunction
 {
+
+    #region 很小量 
+
+    public static float Delta = 0.01f;
+    public static float Delta_Pro = 0.0125f;
+
+    #endregion
+
+
+    #region Enum
+
+    /// <summary>
+    /// 方向
+    /// </summary>
+    public enum BlockDirection
+    {
+        前,
+        后,
+        左,
+        右,
+        上,
+        下
+    }
+
+    #endregion
+
 
     #region BlockType
 

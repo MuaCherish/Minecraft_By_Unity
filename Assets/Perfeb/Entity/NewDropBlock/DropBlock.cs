@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.XR;
 using System.Collections.Generic;
-
+using static UsefulFunction;
 
 public class DropBlock: MC_Entity_Base
 {
@@ -387,28 +387,28 @@ public class DropBlock: MC_Entity_Base
         
         
         // 优先搜索四周是否有空气，搜到了就向那个方块进行移动
-        if (managerhub.world.GetBlockType(Collider_Component.GetBlockDirectPoint(Vector3.forward)) == VoxelData.Air)
+        if (managerhub.world.GetBlockType(Collider_Component.GetPoint_Direct_1m(BlockDirection.前)) == VoxelData.Air)
         {
             Collider_Component.CloseCollisionForAWhile(0.2f);
             _Force = Vector3.forward;
             _Force.y = 0.5f;
             Velocity_Component.AddForce(_Force, HandleBuriedForceValue);
         }
-        else if (managerhub.world.GetBlockType(Collider_Component.GetBlockDirectPoint(Vector3.back)) == VoxelData.Air)
+        else if (managerhub.world.GetBlockType(Collider_Component.GetPoint_Direct_1m(BlockDirection.后)) == VoxelData.Air)
         {
             Collider_Component.CloseCollisionForAWhile(0.2f);
             _Force = Vector3.back;
             _Force.y = 0.5f;
             Velocity_Component.AddForce(_Force, HandleBuriedForceValue);
         }
-        else if (managerhub.world.GetBlockType(Collider_Component.GetBlockDirectPoint(Vector3.left)) == VoxelData.Air)
+        else if (managerhub.world.GetBlockType(Collider_Component.GetPoint_Direct_1m(BlockDirection.左)) == VoxelData.Air)
         {
             Collider_Component.CloseCollisionForAWhile(0.2f);
             _Force = Vector3.left;
             _Force.y = 0.5f;
             Velocity_Component.AddForce(_Force, HandleBuriedForceValue);
         }
-        else if (managerhub.world.GetBlockType(Collider_Component.GetBlockDirectPoint(Vector3.right)) == VoxelData.Air)
+        else if (managerhub.world.GetBlockType(Collider_Component.GetPoint_Direct_1m(BlockDirection.右)) == VoxelData.Air)
         {
             Collider_Component.CloseCollisionForAWhile(0.2f);
             _Force = Vector3.right;

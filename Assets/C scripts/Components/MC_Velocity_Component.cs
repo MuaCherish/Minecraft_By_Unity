@@ -69,7 +69,11 @@ namespace MCEntity
 
         private void FixedUpdate()
         {
-            _ReferFixedUpdate_Caculate();
+            if (Collider_Component.managerhub.world.game_state == Game_State.Playing)
+            {
+                _ReferFixedUpdate_Caculate();
+            }
+           
         }
 
         private void Update()
@@ -93,6 +97,16 @@ namespace MCEntity
         public void EntityRotation(Vector3? targetDirection = null, float rotationSpeed = 0, Vector3? axis = null, float angle = 0, bool isInstant = false)
         {
             
+        }
+
+
+        /// <summary>
+        /// 获取速度
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 GetVelocity()
+        {
+            return velocity;
         }
 
 
@@ -306,7 +320,7 @@ namespace MCEntity
             {
                 momentum += Othermomentum;
                 Othermomentum = Vector3.zero;
-                print($"施加了力，Moment：{momentum}");
+                //print($"施加了力，Moment：{momentum}");
             }
 
             // 检查是否达到终端速度
@@ -319,15 +333,15 @@ namespace MCEntity
         // 计算速度
         void Caculate_Velocity()
         {
-            // 条件返回
+            // 条件返回-如果在地面
             if (Collider_Component.isGround && 
-                Othermomentum == Vector3.zero 
+                Othermomentum == Vector3.zero
                 )
             {
                 if (momentum.y <= Gravity.y)
                 {
                     // 将垂直速度归零
-                    velocity.y = 0f;
+                    //velocity.y = 0f;
 
 
                     CheckSliperVelocity();
@@ -354,16 +368,23 @@ namespace MCEntity
             //---------------------------限值区域-----------------------
 
             // 检查是否达到终端速度并限制速度
+            CheckUltVelocity();
+
+            //滑膜限制
+            CheckSliperVelocity();
+        }
+
+        //终端速度限制
+        void CheckUltVelocity()
+        {
             if (velocity.y <= Ultimate_VerticalVelocity)
             {
                 // 强制速度为终端速度
                 velocity.y = Ultimate_VerticalVelocity;
             }
-
-            CheckSliperVelocity();
         }
 
-
+        //滑膜限制
         void CheckSliperVelocity()
         {
             //滑膜检测
@@ -371,6 +392,8 @@ namespace MCEntity
                 velocity.z = 0;
             if ((velocity.x > 0 && Collider_Component.collider_Right) || (velocity.x < 0 && Collider_Component.collider_Left))
                 velocity.x = 0;
+            if (velocity.y > 0 && Collider_Component.collider_Up || velocity.y < 0 && Collider_Component.isGround)
+                velocity.y = 0;
         }
 
 

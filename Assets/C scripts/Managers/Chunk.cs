@@ -4736,7 +4736,7 @@ public class Chunk : MonoBehaviour
     //}
 
     //重载
-    private VoxelStruct GetBlock(int _x, int _y,int _z)
+    public VoxelStruct GetBlock(int _x, int _y,int _z)
     {
         //如果目标出界
         if (isOutOfRange(_x, _y, _z))
@@ -4783,7 +4783,7 @@ public class Chunk : MonoBehaviour
 
     //获得对面Voxel
     //待方向的GetBlock一般只有一层
-    private VoxelStruct GetBlock(Vector3 _pos, int _p)
+    public VoxelStruct GetBlock(Vector3 _pos, int _p)
     {
         Vector3 _TargetPos = _pos + VoxelData.faceChecks[_p];
         int _x = (int)_TargetPos.x;
@@ -4898,7 +4898,7 @@ public class Chunk : MonoBehaviour
     }
 
     //重载
-    private VoxelStruct GetBlock(int _x, int _y, int _z, int _p)
+    public VoxelStruct GetBlock(int _x, int _y, int _z, int _p)
     {
 
         //如果目标出界

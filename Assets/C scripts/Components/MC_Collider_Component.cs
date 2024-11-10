@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using MCEntity;
 using Homebrew;
+using static UsefulFunction;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace MCEntity
 {
@@ -10,10 +12,11 @@ namespace MCEntity
     {
 
         #region 状态
+
         [Foldout("状态", true)]
         [ReadOnly] public bool isGround = false;
 
-        void ReferUpdate()
+        void _ReferUpdate_State()
         {
             isGround = collider_Down;
         }
@@ -22,11 +25,10 @@ namespace MCEntity
         #endregion
 
 
-
         #region 生命周期函数
 
         MC_Velocity_Component Velocity_Component;
-        ManagerHub managerhub;
+        public ManagerHub managerhub;
 
         private void Awake()
         {
@@ -40,9 +42,12 @@ namespace MCEntity
 
         private void Update()
         {
-
-            ReferUpdate();
-            ReferUpdateHitBox();
+            if (managerhub.world.game_state == Game_State.Playing)
+            {
+                _ReferUpdate_State();
+                _ReferUpdate_HitBox();
+            }
+           
         }
 
 
@@ -51,117 +56,7 @@ namespace MCEntity
         #endregion
 
 
-        #region 判定箱
-
-        // 判定箱设置
-        [Foldout("判定箱", true)]
-        [Header("绘制判定箱")] public bool isDrawHitBox; private bool hasExec_isDrawHitBox = true;
-        [Header("判定箱眼睛相对高度")] public float hitBoxEyes = 0.8f;
-        [Header("判定箱宽度")] public float hitBoxWidth = 1f;
-        [Header("判定箱高度")] public float hitBoxHeight = 1f;
-        private GameObject lineObject;
-        private Mesh mesh;
-
-        // 前方碰撞检测
-        public bool collider_Front
-        {
-            get
-            {
-                if (isCollisionLocked) return false;
-
-                return managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(0f, 0f, 0.01f)) ||
-                       managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(0f, 0f, 0.01f)) ||
-                       managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(0f, 0f, 0.01f)) ||
-                       managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(0f, 0f, 0.01f)) ||
-                       TryCheckMore_SubdivisionCollition(new Vector3(0f, 0f, 1f));
-            }
-        }
-
-        // 后方碰撞检测
-        public bool collider_Back
-        {
-            get
-            {
-                if (isCollisionLocked) return false;
-
-                return managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(0f, 0f, -0.01f)) ||
-                       managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(0f, 0f, -0.01f)) ||
-                       managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(0f, 0f, -0.01f)) ||
-                       managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(0f, 0f, -0.01f)) ||
-                       TryCheckMore_SubdivisionCollition(new Vector3(0f, 0f, -1f));
-            }
-        }
-
-        // 左方碰撞检测
-        public bool collider_Left
-        {
-            get
-            {
-                if (isCollisionLocked) return false;
-
-                return managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(-0.01f, 0f, 0f)) ||
-                       managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(-0.01f, 0f, 0f)) ||
-                       managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(-0.01f, 0f, 0f)) ||
-                       managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(-0.01f, 0f, 0f)) ||
-                       TryCheckMore_SubdivisionCollition(new Vector3(-1f, 0f, 0f));
-            }
-        }
-
-        // 右方碰撞检测
-        public bool collider_Right
-        {
-            get
-            {
-                if (isCollisionLocked) return false;
-
-                return managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(0.01f, 0f, 0f)) ||
-                       managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(0.01f, 0f, 0f)) ||
-                       managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(0.01f, 0f, 0f)) ||
-                       managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(0.01f, 0f, 0f)) ||
-                       TryCheckMore_SubdivisionCollition(new Vector3(1f, 0f, 0f));
-            }
-        }
-
-        // 上方碰撞检测
-        public bool collider_Up
-        {
-            get
-            {
-                if (isCollisionLocked) return false;
-
-                return managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(0f, 0.01f, 0f)) ||
-                       managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(0f, 0.01f, 0f)) ||
-                       managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(0f, 0.01f, 0f)) ||
-                       managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(0f, 0.01f, 0f)) ||
-                       TryCheckMore_SubdivisionCollition(new Vector3(0f, 1f, 0f));
-            }
-        }
-
-        // 下方碰撞检测
-        public bool collider_Down
-        {
-            get
-            {
-                if (isCollisionLocked) return false;
-
-                return managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(0f, -0.01f, 0f)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(0f, -0.01f, 0f)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(0f, -0.01f, 0f)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(0f, -0.01f, 0f)) ||
-                    TryCheckMore_SubdivisionCollition(new Vector3(0f, -1f, 0f));
-
-            }
-        }
-        public bool Collider_Surround
-        {
-            get
-            {
-                return !isCollisionLocked && (collider_Front || collider_Back || collider_Left || collider_Right);
-            }
-        }
-
-
-
+        #region 公开函数
 
         /// <summary>
         /// 判定该点是否在判定向内
@@ -214,35 +109,641 @@ namespace MCEntity
             }
         }
 
-
-        //引用Update
-        private void ReferUpdateHitBox()
+        // 暂时关闭所有点的碰撞检测
+        public void CloseCollisionForAWhile(float _time)
         {
-            //位置修正
-            if (collider_Down)
-            {
-                // 计算新的 y 位置，避免物体陷入地下
-                float newYPosition = (int)selfPos.y + hitBoxHeight / 2f;
-                // 创建一个新的位置
-                Vector3 newPosition = new Vector3(transform.position.x, newYPosition, transform.position.z);
+            isCollisionLocked = true;
+            collisionLockTimer = _time;
+            StartCoroutine(CollisionLockTimerCoroutine());
+        }
 
-                // 更新物体的位置
-                transform.position = newPosition;
+
+        #endregion
+
+
+        #region 碰撞检测
+
+        // 前方
+        public bool collider_Front
+        {
+            get
+            {
+                if (isCollisionLocked) return false;
+
+                if (managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, -Delta, Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, -Delta, Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, Delta, Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, Delta, Delta)) ||
+                    TryCheckMore_SubdivisionCollition(BlockDirection.前))
+                {
+
+                    //进行一次微调
+                    if (!AdjustLock_Collsion_Front && Velocity_Component.GetVelocity().z > 0)
+                    {
+                        // 计算 X 坐标调整
+                        int _selfZ = (int)(GetPoint_HitBoxEdge(BlockDirection.前).z + Vector3.forward.z * Delta_Pro);
+                        float _blockZ = GetTargetBlockHeightAndWidth(BlockDirection.前);
+                        transform.position = new Vector3(selfPos.x, selfPos.y, _selfZ + _blockZ - hitBoxWidth / 2);
+                        //print($"进行一次位置修正,_selyX: {_selfZ},  _blockX:{_blockZ}");
+
+                        // 调整位置后锁定避免重复调用
+                        AdjustLock_Collsion_Front = true;
+
+                        //print("Left");
+                    }
+
+
+                    return true;
+                }
+                else
+                {
+                    // 若未碰撞到地面，解锁位置调整
+                    if (AdjustLock_Collsion_Front)
+                    {
+                        AdjustLock_Collsion_Front = false;
+                    }
+
+                    return false;
+                }
+            }
+        }
+
+        // 后方
+        public bool collider_Back
+        {
+            get
+            {
+                if (isCollisionLocked) return false;
+
+                if (managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, -Delta, -Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, -Delta, -Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, Delta, -Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, Delta, -Delta)) ||
+                    TryCheckMore_SubdivisionCollition(BlockDirection.后))
+                {
+
+                    //进行一次微调
+                    if (!AdjustLock_Collsion_Back && Velocity_Component.GetVelocity().z < 0)
+                    {
+                        // 计算 X 坐标调整
+                        int _selfZ = (int)(GetPoint_HitBoxEdge(BlockDirection.后).z + Vector3.back.z * Delta_Pro);
+                        float _blockZ = GetTargetBlockHeightAndWidth(BlockDirection.后);
+                        transform.position = new Vector3(selfPos.x, selfPos.y, _selfZ + _blockZ + hitBoxWidth / 2);
+                        //print($"进行一次位置修正,_selyX: {_selfZ},  _blockX:{_blockZ}");
+
+                        // 调整位置后锁定避免重复调用
+                        AdjustLock_Collsion_Back = true;
+
+                        //print("Left");
+                    }
+
+
+                    return true;
+                }
+                else
+                {
+                    // 若未碰撞到地面，解锁位置调整
+                    if (AdjustLock_Collsion_Back)
+                    {
+                        AdjustLock_Collsion_Back = false;
+                    }
+
+                    return false;
+                }
+            }
+        }
+
+        // 左方
+        public bool collider_Left
+        {
+            get
+            {
+                if (isCollisionLocked) return false;
+
+                if (managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(-Delta, -Delta, -Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(-Delta, Delta, -Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(-Delta, -Delta, Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(-Delta, Delta, Delta)) ||
+                    TryCheckMore_SubdivisionCollition(BlockDirection.左))
+                {
+
+                    //进行一次微调
+                    if (!AdjustLock_Collsion_Left && Velocity_Component.GetVelocity().x < 0)
+                    {
+                        // 计算 X 坐标调整
+                        int _selyX = (int)(GetPoint_HitBoxEdge(BlockDirection.左).x + Vector3.left.x * Delta_Pro);
+                        float _blockX = GetTargetBlockHeightAndWidth(BlockDirection.左);
+                        transform.position = new Vector3(_selyX + _blockX + hitBoxWidth / 2, selfPos.y, selfPos.z);
+                        //print($"进行一次位置修正,_selyX: {_selyX},  _blockX:{_blockX}");
+
+                        // 调整位置后锁定避免重复调用
+                        AdjustLock_Collsion_Left = true;
+
+                        //print("Left");
+                    }
+
+
+                    return true;
+                }
+                else
+                {
+                    // 若未碰撞到地面，解锁位置调整
+                    if (AdjustLock_Collsion_Left)
+                    {
+                        AdjustLock_Collsion_Left = false;
+                    }
+
+                    return false;
+                }
+            }
+        }
+
+        // 右方
+        public bool collider_Right
+        {
+            get
+            {
+                if (isCollisionLocked) return false;
+
+                if (managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(Delta, -Delta, -Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(Delta, Delta, -Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(Delta, -Delta, Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(Delta, Delta, Delta)) ||
+                    TryCheckMore_SubdivisionCollition(BlockDirection.右))
+                {
+
+                    
+
+
+                    //进行一次微调
+                    if (!AdjustLock_Collsion_Right && Velocity_Component.GetVelocity().x > 0)
+                    {
+
+                        // 计算 X 坐标调整
+                        int _selyX = (int)(GetPoint_HitBoxEdge(BlockDirection.右).x + Vector3.right.x * Delta_Pro);
+                        float _blockX = GetTargetBlockHeightAndWidth(BlockDirection.右);
+                        transform.position = new Vector3(_selyX + _blockX - hitBoxWidth / 2, selfPos.y, selfPos.z);
+                        //print($"进行一次位置修正,_selyX: {_selyX},  _blockX:{_blockX}");
+
+                        // 调整位置后锁定避免重复调用
+                        AdjustLock_Collsion_Right = true;
+
+                        //print("Right");
+                    }
+
+
+                    return true;
+                }
+                else
+                {
+                    // 若未碰撞到地面，解锁位置调整
+                    if (AdjustLock_Collsion_Right)
+                    {
+                        AdjustLock_Collsion_Right = false;
+                    }
+
+                    return false;
+                }
+            }
+        }
+
+        // 上方
+        public bool collider_Up
+        {
+            get
+            {
+                if (isCollisionLocked) return false;
+
+                if (managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, Delta, Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, Delta, -Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, Delta, Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, Delta, -Delta)) ||
+                    TryCheckMore_SubdivisionCollition(BlockDirection.上))
+                {
+
+                    //进行一次微调
+                    if (!AdjustLock_Collsion_Up && Velocity_Component.GetVelocity().y > 0)
+                    {
+                        // 计算 Y 坐标调整
+                        int _selyY = (int)(GetPoint_HitBoxEdge(BlockDirection.上).y + Vector3.up.y * Delta_Pro);
+                        float _blockY = GetTargetBlockHeightAndWidth(BlockDirection.上);
+                        transform.position = new Vector3(selfPos.x, _selyY + _blockY - hitBoxHeight / 2, selfPos.z);
+                        //print($"进行一次位置修正,_selyY: {_selyY},  _blockY:{_blockY}");
+
+                        // 调整位置后锁定避免重复调用
+                        AdjustLock_Collsion_Up = true;
+                    }
+
+                    
+                    return true;
+                }
+                else
+                {
+                    // 若未碰撞到地面，解锁位置调整
+                    if (AdjustLock_Collsion_Up)
+                    {
+                        AdjustLock_Collsion_Up = false;
+                    }
+                    
+                    return false;
+                }
+            }
+        }
+
+        // 下方
+
+        public bool collider_Down
+        {
+            get
+            {
+                // 若碰撞已锁定或校验被锁定则直接返回 false
+                if (isCollisionLocked) return false;
+
+                // 进行碰撞检测
+                if (managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, -Delta, Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, -Delta, -Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, -Delta, Delta)) ||
+                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, -Delta, -Delta)) ||
+                    TryCheckMore_SubdivisionCollition(BlockDirection.下))
+                {
+
+                    //进行一次微调
+                    if (!AdjustLock_Collsion_Down && Velocity_Component.GetVelocity().y < 0)
+                    {
+                        // 计算 Y 坐标调整
+                        int _selyY = (int)(GetPoint_HitBoxEdge(BlockDirection.下).y + Vector3.down.y * Delta_Pro);
+                        float _blockY = GetTargetBlockHeightAndWidth(BlockDirection.下);
+                        transform.position = new Vector3(selfPos.x, _selyY + _blockY + hitBoxHeight / 2, selfPos.z);
+                        //print($"位置修正, _selfY: {_selyY},  _blockY:{_blockY}");
+
+                        // 调整位置后锁定避免重复调用
+                        AdjustLock_Collsion_Down = true;
+
+                        //print("Down");
+                    }
+
+                   
+                    return true;
+                }
+                else
+                {
+                    
+                    // 若未碰撞到地面，解锁位置调整
+                    if (AdjustLock_Collsion_Down)
+                    {
+                        //print("解锁");
+                        AdjustLock_Collsion_Down = false;
+                    }
+                    
+                    return false;
+                }
+            }
+        }
+
+
+        //周围
+        public bool Collider_Surround
+        {
+            get
+            {
+                return !isCollisionLocked && (collider_Front || collider_Back || collider_Left || collider_Right);
+            }
+        }
+
+
+        #endregion
+
+
+        #region 位置修正
+
+        //位置修正
+        private bool AdjustLock_Collsion_Front = false;
+        private bool AdjustLock_Collsion_Back = false;
+        private bool AdjustLock_Collsion_Left = false;
+        private bool AdjustLock_Collsion_Right = false;
+        private bool AdjustLock_Collsion_Up = false;
+        private bool AdjustLock_Collsion_Down = false;
+
+        /// <summary>
+        /// 获取目标方向方块的高度或者宽度
+        /// </summary>
+        /// <param name="_DIRECT">方向，枚举</param>
+        float GetTargetBlockHeightAndWidth(BlockDirection _DIRECT)
+        {
+            //比较值
+            float _value = 0f;
+
+            //边界变量
+            Vector3 _00 = Vector3.zero;
+            Vector3 _11 = Vector3.zero;
+
+            switch (_DIRECT)
+            {
+                case BlockDirection.前:
+
+                    //确定范围
+                    _00 = 前_左下;
+                    _11 = 前_右上;
+
+                    //print($"_00: {_00}, _11: {_11}");
+
+                    //从左下角进行遍历，步长为1f
+                    for (float _y = _00.y; _y <= _11.y; _y++)
+                    {
+                        for (float _x = _00.x; _x <= _11.x; _x++)
+                        {
+                            //获取坐标
+                            Vector3 _pos = new Vector3(_x, _y, _00.z + Delta);
+
+                            //获取方块类型
+                            byte _targetType = managerhub.world.GetBlockType(_pos);
+
+                            //提前返回-空气不需要计算
+                            if (_targetType == VoxelData.Air)
+                            {
+                                continue;
+                            }
+
+                            //获取目标最大高度
+                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.zRange.x;
+
+                            //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
+
+                            //比较Yrange.Y取最大值
+                            if (_blockY < _value)
+                            {
+                                _value = _blockY;
+                            }
+                        }
+                    }
+                    break;
+                case BlockDirection.后:
+                    //确定范围
+                    _00 = 后_左下;
+                    _11 = 后_右上;
+
+                    //print($"_00: {_00}, _11: {_11}");
+
+                    //从左下角进行遍历，步长为1f
+                    for (float _y = _00.y; _y <= _11.y; _y++)
+                    {
+                        for (float _x = _00.x; _x <= _11.x; _x++)
+                        {   
+                            //获取坐标
+                            Vector3 _pos = new Vector3(_x, _y, _00.z - Delta);
+
+                            //获取方块类型
+                            byte _targetType = managerhub.world.GetBlockType(_pos);
+
+                            //提前返回-空气不需要计算
+                            if (_targetType == VoxelData.Air)
+                            {
+                                continue;
+                            }
+
+                            //获取目标最大高度
+                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.zRange.y;
+
+                            //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
+
+                            //比较Yrange.Y取最大值
+                            if (_blockY > _value)
+                            {
+                                _value = _blockY;
+                            }
+                        }
+                    }
+                    break;
+                case BlockDirection.左:
+
+                    //确定范围
+                    _00 = 后_左下;
+                    _11 = 前_左上;
+
+                    //print($"_00: {_00}, _11: {_11}");
+
+                    //从左下角进行遍历，步长为1f
+                    for (float _z = _00.z; _z <= _11.z; _z++)
+                    {
+                        for (float _y = _00.y; _y <= _11.y; _y++)
+                        {
+                            //获取坐标
+                            Vector3 _pos = new Vector3(_00.x - Delta, _y, _z);
+
+                            //获取方块类型
+                            byte _targetType = managerhub.world.GetBlockType(_pos);
+
+                            //提前返回-空气不需要计算
+                            if (_targetType == VoxelData.Air)
+                            {
+                                continue;
+                            }
+
+                            //获取目标最大高度
+                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.xRange.y;
+
+                            //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
+
+                            //比较Yrange.Y取最大值
+                            if (_blockY > _value)
+                            {
+                                _value = _blockY;
+                            }
+                        }
+                    }
+                    break;
+                case BlockDirection.右:
+
+                    //确定范围
+                    _00 = 后_右下;
+                    _11 = 前_右上;
+
+                    //从左下角进行遍历，步长为1f
+                    for (float _z = _00.z; _z <= _11.z; _z++)
+                    {
+                        for (float _y = _00.y; _y <= _11.y; _y++)
+                        {
+                            //获取坐标
+                            Vector3 _pos = new Vector3(_00.x + Delta, _y, _z);
+
+                            //获取方块类型
+                            byte _targetType = managerhub.world.GetBlockType(_pos);
+
+                            //提前返回-空气不需要计算
+                            if (_targetType == VoxelData.Air)
+                            {
+                                continue;
+                            }
+
+                            //获取目标最大高度
+                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.xRange.x;
+
+                            //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
+
+                            //比较Yrange.Y取最大值
+                            if (_blockY < _value)
+                            {
+                                _value = _blockY;
+                            }
+                        }
+                    }
+                    break;
+                case BlockDirection.上:
+
+                    //确定范围
+                    _00 = 后_左上;
+                    _11 = 前_右上;
+
+                    //从左下角进行遍历，步长为1f
+                    for (float _z = _00.z; _z <= _11.z; _z++)
+                    {
+                        for (float _x = _00.x; _x <= _11.x; _x++)
+                        {
+                            //获取坐标
+                            Vector3 _pos = new Vector3(_x, _00.y + Delta, _z);
+
+                            //获取方块类型
+                            byte _targetType = managerhub.world.GetBlockType(_pos);
+
+                            //提前返回-空气不需要计算
+                            if (_targetType == VoxelData.Air)
+                            {
+                                continue;
+                            }
+
+                            //获取目标最低高度
+                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.yRange.x;
+
+                            print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
+
+                            //比较Yrange.Y取最大值
+                            if (_blockY < _value)
+                            {
+                                _value = _blockY;
+                            }
+                        }
+                    }
+
+                    break;
+                case BlockDirection.下:
+
+                    //确定范围
+                    _00 = 后_左下;
+                    _11 = 前_右下;
+
+                    //从左下角进行遍历，步长为1f
+                    for (float _z = _00.z; _z <= _11.z; _z++)
+                    {
+                        for (float _x = _00.x; _x <= _11.x; _x++)
+                        {
+                            //获取坐标
+                            Vector3 _pos = new Vector3(_x, _00.y - Delta, _z);
+
+                            //获取方块类型
+                            byte _targetType = managerhub.world.GetBlockType(_pos);
+
+                            //提前返回-空气不需要计算
+                            if (_targetType == VoxelData.Air)
+                            {
+                                continue;
+                            }
+
+                            //获取目标最大高度
+                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.yRange.y;
+
+                            //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
+
+                            //比较Yrange.Y取最大值
+                            if (_blockY > _value)
+                            {
+                                _value = _blockY;
+                            }
+                        }
+                    }
+
+                    break;
+
+                default:
+                    print("GetTargetBlockHeightAndWidth函数出现了问题");
+                    break;
             }
 
 
+            return _value;
+        }
+
+
+        #endregion
+
+
+        #region 暂时关闭碰撞检测
+
+        // 关于暂时停止碰撞检测的代码
+        private bool isCollisionLocked = false;
+        private float collisionLockTimer = 0f;
+        private IEnumerator CollisionLockTimerCoroutine()
+        {
+            while (collisionLockTimer > 0f)
+            {
+                collisionLockTimer -= Time.deltaTime;
+                yield return null;
+            }
+            isCollisionLocked = false;
+        }
+
+
+        #endregion
+
+
+        #region 判定箱
+
+        // 判定箱设置
+        [Foldout("判定箱", true)]
+        [Header("<!警告!>：判定箱尺寸最好不要超过1.2m")]
+        [Header("- 不然可能会有意料之外的Bug")]
+        [Space]
+        [Header("绘制判定箱")] public bool isDrawHitBox; private bool hasExec_isDrawHitBox = true;
+        [Header("判定箱眼睛相对高度")] public float hitBoxEyes = 0.8f;
+        [Header("判定箱宽度")] public float hitBoxWidth = 1f;
+        [Header("判定箱高度")] public float hitBoxHeight = 1f;
+        private GameObject BodyObject;
+        private GameObject EyesObject;
+        private Mesh mesh;
+
+       
+
+        //引用Update
+        void _ReferUpdate_HitBox()
+        {
             //绘制判定箱
+            DrawHitBox();
+        }
+
+
+        
+
+
+        //绘制判定箱
+        void DrawHitBox()
+        {
+
             if (isDrawHitBox)
             {
-                DrawHitBox();
-                
+                _DrawHitBox_DrawBox();
+
             }
             else
             {
-                if (lineObject != null)
+                if (BodyObject != null )
                 {
-                    Destroy(lineObject);
-                    lineObject = null;
+                    Destroy(BodyObject);
+                    BodyObject = null;
+                }
+
+                if (EyesObject != null)
+                {
+                    Destroy(EyesObject);
+                    EyesObject = null;
                 }
 
                 if (hasExec_isDrawHitBox == false)
@@ -250,87 +751,104 @@ namespace MCEntity
                     hasExec_isDrawHitBox = true;
                 }
             }
-
         }
 
-        //绘制判定箱
-        private void DrawHitBox()
+        //绘制判定箱-Mesh逻辑
+        void _DrawHitBox_DrawBox()
         {
-
             if (hasExec_isDrawHitBox)
             {
+                // 创建线框的 GameObject 和 Mesh
+                BodyObject = new GameObject("HitBoxLine");
+                BodyObject.transform.parent = transform;
+                BodyObject.transform.position = transform.position;
 
-                // 创建一个新的 GameObject 用于绘制线框
-                lineObject = new GameObject("HitBoxLine");
-                lineObject.transform.parent = transform; // 设定父物体为当前物体
-                lineObject.transform.position = transform.position;
+                Mesh whiteMesh = new Mesh();
+                Mesh redMesh = new Mesh();
 
-                // 创建 Mesh 组件
-                mesh = new Mesh();
-                MeshFilter meshFilter = lineObject.AddComponent<MeshFilter>();
-                meshFilter.mesh = mesh;
+                // 添加白色部分的 MeshRenderer 和材质
+                MeshFilter whiteMeshFilter = BodyObject.AddComponent<MeshFilter>();
+                whiteMeshFilter.mesh = whiteMesh;
+                MeshRenderer whiteMeshRenderer = BodyObject.AddComponent<MeshRenderer>();
+                whiteMeshRenderer.material = new Material(Shader.Find("Unlit/Color")) { color = Color.white };
 
-                // 添加 MeshRenderer 组件
-                MeshRenderer meshRenderer = lineObject.AddComponent<MeshRenderer>();
-                meshRenderer.material = new Material(Shader.Find("Unlit/Color")) { color = Color.white }; // 使用无光照材质
+                // 创建“眼睛”部分的 GameObject 和 MeshRenderer
+                EyesObject = new GameObject("HitBoxEyeLine");
+                EyesObject.transform.parent = transform;
+                EyesObject.transform.position = transform.position;
 
-                Vector3 center = lineObject.transform.localPosition;
+                MeshFilter redMeshFilter = EyesObject.AddComponent<MeshFilter>();
+                redMeshFilter.mesh = redMesh;
+                MeshRenderer redMeshRenderer = EyesObject.AddComponent<MeshRenderer>();
+                redMeshRenderer.material = new Material(Shader.Find("Unlit/Color")) { color = Color.red };
 
-                // 计算判定箱的八个角
-                Vector3[] positions = new Vector3[12];
+                Vector3 center = BodyObject.transform.localPosition;
+
+                // 顶点
+                Vector3[] positions = new Vector3[8];
+                Vector3[] eyePositions = new Vector3[4];
 
                 // 底面四个角
-                positions[0] = center + new Vector3(-hitBoxWidth / 2 - 0.01f, -hitBoxHeight / 2,  hitBoxWidth / 2 + 0.01f);  // 前左
-                positions[1] = center + new Vector3( hitBoxWidth / 2 + 0.01f, -hitBoxHeight / 2,  hitBoxWidth / 2 + 0.01f);   // 前右
-                positions[2] = center + new Vector3( hitBoxWidth / 2 + 0.01f, -hitBoxHeight / 2, -hitBoxWidth / 2 - 0.01f);  // 后右
-                positions[3] = center + new Vector3(-hitBoxWidth / 2 - 0.01f, -hitBoxHeight / 2, -hitBoxWidth / 2 - 0.01f); // 后左
+                positions[0] = center + new Vector3(-hitBoxWidth / 2, -hitBoxHeight / 2, hitBoxWidth / 2);
+                positions[1] = center + new Vector3(hitBoxWidth / 2, -hitBoxHeight / 2, hitBoxWidth / 2);
+                positions[2] = center + new Vector3(hitBoxWidth / 2, -hitBoxHeight / 2, -hitBoxWidth / 2);
+                positions[3] = center + new Vector3(-hitBoxWidth / 2, -hitBoxHeight / 2, -hitBoxWidth / 2);
 
                 // 顶面四个角
-                positions[4] = positions[0] + Vector3.up * hitBoxHeight; // 前左上
-                positions[5] = positions[1] + Vector3.up * hitBoxHeight; // 前右上
-                positions[6] = positions[2] + Vector3.up * hitBoxHeight; // 后右上
-                positions[7] = positions[3] + Vector3.up * hitBoxHeight; // 后左上
+                positions[4] = positions[0] + Vector3.up * hitBoxHeight;
+                positions[5] = positions[1] + Vector3.up * hitBoxHeight;
+                positions[6] = positions[2] + Vector3.up * hitBoxHeight;
+                positions[7] = positions[3] + Vector3.up * hitBoxHeight;
 
-                // 眼睛
-                positions[8] = positions[0] + Vector3.up * hitBoxHeight * hitBoxEyes; // 前左上
-                positions[9] = positions[1] + Vector3.up * hitBoxHeight * hitBoxEyes; // 前右上
-                positions[10] = positions[2] + Vector3.up * hitBoxHeight * hitBoxEyes; // 后右上
-                positions[11] = positions[3] + Vector3.up * hitBoxHeight * hitBoxEyes; // 后左上
+                // 眼睛部分的四个角
+                eyePositions[0] = positions[0] + Vector3.up * hitBoxHeight * hitBoxEyes;
+                eyePositions[1] = positions[1] + Vector3.up * hitBoxHeight * hitBoxEyes;
+                eyePositions[2] = positions[2] + Vector3.up * hitBoxHeight * hitBoxEyes;
+                eyePositions[3] = positions[3] + Vector3.up * hitBoxHeight * hitBoxEyes;
 
-                // 创建线段索引
+                // 白色部分的索引
                 int[] indices = new int[]
                 {
-                    // 底面
-                    0, 1,
-                    1, 2,
-                    2, 3,
-                    3, 0,
-                    // 顶面
-                    4, 5,
-                    5, 6,
-                    6, 7,
-                    7, 4,
-                    // 侧面
-                    0, 4,
-                    1, 5,
-                    2, 6,
-                    3, 7,
-                    // 侧面
-                    8, 9,
-                    9, 10,
-                    10, 11,
-                    11, 8
+            // 底面
+            0, 1,
+            1, 2,
+            2, 3,
+            3, 0,
+            // 顶面
+            4, 5,
+            5, 6,
+            6, 7,
+            7, 4,
+            // 侧面
+            0, 4,
+            1, 5,
+            2, 6,
+            3, 7
+                };
+
+                // 红色部分（眼睛）的索引
+                int[] eyeIndices = new int[]
+                {
+            0, 1,
+            1, 2,
+            2, 3,
+            3, 0
                 };
 
                 // 更新 Mesh 数据
-                mesh.Clear();
-                mesh.vertices = positions;
-                mesh.SetIndices(indices, MeshTopology.Lines, 0);
-                mesh.RecalculateBounds();
+                whiteMesh.Clear();
+                whiteMesh.vertices = positions;
+                whiteMesh.SetIndices(indices, MeshTopology.Lines, 0);
+
+                redMesh.Clear();
+                redMesh.vertices = eyePositions;
+                redMesh.SetIndices(eyeIndices, MeshTopology.Lines, 0);
+
+                whiteMesh.RecalculateBounds();
+                redMesh.RecalculateBounds();
 
                 hasExec_isDrawHitBox = false;
             }
-
         }
 
 
@@ -343,51 +861,70 @@ namespace MCEntity
         //根据指定方向的点的方块的长度
         //判断自身长度是否足够
         //否则将进行碰撞细分
-        bool TryCheckMore_SubdivisionCollition(Vector3 _Direct)
+        bool TryCheckMore_SubdivisionCollition(BlockDirection _DIRECT)
         {
             return false;
         }
 
         /// <summary>
-        /// 获取基于Block的目标方向点
+        /// 获取基于Block的目标方向点,长度为1m
         /// </summary>
         /// <param name="_direct">方向向量</param>
         /// <returns>目标点</returns>
-        public Vector3 GetBlockDirectPoint(Vector3 _direct)
+        public Vector3 GetPoint_Direct_1m(BlockDirection _DIRECT)
         {
-            // 确保方向向量为单位向量
-            _direct.Normalize();
 
-            // 根据方向返回相应的目标点
-            if (_direct == Vector3.forward) // Front
+            switch (_DIRECT)
             {
-                return selfPos + Vector3.forward;
+                case BlockDirection.前:
+                    return selfPos + Vector3.forward;
+                case BlockDirection.后:
+                    return selfPos + Vector3.back;
+                case BlockDirection.左:
+                    return selfPos + Vector3.left;
+                case BlockDirection.右:
+                    return selfPos + Vector3.right;
+                case BlockDirection.上:
+                    return selfPos + Vector3.up;
+                case BlockDirection.下:
+                    return selfPos + Vector3.down;
+                default:
+                    print("GetPoint_Direct_1m函数出现了问题");
+                    return Vector3.zero;
             }
-            else if (_direct == Vector3.back) // Back
+
+
+        }
+
+
+        /// <summary>
+        /// 获取基于HitBox上的边缘点
+        /// </summary>
+        /// <param name="_direct">方向向量</param>
+        /// <returns>目标点</returns>
+        public Vector3 GetPoint_HitBoxEdge(BlockDirection _DIRECT)
+        {
+
+            switch (_DIRECT)
             {
-                return selfPos + Vector3.back;
+                case BlockDirection.前:
+                    return selfPos + Vector3.forward * hitBoxWidth / 2f;
+                case BlockDirection.后:
+                    return selfPos + Vector3.back * hitBoxWidth / 2f;
+                case BlockDirection.左:
+                    return selfPos + Vector3.left * hitBoxWidth / 2f;
+                case BlockDirection.右:
+                    return selfPos + Vector3.right * hitBoxWidth / 2f;
+                case BlockDirection.上:
+                    return selfPos + Vector3.up * hitBoxHeight / 2f;
+                case BlockDirection.下:
+                    return selfPos + Vector3.down * hitBoxHeight / 2f;                   
+                default:
+                    print("GetPoint_HitBoxEdge函数出现了问题");
+                    return Vector3.zero;
             }
-            else if (_direct == Vector3.left) // Left
-            {
-                return selfPos + Vector3.left;
-            }
-            else if (_direct == Vector3.right) // Right
-            {
-                return selfPos + Vector3.right;
-            }
-            else if (_direct == Vector3.up) // Up
-            {
-                return selfPos + Vector3.up;
-            }
-            else if (_direct == Vector3.down) // Down
-            {
-                return selfPos + Vector3.down;
-            }
-            else
-            {
-                Debug.LogError("GetDirectionPoint输入不正确");
-                return Vector3.zero; // 返回零向量表示错误
-            }
+
+
         }
 
 
@@ -410,7 +947,7 @@ namespace MCEntity
         {
             get
             {
-                return selfPos + Vector3.down * hitBoxHeight / 2f - new Vector3(0f, 0.01f, 0f);
+                return selfPos + Vector3.down * hitBoxHeight / 2f;
             }
         }
 
@@ -495,35 +1032,16 @@ namespace MCEntity
         }
 
 
+
+
+
+        
+
+
         #endregion
 
 
-
         #region 特殊工具
-
-
-        private bool isCollisionLocked = false;
-        private float collisionLockTimer = 0f;
-
-        // 暂时关闭碰撞检测
-        //isGround除外
-        public void CloseCollisionForAWhile(float _time)
-        {
-            isCollisionLocked = true;
-            collisionLockTimer = _time;
-            StartCoroutine(CollisionLockTimerCoroutine());
-        }
-
-        // 碰撞检测的协程，用于解锁
-        private IEnumerator CollisionLockTimerCoroutine()
-        {
-            while (collisionLockTimer > 0f)
-            {
-                collisionLockTimer -= Time.deltaTime;
-                yield return null;
-            }
-            isCollisionLocked = false;
-        }
 
         /// <summary>
         /// 是否在水中
