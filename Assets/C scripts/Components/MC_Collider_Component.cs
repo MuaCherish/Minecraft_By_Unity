@@ -133,17 +133,16 @@ namespace MCEntity
                 if (managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, -Delta, Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, -Delta, Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, Delta, Delta)) ||
-                    TryCheckMore_SubdivisionCollition(BlockDirection.前))
+                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, Delta, Delta)))
                 {
 
                     //进行一次微调
                     if (!AdjustLock_Collsion_Front && Velocity_Component.GetVelocity().z > 0)
                     {
                         // 计算 X 坐标调整
-                        int _selfZ = (int)(GetPoint_HitBoxEdge(BlockDirection.前).z + Vector3.forward.z * Delta_Pro);
-                        float _blockZ = GetTargetBlockHeightAndWidth(BlockDirection.前);
-                        transform.position = new Vector3(selfPos.x, selfPos.y, _selfZ + _blockZ - hitBoxWidth / 2);
+                        //int _selfZ = (int)(GetPoint_HitBoxEdge(BlockDirection.前).z + Vector3.forward.z * Delta_Pro);
+                        //float _blockZ = GetTargetBlockHeightAndWidth(BlockDirection.前);
+                        //transform.position = new Vector3(selfPos.x, selfPos.y, _selfZ + _blockZ - hitBoxWidth / 2);
                         //print($"进行一次位置修正,_selyX: {_selfZ},  _blockX:{_blockZ}");
 
                         // 调整位置后锁定避免重复调用
@@ -178,23 +177,22 @@ namespace MCEntity
                 if (managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, -Delta, -Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, -Delta, -Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, Delta, -Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, Delta, -Delta)) ||
-                    TryCheckMore_SubdivisionCollition(BlockDirection.后))
+                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, Delta, -Delta)))
                 {
 
                     //进行一次微调
                     if (!AdjustLock_Collsion_Back && Velocity_Component.GetVelocity().z < 0)
                     {
                         // 计算 X 坐标调整
-                        int _selfZ = (int)(GetPoint_HitBoxEdge(BlockDirection.后).z + Vector3.back.z * Delta_Pro);
-                        float _blockZ = GetTargetBlockHeightAndWidth(BlockDirection.后);
-                        transform.position = new Vector3(selfPos.x, selfPos.y, _selfZ + _blockZ + hitBoxWidth / 2);
+                        //int _selfZ = (int)(GetPoint_HitBoxEdge(BlockDirection.后).z + Vector3.back.z * Delta_Pro);
+                        //float _blockZ = GetTargetBlockHeightAndWidth(BlockDirection.后);
+                        //transform.position = new Vector3(selfPos.x, selfPos.y, _selfZ + _blockZ + hitBoxWidth / 2);
                         //print($"进行一次位置修正,_selyX: {_selfZ},  _blockX:{_blockZ}");
 
                         // 调整位置后锁定避免重复调用
                         AdjustLock_Collsion_Back = true;
 
-                        //print("Left");
+                        //print("Back");
                     }
 
 
@@ -223,17 +221,16 @@ namespace MCEntity
                 if (managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(-Delta, -Delta, -Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(-Delta, Delta, -Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(-Delta, -Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(-Delta, Delta, Delta)) ||
-                    TryCheckMore_SubdivisionCollition(BlockDirection.左))
+                    managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(-Delta, Delta, Delta)))
                 {
 
                     //进行一次微调
                     if (!AdjustLock_Collsion_Left && Velocity_Component.GetVelocity().x < 0)
                     {
                         // 计算 X 坐标调整
-                        int _selyX = (int)(GetPoint_HitBoxEdge(BlockDirection.左).x + Vector3.left.x * Delta_Pro);
-                        float _blockX = GetTargetBlockHeightAndWidth(BlockDirection.左);
-                        transform.position = new Vector3(_selyX + _blockX + hitBoxWidth / 2, selfPos.y, selfPos.z);
+                        //int _selyX = (int)(GetPoint_HitBoxEdge(BlockDirection.左).x + Vector3.left.x * Delta_Pro);
+                        //float _blockX = GetTargetBlockHeightAndWidth(BlockDirection.左);
+                        //transform.position = new Vector3(_selyX + _blockX + hitBoxWidth / 2, selfPos.y, selfPos.z);
                         //print($"进行一次位置修正,_selyX: {_selyX},  _blockX:{_blockX}");
 
                         // 调整位置后锁定避免重复调用
@@ -268,8 +265,7 @@ namespace MCEntity
                 if (managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(Delta, -Delta, -Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(Delta, Delta, -Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(Delta, -Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(Delta, Delta, Delta)) ||
-                    TryCheckMore_SubdivisionCollition(BlockDirection.右))
+                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(Delta, Delta, Delta)))
                 {
 
                     
@@ -280,9 +276,9 @@ namespace MCEntity
                     {
 
                         // 计算 X 坐标调整
-                        int _selyX = (int)(GetPoint_HitBoxEdge(BlockDirection.右).x + Vector3.right.x * Delta_Pro);
-                        float _blockX = GetTargetBlockHeightAndWidth(BlockDirection.右);
-                        transform.position = new Vector3(_selyX + _blockX - hitBoxWidth / 2, selfPos.y, selfPos.z);
+                        //int _selyX = (int)(GetPoint_HitBoxEdge(BlockDirection.右).x + Vector3.right.x * Delta_Pro);
+                        //float _blockX = GetTargetBlockHeightAndWidth(BlockDirection.右);
+                        //transform.position = new Vector3(_selyX + _blockX - hitBoxWidth / 2, selfPos.y, selfPos.z);
                         //print($"进行一次位置修正,_selyX: {_selyX},  _blockX:{_blockX}");
 
                         // 调整位置后锁定避免重复调用
@@ -317,17 +313,16 @@ namespace MCEntity
                 if (managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, Delta, Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, Delta, -Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, Delta, -Delta)) ||
-                    TryCheckMore_SubdivisionCollition(BlockDirection.上))
+                    managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, Delta, -Delta)))
                 {
 
                     //进行一次微调
                     if (!AdjustLock_Collsion_Up && Velocity_Component.GetVelocity().y > 0)
                     {
                         // 计算 Y 坐标调整
-                        int _selyY = (int)(GetPoint_HitBoxEdge(BlockDirection.上).y + Vector3.up.y * Delta_Pro);
-                        float _blockY = GetTargetBlockHeightAndWidth(BlockDirection.上);
-                        transform.position = new Vector3(selfPos.x, _selyY + _blockY - hitBoxHeight / 2, selfPos.z);
+                        //int _selyY = (int)(GetPoint_HitBoxEdge(BlockDirection.上).y + Vector3.up.y * Delta_Pro);
+                        //float _blockY = GetTargetBlockHeightAndWidth(BlockDirection.上);
+                        //transform.position = new Vector3(selfPos.x, _selyY + _blockY - hitBoxHeight / 2, selfPos.z);
                         //print($"进行一次位置修正,_selyY: {_selyY},  _blockY:{_blockY}");
 
                         // 调整位置后锁定避免重复调用
@@ -363,8 +358,7 @@ namespace MCEntity
                 if (managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, -Delta, Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, -Delta, -Delta)) ||
                     managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, -Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, -Delta, -Delta)) ||
-                    TryCheckMore_SubdivisionCollition(BlockDirection.下))
+                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, -Delta, -Delta)))
                 {
 
                     //进行一次微调
@@ -409,6 +403,60 @@ namespace MCEntity
                 return !isCollisionLocked && (collider_Front || collider_Back || collider_Left || collider_Right);
             }
         }
+
+
+        //动态碰撞细分
+        private bool DynamicSubdivision_CollisionCheck(BlockDirection _DIRECT)
+        {
+            //检测矩形
+            float _DynamicWidth = 1f;
+            float _DynamicHeight = 1f;
+
+            //中心点
+            Vector3 _Center = Vector3.zero; 
+
+            //Block
+            //byte _targetBlockType = 0;
+            //CollosionRange _targetBlockRange;
+
+            //先确定Width
+            switch (_DIRECT)
+            {
+                case BlockDirection.前:
+                    break;
+                case BlockDirection.后:
+                    break;
+                case BlockDirection.左:
+                    break;
+                case BlockDirection.上:
+                    break;
+                case BlockDirection.下:
+
+
+
+
+
+                    //根据width进行碰撞点检测-Front
+                    float _stepX = 1f / _DynamicWidth;
+                    float _stepZ = 1f / _DynamicHeight;
+
+                    //遍历每个矩形
+                    for (float _z = 0; _z < _stepZ; _z += _DynamicHeight)
+                    {
+                        for (float _x = 0; _x < _stepX; _x += _DynamicWidth)
+                        {
+                            //managerhub.world.CollisionCheckForVoxel(_左下 + new Vector3(_x, _y, 1) * _DynamicWidth);
+                        }
+                    }
+
+                    break;
+            }
+
+            
+
+            return false;
+        }
+
 
 
         #endregion
@@ -857,14 +905,6 @@ namespace MCEntity
 
         #region 获取点
 
-        //碰撞细分
-        //根据指定方向的点的方块的长度
-        //判断自身长度是否足够
-        //否则将进行碰撞细分
-        bool TryCheckMore_SubdivisionCollition(BlockDirection _DIRECT)
-        {
-            return false;
-        }
 
         /// <summary>
         /// 获取基于Block的目标方向点,长度为1m

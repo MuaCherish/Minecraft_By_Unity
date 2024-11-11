@@ -30,7 +30,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Decay: 1
-    - _Density: 1
+    - _Density: 0.31572962
     - _Exposure: 1
     - _NumSamples: 64
     - _Weight: 0.5

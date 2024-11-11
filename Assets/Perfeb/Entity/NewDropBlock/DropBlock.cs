@@ -6,6 +6,7 @@ using System.Collections;
 using UnityEngine.XR;
 using System.Collections.Generic;
 using static UsefulFunction;
+using System.Linq;
 
 public class DropBlock: MC_Entity_Base
 {
@@ -371,7 +372,11 @@ public class DropBlock: MC_Entity_Base
     [Foldout("被埋没情况" ,true)]
     [Header("是否被埋")] private bool isBuried = false; // 用于避免重复处理
     [Header("检测时间")] public float HandleBuriedColdTime = 1f;  // 冷却时间
-    [Header("逃逸力")] public float HandleBuriedForceValue = 60f;  // 力度大小 
+    [Header("四周逃逸力")] public float HandleBuriedForceValue = 60f;  // 力度大小 
+    [Header("向四周逃逸关闭碰撞的时间")] public float CloseCollisionTime_Surrond = 0.2f;  // 力度大小 
+
+    [Header("向上逃逸力")] public float HandleBuriedForceValue_Up = 77f;  // 力度大小 
+    [Header("向上逃逸关闭碰撞的时间")] public float CloseCollisionTime_Up = 0.5f;  // 力度大小 
     
     void HandleBuried()
     {
@@ -384,45 +389,45 @@ public class DropBlock: MC_Entity_Base
         isBuried = true; // 标记为已埋没
                          // 暂时关闭碰撞
 
-        
-        
-        // 优先搜索四周是否有空气，搜到了就向那个方块进行移动
-        if (managerhub.world.GetBlockType(Collider_Component.GetPoint_Direct_1m(BlockDirection.前)) == VoxelData.Air)
+
+
+        // 定义四个方向的列表
+        List<(BlockDirection direction, Vector3 force)> directions = new List<(BlockDirection, Vector3)>
         {
-            Collider_Component.CloseCollisionForAWhile(0.2f);
-            _Force = Vector3.forward;
-            _Force.y = 0.5f;
-            Velocity_Component.AddForce(_Force, HandleBuriedForceValue);
+            (BlockDirection.前, Vector3.forward),
+            (BlockDirection.后, Vector3.back),
+            (BlockDirection.左, Vector3.left),
+            (BlockDirection.右, Vector3.right)
+        };
+
+        // 随机打乱方向列表
+        System.Random random = new System.Random();
+        directions = directions.OrderBy(x => random.Next()).ToList();
+
+        // 遍历打乱后的方向
+        bool foundAir = false;
+        foreach (var (direction, force) in directions)
+        {
+            if (managerhub.world.GetBlockType(Collider_Component.GetPoint_Direct_1m(direction)) == VoxelData.Air)
+            {
+                Collider_Component.CloseCollisionForAWhile(CloseCollisionTime_Surrond);
+                _Force = force;
+                _Force.y = 0.5f;
+                Velocity_Component.AddForce(_Force, HandleBuriedForceValue);
+                foundAir = true;
+                break;
+            }
         }
-        else if (managerhub.world.GetBlockType(Collider_Component.GetPoint_Direct_1m(BlockDirection.后)) == VoxelData.Air)
+
+        // 如果没找到空气块，执行向上跳跃
+        if (!foundAir)
         {
-            Collider_Component.CloseCollisionForAWhile(0.2f);
-            _Force = Vector3.back;
-            _Force.y = 0.5f;
-            Velocity_Component.AddForce(_Force, HandleBuriedForceValue);
-        }
-        else if (managerhub.world.GetBlockType(Collider_Component.GetPoint_Direct_1m(BlockDirection.左)) == VoxelData.Air)
-        {
-            Collider_Component.CloseCollisionForAWhile(0.2f);
-            _Force = Vector3.left;
-            _Force.y = 0.5f;
-            Velocity_Component.AddForce(_Force, HandleBuriedForceValue);
-        }
-        else if (managerhub.world.GetBlockType(Collider_Component.GetPoint_Direct_1m(BlockDirection.右)) == VoxelData.Air)
-        {
-            Collider_Component.CloseCollisionForAWhile(0.2f);
-            _Force = Vector3.right;
-            _Force.y = 0.5f;
-            Velocity_Component.AddForce(_Force, HandleBuriedForceValue);
-        }
-        else
-        {
-            // 如果没搜到则向上方跳跃1f
-            Collider_Component.CloseCollisionForAWhile(0.5f);
+            Collider_Component.CloseCollisionForAWhile(CloseCollisionTime_Up);
             _Force = Vector3.up;
-            Velocity_Component.AddForce(_Force, 77f);
+            Velocity_Component.AddForce(_Force, HandleBuriedForceValue_Up);
         }
-        
+
+
 
         // 设置冷却时间，恢复状态
         StartCoroutine(ResetBuriedState());

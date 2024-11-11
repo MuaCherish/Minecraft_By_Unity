@@ -599,7 +599,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   JumpValue: 40
-  Toggle_Start: 0
   StopFloating: 0
   destroyTime: 100
   rotationSpeed: 30
@@ -609,7 +608,10 @@ MonoBehaviour:
   absorbDistance: 2.3
   ColdTimeToAbsorb: 1.8
   HandleBuriedColdTime: 1
-  HandleBuriedForceValue: 60
+  HandleBuriedForceValue: 120
+  CloseCollisionTime_Surrond: 0.2
+  HandleBuriedForceValue_Up: 200
+  CloseCollisionTime_Up: 0.3
 --- !u!114 &7201078242913665717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -623,14 +625,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isMoving: 0
+  isJumpRequest: 0
+  RotationToggle: 0
+  horizon: 0
   velocity: {x: 0, y: 0, z: 0}
   momentum: {x: 0, y: 0, z: 0}
   Othermomentum: {x: 0, y: 0, z: 0}
   mass: 1
   speed_move: 1
   speedDown_ultimate: -10
+  WaterspeedDown_ultimate: -2
   force_jump: 77
   force_gravity: -9.8
+  force_Watergravity: -2
+  JumpColdTime: 0.1
+  HeadObject: {fileID: 0}
+  RotationSensitivity: 50
   Damping_Horizontal: 3
 --- !u!114 &3657433570392770169
 MonoBehaviour:
@@ -645,6 +655,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isGround: 0
+  managerhub: {fileID: 0}
   isDrawHitBox: 0
   hitBoxEyes: 0.8
   hitBoxWidth: 0.3
@@ -656,7 +667,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4458899256724112708}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 039b14dff4272714e86606b89ba01570, type: 3}
   m_Name: 
@@ -668,9 +679,12 @@ MonoBehaviour:
   Up: 0
   Down: 0
   Jump_Direct: {x: 0, y: 0, z: 0}
+  Jump_Value: 0
   Toggle_EntityOnceJump: 0
   Debug_radious: 5
   Toggle_EntityOnceMove: 0
+  EntityControlerEnable: 0
+  RotationSpeed: 0.3
 --- !u!1 &5864546935591180756
 GameObject:
   m_ObjectHideFlags: 0

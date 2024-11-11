@@ -91750,7 +91750,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 8a2580812d58b14448587d735b3d15d4, type: 2}
-  _light: {fileID: 0}
+  _light: {fileID: 593827498}
 --- !u!114 &1727421515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121984,6 +121984,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isMoving: 0
   isJumpRequest: 0
+  RotationToggle: 0
+  horizon: 0
   velocity: {x: 0, y: 0, z: 0}
   momentum: {x: 0, y: 0, z: 0}
   Othermomentum: {x: 0, y: 0, z: 0}
@@ -121995,6 +121997,8 @@ MonoBehaviour:
   force_gravity: -9.8
   force_Watergravity: -2
   JumpColdTime: 0.1
+  HeadObject: {fileID: 0}
+  RotationSensitivity: 50
   Damping_Horizontal: 20
 --- !u!114 &8960886147176265436
 MonoBehaviour:
@@ -122051,7 +122055,7 @@ MonoBehaviour:
   Debug_radious: 5
   Toggle_EntityOnceMove: 0
   EntityControlerEnable: 1
-  RotationSpeed: 1
+  RotationSpeed: 0.5
 --- !u!224 &9007921387207151049
 RectTransform:
   m_ObjectHideFlags: 0

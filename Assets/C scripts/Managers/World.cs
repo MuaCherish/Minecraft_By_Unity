@@ -1746,7 +1746,7 @@ public class World : MonoBehaviour
         }
         else
         {
-            print($"GetBlockType: 坐标 {pos} 所在Chunk不存在");
+            //print($"GetBlockType: 坐标 {pos} 所在Chunk不存在");
             return ERROR_CODE_OUTOFVOXELMAP;
         }
 

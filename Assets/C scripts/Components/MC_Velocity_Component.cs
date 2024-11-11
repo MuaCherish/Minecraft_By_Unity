@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using MCEntity;
 using Homebrew;
+using static UsefulFunction;
 
 namespace MCEntity
 {
@@ -66,12 +67,18 @@ namespace MCEntity
 
 
 
-
+        public bool RotationToggle;
+        public float horizon;
         private void FixedUpdate()
         {
             if (Collider_Component.managerhub.world.game_state == Game_State.Playing)
             {
                 _ReferFixedUpdate_Caculate();
+
+                if (RotationToggle)
+                {
+                    EntityRotation(horizon, 0);
+                }
             }
            
         }
@@ -88,15 +95,23 @@ namespace MCEntity
 
         /// <summary>
         /// 实体旋转
+        /// 输入值在[-1,1]之间
         /// </summary>
-        /// <param name="targetDirection">目标旋转方向（单位向量）</param>
-        /// <param name="rotationSpeed">旋转速度（角度/秒）</param>
-        /// <param name="axis">旋转轴（仅用于固定轴旋转）</param>
-        /// <param name="angle">旋转的角度（仅用于固定轴旋转，可以是正值或负值）</param>
-        /// <param name="isInstant">是否立即完成旋转</param>
-        public void EntityRotation(Vector3? targetDirection = null, float rotationSpeed = 0, Vector3? axis = null, float angle = 0, bool isInstant = false)
+        public void EntityRotation(float _HorizonInput, float _VerticalInput)
         {
-            
+            // 完成水平的旋转
+            transform.Rotate(Vector3.up, _HorizonInput * RotationSensitivity * Time.fixedDeltaTime);
+
+            // 如果头存在，则完成垂直的旋转
+            if (HeadObject != null)
+            {
+                // 垂直旋转计算，限制在[-90, 90]度之间
+                verticalRotation -= _VerticalInput * RotationSensitivity * Time.fixedDeltaTime;
+                verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
+
+                // 更新头部对象的局部旋转，仅影响X轴
+                HeadObject.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+            }
         }
 
 
@@ -137,6 +152,40 @@ namespace MCEntity
 
 
         }
+
+
+        /// <summary>
+        /// 添加速度，按对象自身方向
+        /// 无法立刻改变速度？调用一点点AddForce即可解除y的锁
+        /// </summary>
+        /// <param name="_v"></param>
+        public void SetVelocity(BlockDirection _Direct, float _value)
+        {
+            // 根据方向设置对应的速度分量，只调用第一种重载函数修改特定轴
+            switch (_Direct)
+            {
+                case BlockDirection.前:
+                    SetVelocity("x", transform.forward.x * _value);
+                    SetVelocity("z", transform.forward.z * _value);
+                    break;
+                case BlockDirection.后:
+                    SetVelocity("x", -transform.forward.x * _value);
+                    SetVelocity("z", -transform.forward.z * _value);
+                    break;
+                case BlockDirection.左:
+                    SetVelocity("x", -transform.right.x * _value);
+                    SetVelocity("z", -transform.right.z * _value);
+                    break;
+                case BlockDirection.右:
+                    SetVelocity("x", transform.right.x * _value);
+                    SetVelocity("z", transform.right.z * _value);
+                    break;
+                default:
+                    print("SetVelocity.BlockDirection参数错误");
+                    break;
+            }
+        }
+
 
 
         /// <summary>
@@ -232,8 +281,13 @@ namespace MCEntity
         [Header("实体跳跃力")] public float force_jump = 270f; 
         [Header("实体重力")] public float force_gravity = -13f;
         [Header("实体水下重力")] public float force_Watergravity = -2f;
-        [Header("实体跳跃冷却")] public float JumpColdTime = 0.3f;  private float jumpCooldownTimer = 0f;   // 计时器
-        
+        [Header("实体跳跃冷却")] public float JumpColdTime = 0.1f;  private float jumpCooldownTimer = 0f;   // 计时器
+
+        [Foldout("旋转参数", true)]
+        [Header("实体头(选填)")] public GameObject HeadObject; // 头部对象，用于垂直旋转
+        [Header("实体旋转灵敏度")] public float RotationSensitivity = 50.0f; // 设置旋转灵敏度
+
+        private float verticalRotation = 0f; // 用于存储垂直旋转的累计值
         //衰减系数
         [Foldout("衰减系数", true)]
         [Header("水平摩擦系数 (越小越滑)")] public float Damping_Horizontal = 10f;
@@ -295,6 +349,7 @@ namespace MCEntity
             Caculate_Momentum();   // 首先计算动量（包括重力和空气阻力）
             Caculate_Velocity();   // 然后计算速度
         }
+
 
 
         // 计算动能
@@ -398,12 +453,14 @@ namespace MCEntity
 
 
 
-        //移动实体
+        // 移动实体
         private void ApplyPosition()
         {
             // 更新位置，只使用速度
             transform.position += velocity * Time.fixedDeltaTime;
+
         }
+
 
 
 

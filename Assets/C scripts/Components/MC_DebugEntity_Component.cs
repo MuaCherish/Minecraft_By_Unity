@@ -104,7 +104,7 @@ public class MC_DebugEntity_Component : MonoBehaviour
 
     [Foldout("接管控制", true)]
     [Header("暂时接管小键盘--[IJKL]移动，[?]跳跃")] public bool EntityControlerEnable;
-    [Header("旋转角速度")] public float RotationSpeed = 1f;
+    [Header("旋转角速度")] public float RotationSpeed = 0.3f;
 
     void _ReferUpdate_EntityControler()
     {
@@ -121,20 +121,20 @@ public class MC_DebugEntity_Component : MonoBehaviour
         // 检查输入并设置x和z方向的速度
         if (Input.GetKey(KeyCode.I)) // 向前
         {
-            Velocity_Component.SetVelocity("z", Velocity_Component.speed_move);
+            Velocity_Component.SetVelocity(UsefulFunction.BlockDirection.前, Velocity_Component.speed_move);
         }
         else if (Input.GetKey(KeyCode.K)) // 向后
         {
-            Velocity_Component.SetVelocity("z", -Velocity_Component.speed_move);
+            Velocity_Component.SetVelocity(UsefulFunction.BlockDirection.后, Velocity_Component.speed_move);
         }
 
         if (Input.GetKey(KeyCode.J)) // 向左
         {
-            Velocity_Component.SetVelocity("x", -Velocity_Component.speed_move);
+            Velocity_Component.SetVelocity(UsefulFunction.BlockDirection.左, Velocity_Component.speed_move);
         }
         else if (Input.GetKey(KeyCode.L)) // 向右
         {
-            Velocity_Component.SetVelocity("x", Velocity_Component.speed_move);
+            Velocity_Component.SetVelocity(UsefulFunction.BlockDirection.右, Velocity_Component.speed_move);
         }
 
         // 使用RightShift进行跳跃
@@ -142,6 +142,21 @@ public class MC_DebugEntity_Component : MonoBehaviour
         {
             Velocity_Component.EntityJump();
         }
+
+        // 按下 < 向左旋转，> 向右旋转
+        // 如果两个同时按住，则不触发旋转
+        if (Input.GetKey(KeyCode.N) && !Input.GetKey(KeyCode.M))
+        {
+            // 向左旋转
+            Velocity_Component.EntityRotation(-RotationSpeed, 0);
+        }
+        else if (Input.GetKey(KeyCode.M) && !Input.GetKey(KeyCode.N))
+        {
+            // 向右旋转
+            Velocity_Component.EntityRotation(RotationSpeed, 0);
+        }
+
+
     }
 
 
