@@ -12,6 +12,8 @@ using System.IO;
 using System.Diagnostics;
 using UnityEngine.EventSystems;
 using System.Reflection;
+using Homebrew;
+using static CommandManager;
 
 
 public class CanvasManager : MonoBehaviour
@@ -129,6 +131,7 @@ public class CanvasManager : MonoBehaviour
 
     //----------------------------------- 生命周期 ---------------------------------------
 
+
     private void Start()
     {
         InitCanvasManager();
@@ -141,6 +144,8 @@ public class CanvasManager : MonoBehaviour
             muacherishCoroutine = StartCoroutine(jumpMuaCherish());
         }
         waittoFinishSaveAndBackToMenuCoroutine = null;
+
+        
 
         // 初始化修改值参数
         isPausing = false;
@@ -209,55 +214,95 @@ public class CanvasManager : MonoBehaviour
     private void Update()
     {
 
-        //加载中
-        if (world.game_state == Game_State.Loading)
-        {
-            OpenYourEyes.SetActive(true);
-            LoadingWorld();
+        Handle_ShowFlashLightPrompt();
 
+
+        switch (world.game_state)
+        {
+            case Game_State.Loading:
+                Handle_GameState_Loading();
+                break;
+
+            case Game_State.Playing:
+                Handle_GameState_Playing();
+                break;
+
+            case Game_State.Pause:
+                Handle_GameState_Pause();
+                break;
+
+               
         }
 
-        //加载完成
-        else if (world.game_state == Game_State.Playing)
-        {
-            //Survival
-            if (world.game_mode == GameMode.Survival)
-            {
-                GameMode_Survival();
-            }
-            //Creative
-            else if (world.game_mode == GameMode.Creative)
-            {
-                GameMode_Creative();
-            }
-
-
-
-        }
-
-        //Pause
-        else if (world.game_state == Game_State.Pause)
-        {
-            Show_Esc_Screen();
-
-            if (Input.GetKeyDown(KeyCode.E) && isOpenBackpack && !managerhub.commandManager.isConsoleActive && !managerhub.player.isSpectatorMode)
-            {
-                isPausing = false;
-                isOpenBackpack = false;
-                SwitchUI_Player(-1);
-                managerhub.world.game_state = Game_State.Playing;
-
-                //print("E 关闭背包");
-                CheckSwapBlockAndDropOut();
-            }
-
-            //LayintSwapBlock();
-
-        }
-
-
-        Prompt_FlashLight();
     }
+
+
+
+    #region Handles
+
+    //Update-Loading处理
+    void Handle_GameState_Loading()
+    {
+        OpenYourEyes.SetActive(true);
+        LoadingWorld();
+    }
+
+    //Update-Playing处理
+    void Handle_GameState_Playing()
+    {
+        //Survival
+        if (world.game_mode == GameMode.Survival)
+        {
+            GameMode_Survival();
+        }
+        //Creative
+        else if (world.game_mode == GameMode.Creative)
+        {
+            GameMode_Creative();
+        }
+
+    }
+
+    //Update-Pause处理
+    void Handle_GameState_Pause()
+    {
+        Show_Esc_Screen();
+
+        if (Input.GetKeyDown(KeyCode.E) && isOpenBackpack && !managerhub.chatManager.isInputing && !managerhub.player.isSpectatorMode)
+        {
+            isPausing = false;
+            isOpenBackpack = false;
+            SwitchUI_Player(-1);
+            managerhub.world.game_state = Game_State.Playing;
+
+            //print("E 关闭背包");
+            CheckSwapBlockAndDropOut();
+        }
+
+
+        //LayintSwapBlock();
+    }
+
+    //手电筒提示
+    void Handle_ShowFlashLightPrompt()
+    {
+        if (managerhub.player.isInCave)
+        {
+            if (hasExec_PromptScreen_isShow == false)
+            {
+                //First_Prompt_PlayerThe_Flashlight();
+                managerhub.chatManager.PrintMessage("<系统消息> 尝试按[F]打开手电筒", 10f, Color.white);
+                hasExec_PromptScreen_isShow = true;
+            }
+
+        }
+    }
+
+
+
+    #endregion
+
+
 
     //加载进度条
     public void LoadingWorld()
@@ -295,6 +340,7 @@ public class CanvasManager : MonoBehaviour
     //------------------------------------- 重置版 -----------------------------------------------------------------------------------------------------------------------------------------------
 
     //建立ui缓冲栈
+    [Foldout("其他", true)]
     [Header("Transforms")]
     //public NighManager nightmanager;
     public FixedStack<int> UIBuffer = new FixedStack<int>(5, 0);
@@ -481,7 +527,8 @@ public class CanvasManager : MonoBehaviour
 
                 //其他
                 //HideCursor();
-                ToggleMouseVisibilityAndLock(true);
+
+                UsefulFunction.LockMouse(true);
             }
 
 
@@ -490,11 +537,7 @@ public class CanvasManager : MonoBehaviour
         //玩家模式
         else if (_TargetID == CanvasData.ui玩家)
         {
-            // 将鼠标锁定在屏幕中心
-            //Cursor.lockState = CursorLockMode.Locked;
-            ////鼠标不可视
-            //Cursor.visible = false;
-            ToggleMouseVisibilityAndLock(true);
+            UsefulFunction.LockMouse(true);
 
 
             if (world.game_mode == GameMode.Survival)
@@ -513,7 +556,7 @@ public class CanvasManager : MonoBehaviour
         {
             //Cursor.lockState = CursorLockMode.None;
             //Cursor.visible = true;
-            ToggleMouseVisibilityAndLock(false);
+            UsefulFunction.LockMouse(false);
         }
 
         //死亡
@@ -521,7 +564,7 @@ public class CanvasManager : MonoBehaviour
         {
             //Cursor.lockState = CursorLockMode.None;
             //Cursor.visible = true;
-            ToggleMouseVisibilityAndLock(false);
+            UsefulFunction.LockMouse(false);
 
 
             UIManager[_TargetID].childs[0]._object.GetComponent<TextMeshProUGUI>().text = $"分数：{(int)(endTime - startTime)}";
@@ -532,27 +575,6 @@ public class CanvasManager : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// 根据传入的布尔值隐藏并固定鼠标，或者恢复鼠标的可见性和自由移动
-    /// </summary>
-    /// <param name="isLocked">如果为 true，则隐藏并固定鼠标；如果为 false，则显示并解锁鼠标</param>
-    public void ToggleMouseVisibilityAndLock(bool isLocked)
-    {
-        if (isLocked)
-        {
-            //print("隐藏鼠标");
-            // 隐藏鼠标光标并将其锁定在屏幕中心
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-        else
-        {
-            //print("显示鼠标");
-            // 显示鼠标光标并解除锁定
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-    }
 
 
 
@@ -931,7 +953,7 @@ public class CanvasManager : MonoBehaviour
             if (isPausing == false)
             {
                 isPausing = true;
-                ToggleMouseVisibilityAndLock(false);
+                UsefulFunction.LockMouse(false);
                 UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_其他界面]._object.SetActive(true);
                 UIManager[CanvasData.ui玩家].childs[_index]._object.SetActive(true);
                 UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_准心]._object.SetActive(false);
@@ -1179,7 +1201,7 @@ public class CanvasManager : MonoBehaviour
         //EscScreen
         Show_Esc_Screen();
 
-        if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.commandManager.isConsoleActive && !managerhub.player.isSpectatorMode)
+        if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.chatManager.isInputing && !managerhub.player.isSpectatorMode)
         {
             isOpenBackpack = true;
             SwitchUI_Player(CanvasData.uiplayer_生存背包);
@@ -1257,7 +1279,7 @@ public class CanvasManager : MonoBehaviour
         //EscScreen
         Show_Esc_Screen();
 
-        if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.commandManager.isConsoleActive && !managerhub.player.isSpectatorMode)
+        if (Input.GetKeyDown(KeyCode.E) && !isOpenBackpack && !managerhub.chatManager.isInputing && !managerhub.player.isSpectatorMode)
         {
             isOpenBackpack = true;
             SwitchUI_Player(CanvasData.uiplayer_创造背包);
@@ -1695,7 +1717,7 @@ public class CanvasManager : MonoBehaviour
                 world.game_state = Game_State.Pause;
 
                 // 解锁鼠标以便在暂停时使用
-                ToggleMouseVisibilityAndLock(false);
+                UsefulFunction.LockMouse(false);
             }
             // 解除暂停
             else
@@ -1722,7 +1744,7 @@ public class CanvasManager : MonoBehaviour
                 }
 
                 // 重新锁定鼠标
-                ToggleMouseVisibilityAndLock(true);
+                UsefulFunction.LockMouse(true);
                 world.game_state = Game_State.Playing;
             }
         }
@@ -1734,10 +1756,7 @@ public class CanvasManager : MonoBehaviour
 
         isPausing = !isPausing;
 
-
-        //Cursor.lockState = CursorLockMode.Locked;
-        //Cursor.visible = false;
-        ToggleMouseVisibilityAndLock(true);
+        UsefulFunction.LockMouse(true);
 
         SwitchToUI(CanvasData.ui玩家);
         world.game_state = Game_State.Playing;
@@ -1786,31 +1805,6 @@ public class CanvasManager : MonoBehaviour
     //}
 
 
-    //手电筒的提示
-    void Prompt_FlashLight()
-    { 
-        if (managerhub.player.isInCave)
-        {
-            if (hasExec_PromptScreen_isShow == false)
-            {
-                //First_Prompt_PlayerThe_Flashlight();
-                managerhub.commandManager.PrintMessage("<系统消息> 尝试按[F]打开手电筒", 10f,Color.white);
-                hasExec_PromptScreen_isShow = true;
-            }
-            
-        }
-
-        //if (Input.GetKeyDown(KeyCode.F) && hasExec_PromptScreen_isShow)
-        //{
-        //    if (hasExec_PromptScreen_isHide)
-        //    {
-        //        StartCoroutine(Hide_Animation_PromptScreen());
-
-        //        hasExec_PromptScreen_isHide = false;
-        //    }
-        //}
-
-    }
 
     //public void First_Prompt_PlayerThe_Flashlight()
     //{
@@ -2031,17 +2025,6 @@ public class CanvasManager : MonoBehaviour
         SpectatorScreen.SetActive(_open);
     }
 
-
-    //void HideCursor()
-    //{
-    //    // 将鼠标锁定在屏幕中心
-    //    Cursor.lockState = CursorLockMode.Locked;
-    //    //鼠标不可视
-    //    Cursor.visible = false;
-
-    //    ToggleMouseVisibilityAndLock(true);
-    //}
-
    
 
     //显示Block名字
@@ -2206,3 +2189,28 @@ public class FixedStack<T>
         return stack.ToArray();
     }
 }
+
+
+//消息结构体
+[Serializable]
+public class Amessage
+{
+    public string content;
+    public float life;
+    public Color color;
+
+    public Amessage(string _content, float _life)
+    {
+        content = _content;
+        life = _life;
+    }
+
+    public Amessage(string _content, float _life, Color _color)
+    {
+        content = _content;
+        life = _life;
+        color = _color;
+    }
+
+}
+

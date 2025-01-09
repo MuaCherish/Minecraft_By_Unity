@@ -17,6 +17,13 @@ public class HandShake : MonoBehaviour
     private Quaternion initialRotation;
     private bool isReturningToIdle = false;
 
+    ManagerHub managerhub;
+    private void Awake()
+    {
+        managerhub = GlobalData.GetManagerhub();
+    }
+
+
     void Start()
     {
         animationComponent = GetComponent<Animation>();
@@ -41,7 +48,7 @@ public class HandShake : MonoBehaviour
             }
 
             // 左键按下时播放一次动画
-            if (Input.GetKey(KeyCode.Mouse0))
+            if (Input.GetKey(KeyCode.Mouse0) && !managerhub.chatManager.isInputing)
             {
                 PlayFirstAnimation();
             }

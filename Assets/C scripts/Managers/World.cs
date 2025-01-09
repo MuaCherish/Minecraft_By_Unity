@@ -352,13 +352,8 @@ public class World : MonoBehaviour
 
             if (hasExec)
             {
-
-                // 将鼠标锁定在屏幕中心
-                UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-
-                //鼠标不可视
-                UnityEngine.Cursor.visible = false;
-
+                UsefulFunction.LockMouse(true);
+                hasExec = false;
             }
 
 

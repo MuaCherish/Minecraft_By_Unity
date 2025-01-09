@@ -362,7 +362,7 @@ public class Player : MonoBehaviour
             }
 
             //”Œœ∑÷–‘›Õ££¨‘›Õ£ÕÊº“ ‰»Î
-            if (managerhub.canvasManager.isPausing == true || commandManager.isConsoleActive == true)
+            if (managerhub.canvasManager.isPausing == true || managerhub.chatManager.isInputing == true)
             {
                 horizontalInput = 0f;
                 verticalInput = 0f;

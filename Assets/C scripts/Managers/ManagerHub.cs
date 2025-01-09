@@ -25,6 +25,7 @@ public class ManagerHub : MonoBehaviour
     public CloudManager cloudManager;
     public Crepuscular crepuscularScript;
     public SunMoving sunMoving;
+    public ChatManager chatManager;
 
     [Foldout("开发者模式", true)]
     public bool 低区块模式; [HideInInspector] public bool hasExec_低区块模式 = true;

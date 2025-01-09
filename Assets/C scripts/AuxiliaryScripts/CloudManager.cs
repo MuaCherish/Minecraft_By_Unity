@@ -55,7 +55,7 @@ namespace Cloud
             {
                 if (hasExec_Update)
                 {
-                    parent.transform.position = new Vector3(managerhub.player.transform.position.x, 128f, managerhub.player.transform.position.z) ;
+                    parent.transform.position = new Vector3(managerhub.player.transform.position.x, 126.5f, managerhub.player.transform.position.z) ;
                     hasExec_Update = false;
                 }
 
