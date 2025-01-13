@@ -7,27 +7,14 @@ namespace Cloud
 {
     public class CloudManager : MonoBehaviour
     {
-        [Foldout("云的引用")]
-        [Header("云")] public Sprite CloudSprite; // 256x256 的Sprite
-        [Header("位置")] public GameObject parent;
-        [Header("云的颜色")]public Material[] cloudMaterials = new Material[2];
-
-        [Foldout("Sprite处理")]
-        [Header("裁切大小")] public Vector2Int cutSize = new Vector2Int(16, 16); // 裁切尺寸（16x16）
-
-        [Foldout("云的设置")]
-        //[Header("云的渲染半径")] public float RenderSize = 4f;
-        [Header("风向")] [ReadOnly] public Vector3 WindDirect;
-        [Header("风速")] public float windSpeed = 1.0f;
 
 
+        #region 周期函数
 
-
-
-        
 
         private ManagerHub managerhub;
-        bool hasExec_Update = true;
+        private bool isCloudInitialized = false; // 标记云的位置是否已初始化
+
         private void Start()
         {
 
@@ -37,41 +24,72 @@ namespace Cloud
             // 在XOZ平面上随机生成一个单位向量作为初始方向
             WindDirect = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
         
-        // 随机获取裁剪的云块并生成对应的GameObject
-        //for (int x = -3; x <= 3; x++)
-        //{
-        //    for (int z = -3; z <= 3; z++)
-        //    {
-        //        GenerateCloud(new Vector3(x, 0, z));
-        //    }
-        //}
-        //GenerateCloud(new Vector3(0, 0, 0));
-        //GenerateCloud(new Vector3(1, 0, 0));
+        
         }
 
         private void Update()
         {
-            if (managerhub.world.game_state == Game_State.Playing)
-            {
-                if (hasExec_Update)
-                {
-                    parent.transform.position = new Vector3(managerhub.player.transform.position.x, 126.5f, managerhub.player.transform.position.z) ;
-                    hasExec_Update = false;
-                }
 
-                CloudMoving();
-            }
-            else
+            switch (managerhub.world.game_state)
             {
-                if (hasExec_Update == false)
-                {
-                    hasExec_Update = true;
-                }
+                case Game_State.Start:
+                    if (!isCloudInitialized)
+                    {
+                        InitCloud_StartPos();
+                        isCloudInitialized = true; // 确保只初始化一次
+                    }
+                    break;
+
+                case Game_State.Playing:
+                    Handle_GameState_Playing();
+                    CloudMoving();
+                    isCloudInitialized = false; // 切换到其他状态时重置标志
+                    break;
+
+                default:
+                    isCloudInitialized = false; // 处理非Playing和Start的状态
+                    break;
             }
         }
 
 
+        void Handle_GameState_Start()
+        {
+            
+        }
+
+
+        void Handle_GameState_Playing()
+        {
+
+        }
+
+
+
+        #endregion
+
+
+        #region 大块云
+
+        [Foldout("云的引用")]
+        [Header("云")] public Sprite CloudSprite; // 256x256 的Sprite
+        [Header("位置")] public GameObject parent;
+        [Header("云的颜色")] public Material[] cloudMaterials = new Material[2];
+
+        [Foldout("云的设置")]
+        [Header("风向")][ReadOnly] public Vector3 WindDirect;
+        [Header("风速")] public float windSpeed = 1.0f;
+
+
         
+
+
+        void InitCloud_StartPos()
+        {
+            parent.transform.position = new Vector3(managerhub.player.transform.position.x, 126.5f, managerhub.player.transform.position.z);
+        }
+
+
         void CloudMoving()
         {
             // 按照速度和方向移动parent
@@ -99,7 +117,25 @@ namespace Cloud
         }
 
 
+        #endregion
+
+
         #region 区块云（弃案）
+
+        // 随机获取裁剪的云块并生成对应的GameObject
+        //for (int x = -3; x <= 3; x++)
+        //{
+        //    for (int z = -3; z <= 3; z++)
+        //    {
+        //        GenerateCloud(new Vector3(x, 0, z));
+        //    }
+        //}
+        //GenerateCloud(new Vector3(0, 0, 0));
+        //GenerateCloud(new Vector3(1, 0, 0));
+
+        //[Header("云的渲染半径")] public float RenderSize = 4f;
+        //[Foldout("Sprite处理")]
+        //[Header("裁切大小")] public Vector2Int cutSize = new Vector2Int(16, 16); // 裁切尺寸（16x16）
 
         //public Dictionary<Vector3, GameObject> AllClouds = new Dictionary<Vector3, GameObject>();
 

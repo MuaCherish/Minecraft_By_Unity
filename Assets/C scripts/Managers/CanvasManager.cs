@@ -277,6 +277,8 @@ public class CanvasManager : MonoBehaviour
 
             //print("E ¹Ø±Õ±³°ü");
             CheckSwapBlockAndDropOut();
+
+            UsefulFunction.LockMouse(true);
         }
 
 

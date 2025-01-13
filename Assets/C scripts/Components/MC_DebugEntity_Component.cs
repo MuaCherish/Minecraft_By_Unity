@@ -47,6 +47,8 @@ public class MC_DebugEntity_Component : MonoBehaviour
             _ReferUpdate_RealCollision();
 
             _ReferUpdate_EntityControler();
+
+            _ReferUpdate_LifeComponentTest();
         }
 
        
@@ -159,6 +161,56 @@ public class MC_DebugEntity_Component : MonoBehaviour
 
     }
 
+
+    #endregion
+
+
+    #region Life组件测试
+
+    [Foldout("Life组件测试", true)]
+    [Header("更新的数值")] public int UpdateValue = -1;
+    [Header("更新变化血条")] public bool Toggle_UpdateBlood;
+
+    [Header("设定的血条")] public int SetValue = 20;
+    [Header("更新设定血条")] public bool Toggle_UpdateSetBlood;
+
+    MC_Life_Component life_Component;
+
+
+    void _ReferUpdate_LifeComponentTest()
+    {
+        if (Toggle_UpdateBlood)
+        {
+
+            if (life_Component == null)
+            {
+                life_Component = GetComponent<MC_Life_Component>();
+            }
+
+            life_Component.UpdateEntityLife(UpdateValue, Vector3.back);
+
+            print($"更新后血量: {life_Component.EntityBlood}");
+
+            Toggle_UpdateBlood = false;
+        }
+
+
+        if (Toggle_UpdateSetBlood)
+        {
+            if (life_Component == null)
+            {
+                life_Component = GetComponent<MC_Life_Component>();
+            }
+
+            life_Component.SetEntityBlood(SetValue);
+
+            print($"设定血量: {life_Component.EntityBlood}");
+
+            Toggle_UpdateSetBlood = false;
+        }
+
+
+    }
 
     #endregion
 

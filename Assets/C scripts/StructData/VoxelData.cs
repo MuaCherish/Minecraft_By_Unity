@@ -214,7 +214,7 @@ public static class VoxelData
     public static readonly Byte Tool_Arrow = 62; //箭
     public static readonly Byte Fish = 63;
     public static readonly Byte Rotten_Flesh = 64; //腐肉
-                                                   //public static readonly Byte Tool_Pork = 65;
+    public static readonly Byte Slimeball = 65;  //粘液球
                                                    //public static readonly Byte Tool_Pork = 66;
                                                    //public static readonly Byte Tool_Pork = 67;
                                                    //public static readonly Byte Tool_Pork = 68;

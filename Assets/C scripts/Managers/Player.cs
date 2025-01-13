@@ -37,6 +37,8 @@ public class Player : MonoBehaviour
     public MusicManager musicmanager;
     public BackPackManager backpackmanager;
     public LifeManager lifemanager;
+
+
     public GameObject particle_explosion;
 
     public Material HighLightMaterial;

@@ -15,7 +15,7 @@ public class DebugManager : MonoBehaviour
 
     #region 周期函数
 
-    private ManagerHub managerHub;
+    private ManagerHub managerhub;
 
     private void Awake()
     {
@@ -25,7 +25,7 @@ public class DebugManager : MonoBehaviour
 
     private void Start()
     {
-        managerHub = GlobalData.GetManagerhub();
+        managerhub = GlobalData.GetManagerhub();
     }
 
     public void InitDebugManager()
@@ -48,58 +48,66 @@ public class DebugManager : MonoBehaviour
         }
     }
 
-    void Update()
+    void Update(){
+
+        switch (managerhub.world.game_state)
+        {
+            case Game_State.Start:
+                Handle_GameState_Start();
+                break;
+
+            case Game_State.Playing:
+                Handle_GameState_Playing();
+                break;
+        }
+
+
+    }
+
+
+    void Handle_GameState_Start()
     {
-
-        if (managerHub.world.game_state == Game_State.Start)
+        if (DebugScreen.activeSelf)
         {
-            if (DebugScreen.activeSelf)
-            {
-                isDebug = false;
-                DebugScreen.SetActive(false);
-            }
-
-
+            isDebug = false;
+            DebugScreen.SetActive(false);
         }
-        else if (managerHub.world.game_state == Game_State.Playing)
+    }
+
+    void Handle_GameState_Playing()
+    {
+        if (Input.GetKeyDown(KeyCode.F3))
         {
-            if (Input.GetKeyDown(KeyCode.F3))
-            {
-                //RenderSettings.fog = isDebug;
-                isDebug = !isDebug;
-                DebugScreen.SetActive(!DebugScreen.activeSelf);
-            }
+            //RenderSettings.fog = isDebug;
+            isDebug = !isDebug;
+            DebugScreen.SetActive(!DebugScreen.activeSelf);
+        }
 
-            //Border
-            if (Input.GetKeyDown(KeyCode.F4))
-            {
-                isShowChunkBorder = !isShowChunkBorder;
-
-            }
-
-            if (isShowChunkBorder)
-            {
-                ShowChunkBorder();
-            }
-            else
-            {
-                if (hasExec_ChunkBorder == false)
-                {
-                    hasExec_ChunkBorder = true;
-                    ChunkBorderObject.SetActive(false);
-                }
-            }
-
-
-            if (isDebug)
-            {
-                CaculateFPS();
-            }
+        //Border
+        if (Input.GetKeyDown(KeyCode.F4))
+        {
+            isShowChunkBorder = !isShowChunkBorder;
 
         }
 
+        if (isShowChunkBorder)
+        {
+            ShowChunkBorder();
+        }
+        else
+        {
+            if (hasExec_ChunkBorder == false)
+            {
+                hasExec_ChunkBorder = true;
+                ChunkBorderObject.SetActive(false);
+            }
+        }
 
 
+        if (isDebug)
+        {
+            CaculateFPS();
+        }
     }
 
 
@@ -117,7 +125,7 @@ public class DebugManager : MonoBehaviour
 
     void UpdateScreen()
     {
-        Vector3 footlocation = managerHub.world.PlayerFoot.position;
+        Vector3 footlocation = managerhub.world.PlayerFoot.position;
         
 
         // 根据 FPS 设置颜色
@@ -138,37 +146,37 @@ public class DebugManager : MonoBehaviour
         //update
         //TextScreens[0].text += $"\n";
         TextScreens[0].text = $"<color={fpsColor}>帧数: {fps:F2}</color>\n";
-        TextScreens[0].text += $"当前时间: {managerHub.timeManager.GetCurrentTime():F2}时\n";
+        TextScreens[0].text += $"当前时间: {managerhub.timeManager.GetCurrentTime():F2}时\n";
         TextScreens[0].text += $"\n";
 
 
         TextScreens[0].text += $"[Player]\n";
-        TextScreens[0].text += $"速度: {managerHub.player.velocity}\n";
+        TextScreens[0].text += $"速度: {managerhub.player.velocity}\n";
         TextScreens[0].text += $"朝向: {CalculateFacing()}\n";
-        TextScreens[0].text += $"实际朝向: {managerHub.player.FactFacing}\n";
-        TextScreens[0].text += $"实际运动方向: {managerHub.player.ActualMoveDirection}\n";
-        //LeftText.text += $"新的运动方向: {managerHub.player.momentum}\n";
-        TextScreens[0].text += $"输入: {managerHub.player.keyInput}\n";
-        TextScreens[0].text += $"眼睛坐标: {managerHub.player.cam.position}\n";
-        TextScreens[0].text += $"实时重力: {managerHub.player.verticalMomentum}\n";
+        TextScreens[0].text += $"实际朝向: {managerhub.player.FactFacing}\n";
+        TextScreens[0].text += $"实际运动方向: {managerhub.player.ActualMoveDirection}\n";
+        //LeftText.text += $"新的运动方向: {managerhub.player.momentum}\n";
+        TextScreens[0].text += $"输入: {managerhub.player.keyInput}\n";
+        TextScreens[0].text += $"眼睛坐标: {managerhub.player.cam.position}\n";
+        TextScreens[0].text += $"实时重力: {managerhub.player.verticalMomentum}\n";
         //LeftText.text += $"绝对坐标: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))}\n";
         //LeftText.text += $"相对坐标: {managerHub.world.GetRelalocation(footlocation)}\n";
-        TextScreens[0].text += $"已保存方块数量: {managerHub.world.EditNumber.Count}\n";
-        TextScreens[0].text += $"碰撞点检测个数:{managerHub.player.CollisionNumber}\n";
+        TextScreens[0].text += $"已保存方块数量: {managerhub.world.EditNumber.Count}\n";
+        TextScreens[0].text += $"碰撞点检测个数:{managerhub.player.CollisionNumber}\n";
         //LeftText.text += $"生存模式玩家走过的路程: {managerHub.player.accumulatedDistance:F2}m\n";
         TextScreens[0].text += $"\n";
 
 
         TextScreens[0].text += $"[Chunk]\n";
-        TextScreens[0].text += $"区块坐标: {managerHub.world.GetChunkLocation(footlocation)}\n";
+        TextScreens[0].text += $"区块坐标: {managerhub.world.GetChunkLocation(footlocation)}\n";
         TextScreens[0].text += $"初始化区块平均渲染时间: {CaculateChunkRenderTime()}\n";
         TextScreens[0].text += $"\n";
 
 
         TextScreens[0].text += $"[FootPosition]\n";
         TextScreens[0].text += $"foot绝对坐标: {(new Vector3(footlocation.x, footlocation.y, footlocation.z))} \n";
-        TextScreens[0].text += $"foot相对坐标: {managerHub.world.GetRelalocation(footlocation)} \n";
-        TextScreens[0].text += $"foot坐标类型: {managerHub.world.GetBlockType(footlocation)} \n";
+        TextScreens[0].text += $"foot相对坐标: {managerhub.world.GetRelalocation(footlocation)} \n";
+        TextScreens[0].text += $"foot坐标类型: {managerhub.world.GetBlockType(footlocation)} \n";
         TextScreens[0].text += $"\n";
 
         TextScreens[0].text += $"[System]\n";
@@ -188,7 +196,7 @@ public class DebugManager : MonoBehaviour
     //facing
     string CalculateFacing()
     {
-        Vector3 forward = managerHub.player.transform.forward;
+        Vector3 forward = managerhub.player.transform.forward;
         float angle = Mathf.Atan2(forward.z, forward.x) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360;
 
@@ -302,7 +310,7 @@ public class DebugManager : MonoBehaviour
 
     string CaculateChunkRenderTime()
     {
-        float time = Mathf.Round(managerHub.world.OneChunkRenderTime * 1000f * 100f) / 100f;
+        float time = Mathf.Round(managerhub.world.OneChunkRenderTime * 1000f * 100f) / 100f;
 
         if (time == 0)
         {
@@ -362,7 +370,7 @@ public class DebugManager : MonoBehaviour
         }
 
 
-        _newChunkLocation = managerHub.world.GetChunkLocation(managerHub.player.transform.position) * 16f;
+        _newChunkLocation = managerhub.world.GetChunkLocation(managerhub.player.transform.position) * 16f;
 
         if (_newChunkLocation != _Previous_hunkLocation)
         {

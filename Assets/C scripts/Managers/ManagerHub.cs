@@ -21,6 +21,8 @@ public class ManagerHub : MonoBehaviour
     public TimeManager timeManager;
     public World world;
     public Player player;
+
+    [Foldout("Others", true)]
     public TextureTo3D textureTo3D;
     public CloudManager cloudManager;
     public Crepuscular crepuscularScript;

@@ -1,3 +1,4 @@
+using Homebrew;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,10 +6,62 @@ using UnityEngine.Experimental.GlobalIllumination;
 
 public class SunMoving : MonoBehaviour
 {
+
+    #region 状态
+
+
+    [Foldout("状态", true)]
     public bool isOpenLightCast;
 
-    [Header("引用")]
-    public ManagerHub managerhub;
+
+    #endregion
+
+
+    #region 周期函数
+
+    ManagerHub managerhub;
+
+
+    private void Awake()
+    {
+        managerhub = GlobalData.GetManagerhub();
+
+        directionalLightMain = DirectionalLightMain.GetComponent<Light>();
+        directionalLight = DirectionalLight.GetComponent<Light>();
+    }
+
+
+    private void Update()
+    {
+
+        switch (managerhub.world.game_state)
+        {
+            case Game_State.Playing:
+                Handle_GameState_Playing();
+                break;
+        }
+
+        
+        
+    }
+
+
+    void Handle_GameState_Playing()
+    {
+        DynamicLightCast();
+
+        SunMoon_Moving();
+
+    }
+
+
+    #endregion
+
+
+    #region 日月移动
+
+    [Foldout("日月移动", true)]
+
     public Transform Sun;
     public Transform Moon;
     public Transform DirectionalLight; Light directionalLight;
@@ -20,76 +73,46 @@ public class SunMoving : MonoBehaviour
     private float time; // time在0~24之间，其中12的时候time在玩家正上方
     public float radius; // 距离玩家多远
 
-    private bool hasExec_Update = true;
 
-
-    private void Awake()
+    void SunMoon_Moving()
     {
-        directionalLightMain = DirectionalLightMain.GetComponent<Light>();
-        directionalLight = DirectionalLight.GetComponent<Light>();
+        // 获取数据
+        playerPosition = managerhub.player.transform.position;
+        time = managerhub.timeManager.GetCurrentTime();
+
+        // 设置太阳的位置
+        // 计算太阳的角度：将time值映射到0~360度（0点和24点相当于日落，12点为正上方）
+        float angle = (time / 24f) * 360f;
+
+        // 计算太阳相对玩家的位置
+        float sunX = playerPosition.x + radius * Mathf.Cos(angle * Mathf.Deg2Rad);
+        float sunZ = playerPosition.z + radius * Mathf.Sin(angle * Mathf.Deg2Rad);
+        float sunY = playerPosition.y + radius * Mathf.Sin((angle - 90f) * Mathf.Deg2Rad); // 12点时太阳在正上方
+
+        // 设置太阳的位置
+        Sun.transform.position = new Vector3(sunX, sunY, sunZ);
+
+        // 让太阳一直面向玩家
+        Sun.transform.LookAt(playerPosition);
+
+        // 设置月亮的位置
+        // 计算与太阳相对的角度
+        float moonAngle = angle + 180f; // 与太阳相对
+        float moonX = playerPosition.x + radius * Mathf.Cos(moonAngle * Mathf.Deg2Rad);
+        float moonZ = playerPosition.z + radius * Mathf.Sin(moonAngle * Mathf.Deg2Rad);
+        float moonY = playerPosition.y + radius * Mathf.Sin((moonAngle - 90f) * Mathf.Deg2Rad); // 与太阳高度相反
+
+        // 设置月亮的位置
+        Moon.transform.position = new Vector3(moonX, moonY, moonZ);
+
+        // 让月亮一直面向玩家
+        Moon.transform.LookAt(playerPosition);
     }
 
-
-    private void Update()
-    {
-        // 游戏开始
-        if (managerhub.world.game_state == Game_State.Playing)
-        {
-            // 一次性代码
-            if (hasExec_Update)
-            {
-                hasExec_Update = false;
-            }
-
-            DynamicLightCast();
+    #endregion
 
 
-            // 获取数据
-            playerPosition = managerhub.player.transform.position;
-            time = managerhub.timeManager.GetCurrentTime();
-
-            // 设置太阳的位置
-            // 计算太阳的角度：将time值映射到0~360度（0点和24点相当于日落，12点为正上方）
-            float angle = (time / 24f) * 360f;
-
-            // 计算太阳相对玩家的位置
-            float sunX = playerPosition.x + radius * Mathf.Cos(angle * Mathf.Deg2Rad);
-            float sunZ = playerPosition.z + radius * Mathf.Sin(angle * Mathf.Deg2Rad);
-            float sunY = playerPosition.y + radius * Mathf.Sin((angle - 90f) * Mathf.Deg2Rad); // 12点时太阳在正上方
-
-            // 设置太阳的位置
-            Sun.transform.position = new Vector3(sunX, sunY, sunZ);
-
-            // 让太阳一直面向玩家
-            Sun.transform.LookAt(playerPosition);
-
-
-            
-
-            
-
-            // 设置月亮的位置
-            // 计算与太阳相对的角度
-            float moonAngle = angle + 180f; // 与太阳相对
-            float moonX = playerPosition.x + radius * Mathf.Cos(moonAngle * Mathf.Deg2Rad);
-            float moonZ = playerPosition.z + radius * Mathf.Sin(moonAngle * Mathf.Deg2Rad);
-            float moonY = playerPosition.y + radius * Mathf.Sin((moonAngle - 90f) * Mathf.Deg2Rad); // 与太阳高度相反
-
-            // 设置月亮的位置
-            Moon.transform.position = new Vector3(moonX, moonY, moonZ);
-
-            // 让月亮一直面向玩家
-            Moon.transform.LookAt(playerPosition);
-        }
-        else
-        {
-
-            
-        }
-    }
-
-
-
+    #region 光线后处理
 
 
     void DynamicLightCast()
@@ -166,6 +189,9 @@ public class SunMoving : MonoBehaviour
         float result = 4 * Mathf.Pow(managerhub.timeManager.timeStruct._time.value - 0.5f, 2);
         Mat_LightCast.SetFloat("_Density", result);
     }
+
+
+    #endregion
 
 
 }
