@@ -203,6 +203,8 @@ namespace MCEntity
         /// <param name="_force">瞬时冲量</param>
         public void AddForce(Vector3 _direct, float _value)
         {
+            _direct = Vector3.Normalize(_direct);
+
             //print($"施加了{_force.magnitude}的力");
             StartCoroutine(waitFrameToAddOtherForce(_direct, _value));
 

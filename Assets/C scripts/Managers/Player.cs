@@ -1,6 +1,8 @@
 //using System;
 using Homebrew;
+using MCEntity;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.LowLevel;
 
@@ -24,6 +26,7 @@ public class Player : MonoBehaviour
     [ReadOnly] public bool isFirstBrokeBlock = true;  //创造模式点击可以瞬间销毁方块
     [ReadOnly] public bool isInputing;  //输入停止
     [ReadOnly] public bool NotCheckPlayerCollision;
+    [ReadOnly] public bool isHitEntity = false; //打到实体了
 
     [Foldout("玩家Buff", true)]
     [ReadOnly] public bool isSpectatorMode; 
@@ -926,6 +929,22 @@ public class Player : MonoBehaviour
         {
             isFirstBrokeBlock = true;
 
+            RayCastStruct _rayCast = NewRayCast();
+
+            print($"EntityID:{_rayCast.targetEntity._id}");
+
+            if (_rayCast.targetEntity._id != -1)
+            {
+                isHitEntity = true;
+                //print("打到实体了");
+
+                Vector3 direct = managerhub.player.transform.forward;
+                direct.y = 0.8f;
+
+                _rayCast.targetEntity._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-1, direct);
+
+            }
+
             //print(OnLoadResource.Instance.Goods[1]);
         }
 
@@ -938,6 +957,7 @@ public class Player : MonoBehaviour
             managerhub.OldMusicManager.isbroking = false;
             managerhub.OldMusicManager.Audio_player_broke.Stop();
             isFirstBrokeBlock = true;
+            isHitEntity = false;
         }
 
         //左键销毁泥土
@@ -975,7 +995,7 @@ public class Player : MonoBehaviour
             {
 
                 //如果正在销毁则不执行
-                if (!isDestroying)
+                if (!isDestroying && !isHitEntity)
                 {
 
                     //Debug.Log("执行销毁");
@@ -2553,8 +2573,11 @@ public class Player : MonoBehaviour
         // 射线距离
         public float rayDistance;
 
+        // 目标实体（可为空）
+        public EntityStruct targetEntity;
+
         // 构造函数
-        public RayCastStruct(bool isHit, Vector3 rayOrigin, Vector3 hitPoint, Vector3 hitPoint_Previous, byte blockType, Vector3 hitNormal, float rayDistance)
+        public RayCastStruct(bool isHit, Vector3 rayOrigin, Vector3 hitPoint, Vector3 hitPoint_Previous, byte blockType, Vector3 hitNormal, float rayDistance, EntityStruct targetEntitystruct)
         {
             this.isHit = isHit;
             this.rayOrigin = rayOrigin;
@@ -2563,6 +2586,7 @@ public class Player : MonoBehaviour
             this.blockType = blockType;
             this.hitNormal = hitNormal;
             this.rayDistance = rayDistance;
+            this.targetEntity = targetEntitystruct;
         }
 
         // 覆盖ToString方法，用于打印输出
@@ -2575,9 +2599,11 @@ public class Player : MonoBehaviour
                    $"  Previous Hit Point: {hitPoint_Previous}\n" +
                    $"  Block Type: {blockType}\n" +
                    $"  Hit Normal: {hitNormal}\n" +
-                   $"  Ray Distance: {rayDistance}";
+                   $"  Ray Distance: {rayDistance}\n" +
+                   $"  Target Entity: {targetEntity._id}, {targetEntity._obj}";
         }
     }
+
 
 
 
@@ -2593,6 +2619,7 @@ public class Player : MonoBehaviour
         Vector3 hitNormal = Vector3.zero; // 用于记录法线方向
         float rayDistance = 0f;           // 用于记录射线距离
         bool isHit = false;               // 用于记录是否命中
+        EntityStruct targetEntity = new EntityStruct(-1, null); // 目标实体
 
         // 从射线起点（摄像机位置）开始，沿着摄像机的前方向进行检测
         while (step < reach)
@@ -2606,7 +2633,28 @@ public class Player : MonoBehaviour
                 pos = new Vector3(pos.x, 0, pos.z);
             }
 
-            // 检测当前点是否命中了某个方块
+            //实体命中检测
+            if (targetEntity._id == -1)
+            {
+                // 获取范围内的实体
+                var entitiesInRange = world.GetOverlapSphereEntity(transform.position, reach);
+
+                // 检查是否有实体与射线相交，并且该实体与射线碰撞
+                foreach (var entity in entitiesInRange)
+                {
+                    // 获取实体的碰撞检测组件
+                    var collider = entity._obj.GetComponent<MC_Collider_Component>();
+                    if (collider != null && collider.CheckHitBox(pos))
+                    {
+                        //print("打到实体了");
+                        targetEntity._id = entity._id;
+                        targetEntity._obj = entity._obj;
+                        break; // 找到第一个符合条件的实体，退出循环
+                    }
+                }
+            }
+
+            // 方块命中检测
             if (managerhub.world.RayCheckForVoxel(pos))
             {
                 // 记录命中点
@@ -2640,6 +2688,7 @@ public class Player : MonoBehaviour
                 // 计算射线距离
                 rayDistance = (pos - cam.position).magnitude;
 
+
                 // 命中后跳出循环
                 break;
             }
@@ -2651,32 +2700,20 @@ public class Player : MonoBehaviour
             step += checkIncrement;
         }
 
-        // 如果没有命中任何方块，返回未命中的结果
-        if (!isHit)
-        {
-            return new RayCastStruct
-            {
-                isHit = false,
-                rayOrigin = cam.position,
-                hitPoint = Vector3.zero,
-                hitPoint_Previous = Vector3.zero,
-                blockType = 255,  // 未命中方块
-                hitNormal = Vector3.zero,
-                rayDistance = 0f
-            };
-        }
 
-        // 返回射线检测结果的结构体
+        // 如果没有命中方块，但检测到实体，返回包含实体的结果
         return new RayCastStruct
         {
-            isHit = true,                    // 设置命中状态为true
-            rayOrigin = cam.position,        // 射线的起点
-            hitPoint = hitPoint,             // 命中的点
-            hitPoint_Previous = lastPos,     // 上一个点
-            blockType = blockType,           // 方块类型
-            hitNormal = hitNormal,           // 命中的法线方向
-            rayDistance = rayDistance        // 射线距离
+            isHit = isHit,
+            rayOrigin = cam.position,
+            hitPoint = hitPoint,
+            hitPoint_Previous = lastPos,
+            blockType = blockType,
+            hitNormal = hitNormal,
+            rayDistance = rayDistance,
+            targetEntity = targetEntity._id != -1 ? targetEntity : new EntityStruct(-1, null) // 如果没有检测到实体则默认值
         };
+
     }
 
 
@@ -2716,7 +2753,7 @@ public class Player : MonoBehaviour
     //        //if (world.GetBlockType(pos) == VoxelData.Bamboo || (world.GetBlockType(pos) != VoxelData.Air && world.GetBlockType(pos) != VoxelData.BedRock && world.GetBlockType(pos) != VoxelData.Water))
     //        if (managerhub.world.RayCheckForVoxel(pos))
     //        {
-                
+
 
     //            //print($"now射线检测：{(pos-cam.position).magnitude}");
     //            ray_length = (pos - cam.position).magnitude;
@@ -2795,7 +2832,7 @@ public class Player : MonoBehaviour
     //            // 返回从起始点到打中前一帧点的距离
     //            //print((lastPos - originPos).magnitude);
     //            return (lastPos - originPos).magnitude;
-                
+
     //        }
 
     //        // 保存当前帧的位置作为最后的有效位置
@@ -2811,9 +2848,7 @@ public class Player : MonoBehaviour
 
     //-------------------------------------------------------------------------------------
 
-
-
-
+   
 
     //---------------------------------- debug ---------------------------------------------
 

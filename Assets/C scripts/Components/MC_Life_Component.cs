@@ -15,9 +15,9 @@ namespace MCEntity
 
         [Foldout("状态", true)]
 
-        [ReadOnly] public bool isEntity_Dive = false;
         [ReadOnly] public bool isEntity_Hurt = false;
         [ReadOnly] public bool isEntity_Dead = false;
+        [ReadOnly] public bool isEntity_Dive = false;
 
         #endregion
 
@@ -28,6 +28,7 @@ namespace MCEntity
         MC_Collider_Component Collider_Component;
         Animation animationCoponent;
         World world;
+        GameObject ParticleParent;
 
         private void Awake()
         {
@@ -35,6 +36,7 @@ namespace MCEntity
             Collider_Component = GetComponent<MC_Collider_Component>();
             animationCoponent = GetComponent<Animation>();
             world = Collider_Component.managerhub.world;
+            ParticleParent = GameObject.Find("Environment/Particles");
         }
 
 
@@ -64,9 +66,8 @@ namespace MCEntity
         [Header("实体生命值")] public int EntityBlood = 20;
         [Header("材质引用")] public Material EntityMat;
         [Header("受伤持续时间")] public float Hurt_ElapseTime = 0.3f;
-        [Header("受伤力度")] public float Hurt_Force = 60f;
+        [Header("受伤力度")] public float Hurt_Force = 35f;
         [Header("蒸汽粒子")] public GameObject Evaporation_Particle;
-        [Header("粒子父类")] public GameObject ParticleParent;
         private Color originalColor; // 保存材质的原始颜色
 
         /// <summary>
@@ -74,6 +75,9 @@ namespace MCEntity
         /// </summary>
         public void UpdateEntityLife(int _updateLifeValue, Vector3 _hutyDirect)
         {
+            //提前返回-受伤或者死亡不触发
+            if (isEntity_Hurt || isEntity_Dead)
+                return;
 
             //提前返回-0不触发
             if (_updateLifeValue == 0)
@@ -87,12 +91,14 @@ namespace MCEntity
             if (CheckDead_EditBlood(_updateLifeValue))
                 Handle_Dead();
 
-
+            //print($"受击向量: {_hutyDirect}");
         }
 
 
         void Handle_Hurt(Vector3 _hurtDirect)
         {
+            isEntity_Hurt = true;
+
             //材质变红
             if (EntityMat != null)
                 StartCoroutine(ChangeColorCoroutine());
@@ -107,6 +113,8 @@ namespace MCEntity
 
         void Handle_Dead()
         {
+            isEntity_Dead = true;
+
             //死亡动画
             if (animationCoponent != null && animationCoponent.GetClip("EntityDead") != null)
             {
@@ -150,6 +158,8 @@ namespace MCEntity
 
             // 将材质颜色还原
             EntityMat.color = originalColor;
+
+            isEntity_Hurt = false;
         }
 
 
@@ -205,12 +215,14 @@ namespace MCEntity
         {
             if (world.GetBlockType(Collider_Component.EyesPoint) == VoxelData.Water && Coroutine_CheckOxy == null)
             {
+                isEntity_Dive = true;
                 Coroutine_CheckOxy = StartCoroutine(_CheckOxy());
             }
         }
 
         IEnumerator _CheckOxy()
         {
+            
 
             while (true)
             {
@@ -219,6 +231,7 @@ namespace MCEntity
                 {
                     EntityOxygen = 10;
                     Coroutine_CheckOxy = null;
+                    isEntity_Dive = false;
                     yield break;
                 }
 

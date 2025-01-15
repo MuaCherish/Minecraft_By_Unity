@@ -2765,20 +2765,25 @@ public class Chunk : MonoBehaviour
 
 
         //挤开玩家
-        Vector3 _targetCenter = new Vector3((int)pos.x, (int)pos.y, (int)pos.z);
-        CollosionRange _collosionRange = managerhub.world.blocktypes[thisType].CollosionRange;
-        float _width = _collosionRange.zRange.y - _collosionRange.zRange.x;
-        float _hight = _collosionRange.yRange.y - _collosionRange.yRange.x;
-        _targetCenter.x += (_collosionRange.xRange.x + _collosionRange.xRange.y) / 2f;
-        _targetCenter.y += (_collosionRange.yRange.x + _collosionRange.yRange.y) / 2f;
-        _targetCenter.z += (_collosionRange.zRange.x + _collosionRange.zRange.y) / 2f;
-        Vector3 isShoveDirection = managerhub.player.CheckHitBox(_targetCenter, _width, _hight);
-
-        if (isShoveDirection != Vector3.zero)
+        if (world.blocktypes[thisType].isSolid)
         {
-            //print("挤到玩家");
-            managerhub.player.ForceMoving(isShoveDirection, 1f, 0.1f);
+            Vector3 _targetCenter = new Vector3((int)pos.x, (int)pos.y, (int)pos.z);
+            CollosionRange _collosionRange = managerhub.world.blocktypes[thisType].CollosionRange;
+            float _width = _collosionRange.zRange.y - _collosionRange.zRange.x;
+            float _hight = _collosionRange.yRange.y - _collosionRange.yRange.x;
+            _targetCenter.x += (_collosionRange.xRange.x + _collosionRange.xRange.y) / 2f;
+            _targetCenter.y += (_collosionRange.yRange.x + _collosionRange.yRange.y) / 2f;
+            _targetCenter.z += (_collosionRange.zRange.x + _collosionRange.zRange.y) / 2f;
+            Vector3 isShoveDirection = managerhub.player.CheckHitBox(_targetCenter, _width, _hight);
+
+            if (isShoveDirection != Vector3.zero)
+            {
+                //print("挤到玩家");
+                managerhub.player.ForceMoving(isShoveDirection, 1f, 0.1f);
+            }
         }
+
+        
 
         //Music
         if (world.blocktypes[thisType].broken_clip != null)

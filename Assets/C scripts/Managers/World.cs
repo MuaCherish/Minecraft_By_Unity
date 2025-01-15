@@ -2594,6 +2594,9 @@ public class World : MonoBehaviour
 
     #endregion
 
+
+    #region 工具
+
     //放置高亮方块的
     //用于眼睛射线的检测
     public bool RayCheckForVoxel(Vector3 pos)
@@ -2649,6 +2652,172 @@ public class World : MonoBehaviour
     {
         return new Vector2(a.x * b.x, a.y * b.y);
     }
+
+    #endregion
+
+
+    #region 实体管理
+
+    [Foldout("实体管理", true)]
+    [Header("实体父类")] public GameObject Entity_Parent;
+    [Header("实体预制体")] public GameObject[] Entity_Prefeb;
+    public List<EntityStruct> AllEntity = new List<EntityStruct>();
+    [Header("最大实体数量")][SerializeField] private int maxSize = 100; // 默认值为100，可在Inspector中调整
+    private int Unique_Id = 0; // 用于生成新的唯一ID
+
+   
+    /// <summary>
+    /// 根据id寻找实体
+    /// </summary>
+    public GameObject FindEntity(int _id)
+    {
+        foreach (var entity in AllEntity)
+        {
+            if (entity._id == _id)
+            {
+                return entity._obj;
+            }
+        }
+        Debug.LogWarning($"实体ID {_id} 不存在！");
+        return null;
+    }
+
+    /// <summary>
+    /// 设置最大容量
+    /// </summary>
+    /// <param name="newMaxSize">新的最大容量</param>
+    public void SetMaxSize(int newMaxSize)
+    {
+        if (AllEntity.Count >= newMaxSize)
+        {
+            Debug.LogWarning("新设置的最大容量小于当前实体数量，调整无效！");
+            return;
+        }
+
+        maxSize = newMaxSize;
+        Debug.Log($"最大容量已调整为 {maxSize}。");
+    }
+
+    /// <summary>
+    /// 添加实体到管理中
+    /// </summary>
+    /// <param name="_index">需要添加的预制体的下标</param>
+    /// <param name="_Startpos">实体的起始位置</param>
+    /// <returns>是否添加成功</returns>
+    public bool AddEntity(int _index, Vector3 _Startpos)
+    {
+        // 检查实体数量是否达到最大值
+        if (AllEntity.Count >= maxSize)
+        {
+            Debug.LogWarning("实体数量已达到最大值，无法添加新实体！");
+            return false;
+        }
+
+        // 检查下标是否有效
+        if (_index < 0 || _index >= Entity_Prefeb.Length)
+        {
+            Debug.LogError("索引超出范围，请提供有效的预制体索引！");
+            return false;
+        }
+
+        // 实例化预制体
+        GameObject newEntity = Instantiate(Entity_Prefeb[_index]);
+
+        // 将实例化的实体设置为子对象
+        newEntity.transform.SetParent(Entity_Parent.transform);
+        newEntity.transform.position = _Startpos;
+
+        // 生成一个唯一的ID
+        int entityId = Unique_Id++;
+
+        // 将新实例加入数据结构
+        AllEntity.Add(new EntityStruct(entityId, newEntity));
+
+        Debug.Log($"实体 {newEntity.name} 已添加成功，ID为{entityId}！");
+        return true;
+    }
+
+    /// <summary>
+    /// 从管理中移除实体
+    /// </summary>
+    /// <param name="entity">需要移除的实体</param>
+    /// <returns>是否移除成功</returns>
+    public bool RemoveEntity(GameObject entity)
+    {
+        EntityStruct entityToRemove = null;
+
+        // 获取该实体对应的EntityStruct
+        foreach (var entityStruct in AllEntity)
+        {
+            if (entityStruct._obj == entity)
+            {
+                entityToRemove = entityStruct;
+                break;
+            }
+        }
+
+        if (entityToRemove != null)
+        {
+            AllEntity.Remove(entityToRemove);
+            Debug.Log($"实体 {entity.name} 已移除成功！");
+            return true;
+        }
+
+        Debug.LogWarning("该实体不在管理中！");
+        return false;
+    }
+
+    /// <summary>
+    /// 检测当前实体数量
+    /// </summary>
+    /// <returns>实体数量</returns>
+    public int GetEntityCount()
+    {
+        return AllEntity.Count;
+    }
+
+    /// <summary>
+    /// 清空所有实体
+    /// </summary>
+    public void ClearEntities()
+    {
+        AllEntity.Clear();
+        Debug.Log("所有实体已清空！");
+    }
+
+    /// <summary>
+    /// 获取一定范围内的实体（基于位置距离计算）
+    /// </summary>
+    /// <param name="center">范围检测的球心</param>
+    /// <param name="_r">检测范围的半径</param>
+    /// <returns>范围内的实体列表</returns>
+    public List<EntityStruct> GetOverlapSphereEntity(Vector3 center, float _r)
+    {
+        List<EntityStruct> result = new List<EntityStruct>();
+        float sqrRadius = _r * _r; // 使用平方半径以避免重复开平方运算
+
+        foreach (var entityStruct in AllEntity)
+        {
+            if (entityStruct._obj == null)
+                continue; // 防止空引用错误
+
+            // 计算实体与球心的距离
+            Vector3 offset = entityStruct._obj.transform.position - center;
+
+            // 如果实体的平方距离小于等于检测范围的平方半径，添加到结果列表
+            if (offset.sqrMagnitude <= sqrRadius)
+            {
+                result.Add(entityStruct);
+            }
+        }
+
+        return result;
+    }
+
+
+
+    #endregion
+
 
 
 }

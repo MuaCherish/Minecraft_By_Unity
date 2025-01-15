@@ -63,6 +63,7 @@ namespace MCEntity
         /// </summary>
         public bool CheckHitBox(Vector3 _targetPos)
         {
+
             Vector3 _selfPos = selfPos;
             float selfHalfWidth = hitBoxWidth / 2f;
             float selfHalfHeight = hitBoxHeight / 2f;

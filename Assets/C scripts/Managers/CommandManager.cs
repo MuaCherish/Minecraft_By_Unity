@@ -134,7 +134,7 @@ public class CommandManager : MonoBehaviour
                             managerhub.backpackManager.update_slots(0, type, number);
                             //managerhub.backpackManager.ChangeBlockInHand();
                             managerhub.NewmusicManager.PlayOneShot(MusicData.absorb_1);
-                            return "<系统消息> " + "给与玩家方块";
+                            return "<系统消息> " + $"给与玩家方块 [{typeString}]";
                         }
                         else
                         {
@@ -288,9 +288,9 @@ public class CommandManager : MonoBehaviour
 
             //addSlim
             case 9:
+
+                managerhub.world.AddEntity(EntityData.TestSlim, managerhub.player.transform.position);
                 
-                Entity_Slim.transform.position = managerhub.player.transform.position;
-                Entity_Slim.SetActive(true);
                 return "<系统消息> " + "已添加史莱姆";
 
             // 旁观者模式

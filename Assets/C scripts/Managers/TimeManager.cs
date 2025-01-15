@@ -172,6 +172,7 @@ public class TimeManager : MonoBehaviour
             //如果值中途出现大幅度篡改，则立即调整值
             if (Mathf.Abs(timeStruct._time.CurrentTime - timeStruct._time.previous_CurrentTime) > 1)
             {
+                //print("差值过大立即调整时间");
                 if (!isNight)
                 {
                     timeStruct._time.value = 1;
