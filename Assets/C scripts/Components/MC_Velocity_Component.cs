@@ -93,27 +93,7 @@ namespace MCEntity
 
         #region 公开函数
 
-        /// <summary>
-        /// 实体旋转
-        /// 输入值在[-1,1]之间
-        /// </summary>
-        public void EntityRotation(float _HorizonInput, float _VerticalInput)
-        {
-            // 完成水平的旋转
-            transform.Rotate(Vector3.up, _HorizonInput * RotationSensitivity * Time.fixedDeltaTime);
-
-            // 如果头存在，则完成垂直的旋转
-            if (HeadObject != null)
-            {
-                // 垂直旋转计算，限制在[-90, 90]度之间
-                verticalRotation -= _VerticalInput * RotationSensitivity * Time.fixedDeltaTime;
-                verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
-
-                // 更新头部对象的局部旋转，仅影响X轴
-                HeadObject.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-            }
-        }
-
+      
 
         /// <summary>
         /// 获取速度
@@ -482,17 +462,81 @@ namespace MCEntity
         private bool isInstantRotation = false; // 默认非瞬时旋转
 
         /// <summary>
-        /// 设置旋转参数
+        /// 将Entity转向某个方向，仅旋转XZ平面，保持Y值不变，平滑过渡
         /// </summary>
-        /// <param name="newTargetDirection">目标旋转方向（单位向量）</param>
-        /// <param name="newRotationSpeed">旋转速度（角度/秒）</param>
-        /// <param name="isInstant">是否立即完成旋转</param>
-        public void SetRotationParameters(Vector3 newTargetDirection, float newRotationSpeed, bool isInstant = false)
+        public void EntitySmoothRotation(Vector3 _direct, float _elapseTime)
         {
-            targetDirection = newTargetDirection.normalized; // 保存目标方向并归一化
-            rotationSpeed = newRotationSpeed;
-            isInstantRotation = isInstant;
+            // 启动协程执行平滑旋转
+            StartCoroutine(SmoothRotateCoroutine(_direct, _elapseTime));
         }
+
+        private IEnumerator SmoothRotateCoroutine(Vector3 _direct, float _elapseTime)
+        {
+            // 将目标方向的Y值设置为0，确保只在XZ平面旋转
+            _direct.y = 0;
+
+            // 确保目标方向有长度，避免异常
+            if (_direct.sqrMagnitude < 0.0001f)
+                yield break;
+
+            // 计算目标方向的旋转四元数
+            Quaternion targetRotation = Quaternion.LookRotation(_direct);
+
+            // 记录初始旋转
+            Quaternion initialRotation = transform.rotation;
+
+            // 累计时间
+            float elapsedTime = 0f;
+
+            // 平滑旋转
+            while (elapsedTime < _elapseTime)
+            {
+                elapsedTime += Time.deltaTime;
+
+                // 插值计算旋转
+                transform.rotation = Quaternion.Slerp(
+                    initialRotation,
+                    targetRotation,
+                    elapsedTime / _elapseTime
+                );
+
+                // 保持XZ平面旋转，Y值固定
+                Vector3 eulerAngles = transform.rotation.eulerAngles;
+                transform.rotation = Quaternion.Euler(0, eulerAngles.y, 0);
+
+                // 等待下一帧
+                yield return null;
+            }
+
+            // 最终确保完全对准目标方向
+            transform.rotation = Quaternion.Euler(0, targetRotation.eulerAngles.y, 0);
+        }
+
+
+
+
+        /// <summary>
+        /// 实体旋转
+        /// 输入值在[-1,1]之间
+        /// </summary>
+        public void EntityRotation(float _HorizonInput, float _VerticalInput)
+        {
+            // 完成水平的旋转
+            transform.Rotate(Vector3.up, _HorizonInput * RotationSensitivity * Time.fixedDeltaTime);
+
+            // 如果头存在，则完成垂直的旋转
+            if (HeadObject != null)
+            {
+                // 垂直旋转计算，限制在[-90, 90]度之间
+                verticalRotation -= _VerticalInput * RotationSensitivity * Time.fixedDeltaTime;
+                verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
+
+                // 更新头部对象的局部旋转，仅影响X轴
+                HeadObject.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+            }
+        }
+
+
 
 
         #endregion

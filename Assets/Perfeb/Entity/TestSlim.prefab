@@ -821,9 +821,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a9bd0976fb09743840a44f48277fd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AI_CanSwiming: 0
   myState: 0
-  FloatingForce: 5
+  isAttacking: 0
+  myMovingType: 0
+  isAggressive: 1
+  AIseeDistance: 15
+  Idle_WaitTime: 1
+  Chase_WaitTime: 5
+  AI_CanSwiming: 1
+  FloatingForce: 3
 --- !u!114 &6918692228164463923
 MonoBehaviour:
   m_ObjectHideFlags: 0

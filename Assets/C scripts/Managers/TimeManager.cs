@@ -15,9 +15,9 @@ public class TimeManager : MonoBehaviour
 
     #region 状态
 
-    [Foldout("状态", true)]
+    //[Foldout("状态", true)]
     //[Header("当前时间(24小时制)")][Range(0, 24), SerializeField] private float CurrentTime = 12;
-    [Header("是否是晚上")][ReadOnly] public bool isNight;
+    //[Header("是否是晚上")][ReadOnly] public bool isNight;
 
     #endregion
 
@@ -61,7 +61,7 @@ public class TimeManager : MonoBehaviour
             }
 
 
-            DynamicState_isNight();
+           // DynamicState_isNight();
 
 
             //DynamicSwitchCaveMode();
@@ -91,17 +91,33 @@ public class TimeManager : MonoBehaviour
 
     #region 状态判断
 
-    void DynamicState_isNight()
+
+    public bool Check_isNight()
     {
         if (timeStruct._time.CurrentTime <= 6 || timeStruct._time.CurrentTime >= 18)
         {
-            isNight = true;
+            return true;
         }
         else
         {
-            isNight = false;
+            return false;
         }
     }
+
+    public bool Check_isNight(float _time)
+    {
+        if (_time <= 6 || _time >= 18)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+
 
     #endregion
 
@@ -113,6 +129,7 @@ public class TimeManager : MonoBehaviour
     {
         //timeStruct._time.CurrentTime = 12f;
         timeStruct._time.CurrentTime = Random.Range(8f, 15f);
+        timeStruct._time.previous_CurrentTime = timeStruct._time.CurrentTime;
         timeStruct._time.value = 1;
         timeStruct._Water.WatersMaterial.SetFloat("__2", timeStruct._Water.LightnessRange.y);
 
@@ -122,7 +139,7 @@ public class TimeManager : MonoBehaviour
         //{
         //    weather = (Enum_Weather)Random.Range(0, System.Enum.GetValues(typeof(Enum_Weather)).Length);
         //}
-
+         
     }
 
     public float GetCurrentTime()
@@ -172,15 +189,17 @@ public class TimeManager : MonoBehaviour
             //如果值中途出现大幅度篡改，则立即调整值
             if (Mathf.Abs(timeStruct._time.CurrentTime - timeStruct._time.previous_CurrentTime) > 1)
             {
-                //print("差值过大立即调整时间");
-                if (!isNight)
-                {
-                    timeStruct._time.value = 1;
-                }
-                else
+
+                
+                if (Check_isNight(timeStruct._time.CurrentTime))
                 {
                     timeStruct._time.value = 0;
                 }
+                else
+                {
+                    timeStruct._time.value = 1;
+                }
+                //print($"差值过大,Current = {timeStruct._time.CurrentTime}, previous = {timeStruct._time.previous_CurrentTime}, value = {timeStruct._time.value}");
 
                 UpdateAll();
 

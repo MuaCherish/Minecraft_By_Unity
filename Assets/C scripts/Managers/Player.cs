@@ -27,8 +27,6 @@ public class Player : MonoBehaviour
     [ReadOnly] public bool isInputing;  //输入停止
     [ReadOnly] public bool NotCheckPlayerCollision;
     [ReadOnly] public bool isHitEntity = false; //打到实体了
-
-    [Foldout("玩家Buff", true)]
     [ReadOnly] public bool isSpectatorMode; 
 
 
@@ -121,10 +119,7 @@ public class Player : MonoBehaviour
 
 
     //raycast
-    public float reach = 8f;
-    private float checkIncrement = 0.01f;
-    [HideInInspector]
-    public float ray_length = 0f;
+    
     [HideInInspector]
     public bool isPlacing = false;
     private float max_hand_length = 0.7f;
@@ -929,9 +924,9 @@ public class Player : MonoBehaviour
         {
             isFirstBrokeBlock = true;
 
-            RayCastStruct _rayCast = NewRayCast();
+            RayCastStruct _rayCast = NewRayCast(cam.position, cam.forward, reach);
 
-            print($"EntityID:{_rayCast.targetEntity._id}");
+            //print($"EntityID:{_rayCast.targetEntity._id}");
 
             if (_rayCast.targetEntity._id != -1)
             {
@@ -939,7 +934,7 @@ public class Player : MonoBehaviour
                 //print("打到实体了");
 
                 Vector3 direct = managerhub.player.transform.forward;
-                direct.y = 0.8f;
+                direct.y = 1f;
 
                 _rayCast.targetEntity._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-1, direct);
 
@@ -969,10 +964,10 @@ public class Player : MonoBehaviour
             //isLeftMouseDown = true;
             //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
             //Vector3 _raycastNow = RayCast_now();
-            RayCastStruct _rayCast = NewRayCast();
+            RayCastStruct _rayCast = NewRayCast(cam.position, cam.forward, reach);
             test_Normal = _rayCast.hitNormal;
 
-            if (_rayCast.isHit && hasExec_isChangedBlock && world.blocktypes[world.GetBlockType(_rayCast.hitPoint)].canBeChoose)
+            if (_rayCast.isHit == 1 && hasExec_isChangedBlock && world.blocktypes[world.GetBlockType(_rayCast.hitPoint)].canBeChoose)
             {
                 OldPointLocation = new Vector3(Mathf.FloorToInt(_rayCast.hitPoint.x), Mathf.FloorToInt(_rayCast.hitPoint.y), Mathf.FloorToInt(_rayCast.hitPoint.z));
                 hasExec_isChangedBlock = false;
@@ -1022,7 +1017,7 @@ public class Player : MonoBehaviour
         {
 
             isPlacing = true;
-            RayCastStruct _rayCast = NewRayCast();
+            RayCastStruct _rayCast = NewRayCast(cam.position, cam.forward, reach);
 
             if (_rayCast.hitPoint != Vector3.zero)
             {
@@ -1108,7 +1103,7 @@ public class Player : MonoBehaviour
                 if (_selecttype < managerhub.world.blocktypes.Length && !managerhub.world.blocktypes[_selecttype].isTool)
                 {
                     //如果打到 && 距离大于2f && 且不是脚底下
-                    if (_rayCast.isHit && (_rayCast.hitPoint_Previous - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(_rayCast.hitPoint_Previous.x, _rayCast.hitPoint_Previous.y - 1f, _rayCast.hitPoint_Previous.z)))
+                    if (_rayCast.isHit == 1 && (_rayCast.hitPoint_Previous - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(_rayCast.hitPoint_Previous.x, _rayCast.hitPoint_Previous.y - 1f, _rayCast.hitPoint_Previous.z)))
                     {
 
                         //music
@@ -1595,10 +1590,10 @@ public class Player : MonoBehaviour
     {
         //如果成功放置，则不需要再更新，直到玩家改变方块isChangeBlock == true或者world.GetBlockType(pos)发生改变
 
-        RayCastStruct _rayCast = NewRayCast();
+        RayCastStruct _rayCast = NewRayCast(cam.position, cam.forward, reach);
 
         //如果可以放置
-        if (_rayCast.isHit)
+        if (_rayCast.isHit == 1)
         {
             int posX = Mathf.FloorToInt(_rayCast.hitPoint.x);
             int posY = Mathf.FloorToInt(_rayCast.hitPoint.y);
@@ -2549,67 +2544,14 @@ public class Player : MonoBehaviour
     //--------------------------------- 射线检测 ------------------------------------------
 
 
-    [System.Serializable]
-    public struct RayCastStruct
-    {
-        // 是否命中
-        public bool isHit;
-
-        // 射线起点
-        public Vector3 rayOrigin;
-
-        // 打中点坐标
-        public Vector3 hitPoint;
-
-        // 打中前一点坐标
-        public Vector3 hitPoint_Previous;
-
-        // 打中方块类型
-        public byte blockType; // 如果需要使用枚举，也可以改为枚举类型
-
-        // 打中法线方向
-        public Vector3 hitNormal;
-
-        // 射线距离
-        public float rayDistance;
-
-        // 目标实体（可为空）
-        public EntityStruct targetEntity;
-
-        // 构造函数
-        public RayCastStruct(bool isHit, Vector3 rayOrigin, Vector3 hitPoint, Vector3 hitPoint_Previous, byte blockType, Vector3 hitNormal, float rayDistance, EntityStruct targetEntitystruct)
-        {
-            this.isHit = isHit;
-            this.rayOrigin = rayOrigin;
-            this.hitPoint = hitPoint;
-            this.hitPoint_Previous = hitPoint_Previous;
-            this.blockType = blockType;
-            this.hitNormal = hitNormal;
-            this.rayDistance = rayDistance;
-            this.targetEntity = targetEntitystruct;
-        }
-
-        // 覆盖ToString方法，用于打印输出
-        public override string ToString()
-        {
-            return $"RayCastStruct: \n" +
-                   $"  Is Hit: {isHit}\n" +
-                   $"  Ray Origin: {rayOrigin}\n" +
-                   $"  Hit Point: {hitPoint}\n" +
-                   $"  Previous Hit Point: {hitPoint_Previous}\n" +
-                   $"  Block Type: {blockType}\n" +
-                   $"  Hit Normal: {hitNormal}\n" +
-                   $"  Ray Distance: {rayDistance}\n" +
-                   $"  Target Entity: {targetEntity._id}, {targetEntity._obj}";
-        }
-    }
-
 
 
 
     //射线检测
-    // 返回结构体的RayCast
-    public RayCastStruct NewRayCast()
+    [Foldout("射线检测", true)]
+    [Header("射线长度")] public float reach = 5.2f;
+    [Header("射线间隔")] private float checkIncrement = 0.01f;
+    public RayCastStruct NewRayCast(Vector3 _origin, Vector3 _direct, float _maxDistance)
     {
         // 射线增量和最大射程
         float step = checkIncrement;
@@ -2618,14 +2560,14 @@ public class Player : MonoBehaviour
         byte blockType = 255;             // 用于记录打中方块的类型，默认为255表示未命中
         Vector3 hitNormal = Vector3.zero; // 用于记录法线方向
         float rayDistance = 0f;           // 用于记录射线距离
-        bool isHit = false;               // 用于记录是否命中
+        byte isHit = 0;               // 用于记录是否命中【0没有名字】【1命中方块】【2命中实体】
         EntityStruct targetEntity = new EntityStruct(-1, null); // 目标实体
 
         // 从射线起点（摄像机位置）开始，沿着摄像机的前方向进行检测
-        while (step < reach)
+        while (step < _maxDistance)
         {
             // 当前射线所在的点
-            Vector3 pos = cam.position + (cam.forward * step);
+            Vector3 pos = _origin + (_direct * step);
 
             // 如果y坐标小于0，修正为0，避免穿透地面
             if (pos.y < 0)
@@ -2633,11 +2575,11 @@ public class Player : MonoBehaviour
                 pos = new Vector3(pos.x, 0, pos.z);
             }
 
-            //实体命中检测
-            if (targetEntity._id == -1)
+            // 实体命中检测
+            if (targetEntity._id == -1 && isHit == 0)
             {
                 // 获取范围内的实体
-                var entitiesInRange = world.GetOverlapSphereEntity(transform.position, reach);
+                var entitiesInRange = world.GetOverlapSphereEntity(_origin, _maxDistance);
 
                 // 检查是否有实体与射线相交，并且该实体与射线碰撞
                 foreach (var entity in entitiesInRange)
@@ -2646,20 +2588,20 @@ public class Player : MonoBehaviour
                     var collider = entity._obj.GetComponent<MC_Collider_Component>();
                     if (collider != null && collider.CheckHitBox(pos))
                     {
-                        //print("打到实体了");
                         targetEntity._id = entity._id;
                         targetEntity._obj = entity._obj;
+                        isHit = 2;
                         break; // 找到第一个符合条件的实体，退出循环
                     }
                 }
             }
 
             // 方块命中检测
-            if (managerhub.world.RayCheckForVoxel(pos))
+            if (managerhub.world.RayCheckForVoxel(pos) && isHit == 0)
             {
                 // 记录命中点
                 hitPoint = pos;
-                isHit = true; // 记录命中
+                isHit = 1; // 记录命中
 
                 // 获取命中的方块类型
                 blockType = managerhub.world.GetBlockType(pos);
@@ -2671,27 +2613,27 @@ public class Player : MonoBehaviour
                 // 找出影响最大的轴
                 if (Mathf.Abs(relativePos.x) > Mathf.Abs(relativePos.y) && Mathf.Abs(relativePos.x) > Mathf.Abs(relativePos.z))
                 {
-                    // x轴占主导，命中左右侧面
-                    hitNormal = new Vector3(Mathf.Sign(relativePos.x), 0, 0);
+                    hitNormal = new Vector3(Mathf.Sign(relativePos.x), 0, 0); // x轴占主导
                 }
                 else if (Mathf.Abs(relativePos.y) > Mathf.Abs(relativePos.x) && Mathf.Abs(relativePos.y) > Mathf.Abs(relativePos.z))
                 {
-                    // y轴占主导，命中顶部或底部
-                    hitNormal = new Vector3(0, Mathf.Sign(relativePos.y), 0);
+                    hitNormal = new Vector3(0, Mathf.Sign(relativePos.y), 0); // y轴占主导
                 }
                 else
                 {
-                    // z轴占主导，命中前后侧面
-                    hitNormal = new Vector3(0, 0, Mathf.Sign(relativePos.z));
+                    hitNormal = new Vector3(0, 0, Mathf.Sign(relativePos.z)); // z轴占主导
                 }
 
                 // 计算射线距离
-                rayDistance = (pos - cam.position).magnitude;
-
+                rayDistance = (pos - _origin).magnitude;
 
                 // 命中后跳出循环
                 break;
             }
+
+            //提前返回-如果已经命中
+            if (isHit != 0)
+                break;
 
             // 更新上一帧的位置
             lastPos = pos;
@@ -2700,21 +2642,20 @@ public class Player : MonoBehaviour
             step += checkIncrement;
         }
 
-
-        // 如果没有命中方块，但检测到实体，返回包含实体的结果
+        // 返回射线结果结构体
         return new RayCastStruct
         {
             isHit = isHit,
-            rayOrigin = cam.position,
+            rayOrigin = _origin,
             hitPoint = hitPoint,
             hitPoint_Previous = lastPos,
             blockType = blockType,
             hitNormal = hitNormal,
             rayDistance = rayDistance,
-            targetEntity = targetEntity._id != -1 ? targetEntity : new EntityStruct(-1, null) // 如果没有检测到实体则默认值
+            targetEntity = targetEntity._id != -1 ? targetEntity : new EntityStruct(-1, null),
         };
-
     }
+
 
 
     //获得居中方块
@@ -3422,4 +3363,59 @@ public class Player : MonoBehaviour
 
 }
 
+
+[System.Serializable]
+public struct RayCastStruct
+{
+    // 是否命中
+    public byte isHit;
+
+    // 射线起点
+    public Vector3 rayOrigin;
+
+    // 打中点坐标
+    public Vector3 hitPoint;
+
+    // 打中前一点坐标
+    public Vector3 hitPoint_Previous;
+
+    // 打中方块类型
+    public byte blockType; // 如果需要使用枚举，也可以改为枚举类型
+
+    // 打中法线方向
+    public Vector3 hitNormal;
+
+    // 射线距离
+    public float rayDistance;
+
+    // 目标实体（可为空）
+    public EntityStruct targetEntity;
+
+    // 构造函数
+    public RayCastStruct(byte isHit, Vector3 rayOrigin, Vector3 hitPoint, Vector3 hitPoint_Previous, byte blockType, Vector3 hitNormal, float rayDistance, EntityStruct targetEntitystruct)
+    {
+        this.isHit = isHit;
+        this.rayOrigin = rayOrigin;
+        this.hitPoint = hitPoint;
+        this.hitPoint_Previous = hitPoint_Previous;
+        this.blockType = blockType;
+        this.hitNormal = hitNormal;
+        this.rayDistance = rayDistance;
+        this.targetEntity = targetEntitystruct;
+    }
+
+    // 覆盖ToString方法，用于打印输出
+    public override string ToString()
+    {
+        return $"RayCastStruct: \n" +
+               $"  Is Hit: {isHit}\n" +
+               $"  Ray Origin: {rayOrigin}\n" +
+               $"  Hit Point: {hitPoint}\n" +
+               $"  Previous Hit Point: {hitPoint_Previous}\n" +
+               $"  Block Type: {blockType}\n" +
+               $"  Hit Normal: {hitNormal}\n" +
+               $"  Ray Distance: {rayDistance}\n" +
+               $"  Target Entity: {targetEntity._id}, {targetEntity._obj}";
+    }
+}
 

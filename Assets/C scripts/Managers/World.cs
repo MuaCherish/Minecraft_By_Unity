@@ -2733,7 +2733,7 @@ public class World : MonoBehaviour
         // 将新实例加入数据结构
         AllEntity.Add(new EntityStruct(entityId, newEntity));
 
-        Debug.Log($"实体 {newEntity.name} 已添加成功，ID为{entityId}！");
+        //Debug.Log($"实体 {newEntity.name} 已添加成功，ID为{entityId}！");
         return true;
     }
 
