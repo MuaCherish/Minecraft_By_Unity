@@ -137,7 +137,7 @@ public class SunMoving : MonoBehaviour
             // 如果需要调整灯光的朝向，可以通过第二个参数传入一个自定义的“上”方向（默认为 Vector3.up）
             // 计算从 Sun 到 Player 的方向向量
             Vector3 Lightdirection = Vector3.zero;
-            if (!managerhub.timeManager.Check_isNight())
+            if (!managerhub.timeManager.IsNight())
             {
                 Lightdirection = playerPosition - Sun.transform.position;
             }
@@ -157,7 +157,7 @@ public class SunMoving : MonoBehaviour
                 DirectionalLightMain.gameObject.SetActive(true);
             }
 
-            
+            //Test
             
         }
     }
