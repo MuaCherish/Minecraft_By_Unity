@@ -13,67 +13,71 @@ public enum Enum_Weather
 public class TimeManager : MonoBehaviour
 {
 
-    #region 状态
-
-    //[Foldout("状态", true)]
-    //[Header("当前时间(24小时制)")][Range(0, 24), SerializeField] private float CurrentTime = 12;
-    //[Header("是否是晚上")][ReadOnly] public bool isNight;
-
-    #endregion
-
 
     #region 周期函数
 
     private ManagerHub managerhub;
-    private bool haeExec_Update = true;
-
-
     private void Start()
     {
         managerhub = GlobalData.GetManagerhub();
         InitTimeManager();
+    }
 
+    private void Update()
+    {
 
-        //WeatherCheck();
+        switch (managerhub.world.game_state)
+        {
+            case Game_State.Start:
+                Handle_GameState_Start();
+                break;
 
-        
+            case Game_State.Playing:
+                Handle_GameState_Playing();
+                break;
+
+        }
+
 
     }
 
-
-    [Foldout("引用", true)]
-    [Header("高空引用")] public GameObject SkyParent;
-    private void Update()
+    void Handle_GameState_Start()
     {
-        // 启动条件
-        if (managerhub.world.game_state == Game_State.Playing)
+        if (hasExec_Start)
         {
-            if (TimeCoroutine == null)
-            {
-                TimeCoroutine = StartCoroutine(UpdateTime());
-            }
-
-            if (haeExec_Update)
-            {
-                //UpdateDayFogDistance();
-                SkyParent.SetActive(true);
-                haeExec_Update = false;
-            }
-
-
-           // DynamicState_isNight();
-
-
-            //DynamicSwitchCaveMode();
-        }
-        else
-        {
-            if (haeExec_Update == false)
-            {
-                haeExec_Update = true;
-            }
+            InitTimeManager();
             
+
+            hasExec_Start = false;
         }
+        
+    }
+
+    void Handle_GameState_Playing()
+    {
+        hasExec_Start = true;
+
+        if (TimeCoroutine == null)
+            TimeCoroutine = StartCoroutine(UpdateTime());
+        //hasExec_TimeCoroutine = true;
+
+    }
+
+    bool hasExec_Start = true;
+    public void InitTimeManager()
+    {
+        //timeStruct._time.CurrentTime = 12f;
+        timeStruct._time.CurrentTime = Random.Range(8f, 15f);
+        timeStruct._time.previous_CurrentTime = 0f;
+        timeStruct._time.value = 1;
+        timeStruct._Water.WatersMaterial.SetFloat("__2", timeStruct._Water.LightnessRange.y);
+        SkyParent.SetActive(true);
+
+        //if (isRandomWeather)
+        //{
+        //    weather = (Enum_Weather)Random.Range(0, System.Enum.GetValues(typeof(Enum_Weather)).Length);
+        //}
+
     }
 
 
@@ -89,168 +93,202 @@ public class TimeManager : MonoBehaviour
     #endregion
 
 
-    #region 状态判断
+    #region 变量
 
+    [Foldout("引用", true)]
+    [Header("Sky父类")] public GameObject SkyParent;
 
-    public bool Check_isNight()
-    {
-        if (timeStruct._time.CurrentTime <= 6 || timeStruct._time.CurrentTime >= 18)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public bool Check_isNight(float _time)
-    {
-        if (_time <= 6 || _time >= 18)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-
+    [Foldout("时间流逝", true)]
+    public TimeManagertruct timeStruct;
 
 
     #endregion
 
 
-    #region 外界调用
 
-    
-    public void InitTimeManager()
+    #region 时间流逝
+
+    /// <summary>
+    /// 是否是晚上
+    /// </summary>
+    /// <returns>是否为晚上</returns>
+    public bool IsNight()
     {
-        //timeStruct._time.CurrentTime = 12f;
-        timeStruct._time.CurrentTime = Random.Range(8f, 15f);
-        timeStruct._time.previous_CurrentTime = timeStruct._time.CurrentTime;
-        timeStruct._time.value = 1;
-        timeStruct._Water.WatersMaterial.SetFloat("__2", timeStruct._Water.LightnessRange.y);
-
-
-
-        //if (isRandomWeather)
-        //{
-        //    weather = (Enum_Weather)Random.Range(0, System.Enum.GetValues(typeof(Enum_Weather)).Length);
-        //}
-         
+        return IsNight(timeStruct._time.CurrentTime);
     }
 
+    /// <summary>
+    /// 是否是晚上（根据指定时间）
+    /// </summary>
+    /// <param name="_time">指定时间</param>
+    /// <returns>是否为晚上</returns>
+    public bool IsNight(float _time)
+    {
+        return _time <= timeStruct._time.天开始变亮.x || _time >= timeStruct._time.天开始变黑.y;
+    }
+
+    /// <summary>
+    /// 获取当前游戏时间
+    /// </summary>
+    /// <returns>当前时间</returns>
     public float GetCurrentTime()
     {
         return timeStruct._time.CurrentTime;
     }
 
-    //设置系统时间
+    /// <summary>
+    /// 设置当前游戏时间
+    /// </summary>
+    /// <param name="_time">目标时间</param>
     public void SetTime(float _time)
     {
-        timeStruct._time.CurrentTime = _time;
+        timeStruct._time.CurrentTime = Mathf.Clamp(_time, 0, 24); // 确保时间有效
+    }
+
+    /// <summary>
+    /// 暂停或恢复时间流逝
+    /// </summary>
+    /// <param name="_pause">是否暂停</param>
+    public void PauseTime(bool _pause)
+    {
+        isPauseTime = _pause;
     }
 
     #endregion
 
+    #region 游戏时钟
 
-    #region 时间流逝
+    private Coroutine TimeCoroutine; // 24小时制的时间协程
+    private bool isPauseTime;
 
-    [Foldout("时间流逝", true)]
-    public TimeManagertruct timeStruct;
-    //public WeatherStruct[] weatherLists;
-
-    // 时间流逝协程
-    private Coroutine TimeCoroutine; //24小时制的时间
     private IEnumerator UpdateTime()
     {
         while (true)
         {
-            // 等待一帧
-            yield return null;
-
-            // 计算每帧应该增加的游戏时间
-            float elapsedTime = Time.deltaTime / timeStruct._time.second_GameOneHour;
-
-            // 增加游戏时间
-            timeStruct._time.CurrentTime += elapsedTime;
+            // 提前返回：如果暂停时间或不在游戏中
+            if (isPauseTime || !IsGameRunning())
+            {
+                yield return null;
+                continue;
+            }
 
             // 确保时间在 0-24 小时之间循环
-            if (timeStruct._time.CurrentTime >= 24)
+            NormalizeTime();
+
+            // 增加游戏时间
+            UpdateGameTime();
+
+            // 更新亮度值
+            UpdateTimeValue();
+
+            // 如果 Value 改变过多，立即更新
+            if (HasSignificantTimeChange())
             {
-                timeStruct._time.CurrentTime -= 24;
-            }
-
-            //----------------------------------------固定顺序
-
-
-            //如果值中途出现大幅度篡改，则立即调整值
-            if (Mathf.Abs(timeStruct._time.CurrentTime - timeStruct._time.previous_CurrentTime) > 1)
-            {
-
-                
-                if (Check_isNight(timeStruct._time.CurrentTime))
-                {
-                    timeStruct._time.value = 0;
-                }
-                else
-                {
-                    timeStruct._time.value = 1;
-                }
-                //print($"差值过大,Current = {timeStruct._time.CurrentTime}, previous = {timeStruct._time.previous_CurrentTime}, value = {timeStruct._time.value}");
-
                 UpdateAll();
-
+                Debug.Log($"更新一次，value: {timeStruct._time.value}");
             }
 
-            
+            // 如果亮度有效，则更新场景对象
+            if (ShouldUpdateObjects())
+            {
+                UpdateAll();
+            }
 
+            // 保存当前时间
             timeStruct._time.previous_CurrentTime = timeStruct._time.CurrentTime;
 
-            //----------------------------------------
-
-            // 开始过渡
-            if ((timeStruct._time.CurrentTime >= timeStruct._time.天开始变亮.x && timeStruct._time.CurrentTime <= timeStruct._time.天开始变亮.y) || (timeStruct._time.CurrentTime >= timeStruct._time.天开始变黑.x && timeStruct._time.CurrentTime <= timeStruct._time.天开始变黑.y))
-            {
-                //Value百分值
-                if (timeStruct._time.CurrentTime < 12)
-                {
-                    timeStruct._time.value = Mathf.InverseLerp(timeStruct._time.天开始变亮.x, timeStruct._time.天开始变亮.y, timeStruct._time.CurrentTime);
-                }
-                else
-                {
-                    timeStruct._time.value = 1 - Mathf.InverseLerp(timeStruct._time.天开始变黑.x, timeStruct._time.天开始变黑.y, timeStruct._time.CurrentTime);
-                }
-
-                //Color LerpFogColor = Color.Lerp(timeStruct._fog.FogNightColor, timeStruct._fog.FogDayColor, timeStruct._time.value);
-
-                //改变 
-                //timeStruct._Skybox.SkyboxMaterial.SetFloat("_Exposure", Mathf.Lerp(timeStruct._Skybox.SkyboxRange.x, timeStruct._Skybox.SkyboxRange.y, timeStruct._time.value));
-                //timeStruct._fog.SkyboxMaterial.SetColor("_Tint", LerpFogColor);
-
-                //if (managerhub.player.isInCave == false)
-                //{
-                //    RenderSettings.fogColor = LerpFogColor;
-                //}
-                UpdateAll();
-
-
-            }
-
-
-
-            // 关闭条件
-            if (managerhub.world.game_state == Game_State.Start)
-            {
-                TimeCoroutine = null;
-                InitTimeManager();
-                yield break;
-            }
+            // 等待下一帧
+            yield return null;
         }
     }
 
+    /// <summary>
+    /// 检查游戏是否正在运行
+    /// </summary>
+    /// <returns>是否运行中</returns>
+    private bool IsGameRunning()
+    {
+        if (managerhub.world.game_state != Game_State.Start) return true;
+
+        TimeCoroutine = null; // 停止协程
+        return false;
+    }
+
+    /// <summary>
+    /// 确保时间在 0-24 小时之间循环
+    /// </summary>
+    private void NormalizeTime()
+    {
+        if (timeStruct._time.CurrentTime >= 24)
+        {
+            timeStruct._time.CurrentTime -= 24;
+        }
+    }
+
+    /// <summary>
+    /// 更新游戏时间
+    /// </summary>
+    private void UpdateGameTime()
+    {
+        float elapsedTime = Time.deltaTime / timeStruct._time.second_GameOneHour;
+        timeStruct._time.CurrentTime += elapsedTime;
+    }
+
+    /// <summary>
+    /// 更新亮度值
+    /// </summary>
+    private void UpdateTimeValue()
+    {
+        if (timeStruct._time.CurrentTime < 12)
+        {
+            timeStruct._time.value = Mathf.InverseLerp(
+                timeStruct._time.天开始变亮.x,
+                timeStruct._time.天开始变亮.y,
+                timeStruct._time.CurrentTime
+            );
+        }
+        else
+        {
+            timeStruct._time.value = 1 - Mathf.InverseLerp(
+                timeStruct._time.天开始变黑.x,
+                timeStruct._time.天开始变黑.y,
+                timeStruct._time.CurrentTime
+            );
+        }
+    }
+
+    /// <summary>
+    /// 检查时间是否有显著变化
+    /// </summary>
+    /// <returns>是否需要立即更新</returns>
+    private bool HasSignificantTimeChange()
+    {
+        const float maxTimeChange = 0.5f; // 调整为固定值
+        return Mathf.Abs(timeStruct._time.CurrentTime - timeStruct._time.previous_CurrentTime) > maxTimeChange;
+    }
+
+    /// <summary>
+    /// 检查是否需要更新对象
+    /// </summary>
+    /// <returns>是否需要更新</returns>
+    private bool ShouldUpdateObjects()
+    {
+        return timeStruct._time.value != 0 && timeStruct._time.value != 1;
+    }
+
+
+
+
+
+
+#endregion
+
+
+
+    #region UpdateObject
+
+
+    //更新所有时间Object
     void UpdateAll()
     {
         SetLight();
@@ -298,8 +336,8 @@ public class TimeManager : MonoBehaviour
         timeStruct._skybox.SkyboxMaterial.SetColor("_ColorB", BLerpColor);
 
         // 更新云的颜色
-        
-        
+
+
     }
 
 
@@ -348,6 +386,8 @@ public class TimeManager : MonoBehaviour
     //    RenderSettings.fogStartDistance = timeStruct._fog.FogDayDistance.x;
     //    RenderSettings.fogEndDistance = timeStruct._fog.FogDayDistance.y;
     //}
+
+
 
     #endregion
 

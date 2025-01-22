@@ -13,7 +13,7 @@ namespace Cloud
 
 
         private ManagerHub managerhub;
-        private bool isCloudInitialized = false; // 标记云的位置是否已初始化
+        //private bool isCloudInitialized = false; // 标记云的位置是否已初始化
 
         private void Start()
         {
@@ -23,8 +23,8 @@ namespace Cloud
 
             // 在XOZ平面上随机生成一个单位向量作为初始方向
             WindDirect = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
-        
-        
+
+
         }
 
         private void Update()
@@ -33,21 +33,18 @@ namespace Cloud
             switch (managerhub.world.game_state)
             {
                 case Game_State.Start:
-                    if (!isCloudInitialized)
-                    {
-                        InitCloud_StartPos();
-                        isCloudInitialized = true; // 确保只初始化一次
-                    }
+                    hasExec_Loading = true;
+                    break;
+
+                case Game_State.Loading:
+                    Handle_GameState_Loading();
                     break;
 
                 case Game_State.Playing:
                     Handle_GameState_Playing();
-                    CloudMoving();
-                    isCloudInitialized = false; // 切换到其他状态时重置标志
                     break;
 
                 default:
-                    isCloudInitialized = false; // 处理非Playing和Start的状态
                     break;
             }
         }
@@ -55,13 +52,22 @@ namespace Cloud
 
         void Handle_GameState_Start()
         {
-            
+
         }
 
+        private bool hasExec_Loading = true;
+        void Handle_GameState_Loading()
+        {
+            if (hasExec_Loading)
+            {
+                InitCloud_StartPos();
+                hasExec_Loading = false;
+            }
+        }
 
         void Handle_GameState_Playing()
         {
-
+            CloudMoving();
         }
 
 
@@ -81,7 +87,7 @@ namespace Cloud
         [Header("风速")] public float windSpeed = 1.0f;
 
 
-        
+
 
 
         void InitCloud_StartPos()
@@ -98,7 +104,7 @@ namespace Cloud
         }
 
 
-        
+
 
 
         //设置颜色
