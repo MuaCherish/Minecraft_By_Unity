@@ -25,13 +25,11 @@ public class CommandManager : MonoBehaviour
     #endregion
 
 
-
     #region 指令系统
 
     
     [Foldout("指令系统", true)]
     [Header("指令集")] public List<CommandSystem> commands = new List<CommandSystem>();
-    [Header("史莱姆引用")] public GameObject Entity_Slim;
 
     //指令解析-执行函数
     public String CheckCommand(String _input, out Color _color)
@@ -154,7 +152,7 @@ public class CommandManager : MonoBehaviour
 
             //time
             case 5:
-                string pattern5 = @"\/time\s+(\d+)";
+                string pattern5 = @"\/settime\s+(\d+)";
 
                 // 使用正则表达式匹配数字
                 Match match5 = Regex.Match(_input, pattern5);

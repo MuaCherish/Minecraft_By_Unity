@@ -23,6 +23,7 @@ public class ManagerHub : MonoBehaviour
     public Player player;
 
     [Foldout("Others", true)]
+    public Weather weather;
     public TextureTo3D textureTo3D;
     public CloudManager cloudManager;
     public Crepuscular crepuscularScript;

@@ -33,7 +33,7 @@ namespace Cloud
             switch (managerhub.world.game_state)
             {
                 case Game_State.Start:
-                    hasExec_Loading = true;
+                    hasExec_Playing = true;
                     break;
 
                 case Game_State.Loading:
@@ -55,18 +55,22 @@ namespace Cloud
 
         }
 
-        private bool hasExec_Loading = true;
+        
         void Handle_GameState_Loading()
         {
-            if (hasExec_Loading)
-            {
-                InitCloud_StartPos();
-                hasExec_Loading = false;
-            }
+            
         }
+
+        private bool hasExec_Playing = true;
 
         void Handle_GameState_Playing()
         {
+            if (hasExec_Playing)
+            {
+                InitCloud_StartPos();
+                hasExec_Playing = false;
+            }
+
             CloudMoving();
         }
 
@@ -84,6 +88,7 @@ namespace Cloud
 
         [Foldout("云的设置")]
         [Header("风向")][ReadOnly] public Vector3 WindDirect;
+        [Header("云层高度")]public float CloudHeight = 200f;
         [Header("风速")] public float windSpeed = 1.0f;
 
 
@@ -92,7 +97,8 @@ namespace Cloud
 
         void InitCloud_StartPos()
         {
-            parent.transform.position = new Vector3(managerhub.player.transform.position.x, 126.5f, managerhub.player.transform.position.z);
+            //print(managerhub.player.transform.position);
+            parent.transform.position = new Vector3(managerhub.player.transform.position.x, CloudHeight, managerhub.player.transform.position.z);
         }
 
 

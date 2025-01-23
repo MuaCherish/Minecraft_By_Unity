@@ -4,11 +4,7 @@ using UnityEngine;
 using Cloud;
 using static UnityEngine.Rendering.DebugUI;
 
-public enum Enum_Weather
-{
-    Sunshine = 0,
-    Cloudy = 1,
-}
+
 
 public class TimeManager : MonoBehaviour
 {
@@ -32,6 +28,10 @@ public class TimeManager : MonoBehaviour
                 Handle_GameState_Start();
                 break;
 
+            case Game_State.Loading:
+                Handle_GameState_Loading(); 
+                break;
+
             case Game_State.Playing:
                 Handle_GameState_Playing();
                 break;
@@ -53,14 +53,24 @@ public class TimeManager : MonoBehaviour
         
     }
 
+
+    void Handle_GameState_Loading()
+    {
+        if (!SkyParent.activeSelf)
+        {
+            SkyParent.SetActive(true);
+        }
+        
+    }
+
+
     void Handle_GameState_Playing()
     {
         hasExec_Start = true;
-
-        if (TimeCoroutine == null)
-            TimeCoroutine = StartCoroutine(UpdateTime());
         //hasExec_TimeCoroutine = true;
 
+        UpdateGameTime_Clock();
+        UpdateGameTime_Object();
     }
 
     bool hasExec_Start = true;
@@ -71,7 +81,7 @@ public class TimeManager : MonoBehaviour
         timeStruct._time.previous_CurrentTime = 0f;
         timeStruct._time.value = 1;
         timeStruct._Water.WatersMaterial.SetFloat("__2", timeStruct._Water.LightnessRange.y);
-        SkyParent.SetActive(true);
+        
 
         //if (isRandomWeather)
         //{
@@ -80,6 +90,13 @@ public class TimeManager : MonoBehaviour
 
     }
 
+
+    void InitSkyBox()
+    {
+        timeStruct._skybox.SkyboxMaterial.SetColor("_ColorA", timeStruct._skybox.DayColor[0]);
+        timeStruct._skybox.SkyboxMaterial.SetColor("_ColorB", timeStruct._skybox.DayColor[1]);
+
+    }
 
     private void OnApplicationQuit()
     {
@@ -93,20 +110,11 @@ public class TimeManager : MonoBehaviour
     #endregion
 
 
-    #region 变量
-
-    [Foldout("引用", true)]
-    [Header("Sky父类")] public GameObject SkyParent;
+    #region 游戏时钟
 
     [Foldout("时间流逝", true)]
-    public TimeManagertruct timeStruct;
+    [Header("时间设置")] public TimeManagertruct timeStruct;
 
-
-    #endregion
-
-
-
-    #region 时间流逝
 
     /// <summary>
     /// 是否是晚上
@@ -154,54 +162,48 @@ public class TimeManager : MonoBehaviour
         isPauseTime = _pause;
     }
 
-    #endregion
 
-    #region 游戏时钟
-
-    private Coroutine TimeCoroutine; // 24小时制的时间协程
     private bool isPauseTime;
 
-    private IEnumerator UpdateTime()
+    //更新时间
+    private void UpdateGameTime_Clock()
     {
-        while (true)
+        // 提前返回：如果暂停时间或不在游戏中
+        if (isPauseTime || !IsGameRunning())
         {
-            // 提前返回：如果暂停时间或不在游戏中
-            if (isPauseTime || !IsGameRunning())
-            {
-                yield return null;
-                continue;
-            }
-
-            // 确保时间在 0-24 小时之间循环
-            NormalizeTime();
-
-            // 增加游戏时间
-            UpdateGameTime();
-
-            // 更新亮度值
-            UpdateTimeValue();
-
-            // 如果 Value 改变过多，立即更新
-            if (HasSignificantTimeChange())
-            {
-                UpdateAll();
-                Debug.Log($"更新一次，value: {timeStruct._time.value}");
-            }
-
-            // 如果亮度有效，则更新场景对象
-            if (ShouldUpdateObjects())
-            {
-                UpdateAll();
-            }
-
-            // 保存当前时间
-            timeStruct._time.previous_CurrentTime = timeStruct._time.CurrentTime;
-
-            // 等待下一帧
-            yield return null;
+            return;
         }
+
+        // 确保时间在 0-24 小时之间循环
+        NormalizeTime();
+
+        // 增加游戏时间
+        UpdateGameTime();   
     }
 
+
+    private void UpdateGameTime_Object()
+    {
+
+        //提前返回 - 如果是阴天则不更新
+        if (managerhub.weather.weather == Enum_Weather.Rainy)
+            return;
+
+        // 更新Objects
+        if (HasSignificantTimeChange() || ShouldUpdateObjects())
+        {
+
+            Update_Value();
+            UpdateAll();
+
+            // Debug.Log($"更新一次，value: {timeStruct._time.value}");
+        }
+
+        // 保存当前时间
+        timeStruct._time.previous_CurrentTime = timeStruct._time.CurrentTime;
+    }
+
+    
     /// <summary>
     /// 检查游戏是否正在运行
     /// </summary>
@@ -210,7 +212,6 @@ public class TimeManager : MonoBehaviour
     {
         if (managerhub.world.game_state != Game_State.Start) return true;
 
-        TimeCoroutine = null; // 停止协程
         return false;
     }
 
@@ -234,28 +235,6 @@ public class TimeManager : MonoBehaviour
         timeStruct._time.CurrentTime += elapsedTime;
     }
 
-    /// <summary>
-    /// 更新亮度值
-    /// </summary>
-    private void UpdateTimeValue()
-    {
-        if (timeStruct._time.CurrentTime < 12)
-        {
-            timeStruct._time.value = Mathf.InverseLerp(
-                timeStruct._time.天开始变亮.x,
-                timeStruct._time.天开始变亮.y,
-                timeStruct._time.CurrentTime
-            );
-        }
-        else
-        {
-            timeStruct._time.value = 1 - Mathf.InverseLerp(
-                timeStruct._time.天开始变黑.x,
-                timeStruct._time.天开始变黑.y,
-                timeStruct._time.CurrentTime
-            );
-        }
-    }
 
     /// <summary>
     /// 检查时间是否有显著变化
@@ -281,16 +260,69 @@ public class TimeManager : MonoBehaviour
 
 
 
-#endregion
+    #endregion
 
 
-
-    #region UpdateObject
+    #region 对游戏物体的更新
 
 
     //更新所有时间Object
-    void UpdateAll()
+    [Foldout("时间Objets",true)]
+    [Header("Sky父类")] public GameObject SkyParent;
+
+
+    void Update_Value()
     {
+        if (timeStruct._time.CurrentTime < 12)
+        {
+            timeStruct._time.value = Mathf.InverseLerp(
+                timeStruct._time.天开始变亮.x,
+                timeStruct._time.天开始变亮.y,
+                timeStruct._time.CurrentTime
+            );
+        }
+        else
+        {
+            timeStruct._time.value = 1 - Mathf.InverseLerp(
+                timeStruct._time.天开始变黑.x,
+                timeStruct._time.天开始变黑.y,
+                timeStruct._time.CurrentTime
+            );
+        }
+    }
+
+    /// <summary>
+    /// Time -> Value
+    /// </summary>
+    public float Get_Value(float _time)
+    {
+        if (_time < 12)
+        {
+            _time = Mathf.InverseLerp(
+                timeStruct._time.天开始变亮.x,
+                timeStruct._time.天开始变亮.y,
+                timeStruct._time.CurrentTime
+            );
+        }
+        else
+        {
+            _time = 1 - Mathf.InverseLerp(
+                timeStruct._time.天开始变黑.x,
+                timeStruct._time.天开始变黑.y,
+                timeStruct._time.CurrentTime
+            );
+        }
+
+        return _time;
+    }
+
+
+    /// <summary>
+    /// 更新所有Object
+    /// </summary>
+    public void UpdateAll()
+    {
+
         SetLight();
         SetSkyBoxColor();
         SetCloudColor();
@@ -341,7 +373,6 @@ public class TimeManager : MonoBehaviour
     }
 
 
-
     Color CloudColor;
     void SetCloudColor()
     {
@@ -387,48 +418,6 @@ public class TimeManager : MonoBehaviour
     //    RenderSettings.fogEndDistance = timeStruct._fog.FogDayDistance.y;
     //}
 
-
-
-    #endregion
-
-
-    #region 天空盒
-
-    void InitSkyBox()
-    {
-        timeStruct._skybox.SkyboxMaterial.SetColor("_ColorA", timeStruct._skybox.DayColor[0]);
-        timeStruct._skybox.SkyboxMaterial.SetColor("_ColorB", timeStruct._skybox.DayColor[1]);
-
-    }
-
-
-
-    #endregion
-
-
-    #region 天气(已禁用)
-
-    //[Foldout("天气参数", true)]
-    //[Header("随机天气")] public bool isRandomWeather = true;
-    //[Header("天气")] public Enum_Weather weather = Enum_Weather.Sunshine;
-    //void WeatherCheck()
-    //{
-
-
-    //    switch (weather)
-    //    {
-    //        case Enum_Weather.Sunshine:
-    //            timeStruct._fog.FogDayColor = weatherLists[0].FogDayColor;
-    //            timeStruct._fog.FogNightColor = weatherLists[0].FogNightColor;
-    //            break;
-
-    //        case Enum_Weather.Cloudy:
-    //            managerhub.cloudManager.enabled = false;
-    //            timeStruct._fog.FogDayColor = weatherLists[1].FogDayColor;
-    //            timeStruct._fog.FogNightColor = weatherLists[1].FogNightColor;
-    //            break;
-    //    }
-    //}
 
 
     #endregion
@@ -531,6 +520,3 @@ public class TimeManager : MonoBehaviour
     #endregion 
 
 }
-
-  
-

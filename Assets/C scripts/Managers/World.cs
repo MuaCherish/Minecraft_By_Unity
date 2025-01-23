@@ -484,7 +484,7 @@ public class World : MonoBehaviour
     bool hasExec_RandomPlayerLocation = true;
     IEnumerator Init_Map_Thread(bool _isInitPlayerLocation)
     {
-        
+
 
         //确定玩家圈养中心点
         if (isLoadSaving)
@@ -504,6 +504,9 @@ public class World : MonoBehaviour
             Center_Now = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, 0, GetRealChunkLocation(PlayerFoot.transform.position).z);
 
         }
+
+
+
 
         //写一个协程，清除或者隐藏过远的区块
 

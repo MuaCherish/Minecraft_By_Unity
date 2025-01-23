@@ -34,7 +34,7 @@ public class Time_SkyBoxStruct
     [Header("白天颜色")] public Color[] DayColor = new Color[2];
     [Header("晚霞颜色")] public Color[] SunSetColor = new Color[2];
     [Header("晚上颜色")] public Color[] NightColor = new Color[2];
-    //[Header("迷雾白天范围")] public Vector2 FogDayDistance;  // 迷雾距离
+    //[Header("雨天颜色")] public Color[] RainColor = new Color[2];
     //[Header("迷雾矿洞范围")] public Vector2 FogCaveDistance;  // 迷雾距离
 }
 
@@ -52,6 +52,7 @@ public class Time_TerrainStruct
     [Header("地形材质引用")] public Material BlocksMaterial;
     [Header("白天颜色")] public Color BlocksDayColor;
     [Header("晚上颜色")] public Color BlocksNightColor;
+   // [Header("雨天颜色")] public Color BlocksRainColor;
 }
 
 [Serializable]
