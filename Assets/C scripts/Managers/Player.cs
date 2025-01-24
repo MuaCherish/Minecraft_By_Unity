@@ -1039,8 +1039,8 @@ public class Player : MonoBehaviour
                             if (_selecttype == VoxelData.Tool_MusicDiscs)
                             {
 
-                                managerhub.NewmusicManager.SwitchBackgroundMusic(MusicData.MusicBox);
-
+                                //managerhub.NewmusicManager.SwitchBackgroundMusic(MusicData.MusicBox, 1f, 0.5f);
+                                managerhub.NewmusicManager.Create3DSound(UsefulFunction.GetCenterVector3(_rayCast.hitPoint_Previous) , MusicData.MusicBox);
                                 managerhub.backpackManager.update_slots(1, 50);
                             }
                             break;
@@ -3368,6 +3368,7 @@ public class Player : MonoBehaviour
 public struct RayCastStruct
 {
     // 是否命中
+    //【0没有命中】【1命中方块】【2命中实体】
     public byte isHit;
 
     // 射线起点

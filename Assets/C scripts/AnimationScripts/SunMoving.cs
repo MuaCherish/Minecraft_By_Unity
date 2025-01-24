@@ -168,7 +168,7 @@ public class SunMoving : MonoBehaviour
     /// <param name="_value"></param>
     public void SetLightInten()
     {
-        float newIntensity = Mathf.Lerp(0f, 1.7f, managerhub.timeManager.timeStruct._time.value);
+        float newIntensity = Mathf.Lerp(0f, 1.7f, managerhub.timeManager.gameTime._value);
 
         if (!isOpenLightCast)
         {
@@ -186,7 +186,7 @@ public class SunMoving : MonoBehaviour
     public Material Mat_LightCast;
     public void SetLightCastDensity()
     {
-        float result = 4 * Mathf.Pow(managerhub.timeManager.timeStruct._time.value - 0.5f, 2);
+        float result = 4 * Mathf.Pow(managerhub.timeManager.gameTime._value - 0.5f, 2);
         Mat_LightCast.SetFloat("_Density", result);
     }
 

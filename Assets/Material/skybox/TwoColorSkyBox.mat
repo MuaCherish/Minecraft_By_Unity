@@ -28,6 +28,6 @@ Material:
     - _BlendRange: 0.2
     - _Center: 0.5
     m_Colors:
-    - _ColorA: {r: 0.49803925, g: 0.65882355, b: 0.9960785, a: 0}
-    - _ColorB: {r: 0.69411767, g: 0.7686275, b: 0.86274517, a: 0}
+    - _ColorA: {r: 0.49803922, g: 0.65882355, b: 0.99607843, a: 1}
+    - _ColorB: {r: 0.69411767, g: 0.76862746, b: 0.8627451, a: 1}
   m_BuildTextureStacks: []

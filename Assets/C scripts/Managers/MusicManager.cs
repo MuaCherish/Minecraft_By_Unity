@@ -409,7 +409,7 @@ public class MusicManager : MonoBehaviour
     void PlaySound_Foot()
     {
         // 如果玩家移动并且音频未播放，并且玩家在地面上，则播放音频
-        if (player.isMoving && player.isGrounded && !player.isSquating)
+        if (player.isInputing && player.isGrounded && !player.isSquating)
         {
             if (Time.time >= nextFoot)
             {

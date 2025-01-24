@@ -885,7 +885,7 @@ public class CanvasManager : MonoBehaviour
                 value = UIManager[CanvasData.uiÑ¡ÏîÏ¸½Ú].childs[7]._object.GetComponent<Slider>().value;
 
                 //Update
-                managerhub.NewmusicManager.SetAudioBackGroundVolumn(Mathf.Lerp(0f, 1f, value));
+                managerhub.NewmusicManager.SetVolumn(Mathf.Lerp(0f, 1f, value));
 
                 break;
 

@@ -354,7 +354,7 @@ public class CommandManager : MonoBehaviour
 
                         if (number > 0)
                         {
-                            managerhub.timeManager.timeStruct._time.second_GameOneHour = number;
+                            managerhub.timeManager.gameTime.second_GameOneHour = number;
 
 
                             return "<系统消息> " + $"已更新时间流速";
