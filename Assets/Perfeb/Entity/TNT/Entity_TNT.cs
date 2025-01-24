@@ -20,6 +20,8 @@ public class Entity_TNT : MC_Entity_Base
 
     #region 实现抽象父类
 
+    public int MyEntityID;
+
     // 实现无参的抽象方法
     public override void OnStartEntity()
     {
@@ -28,8 +30,10 @@ public class Entity_TNT : MC_Entity_Base
     }
 
     // 带参数的重载方法
-    public void OnStartEntity(Vector3 _pos, bool _ActByTNT)
+    public void OnStartEntity(int _id, Vector3 _pos, bool _ActByTNT)
     {
+        MyEntityID = _id;
+
         FindComponents();
 
         InitTNT();
@@ -50,8 +54,6 @@ public class Entity_TNT : MC_Entity_Base
     {
         //数值
         Vector3 _center = managerhub.player.GetCenterPoint(transform.position);
-
-
 
         //爆炸粒子效果
         GameObject particle_explore = GameObject.Instantiate(managerhub.player.particle_explosion);
@@ -80,7 +82,6 @@ public class Entity_TNT : MC_Entity_Base
 
         //激活范围内的所有TNT
         BlocksFunction.GetAllTNTPositions(this.transform.position, out List<Vector3> TNTpositions);
-
         if (TNTpositions.Count != 0)
         {
             //print($"搜索到了{TNTpositions.Count}个TNT");
@@ -100,8 +101,26 @@ public class Entity_TNT : MC_Entity_Base
         }
 
 
+        //搜索范围内所有实体
+        List<EntityStruct> _entities = managerhub.world.GetOverlapSphereEntity(_center, BlocksFunction.TNT_explore_Radius);
+
+        foreach (var item in _entities)
+        {
+            Vector3 _forceDirect = item._obj.transform.position - _center;
+            _forceDirect.y = 0.8f;
+            _forceDirect = _forceDirect.normalized;
+
+            float _forceValue = 150f;
+
+            item._obj.GetComponent<MC_Velocity_Component>().AddForce(_forceDirect, _forceValue);
+        }
+
         //Chunk
         BlocksFunction.Boom(_center);
+
+
+        //结束注册
+        managerhub.world.RemoveEntity(MyEntityID);
 
         Destroy(gameObject); // 销毁当前对象
     }

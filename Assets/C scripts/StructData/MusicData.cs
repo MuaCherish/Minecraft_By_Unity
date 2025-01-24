@@ -66,7 +66,7 @@ public static class MusicData
     public static readonly int Eat_2 = 23;
     public static readonly int MusicBox = 24;
     public static readonly int Rain = 25;
-    //public static readonly int world = 26;
+    public static readonly int Slime_Behurt = 26;
     //public static readonly int TNT_Fuse = 27;
     //public static readonly int TNT_Fuse = 28;
     //public static readonly int TNT_Fuse = 29;

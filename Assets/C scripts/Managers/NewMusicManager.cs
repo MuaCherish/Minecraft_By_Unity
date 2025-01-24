@@ -311,6 +311,7 @@ public class NewMusicManager : MonoBehaviour
     /// <param name="_id"></param>
     public void PlayOneShot(int _id)
     {
+
         Audio_oneShot.PlayOneShot(audioclips[_id]);
     }
 

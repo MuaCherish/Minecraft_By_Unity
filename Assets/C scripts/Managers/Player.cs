@@ -140,7 +140,7 @@ public class Player : MonoBehaviour
     Coroutine falldownCoroutine;
     public float hurtCooldownTime = 0.5f;  //摔落冷却时间
     public float new_foot_high = -100f;
-    public float angle = 50f;
+    [Header("受伤歪头最大角度")] public float angle = 50f;
     public float cycleLength = 16f; // 动画周期长度
     public float speed = 200f; // 控制时间的增长速度 
 
@@ -928,7 +928,7 @@ public class Player : MonoBehaviour
 
             //print($"EntityID:{_rayCast.targetEntity._id}");
 
-            if (_rayCast.targetEntity._id != -1)
+            if (_rayCast.targetEntity._id == 2)
             {
                 isHitEntity = true;
                 //print("打到实体了");
@@ -936,8 +936,11 @@ public class Player : MonoBehaviour
                 Vector3 direct = managerhub.player.transform.forward;
                 direct.y = 1f;
 
-                _rayCast.targetEntity._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-1, direct);
-
+                if (_rayCast.targetEntity._obj.GetComponent<MC_Life_Component>() != null)
+                {
+                    _rayCast.targetEntity._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-1, direct);
+                }
+                managerhub.NewmusicManager.PlayOneShot(MusicData.Slime_Behurt);
             }
 
             //print(OnLoadResource.Instance.Goods[1]);
@@ -3155,8 +3158,11 @@ public class Player : MonoBehaviour
     public void CreateTNT(Vector3 _point, bool _acybytnt)
     {
         //创建TNT实体
-        GameObject tnt = GameObject.Instantiate(Entity_TNT);
-        tnt.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
+        //GameObject tnt = GameObject.Instantiate(Entity_TNT);
+        //tnt.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
+
+        managerhub.world.AddEntity(EntityData.TNT, _point, out EntityStruct _result);
+        _result._obj.GetComponent<Entity_TNT>().OnStartEntity(_result._id, GetCenterPoint(_point), _acybytnt);
     }
 
     //记录玩家状态

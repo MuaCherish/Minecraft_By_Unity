@@ -2707,12 +2707,13 @@ public class World : MonoBehaviour
     /// <param name="_index">需要添加的预制体的下标</param>
     /// <param name="_Startpos">实体的起始位置</param>
     /// <returns>是否添加成功</returns>
-    public bool AddEntity(int _index, Vector3 _Startpos)
+    public bool AddEntity(int _index, Vector3 _Startpos, out EntityStruct _Result)
     {
         // 检查实体数量是否达到最大值
         if (AllEntity.Count >= maxSize)
         {
             Debug.LogWarning("实体数量已达到最大值，无法添加新实体！");
+            _Result = null;
             return false;
         }
 
@@ -2720,6 +2721,7 @@ public class World : MonoBehaviour
         if (_index < 0 || _index >= Entity_Prefeb.Length)
         {
             Debug.LogError("索引超出范围，请提供有效的预制体索引！");
+            _Result = null;
             return false;
         }
 
@@ -2734,9 +2736,11 @@ public class World : MonoBehaviour
         int entityId = Unique_Id++;
 
         // 将新实例加入数据结构
-        AllEntity.Add(new EntityStruct(entityId, newEntity));
+        _Result = new EntityStruct(entityId, newEntity);
+        AllEntity.Add(_Result);
 
         //Debug.Log($"实体 {newEntity.name} 已添加成功，ID为{entityId}！");
+        
         return true;
     }
 
@@ -2769,6 +2773,38 @@ public class World : MonoBehaviour
         Debug.LogWarning("该实体不在管理中！");
         return false;
     }
+
+
+    /// <summary>
+    /// 从管理中移除实体
+    /// </summary>
+    /// <param name="entity">需要移除的实体</param>
+    /// <returns>是否移除成功</returns>
+    public bool RemoveEntity(int _id)
+    {
+        EntityStruct entityToRemove = null;
+
+        // 获取该实体对应的EntityStruct
+        foreach (var entityStruct in AllEntity)
+        {
+            if (entityStruct._id == _id)
+            {
+                entityToRemove = entityStruct;
+                break;
+            }
+        }
+
+        if (entityToRemove != null)
+        {
+            AllEntity.Remove(entityToRemove);
+            //Debug.Log($"实体 {_id} 已移除成功！");
+            return true;
+        }
+
+        Debug.LogWarning("该实体不在管理中！");
+        return false;
+    }
+
 
     /// <summary>
     /// 检测当前实体数量

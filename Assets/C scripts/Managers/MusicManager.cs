@@ -191,8 +191,11 @@ public class MusicManager : MonoBehaviour
                 //左键破坏
                 if (Input.GetMouseButton(0))
                 {
+
+                    RayCastStruct _rayCast = player.NewRayCast(player.cam.position, player.cam.transform.forward, player.reach);
+
                     //如果打中
-                    if (player.point_Block_type != PlayerData.notHit)
+                    if (player.point_Block_type != PlayerData.notHit && _rayCast.isHit == 1)
                     {
                         isbroking = true;
 

@@ -79,13 +79,12 @@ public class Weather : MonoBehaviour
 
             if (weather == Enum_Weather.Sunshine && Random.value < weather_Cloudy_robability)
             {
-                weather = Enum_Weather.Rainy;
-                rainDuration = Random.Range(Range_rainDuration.x, Range_rainDuration.y); // 随机设置雨持续时间
-                haExec_StartToRain = true;
+                SetWeatherRainy();
             }
         }
     }
 
+   
 
     #endregion
 
@@ -98,6 +97,18 @@ public class Weather : MonoBehaviour
     [Header("下雨持续时间范围")] public Vector2 Range_rainDuration = new Vector2(10f, 30f); // 雨持续时间
     [Header("头顶射线检测")] public float checkHeadTime = 1f;
     private float HeadTime_elapsedTime = 0f; // 用于计时
+
+
+    /// <summary>
+    /// 将天气转为阴天
+    /// </summary>
+    public void SetWeatherRainy()
+    {
+        weather = Enum_Weather.Rainy;
+        rainDuration = Random.Range(Range_rainDuration.x, Range_rainDuration.y); // 随机设置雨持续时间
+        haExec_StartToRain = true;
+    }
+
 
 
     /// <summary>
@@ -159,11 +170,6 @@ public class Weather : MonoBehaviour
             managerhub.NewmusicManager.BackGroundTime();
         }
     }
-
-
-
-    
-
 
     void CheckPlayerHead()
     {

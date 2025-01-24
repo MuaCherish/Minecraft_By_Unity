@@ -2834,6 +2834,10 @@ public class Chunk : MonoBehaviour
 
         for (int i = 0; i < _EditList.Count; i++)
         {
+
+
+            
+
             Vector3 relaposition = world.GetRelalocation(_EditList[i].editPos);
 
             int _x = Mathf.FloorToInt(relaposition.x);
@@ -2921,8 +2925,13 @@ public class Chunk : MonoBehaviour
             //Music
             if (hasExec_PlaySound)
             {
-                managerhub.NewmusicManager.PlayOneShot(_EditList[i].targetType);
-                hasExec_PlaySound = false;
+                if (_EditList[i].targetType != VoxelData.Air)
+                {
+                    managerhub.NewmusicManager.PlayOneShot(_EditList[i].targetType);
+                    hasExec_PlaySound = false;
+                }
+                    
+                
             }
             
 

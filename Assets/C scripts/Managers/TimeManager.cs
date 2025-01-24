@@ -192,16 +192,8 @@ public class TimeManager : MonoBehaviour
     }
 
 
-    //检查时间是否有显著变化
-    bool HasSignificantTimeChange()
-    {
-        const float maxTimeChange = 0.5f; // 调整为固定值
-        return Mathf.Abs(gameTime.CurrentTime - gameTime.previous_CurrentTime) > maxTimeChange;
-    }
-
-
     /// <summary>
-    /// 更新时间
+    /// 更新游戏时钟
     /// </summary>
     void UpdateGameTime_Clock()
     {
@@ -221,92 +213,22 @@ public class TimeManager : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// 更新游戏物体
-    /// </summary>
-    void UpdateGameTime_Object()
+    //检查时间是否有显著变化
+    bool HasSignificantTimeChange()
     {
-        //正常更新
-        //if (ShouldUpdateObjects())
-        //{
-        ////    Update_Value();
-        ////    UpdateAll();
-        //}
-
-        //提前返回 - 如果是阴天则不更新
-        if (managerhub.weather.weather == Enum_Weather.Rainy)
-            return;
-
-
-        // 如果值跳动过大，则立即改变
-        // 更新Objects
-        if (HasSignificantTimeChange() || ShouldUpdateObjects())
-        {
-
-            //FromGameTimeToUpdateAll_Imediately();
-            UpdateAll();
-            // Debug.Log($"更新一次，value: {timeStruct._time.value}");
-        }
-
-
-        // 保存当前时间
-        gameTime.previous_CurrentTime = gameTime.CurrentTime;
+        const float maxTimeChange = 0.5f; // 调整为固定值
+        return Mathf.Abs(gameTime.CurrentTime - gameTime.previous_CurrentTime) > maxTimeChange;
     }
 
-    /// <summary>
-    /// 检查是否需要更新对象
-    /// </summary>
-    /// <returns>是否需要更新</returns>
-    private bool ShouldUpdateObjects()
-    {
-        return gameTime._value != 0 && gameTime._value != 1;
-    }
-
-    void Update_Value()
-    {
-
-        if ((gameTime.CurrentTime >= gameTime.天开始变亮.x && gameTime.CurrentTime <= gameTime.天开始变亮.y) ||
-            (gameTime.CurrentTime >= gameTime.天开始变黑.x && gameTime.CurrentTime <= gameTime.天开始变黑.y)
-            )
-        {
-            if (gameTime.CurrentTime < 12)
-            {
-                gameTime._value = Mathf.InverseLerp(
-                    gameTime.天开始变亮.x,
-                    gameTime.天开始变亮.y,
-                    gameTime.CurrentTime
-                );
-            }
-            else
-            {
-                gameTime._value = 1 - Mathf.InverseLerp(
-                    gameTime.天开始变黑.x,
-                    gameTime.天开始变黑.y,
-                    gameTime.CurrentTime
-                );
-            }
-        }
-        else if (gameTime.CurrentTime >= gameTime.天开始变亮.y && gameTime.CurrentTime <= gameTime.天开始变黑.x)
-        {
-            gameTime._value = 1;
-        }
-        else
-        {
-            gameTime._value = 0;
-        }
-
-        
-    }
 
 
 
     #endregion
 
 
-
     #region 天气模板
 
-    
+
 
     [Foldout("Transforms",true)]
     [Header("Sky父类")] public GameObject SkyParent;
@@ -630,8 +552,74 @@ public class TimeManager : MonoBehaviour
     #endregion
 
 
+    #region [尽量不要碰]昼夜循环
 
-    #region [Old]对游戏物体的更新
+    /// <summary>
+    /// 更新游戏物体
+    /// </summary>
+    void UpdateGameTime_Object()
+    {
+
+        //提前返回 - 如果是阴天则不更新
+        if (managerhub.weather.weather == Enum_Weather.Rainy)
+            return;
+
+
+        // 如果值跳动过大，则立即改变
+        // 更新Objects
+        if (HasSignificantTimeChange() || ShouldUpdateObjects())
+            UpdateAll();
+
+        // 保存当前时间
+        gameTime.previous_CurrentTime = gameTime.CurrentTime;
+    }
+
+    /// <summary>
+    /// 检查是否需要更新对象
+    /// </summary>
+    /// <returns>是否需要更新</returns>
+    private bool ShouldUpdateObjects()
+    {
+        return gameTime._value != 0 && gameTime._value != 1;
+    }
+
+    void Update_Value()
+    {
+
+        if ((gameTime.CurrentTime >= gameTime.天开始变亮.x && gameTime.CurrentTime <= gameTime.天开始变亮.y) ||
+            (gameTime.CurrentTime >= gameTime.天开始变黑.x && gameTime.CurrentTime <= gameTime.天开始变黑.y)
+            )
+        {
+            if (gameTime.CurrentTime < 12)
+            {
+                gameTime._value = Mathf.InverseLerp(
+                    gameTime.天开始变亮.x,
+                    gameTime.天开始变亮.y,
+                    gameTime.CurrentTime
+                );
+            }
+            else
+            {
+                gameTime._value = 1 - Mathf.InverseLerp(
+                    gameTime.天开始变黑.x,
+                    gameTime.天开始变黑.y,
+                    gameTime.CurrentTime
+                );
+            }
+        }
+        else if (gameTime.CurrentTime >= gameTime.天开始变亮.y && gameTime.CurrentTime <= gameTime.天开始变黑.x)
+        {
+            gameTime._value = 1;
+        }
+        else
+        {
+            gameTime._value = 0;
+        }
+
+
+    }
+
+
 
     /// <summary>
     /// 更新所有Object
@@ -724,7 +712,7 @@ public class TimeManager : MonoBehaviour
 
 }
 
-
+//天气模板类
 [System.Serializable]
 public class WeatherState
 {
