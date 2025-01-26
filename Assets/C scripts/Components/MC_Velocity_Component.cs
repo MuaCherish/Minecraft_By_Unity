@@ -67,20 +67,16 @@ namespace MCEntity
 
 
 
-        public bool RotationToggle;
-        public float horizon;
+        //public bool RotationToggle;
+        //public float horizon;
         private void FixedUpdate()
         {
             if (Collider_Component.managerhub.world.game_state == Game_State.Playing)
             {
                 _ReferFixedUpdate_Caculate();
 
-                if (RotationToggle)
-                {
-                    EntityRotation(horizon, 0);
-                }
             }
-           
+
         }
 
         private void Update()

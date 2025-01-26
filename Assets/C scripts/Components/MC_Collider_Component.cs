@@ -28,7 +28,7 @@ namespace MCEntity
         #region 生命周期函数
 
         MC_Velocity_Component Velocity_Component;
-        public ManagerHub managerhub;
+        [HideInInspector] public ManagerHub managerhub;
 
         private void Awake()
         {
@@ -37,6 +37,10 @@ namespace MCEntity
             if (managerhub == null)
             {
                 managerhub = GlobalData.GetManagerhub();
+            }
+            else
+            {
+                print("未找到managerhub");
             }
         }
 

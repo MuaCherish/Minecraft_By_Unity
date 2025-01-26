@@ -4,15 +4,5 @@ using UnityEngine;
 
 public class MC_PlayerInput_Component : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }

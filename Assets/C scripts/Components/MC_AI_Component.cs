@@ -72,27 +72,17 @@ namespace MCEntity
         [Header("正在攻击")][ReadOnly] public bool isAttacking;
         [Header("成功打到玩家")][ReadOnly] public bool isSucceded_HitPlayer;
 
-
+        //状态机控制器
         Coroutine Coroutine_AIState_Controller;
         IEnumerator Corou_AIState_Controller()
         {
 
             while(true)
             {
+
                 //提前返回-如果没有攻击性
                 if (!isAggressive)
                     yield return null;
-
-                //等待1s
-                if (myState == AIState.Idle)
-                {
-                    yield return new WaitForSeconds(Idle_WaitTime);
-                }
-                else if (myState == AIState.Chase)
-                {
-                    yield return new WaitForSeconds(Chase_WaitTime);
-                }
-
 
                 //从实体眼睛向玩家眼睛发送一条射线
                 Vector3 _direct = Collider_Component.managerhub.player.cam.transform.position - Collider_Component.EyesPoint;
@@ -111,6 +101,18 @@ namespace MCEntity
 
                 }
 
+
+                //等待1s
+                if (myState == AIState.Idle)
+                {
+                    yield return new WaitForSeconds(Idle_WaitTime);
+                }
+                else if (myState == AIState.Chase)
+                {
+                    yield return new WaitForSeconds(Chase_WaitTime);
+                }
+
+
                 //print($"mystate = {myState}, isHit = {_rayCast.isHit}, isOutOfRange = {_rayCast.isOutOfRange}");
             }
 
@@ -119,56 +121,43 @@ namespace MCEntity
 
         }
 
+        //转为逃跑模式
+        public void SwitchFleeState()
+        {
+            myState = AIState.Flee;
+            StartCoroutine(WateToTurnBackIdleState());
+            AIFlee();
+        }
+
+        IEnumerator WateToTurnBackIdleState()
+        {
+            yield return new WaitForSeconds(fleeTime);
+            myState = AIState.Idle;
+        }
 
         #endregion
 
 
         #region AI设置
 
-        [Foldout("AI设置", true)]
+        [Foldout("AI通用设置", true)]
         [Header("AI移动方式")] public AIMovingType myMovingType = AIMovingType.WalkType;
+
+        [Foldout("攻击性AI", true)]
         [Header("是否具有攻击性")] public bool isAggressive = false;
         [Header("AI可视距离")] public float AIseeDistance = 20f;
         [Header("Idle状态侦察延迟")] public float Idle_WaitTime = 1f;
         [Header("Chase状态侦察延迟")] public float Chase_WaitTime = 5f;
 
+        [Foldout("非攻击性AI", true)]
+        [Header("是否会逃跑")] public bool isCanFlee = false;
+        [Header("逃跑时间")] public float fleeTime = 5f;
 
 
         #endregion
 
 
-        #region AI攻击
-
-        
-        void _ReferUpdate_AIAttack()
-        {
-            //提前返回-如果不是生存模式
-            if (Collider_Component.managerhub.world.game_mode != GameMode.Survival)
-                return;
-
-            //如果AI距离玩家低于一定范围，且正在发出攻击时
-            //时刻检测实体与玩家的碰撞盒，并予以玩家伤害
-            Player player = Collider_Component.managerhub.player;
-            float _dis = (transform.position - player.transform.position).magnitude;
-            float _maxDis = Mathf.Abs(Collider_Component.hitBoxWidth - player.playerWidth);
-            if (_dis < _maxDis && isAttacking)
-            {
-                Vector3 hitVec = player.CheckHitBox(transform.position, Collider_Component.hitBoxWidth, Collider_Component.hitBoxHeight);
-                if (hitVec != Vector3.zero && !isSucceded_HitPlayer)
-                {
-                    StartCoroutine(Corou_WaitForSecond("isSucceded_HitPlayer", 1f));
-                    //print("成功打到玩家");
-                    hitVec.y = 1f;
-                    player.ForceMoving(hitVec, 2.5f, 0.2f);
-                    Collider_Component.managerhub.lifeManager.UpdatePlayerBlood(6, true, true);
-                }
-            }
-        }
-
-        #endregion
-
-
-        #region AI移动方式
+        #region AI移动
 
         Coroutine Coroutine_AIMoving;
 
@@ -183,7 +172,7 @@ namespace MCEntity
                     if (myState == AIState.Idle)
                     {
                         //延迟若干秒
-                        float waitTime = Random.Range(3f,7f);
+                        float waitTime = Random.Range(3f, 7f);
                         yield return new WaitForSeconds(waitTime);
 
                         //随机方向
@@ -201,7 +190,7 @@ namespace MCEntity
                         //跳跃
                         Velocity_Component.AddForce(direct, force);
 
-                        
+
 
                     }
                     else if (myState == AIState.Chase)
@@ -270,7 +259,7 @@ namespace MCEntity
         Coroutine Coroutine_AlwaysLookAtPlayer;
         IEnumerator Corou_AlwaysLookAtPlayer()
         {
-            while(myState == AIState.Chase)
+            while (myState == AIState.Chase)
             {
                 yield return new WaitForSeconds(0.2f);
                 Vector3 playerPosition = Collider_Component.managerhub.player.transform.position;
@@ -289,7 +278,55 @@ namespace MCEntity
         #endregion
 
 
-        #region 上浮能力
+        #region AI攻击
+
+
+        void _ReferUpdate_AIAttack()
+        {
+            //提前返回-如果不是生存模式
+            if (Collider_Component.managerhub.world.game_mode != GameMode.Survival)
+                return;
+
+            //如果AI距离玩家低于一定范围，且正在发出攻击时
+            //时刻检测实体与玩家的碰撞盒，并予以玩家伤害
+            Player player = Collider_Component.managerhub.player;
+            float _dis = (transform.position - player.transform.position).magnitude;
+            float _maxDis = Mathf.Abs(Collider_Component.hitBoxWidth - player.playerWidth);
+            if (_dis < _maxDis && isAttacking)
+            {
+                Vector3 hitVec = player.CheckHitBox(transform.position, Collider_Component.hitBoxWidth, Collider_Component.hitBoxHeight);
+                if (hitVec != Vector3.zero && !isSucceded_HitPlayer)
+                {
+                    StartCoroutine(Corou_WaitForSecond("isSucceded_HitPlayer", 1f));
+                    //print("成功打到玩家");
+                    hitVec.y = 1f;
+                    player.ForceMoving(hitVec, 2.5f, 0.2f);
+                    Collider_Component.managerhub.lifeManager.UpdatePlayerBlood(6, true, true);
+                }
+            }
+        }
+
+        #endregion
+
+
+        #region AI逃跑
+
+
+        void AIFlee()
+        {
+            //随机选择一个方向
+
+            //转向这个方向
+
+            //朝这个方向奔跑若干秒
+
+            //切换回Idle状态
+        }
+
+
+        #endregion
+
+        #region AI上浮
 
         [Foldout("上浮能力", true)]
         [Header("在水中会向上浮")] public bool AI_CanSwiming;

@@ -1,6 +1,7 @@
 using Homebrew;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace MCEntity
 {
     [RequireComponent(typeof(MC_Velocity_Component))]
     [RequireComponent(typeof(MC_Collider_Component))]
+    [RequireComponent(typeof(MC_AI_Component))]
     public class MC_Life_Component : MonoBehaviour
     {
 
@@ -26,6 +28,7 @@ namespace MCEntity
 
         MC_Velocity_Component Velocity_Component;
         MC_Collider_Component Collider_Component;
+        MC_AI_Component AI_Component;
         Animation animationCoponent;
         World world;
         GameObject ParticleParent;
@@ -34,6 +37,7 @@ namespace MCEntity
         {
             Velocity_Component = GetComponent<MC_Velocity_Component>();
             Collider_Component = GetComponent<MC_Collider_Component>();
+            AI_Component = GetComponent<MC_AI_Component>();
             animationCoponent = GetComponent<Animation>();
             world = Collider_Component.managerhub.world;
             ParticleParent = GameObject.Find("Environment/Particles");
@@ -86,6 +90,14 @@ namespace MCEntity
             //触发受伤程序
             if (_updateLifeValue < 0)
                 Handle_Hurt(_hutyDirect);
+
+
+            //如果没有攻击性，则会开始逃跑
+            if (AI_Component.isAggressive == false)
+            {
+                //AI_Component.myState = AIState.Flee;
+            }
+
 
             //修改血量并检查死亡程序
             if (CheckDead_EditBlood(_updateLifeValue))
