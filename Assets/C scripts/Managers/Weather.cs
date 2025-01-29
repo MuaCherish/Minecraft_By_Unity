@@ -28,7 +28,7 @@ public class Weather : MonoBehaviour
     Player player;
     private void Awake()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
         player = managerhub.player;
     }
 

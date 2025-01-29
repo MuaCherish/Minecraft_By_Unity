@@ -23,7 +23,7 @@ public class ChatManager : MonoBehaviour
     ManagerHub managerhub;
     void Awake()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
     }
 
     private void Start()

@@ -17,7 +17,7 @@ public class CommandManager : MonoBehaviour
 
     private void Awake()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
     }
 
 

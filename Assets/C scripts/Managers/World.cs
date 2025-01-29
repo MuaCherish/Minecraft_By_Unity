@@ -2663,8 +2663,9 @@ public class World : MonoBehaviour
 
     [Foldout("实体管理", true)]
     [Header("实体父类")] public GameObject Entity_Parent;
+    [Header("蒸汽粒子")] public GameObject Evaporation_Particle;
     [Header("实体预制体")] public GameObject[] Entity_Prefeb;
-    public List<EntityStruct> AllEntity = new List<EntityStruct>();
+    [Header("活着的所有实体")] public List<EntityStruct> AllEntity = new List<EntityStruct>();
     [Header("最大实体数量")][SerializeField] private int maxSize = 100; // 默认值为100，可在Inspector中调整
     private int Unique_Id = 0; // 用于生成新的唯一ID
 
@@ -2734,6 +2735,9 @@ public class World : MonoBehaviour
 
         // 生成一个唯一的ID
         int entityId = Unique_Id++;
+
+        //对实体进行注册
+        newEntity.GetComponent<MC_Registration_Component>().RegistEntity(entityId);
 
         // 将新实例加入数据结构
         _Result = new EntityStruct(entityId, newEntity);

@@ -24,7 +24,7 @@ public class SunMoving : MonoBehaviour
 
     private void Awake()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
 
         directionalLightMain = DirectionalLightMain.GetComponent<Light>();
         directionalLight = DirectionalLight.GetComponent<Light>();

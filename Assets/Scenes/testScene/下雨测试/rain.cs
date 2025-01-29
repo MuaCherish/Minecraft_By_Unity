@@ -16,7 +16,7 @@ public class Rain : MonoBehaviour
 
     private void Awake()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
         world = managerhub.world;
         ps = GetComponent<ParticleSystem>();
     }

@@ -15,14 +15,14 @@ public class ParticleCollision : MonoBehaviour
     {
         // 获取粒子系统组件
         _particleSystem = GetComponent<ParticleSystem>();
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
     }
 
     public void Particle_Play(byte _targetType)
     {
         if (managerhub == null)
         {
-            managerhub = GlobalData.GetManagerhub();
+            managerhub = SceneData.GetManagerhub();
         }
 
         // 生成10张随机裁剪后的Sprite

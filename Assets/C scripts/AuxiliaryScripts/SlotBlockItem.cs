@@ -14,7 +14,7 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     private void Start()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
     }
 
 
@@ -180,7 +180,7 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         if (managerhub == null)
         {
-            managerhub = GlobalData.GetManagerhub();
+            managerhub = SceneData.GetManagerhub();
         }
         //print(MyItem._blocktype + "-" + MyItem._number);
 

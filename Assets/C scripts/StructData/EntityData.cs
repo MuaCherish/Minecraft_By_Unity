@@ -3,8 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface IEntityLifecycle
+{
+    void OnStartEntity();  // 实体启动时调用
+    void OnEndEntity();    // 实体销毁时调用
+}
+
 public static class EntityData
 {
+    //实体设置
+    public static readonly float MinYtoRemoveEntity = -20f;
+
+
     //生物类型
     public static readonly int TestSlim = 0;
     public static readonly int TNT = 1;

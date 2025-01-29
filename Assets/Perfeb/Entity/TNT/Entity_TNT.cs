@@ -4,37 +4,32 @@ using UnityEngine;
 using MCEntity;
 
 
-public class Entity_TNT : MC_Entity_Base
+public class Entity_TNT : MonoBehaviour, IEntityLifecycle
 {
 
 
     #region 周期函数
 
-    protected override void Update()
+    ManagerHub managerhub;
+    MC_Velocity_Component Velocity_Component;
+    private void Awake()
     {
-        base.Update();
+        managerhub = SceneData.GetManagerhub();
+        Velocity_Component = GetComponent<MC_Velocity_Component>();
     }
 
-    #endregion
-
-
-    #region 实现抽象父类
 
     public int MyEntityID;
 
-    // 实现无参的抽象方法
-    public override void OnStartEntity()
+    public void OnStartEntity()
     {
-        // 这里可以实现默认的逻辑
-        Debug.Log("Entity_TNT 的 OnStartEntity（无参数）被调用");
+        //throw new System.NotImplementedException();
     }
 
     // 带参数的重载方法
     public void OnStartEntity(int _id, Vector3 _pos, bool _ActByTNT)
     {
         MyEntityID = _id;
-
-        FindComponents();
 
         InitTNT();
         transform.position = _pos;
@@ -50,7 +45,7 @@ public class Entity_TNT : MC_Entity_Base
         StartCoroutine(TNTBlink());
     }
 
-    public override void OnEndEntity()
+    public void OnEndEntity()
     {
         //数值
         Vector3 _center = managerhub.player.GetCenterPoint(transform.position);

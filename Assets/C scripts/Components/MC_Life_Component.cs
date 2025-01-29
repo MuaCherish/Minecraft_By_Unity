@@ -10,6 +10,7 @@ namespace MCEntity
     [RequireComponent(typeof(MC_Velocity_Component))]
     [RequireComponent(typeof(MC_Collider_Component))]
     [RequireComponent(typeof(MC_AI_Component))]
+    [RequireComponent(typeof(MC_Registration_Component))]
     public class MC_Life_Component : MonoBehaviour
     {
 
@@ -29,18 +30,16 @@ namespace MCEntity
         MC_Velocity_Component Velocity_Component;
         MC_Collider_Component Collider_Component;
         MC_AI_Component AI_Component;
-        Animation animationCoponent;
         World world;
-        GameObject ParticleParent;
+        MC_Registration_Component Registration_Component;
 
         private void Awake()
         {
             Velocity_Component = GetComponent<MC_Velocity_Component>();
             Collider_Component = GetComponent<MC_Collider_Component>();
             AI_Component = GetComponent<MC_AI_Component>();
-            animationCoponent = GetComponent<Animation>();
             world = Collider_Component.managerhub.world;
-            ParticleParent = GameObject.Find("Environment/Particles");
+            Registration_Component = GetComponent<MC_Registration_Component>();
         }
 
 
@@ -58,6 +57,7 @@ namespace MCEntity
             if (world.game_state == Game_State.Playing)
             {
                 _ReferUpdate_CheckOxy();
+                _ReferUpdate_FallingCheck();
             }
         }
 
@@ -66,9 +66,11 @@ namespace MCEntity
 
         #region 生命值部分
 
+        [Foldout("Transform", true)]
+        [Header("材质引用")] public Material EntityMat;
+
         [Foldout("生命值设置", true)]
         [Header("实体生命值")] public int EntityBlood = 20;
-        [Header("材质引用")] public Material EntityMat;
         [Header("受伤持续时间")] public float Hurt_ElapseTime = 0.3f;
         [Header("受伤力度")] public float Hurt_Force = 35f;
         [Header("蒸汽粒子")] public GameObject Evaporation_Particle;
@@ -127,36 +129,9 @@ namespace MCEntity
         {
             isEntity_Dead = true;
 
-            //死亡动画
-            if (animationCoponent != null && animationCoponent.GetClip("EntityDead") != null)
-            {
-                animationCoponent.Play("EntityDead");
-            }
-            else
-            {
-                print("找不到");
-            }
 
-
-            //蒸汽粒子
-            // 创建实例，并将父对象设置为 particleParent
-            GameObject deadParticle = GameObject.Instantiate(
-                Evaporation_Particle,
-                transform.position,
-                Quaternion.LookRotation(Vector3.up),
-                ParticleParent.transform  // 设置父对象
-            );
-
-
-            //创建掉落物
-            Vector3 randomPoint = Random.insideUnitSphere / 2f;
-            Collider_Component.managerhub.backpackManager.CreateDropBox(this.transform.position, new BlockItem(VoxelData.Slimeball, 1), false);
-            Collider_Component.managerhub.backpackManager.CreateDropBox(this.transform.position + randomPoint, new BlockItem(VoxelData.Apple, 2), false);
-
-            Destroy(this.gameObject, 0.5f);
-
+            Registration_Component.LogOffEntity();
         }
-
 
 
         //材质变红
@@ -271,6 +246,42 @@ namespace MCEntity
             }
 
             
+        }
+
+        #endregion
+
+
+        #region 摔落检测
+
+        [Foldout("摔落参数", true)]
+        [Header("最大摔落高度")] public float maxFallDis = 4f;
+        private float realMaxY = -Mathf.Infinity;  //当前触及的最大高度
+
+        void _ReferUpdate_FallingCheck()
+        {
+
+            //落地检测
+            if (Collider_Component.isGround)
+            {
+                float _Drop = realMaxY - Collider_Component.FootPoint.y;
+                if (_Drop > maxFallDis)
+                {
+                    print($"扣除血量:{_Drop - maxFallDis}");
+                    UpdateEntityLife(-(int)(_Drop - maxFallDis), Vector3.zero);
+                    realMaxY = Collider_Component.FootPoint.y;
+                }
+            }
+            else
+            {
+                //实时更新
+                if (Collider_Component.FootPoint.y > realMaxY)
+                {
+                    realMaxY = Collider_Component.FootPoint.y;
+                }
+            }
+
+            
+
         }
 
         #endregion

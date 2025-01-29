@@ -6,24 +6,19 @@ using UnityEngine;
 
 
 
-public class Entity_Pig : MC_Entity_Base
+public class Entity_Pig : MonoBehaviour, IEntityLifecycle
 {
 
     #region ÖÜÆÚº¯Êý
 
-    protected override void Update()
-    {
-        base.Update();
-    }
-
     #endregion
 
-    public override void OnEndEntity()
+    public void OnEndEntity()
     {
         //throw new System.NotImplementedException();
     }
 
-    public override void OnStartEntity()
+    public void OnStartEntity()
     {
         //throw new System.NotImplementedException();
     }

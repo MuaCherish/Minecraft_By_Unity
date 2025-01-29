@@ -28,20 +28,24 @@ namespace MCEntity
         #region 生命周期函数
 
         MC_Velocity_Component Velocity_Component;
-        [HideInInspector] public ManagerHub managerhub;
+        private ManagerHub _managerhub;
+
+        public ManagerHub managerhub
+        {
+            get
+            {
+                if (_managerhub == null)
+                {
+                    _managerhub = SceneData.GetManagerhub();
+                }
+                return _managerhub;
+            }
+        }
+
 
         private void Awake()
         {
             Velocity_Component = GetComponent<MC_Velocity_Component>();
-
-            if (managerhub == null)
-            {
-                managerhub = GlobalData.GetManagerhub();
-            }
-            else
-            {
-                print("未找到managerhub");
-            }
         }
 
         private void Update()

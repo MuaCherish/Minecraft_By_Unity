@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using static UsefulFunction;
 using System.Linq;
 
-public class DropBlock: MC_Entity_Base
+public class DropBlock: MonoBehaviour, IEntityLifecycle
 {
 
     #region 周期函数
@@ -17,10 +17,18 @@ public class DropBlock: MC_Entity_Base
     [Header("初始化随机跳跃力度")] public float JumpValue = 40f;
     BlockItem myItem = new BlockItem(VoxelData.Air, 1);
 
-
-    protected override void Update()
+    ManagerHub managerhub;
+    MC_Collider_Component Collider_Component; 
+    MC_Velocity_Component Velocity_Component; 
+    private void Awake()
     {
-        base.Update();
+        managerhub = SceneData.GetManagerhub();
+        Collider_Component = GetComponent<MC_Collider_Component>();
+        Velocity_Component = GetComponent<MC_Velocity_Component>();
+    }
+
+    void Update()
+    {
 
         //if (Toggle_Start)
         //{
@@ -33,22 +41,13 @@ public class DropBlock: MC_Entity_Base
         ReferUpdateBeBuried();
     }
 
-
-
-    #endregion
-
-
-    #region 实现父类
-
-    public override void OnStartEntity()
+    public void OnStartEntity()
     {
-        // 这里可以实现默认的逻辑
-        Debug.Log("Entity_TNT 的 OnStartEntity（无参数）被调用");
+        //throw new System.NotImplementedException();
     }
 
     public void OnStartEntity(Vector3 _CenterPos, BlockItem _Item, bool _isRandomJump)
     {
-        FindComponents();
 
         Destroy(this.gameObject, destroyTime);
 
@@ -72,7 +71,7 @@ public class DropBlock: MC_Entity_Base
     }
 
 
-    public override void OnEndEntity()
+    public void OnEndEntity()
     {
         //播放音效
         if (UnityEngine.Random.Range(0, 2) == 0)
@@ -115,7 +114,7 @@ public class DropBlock: MC_Entity_Base
     {
         if (managerhub == null)
         {
-            managerhub = GlobalData.GetManagerhub();
+            managerhub = SceneData.GetManagerhub();
         }
 
 

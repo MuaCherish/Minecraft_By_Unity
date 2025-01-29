@@ -381,6 +381,7 @@ GameObject:
   - component: {fileID: 2771239175502256877}
   - component: {fileID: 7378209931774044331}
   - component: {fileID: 6918692228164463923}
+  - component: {fileID: 4831302580858807548}
   m_Layer: 0
   m_Name: TestSlim
   m_TagString: Untagged
@@ -397,7 +398,7 @@ Transform:
   m_GameObject: {fileID: 5877411306531390997}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2979.17, y: 5.815, z: 2722.0798}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -729,7 +730,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isGround: 0
-  managerhub: {fileID: 0}
   isDrawHitBox: 0
   hitBoxEyes: 0.65
   hitBoxWidth: 1.2
@@ -748,8 +748,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isMoving: 0
   isJumpRequest: 0
-  RotationToggle: 0
-  horizon: 0
   velocity: {x: 0, y: 0, z: 0}
   momentum: {x: 0, y: 0, z: 0}
   Othermomentum: {x: 0, y: 0, z: 0}
@@ -823,11 +821,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myState: 0
   isAttacking: 0
+  isSucceded_HitPlayer: 0
+  Toggle_Flee: 0
   myMovingType: 0
   isAggressive: 1
   AIseeDistance: 15
   Idle_WaitTime: 1
   Chase_WaitTime: 5
+  isCanFlee: 0
+  fleeTime: 5
+  fleeSpeed: 2
+  RotationSpeed: 0.3
   AI_CanSwiming: 1
   FloatingForce: 3
 --- !u!114 &6918692228164463923
@@ -845,12 +849,27 @@ MonoBehaviour:
   isEntity_Hurt: 0
   isEntity_Dead: 0
   isEntity_Dive: 0
-  EntityBlood: 20
   EntityMat: {fileID: 2100000, guid: a60d18eacfc391444898bdad1544d278, type: 2}
+  EntityBlood: 20
   Hurt_ElapseTime: 0.3
   Hurt_Force: 60
   Evaporation_Particle: {fileID: 9114416006497185209, guid: 49b21542e437d7c40a17cd534b10318b, type: 3}
+  WateToDead_Time: 1
   EntityOxygen: 10
+--- !u!114 &4831302580858807548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5877411306531390997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6990a6dd2445f2f4a8feab6046d72c39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EntityID: -1
+  checkInterval: 3
 --- !u!1 &6098243918259502728
 GameObject:
   m_ObjectHideFlags: 0

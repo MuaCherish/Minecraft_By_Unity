@@ -20,7 +20,7 @@ public class HandShake : MonoBehaviour
     ManagerHub managerhub;
     private void Awake()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub(); 
     }
 
 

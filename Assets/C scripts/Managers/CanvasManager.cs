@@ -1088,7 +1088,7 @@ public class CanvasManager : MonoBehaviour
     public void InitAllManagers()
     {
         InitCanvasManager();
-        musicmanager.InitMusicManager();
+        //musicmanager.InitMusicManager();
         world.InitWorldManager();
         player.InitPlayerManager();
         BackPackManager.InitBackPackManager();

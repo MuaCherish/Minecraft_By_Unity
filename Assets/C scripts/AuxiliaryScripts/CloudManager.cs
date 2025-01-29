@@ -19,7 +19,7 @@ namespace Cloud
         {
 
 
-            managerhub = GlobalData.GetManagerhub();
+            managerhub = SceneData.GetManagerhub();
 
             // 在XOZ平面上随机生成一个单位向量作为初始方向
             WindDirect = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;

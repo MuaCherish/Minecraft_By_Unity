@@ -9,7 +9,7 @@ public class ThrowSwapBlock : MonoBehaviour, IPointerDownHandler
 
     private void Start()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
     }
 
     //当被点击
@@ -17,7 +17,7 @@ public class ThrowSwapBlock : MonoBehaviour, IPointerDownHandler
     {
         if (managerhub == null)
         {
-            managerhub = GlobalData.GetManagerhub();
+            managerhub = SceneData.GetManagerhub();
         }
         //print("黑色背景被点击");
         //判断swapblock是否存在

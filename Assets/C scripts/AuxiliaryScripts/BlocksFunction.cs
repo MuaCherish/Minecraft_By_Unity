@@ -20,7 +20,7 @@ public static class BlocksFunction
     //爆炸算法
     public static void Boom(Vector3 _originPos)
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
 
         // 将原始位置转换为整数
         _originPos = new Vector3((int)_originPos.x, (int)_originPos.y, (int)_originPos.z);
@@ -76,7 +76,7 @@ public static class BlocksFunction
     //烟雾算法
     public static void Smoke(Vector3 _originPos)
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
 
         _originPos = new Vector3((int)_originPos.x, (int)_originPos.y, (int)_originPos.z);
         List<Vector3> directions = new List<Vector3>
@@ -139,7 +139,7 @@ public static class BlocksFunction
     public static void GetAllTNTPositions(Vector3 _originPos, out List<Vector3> positions)
     {
 
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
 
         positions = new List<Vector3>();
 

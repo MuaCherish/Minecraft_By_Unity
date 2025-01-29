@@ -39,7 +39,7 @@ public class MusicManager : MonoBehaviour
 
     private void Awake()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
         world = managerhub.world;
         player = managerhub.player;
     }

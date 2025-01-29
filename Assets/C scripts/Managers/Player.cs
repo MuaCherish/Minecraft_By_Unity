@@ -928,7 +928,7 @@ public class Player : MonoBehaviour
 
             //print($"EntityID:{_rayCast.targetEntity._id}");
 
-            if (_rayCast.targetEntity._id == 2)
+            if (_rayCast.isHit == 2)
             {
                 isHitEntity = true;
                 //print("打到实体了");
@@ -940,7 +940,14 @@ public class Player : MonoBehaviour
                 {
                     _rayCast.targetEntity._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-1, direct);
                 }
-                managerhub.NewmusicManager.PlayOneShot(MusicData.Slime_Behurt);
+
+                int _index = MusicData.Slime_Behurt;
+                if (_rayCast.targetEntity._obj.GetComponent<MC_Music_Component>() != null)
+                {
+                    _index = _rayCast.targetEntity._obj.GetComponent<MC_Music_Component>().BeHurtIndex;
+                }
+                
+                managerhub.NewmusicManager.PlayOneShot(_index);
             }
 
             //print(OnLoadResource.Instance.Goods[1]);
@@ -2553,7 +2560,7 @@ public class Player : MonoBehaviour
     //射线检测
     [Foldout("射线检测", true)]
     [Header("射线长度")] public float reach = 5.2f;
-    [Header("射线间隔")] private float checkIncrement = 0.01f;
+    [Header("射线间隔")] public float checkIncrement = 0.01f;
     public RayCastStruct NewRayCast(Vector3 _origin, Vector3 _direct, float _maxDistance)
     {
         // 射线增量和最大射程

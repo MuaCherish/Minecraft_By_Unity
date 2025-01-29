@@ -30,7 +30,7 @@ public class MC_Music_Component : MonoBehaviour
 
     private void Awake()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
         Velocity_Component = GetComponent<MC_Velocity_Component>();
         Collider_Component = GetComponent<MC_Collider_Component>();
     }
@@ -58,6 +58,10 @@ public class MC_Music_Component : MonoBehaviour
     GameObject AudioSourceObject;
     AudioSource[] MainAudioSources;
     private int MainAudioSourceCount = 3;
+
+    [Foldout("个性化片段", true)]
+    [Header("受伤音效下标")] public int BeHurtIndex = 26; //默认为史莱姆音效
+    [Header("死亡音效下标")] public int DeathIndex = 28; //默认为苦力怕音效
 
     [Foldout("播放器参数", true)]
     [Header("玩家可听到的最远距离")] public float MaxDistanceToHear;

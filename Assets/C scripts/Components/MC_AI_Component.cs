@@ -28,15 +28,28 @@ namespace MCEntity
     public class MC_AI_Component : MonoBehaviour
     {
 
+        #region 状态
+
+        [Foldout("状态机", true)]
+        [Header("AI状态机")][ReadOnly] public AIState myState;
+
+        [Foldout("AI状态", true)]
+        [Header("正在攻击")][ReadOnly] public bool isAttacking;
+        [Header("成功打到玩家")][ReadOnly] public bool isSucceded_HitPlayer;
+
+        #endregion
+
+
         #region 周期函数
 
         MC_Velocity_Component Velocity_Component;
         MC_Collider_Component Collider_Component;
-
+        World world;
         private void Awake()
         {
             Velocity_Component = GetComponent<MC_Velocity_Component>();
             Collider_Component = GetComponent<MC_Collider_Component>();
+            world = Collider_Component.managerhub.world;
         }
 
         private void Start()
@@ -54,10 +67,18 @@ namespace MCEntity
             }
         }
 
+        public bool Toggle_Flee;
         private void Update()
         {
             _ReferUpdate_AICompetent();
             _ReferUpdate_AIAttack();
+
+            if (Toggle_Flee)
+            {
+                SwitchFleeState();
+                Toggle_Flee = false;
+            }
+
         }
 
         #endregion
@@ -65,12 +86,6 @@ namespace MCEntity
 
         #region AI状态机
 
-        [Foldout("状态机", true)]
-        [Header("AI状态机")][ReadOnly] public AIState myState;
-
-        [Foldout("AI状态", true)]
-        [Header("正在攻击")][ReadOnly] public bool isAttacking;
-        [Header("成功打到玩家")][ReadOnly] public bool isSucceded_HitPlayer;
 
         //状态机控制器
         Coroutine Coroutine_AIState_Controller;
@@ -79,14 +94,22 @@ namespace MCEntity
 
             while(true)
             {
+                // 提前返回 - 如果没有攻击性
+                // 提前返回 - 如果是创造模式
+                if (isAggressive == false || world.game_mode == GameMode.Creative)
+                {
+                    yield return null; // 让出控制权，避免死循环
+                    continue;
+                }
 
-                //提前返回-如果没有攻击性
-                if (!isAggressive)
-                    yield return null;
 
                 //从实体眼睛向玩家眼睛发送一条射线
                 Vector3 _direct = Collider_Component.managerhub.player.cam.transform.position - Collider_Component.EyesPoint;
                 RayCastStruct _rayCast = Collider_Component.managerhub.player.NewRayCast(Collider_Component.EyesPoint, _direct, AIseeDistance);
+
+                // 可视化射线用于调试
+                Debug.DrawRay(Collider_Component.EyesPoint, _direct.normalized * AIseeDistance, Color.red, 1f);
+                print("发射射线");
 
                 //如果之间没有方块
                 if (_rayCast.isHit == 1 || _rayCast.isHit == 2)
@@ -121,13 +144,7 @@ namespace MCEntity
 
         }
 
-        //转为逃跑模式
-        public void SwitchFleeState()
-        {
-            myState = AIState.Flee;
-            StartCoroutine(WateToTurnBackIdleState());
-            AIFlee();
-        }
+        
 
         IEnumerator WateToTurnBackIdleState()
         {
@@ -152,6 +169,8 @@ namespace MCEntity
         [Foldout("非攻击性AI", true)]
         [Header("是否会逃跑")] public bool isCanFlee = false;
         [Header("逃跑时间")] public float fleeTime = 5f;
+        [Header("逃跑速度")] public float fleeSpeed = 2f;
+        [Header("旋转速度")] public float RotationSpeed = 0.3f;
 
 
         #endregion
@@ -181,7 +200,7 @@ namespace MCEntity
                         Vector3 direct = direction.normalized; // 标准化向量
 
                         //随机力度
-                        float force = Random.Range(100, 150);
+                        float force = Velocity_Component.force_jump;
 
                         //转向跳跃方向
                         Velocity_Component.EntitySmoothRotation(direct, 0.7f);
@@ -221,7 +240,10 @@ namespace MCEntity
 
                     }
                 }
-
+                else if (myMovingType == AIMovingType.WalkType)
+                {
+                    yield return null;
+                }
             }
 
 
@@ -284,7 +306,7 @@ namespace MCEntity
         void _ReferUpdate_AIAttack()
         {
             //提前返回-如果不是生存模式
-            if (Collider_Component.managerhub.world.game_mode != GameMode.Survival)
+            if (world.game_mode != GameMode.Survival)
                 return;
 
             //如果AI距离玩家低于一定范围，且正在发出攻击时
@@ -311,20 +333,67 @@ namespace MCEntity
 
         #region AI逃跑
 
-
-        void AIFlee()
+        //转为逃跑模式
+        public void SwitchFleeState()
         {
-            //随机选择一个方向
-
-            //转向这个方向
-
-            //朝这个方向奔跑若干秒
-
-            //切换回Idle状态
+            myState = AIState.Flee;
+            StartCoroutine(WateToTurnBackIdleState());
+            if (Coroutine_AIFlee == null)
+                Coroutine_AIFlee = StartCoroutine(Corou_AIFlee());
         }
 
 
+        Coroutine Coroutine_AIFlee;
+        IEnumerator Corou_AIFlee()
+        {
+            float _time = 0;
+            Vector3 fleeDirection = Vector3.zero;
+
+            // 逃跑时随机选择一个逃跑方向
+            fleeDirection = Random.insideUnitSphere;
+            fleeDirection.y = 0; // 确保逃跑方向在水平面上
+            fleeDirection.Normalize(); // 标准化方向
+
+            // 初始时旋转朝向逃跑方向
+            Velocity_Component.EntitySmoothRotation(fleeDirection, 0.7f);
+
+            while (_time < fleeTime)
+            {
+                _time += Time.deltaTime;
+
+                // 每一帧都向逃跑方向加速
+                Velocity_Component.SetVelocity("x", fleeDirection.x * fleeSpeed);
+                Velocity_Component.SetVelocity("z", fleeDirection.z * fleeSpeed);
+
+                // 碰撞检测：如果周围有障碍物，尝试跳跃
+                if (Collider_Component.Collider_Surround)
+                {
+                    Velocity_Component.EntityJump();
+                }
+
+                // 可以考虑给AI加一些随机因素，使其逃跑不那么线性
+                if (Random.Range(0f, 1f) < 0.05f) // 每0.05概率改变逃跑方向
+                {
+                    fleeDirection = Random.insideUnitSphere;
+                    fleeDirection.y = 0; // 保持水平逃跑
+                    fleeDirection.Normalize();
+
+                    // 每次改变逃跑方向时重新旋转
+                    Velocity_Component.EntitySmoothRotation(fleeDirection, 0.7f);
+                }
+
+                yield return null;
+            }
+
+            // 逃跑结束后切换到Idle状态
+            myState = AIState.Idle;
+        }
+
+
+
+
         #endregion
+
 
         #region AI上浮
 

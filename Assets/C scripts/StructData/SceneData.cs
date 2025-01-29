@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class GlobalData
+public static class SceneData
 {
     /// <summary>
     /// 获取场景里的ManagerHub
@@ -41,6 +41,26 @@ public static class GlobalData
         else
         {
             Debug.LogError("Cant Find Clones");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// 获取场景里的粒子存放点
+    /// </summary>
+    /// <returns></returns>
+    public static GameObject GetParticleParent()
+    {
+        // 在场景中查找名为 "ManagerHub" 的 GameObject
+        GameObject _obj = GameObject.Find("Environment/Particles");
+
+        if (_obj != null)
+        {
+            return _obj;
+        }
+        else
+        {
+            Debug.LogError("Cant Find Particles");
             return null;
         }
     }

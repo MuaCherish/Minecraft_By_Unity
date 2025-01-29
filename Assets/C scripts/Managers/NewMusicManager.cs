@@ -23,7 +23,7 @@ public class NewMusicManager : MonoBehaviour
 
     private void Awake()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
     }
 
 
@@ -167,7 +167,7 @@ public class NewMusicManager : MonoBehaviour
     {
         GameObject _obj = Instantiate(Prefeb_3dMusicObject);
 
-        _obj.transform.SetParent(GlobalData.GetClonesParent().transform);
+        _obj.transform.SetParent(SceneData.GetClonesParent().transform);
         _obj.transform.position = _pos;
         _obj.GetComponent<MusicObject3D>().StartMusic(audioclips[_id]);
 

@@ -19,7 +19,7 @@ public class TimeManager : MonoBehaviour
 
     private void Awake()
     {
-        managerhub = GlobalData.GetManagerhub();
+        managerhub = SceneData.GetManagerhub();
     }
     private void Start()
     {
