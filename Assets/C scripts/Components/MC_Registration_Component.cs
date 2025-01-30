@@ -62,7 +62,7 @@ public class MC_Registration_Component : MonoBehaviour
     // 检查间隔时间（单位：秒）
     [Foldout("设置", true)]
     [Header("销毁条件检测间隔")] public float checkInterval = 3f; private float lastCheckTime = -5f; // 初始化为负值以确保首次检测
-    [Header("死亡延迟时间")] public float WateToDead_Time = 2f;
+    [Header("死亡延迟时间")] public float WateToDead_Time = 1f;
 
 
     #endregion

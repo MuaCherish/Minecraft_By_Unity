@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using static UsefulFunction;
 using System.Linq;
 
-public class DropBlock: MonoBehaviour, IEntityLifecycle
+public class DropBlock: MonoBehaviour, IEntityBrain
 {
 
     #region ÖÜÆÚº¯Êý

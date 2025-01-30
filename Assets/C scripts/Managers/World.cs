@@ -14,7 +14,7 @@ using Homebrew;
 public enum Game_State
 {
 
-    Start, Loading, Playing, Pause, Dead, Ending,
+    Start, Loading, Playing, Pause, Ending,
 
 }
 

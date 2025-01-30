@@ -4,7 +4,7 @@ using UnityEngine;
 using MCEntity;
 
 
-public class Entity_TNT : MonoBehaviour, IEntityLifecycle
+public class Entity_TNT : MonoBehaviour, IEntityBrain
 {
 
 

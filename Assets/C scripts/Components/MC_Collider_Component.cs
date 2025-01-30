@@ -987,7 +987,7 @@ namespace MCEntity
         {
             get
             {
-                return transform.position + Vector3.up * hitBoxHeight * hitBoxEyes;
+                return transform.position + Vector3.up * hitBoxHeight / 2f * hitBoxEyes;
             }
         }
 

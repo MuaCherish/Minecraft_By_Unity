@@ -6,7 +6,7 @@ using UnityEngine;
 
 
 
-public class Entity_Pig : MonoBehaviour, IEntityLifecycle
+public class Entity_Pig : MonoBehaviour, IEntityBrain
 {
 
     #region ÖÜÆÚº¯Êý

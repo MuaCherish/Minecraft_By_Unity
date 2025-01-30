@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IEntityLifecycle
+public interface IEntityBrain
 {
     void OnStartEntity();  // 实体启动时调用
     void OnEndEntity();    // 实体销毁时调用

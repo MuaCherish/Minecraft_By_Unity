@@ -40,6 +40,8 @@ namespace MCEntity
             AI_Component = GetComponent<MC_AI_Component>();
             world = Collider_Component.managerhub.world;
             Registration_Component = GetComponent<MC_Registration_Component>();
+
+            CreateMaterialInstance();
         }
 
 
@@ -61,13 +63,29 @@ namespace MCEntity
             }
         }
 
+
+
+
+
+        #endregion
+
+
+        #region 材质实例
+
+        //创建材质实例
+        [Foldout("Transforms", true)]
+        [Header("渲染器")] public Renderer Renderer;
+        private Material EntityMat;
+        void CreateMaterialInstance()
+        {
+            EntityMat = new Material(Renderer.sharedMaterial);
+            Renderer.material = EntityMat;
+        }
+
         #endregion
 
 
         #region 生命值部分
-
-        [Foldout("Transform", true)]
-        [Header("材质引用")] public Material EntityMat;
 
         [Foldout("生命值设置", true)]
         [Header("实体生命值")] public int EntityBlood = 20;
@@ -266,7 +284,7 @@ namespace MCEntity
                 float _Drop = realMaxY - Collider_Component.FootPoint.y;
                 if (_Drop > maxFallDis)
                 {
-                    print($"扣除血量:{_Drop - maxFallDis}");
+                    //print($"扣除血量:{_Drop - maxFallDis}");
                     UpdateEntityLife(-(int)(_Drop - maxFallDis), Vector3.zero);
                     realMaxY = Collider_Component.FootPoint.y;
                 }

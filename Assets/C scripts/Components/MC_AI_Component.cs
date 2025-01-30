@@ -25,6 +25,7 @@ namespace MCEntity
 
     [RequireComponent(typeof(MC_Velocity_Component))]
     [RequireComponent(typeof(MC_Collider_Component))]
+    [RequireComponent(typeof(MC_Life_Component))]
     public class MC_AI_Component : MonoBehaviour
     {
 
@@ -44,12 +45,18 @@ namespace MCEntity
 
         MC_Velocity_Component Velocity_Component;
         MC_Collider_Component Collider_Component;
+        MC_Registration_Component Registration_Component;
+        MC_Life_Component Life_Component;
         World world;
+        Player player;
         private void Awake()
         {
             Velocity_Component = GetComponent<MC_Velocity_Component>();
             Collider_Component = GetComponent<MC_Collider_Component>();
             world = Collider_Component.managerhub.world;
+            player = Collider_Component.managerhub.player;
+            Registration_Component = GetComponent<MC_Registration_Component>();
+            Life_Component = GetComponent<MC_Life_Component>();
         }
 
         private void Start()
@@ -70,8 +77,13 @@ namespace MCEntity
         public bool Toggle_Flee;
         private void Update()
         {
-            _ReferUpdate_AICompetent();
-            _ReferUpdate_AIAttack();
+
+            switch (world.game_state)
+            {
+                case Game_State.Playing:
+                    Handle_GameState_Playing();
+                    break;
+            }
 
             if (Toggle_Flee)
             {
@@ -80,6 +92,14 @@ namespace MCEntity
             }
 
         }
+
+        void Handle_GameState_Playing()
+        {
+            _ReferUpdate_AICompetent();
+            _ReferUpdate_AIAttack();
+            _ReferUpdate_Debug_ShowEyesRayCast();
+        }
+
 
         #endregion
 
@@ -92,7 +112,7 @@ namespace MCEntity
         IEnumerator Corou_AIState_Controller()
         {
 
-            while(true)
+            while (true)
             {
                 // 提前返回 - 如果没有攻击性
                 // 提前返回 - 如果是创造模式
@@ -102,27 +122,27 @@ namespace MCEntity
                     continue;
                 }
 
-
                 //从实体眼睛向玩家眼睛发送一条射线
-                Vector3 _direct = Collider_Component.managerhub.player.cam.transform.position - Collider_Component.EyesPoint;
-                RayCastStruct _rayCast = Collider_Component.managerhub.player.NewRayCast(Collider_Component.EyesPoint, _direct, AIseeDistance);
+                Vector3 _direct = player.cam.transform.position - Collider_Component.EyesPoint;
+                RayCastStruct _rayCast = player.NewRayCast(Collider_Component.EyesPoint, _direct, AIseeDistance, Registration_Component.EntityID);
 
-                // 可视化射线用于调试
-                Debug.DrawRay(Collider_Component.EyesPoint, _direct.normalized * AIseeDistance, Color.red, 1f);
-                print("发射射线");
+                //print(_rayCast.rayDistance);
 
-                //如果之间没有方块
-                if (_rayCast.isHit == 1 || _rayCast.isHit == 2)
+                //如果之间没有方块且在可视范围内 则起追逐
+                if (_rayCast.isHit == 0 && 
+                    (player.cam.transform.position - Collider_Component.EyesPoint).magnitude <= AIseeDistance &&
+                    player.isDead == false
+                    )
+                {
+                    //Chase
+                    myState = AIState.Chase;
+                }
+                else 
                 {
                     //Idle
                     myState = AIState.Idle;
                 }
-                else if((Collider_Component.managerhub.player.cam.transform.position - Collider_Component.EyesPoint).magnitude <= AIseeDistance)
-                {
-                    //Chase
-                    myState = AIState.Chase;
 
-                }
 
 
                 //等待1s
@@ -186,6 +206,9 @@ namespace MCEntity
 
             while (true)
             {
+
+
+                //史莱姆
                 if (myMovingType == AIMovingType.JumpType)
                 {
                     if (myState == AIState.Idle)
@@ -203,11 +226,19 @@ namespace MCEntity
                         float force = Velocity_Component.force_jump;
 
                         //转向跳跃方向
-                        Velocity_Component.EntitySmoothRotation(direct, 0.7f);
-                        yield return new WaitForSeconds(0.7f);
+                        if (!Life_Component.isEntity_Dead)
+                        {
+                            Velocity_Component.EntitySmoothRotation(direct, 0.7f);
+                            yield return new WaitForSeconds(0.7f);
+                        }
+
 
                         //跳跃
-                        Velocity_Component.AddForce(direct, force);
+                        if (!Life_Component.isEntity_Dead)
+                        {
+                            Velocity_Component.AddForce(direct, force);
+                        }
+                            
 
 
 
@@ -225,7 +256,7 @@ namespace MCEntity
                         yield return new WaitForSeconds(waitTime);
 
                         // 获取玩家位置
-                        Vector3 playerPosition = Collider_Component.managerhub.player.transform.position;
+                        Vector3 playerPosition = player.transform.position;
 
                         // 计算方向：朝向玩家
                         Vector3 direction = (playerPosition - transform.position).normalized;
@@ -235,13 +266,24 @@ namespace MCEntity
                         float force = Random.Range(100, 150);
 
                         // 跳跃
-                        StartCoroutine(Corou_WaitForSecond("isAttacking", 1f));
-                        Velocity_Component.AddForce(direction, force);
+                        if (!Life_Component.isEntity_Dead)
+                        {
+                            StartCoroutine(Corou_WaitForSecond("isAttacking", 1f));
+                            Velocity_Component.AddForce(direction, force);
+                        }
+                            
 
                     }
                 }
+                //僵尸
                 else if (myMovingType == AIMovingType.WalkType)
                 {
+                    //每次行动都要检查
+                    if (!Life_Component.isEntity_Dead)
+                    {
+
+                    }
+
                     yield return null;
                 }
             }
@@ -284,7 +326,7 @@ namespace MCEntity
             while (myState == AIState.Chase)
             {
                 yield return new WaitForSeconds(0.2f);
-                Vector3 playerPosition = Collider_Component.managerhub.player.transform.position;
+                Vector3 playerPosition = player.transform.position;
                 Vector3 direction = (playerPosition - transform.position).normalized;
                 Velocity_Component.EntitySmoothRotation(direction, 0.25f); // 半秒内转向玩家
             }
@@ -415,6 +457,33 @@ namespace MCEntity
             }
         }
 
+
+        #endregion
+
+
+        #region Debug
+
+        [Foldout("Debug", true)]
+        public bool Debug_ShowEyesRayCast;
+
+        void _ReferUpdate_Debug_ShowEyesRayCast()
+        {
+            if (!Debug_ShowEyesRayCast)
+                return;
+
+            Vector3 _direct = player.cam.transform.position - Collider_Component.EyesPoint;
+            float _dis = (player.cam.transform.position - Collider_Component.EyesPoint).magnitude;
+
+            if (_dis < AIseeDistance)
+            {
+                Debug.DrawRay(Collider_Component.EyesPoint, _direct.normalized * _dis, Color.red);
+            }
+            else
+            {
+                Debug.DrawRay(Collider_Component.EyesPoint, _direct.normalized * _dis, Color.green);
+            }
+            
+        }
 
         #endregion
 

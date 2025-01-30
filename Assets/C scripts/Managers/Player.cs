@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     [ReadOnly] public bool NotCheckPlayerCollision;
     [ReadOnly] public bool isHitEntity = false; //打到实体了
     [ReadOnly] public bool isSpectatorMode; 
+    [ReadOnly] public bool isDead; 
 
 
     [Foldout("Transforms", true)]
@@ -926,7 +927,7 @@ public class Player : MonoBehaviour
 
             RayCastStruct _rayCast = NewRayCast(cam.position, cam.forward, reach);
 
-            //print($"EntityID:{_rayCast.targetEntity._id}");
+            //print($"射线发射长度 = {_rayCast.rayDistance}");
 
             if (_rayCast.isHit == 2)
             {
@@ -2560,30 +2561,35 @@ public class Player : MonoBehaviour
     //射线检测
     [Foldout("射线检测", true)]
     [Header("射线长度")] public float reach = 5.2f;
-    [Header("射线间隔")] public float checkIncrement = 0.01f;
+    [Header("射线间隔")] public float checkIncrement = 0.1f;
     public RayCastStruct NewRayCast(Vector3 _origin, Vector3 _direct, float _maxDistance)
     {
-        // 射线增量和最大射程
+        //预处理
+        _direct.Normalize(); // 将方向向量标准化为单位向量
+
+        // 初始化结构体
         float step = checkIncrement;
         Vector3 lastPos = new Vector3();  // 用于记录上一个点的位置
         Vector3 hitPoint = Vector3.zero;  // 用于记录命中的点
         byte blockType = 255;             // 用于记录打中方块的类型，默认为255表示未命中
         Vector3 hitNormal = Vector3.zero; // 用于记录法线方向
-        float rayDistance = 0f;           // 用于记录射线距离
+        float rayDistance = _maxDistance;           // 用于记录射线距离
         byte isHit = 0;               // 用于记录是否命中【0没有名字】【1命中方块】【2命中实体】
         EntityStruct targetEntity = new EntityStruct(-1, null); // 目标实体
 
-        // 从射线起点（摄像机位置）开始，沿着摄像机的前方向进行检测
+        // 从射线起点开始，沿目标方向进行检测
         while (step < _maxDistance)
         {
             // 当前射线所在的点
             Vector3 pos = _origin + (_direct * step);
 
-            // 如果y坐标小于0，修正为0，避免穿透地面
+            // 提前返回-如果y坐标小于0
             if (pos.y < 0)
-            {
                 pos = new Vector3(pos.x, 0, pos.z);
-            }
+
+            //提前返回-如果已经命中
+            if (isHit != 0)
+                break;
 
             // 实体命中检测
             if (targetEntity._id == -1 && isHit == 0)
@@ -2620,19 +2626,13 @@ public class Player : MonoBehaviour
                 Vector3 blockCenter = new Vector3(Mathf.Floor(hitPoint.x) + 0.5f, Mathf.Floor(hitPoint.y) + 0.5f, Mathf.Floor(hitPoint.z) + 0.5f);
                 Vector3 relativePos = hitPoint - blockCenter;
 
-                // 找出影响最大的轴
+                // 计算法线
                 if (Mathf.Abs(relativePos.x) > Mathf.Abs(relativePos.y) && Mathf.Abs(relativePos.x) > Mathf.Abs(relativePos.z))
-                {
                     hitNormal = new Vector3(Mathf.Sign(relativePos.x), 0, 0); // x轴占主导
-                }
                 else if (Mathf.Abs(relativePos.y) > Mathf.Abs(relativePos.x) && Mathf.Abs(relativePos.y) > Mathf.Abs(relativePos.z))
-                {
                     hitNormal = new Vector3(0, Mathf.Sign(relativePos.y), 0); // y轴占主导
-                }
                 else
-                {
                     hitNormal = new Vector3(0, 0, Mathf.Sign(relativePos.z)); // z轴占主导
-                }
 
                 // 计算射线距离
                 rayDistance = (pos - _origin).magnitude;
@@ -2641,18 +2641,14 @@ public class Player : MonoBehaviour
                 break;
             }
 
-            //提前返回-如果已经命中
-            if (isHit != 0)
-                break;
+            
 
-            // 更新上一帧的位置
+            // 更新
             lastPos = pos;
-
-            // 增加射线步长
             step += checkIncrement;
         }
 
-        // 返回射线结果结构体
+        // 返回结果
         return new RayCastStruct
         {
             isHit = isHit,
@@ -2666,6 +2662,130 @@ public class Player : MonoBehaviour
         };
     }
 
+    public RayCastStruct NewRayCast(Vector3 _origin, Vector3 _direct, float _maxDistance, int castingEntityId)
+    {
+        //预处理
+        _direct.Normalize(); // 将方向向量标准化为单位向量
+
+        // 初始化结构体
+        float step = checkIncrement;
+        Vector3 lastPos = new Vector3();  // 用于记录上一个点的位置
+        Vector3 hitPoint = Vector3.zero;  // 用于记录命中的点
+        byte blockType = 255;             // 用于记录打中方块的类型，默认为255表示未命中
+        Vector3 hitNormal = Vector3.zero; // 用于记录法线方向
+        float rayDistance = _maxDistance;           // 用于记录射线距离
+        byte isHit = 0;               // 用于记录是否命中【0没有命中】【1命中方块】【2命中实体】
+        EntityStruct targetEntity = new EntityStruct(-1, null); // 目标实体
+
+        // 从射线起点开始，沿目标方向进行检测
+        while (step < _maxDistance)
+        {
+            // 当前射线所在的点
+            Vector3 pos = _origin + (_direct * step);
+
+            // 提前返回-如果y坐标小于0
+            if (pos.y < 0)
+                pos = new Vector3(pos.x, 0, pos.z);
+
+            // 提前返回-如果已经命中
+            if (isHit != 0)
+                break;
+
+            // 实体命中检测
+            if (targetEntity._id == -1 && isHit == 0)
+            {
+                // 获取范围内的实体
+                var entitiesInRange = world.GetOverlapSphereEntity(_origin, _maxDistance);
+
+                // 检查是否有实体与射线相交，并且该实体与射线碰撞
+                foreach (var entity in entitiesInRange)
+                {
+                    // 排除当前实体自身
+                    if (entity._id == castingEntityId)
+                        continue;
+
+                    // 获取实体的碰撞检测组件
+                    var collider = entity._obj.GetComponent<MC_Collider_Component>();
+                    if (collider != null && collider.CheckHitBox(pos))
+                    {
+                        targetEntity._id = entity._id;
+                        targetEntity._obj = entity._obj;
+                        isHit = 2;
+                        break; // 找到第一个符合条件的实体，退出循环
+                    }
+                }
+            }
+
+            // 方块命中检测
+            if (managerhub.world.RayCheckForVoxel(pos) && isHit == 0)
+            {
+                // 记录命中点
+                hitPoint = pos;
+                isHit = 1; // 记录命中
+
+                // 获取命中的方块类型
+                blockType = managerhub.world.GetBlockType(pos);
+
+                // 计算命中的法线方向，基于命中点的相对位置判断法线单位向量
+                Vector3 blockCenter = new Vector3(Mathf.Floor(hitPoint.x) + 0.5f, Mathf.Floor(hitPoint.y) + 0.5f, Mathf.Floor(hitPoint.z) + 0.5f);
+                Vector3 relativePos = hitPoint - blockCenter;
+
+                // 计算法线
+                if (Mathf.Abs(relativePos.x) > Mathf.Abs(relativePos.y) && Mathf.Abs(relativePos.x) > Mathf.Abs(relativePos.z))
+                    hitNormal = new Vector3(Mathf.Sign(relativePos.x), 0, 0); // x轴占主导
+                else if (Mathf.Abs(relativePos.y) > Mathf.Abs(relativePos.x) && Mathf.Abs(relativePos.y) > Mathf.Abs(relativePos.z))
+                    hitNormal = new Vector3(0, Mathf.Sign(relativePos.y), 0); // y轴占主导
+                else
+                    hitNormal = new Vector3(0, 0, Mathf.Sign(relativePos.z)); // z轴占主导
+
+                // 计算射线距离
+                rayDistance = (pos - _origin).magnitude;
+
+                // 在命中点位置创建一个球体实例化
+                //if (PlaceBall)
+                //{
+                //    GameObject hitSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                //    hitSphere.transform.position = hitPoint; // 设置球体位置
+                //    hitSphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f); // 设置球体的大小，可以根据需要调整
+
+                //    // 可选：设置球体的颜色
+                //    Renderer sphereRenderer = hitSphere.GetComponent<Renderer>();
+                //    if (sphereRenderer != null)
+                //    {
+                //        sphereRenderer.material.color = Color.red; // 将球体颜色设置为红色
+                //    }
+                //    Destroy(hitSphere, 5f); // 1秒后销毁球体（可根据需要调整时间）
+                //}
+
+
+
+
+                // 可选：销毁球体，避免场景中球体堆积
+
+
+                // 命中后跳出循环
+                break;
+            }
+
+
+            // 更新
+            lastPos = pos;
+            step += checkIncrement;
+        }
+
+        // 返回结果
+        return new RayCastStruct
+        {
+            isHit = isHit,
+            rayOrigin = _origin,
+            hitPoint = hitPoint,
+            hitPoint_Previous = lastPos,
+            blockType = blockType,
+            hitNormal = hitNormal,
+            rayDistance = rayDistance,
+            targetEntity = targetEntity._id != -1 ? targetEntity : new EntityStruct(-1, null),
+        };
+    }
 
 
     //获得居中方块

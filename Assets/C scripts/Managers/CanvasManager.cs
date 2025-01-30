@@ -14,7 +14,7 @@ using UnityEngine.EventSystems;
 using System.Reflection;
 using Homebrew;
 using static CommandManager;
-
+using System.Linq.Expressions;
 
 public class CanvasManager : MonoBehaviour
 {
@@ -1964,6 +1964,7 @@ public class CanvasManager : MonoBehaviour
     public GameObject ParticleParent;
     public void PlayerDead()
     {
+        managerhub.player.isDead = true;
         //DeadScreen.SetActive(true);
         SwitchToUI(CanvasData.ui死亡);
 
@@ -1975,7 +1976,6 @@ public class CanvasManager : MonoBehaviour
             ParticleParent.transform  // 设置父对象
         );
 
-        world.game_state = Game_State.Dead;
     }
 
     public void PlayerClickToRestart()
@@ -1983,7 +1983,7 @@ public class CanvasManager : MonoBehaviour
         //DeadScreen.SetActive(false);
         SwitchToUI(CanvasData.ui玩家);
 
-
+        managerhub.player.isDead = false;
 
         world.game_state = Game_State.Playing;
 

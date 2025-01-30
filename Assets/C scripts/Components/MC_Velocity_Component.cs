@@ -263,6 +263,7 @@ namespace MCEntity
 
         [Foldout("旋转参数", true)]
         [Header("实体头(选填)")] public GameObject HeadObject; // 头部对象，用于垂直旋转
+        [Header("实体身体(必填)")] public GameObject BodyObject;  //确保身体和调试碰撞盒不同时旋转
         [Header("实体旋转灵敏度")] public float RotationSensitivity = 50.0f; // 设置旋转灵敏度
 
         private float verticalRotation = 0f; // 用于存储垂直旋转的累计值
@@ -479,7 +480,7 @@ namespace MCEntity
             Quaternion targetRotation = Quaternion.LookRotation(_direct);
 
             // 记录初始旋转
-            Quaternion initialRotation = transform.rotation;
+            Quaternion initialRotation = BodyObject.transform.rotation;
 
             // 累计时间
             float elapsedTime = 0f;
@@ -489,24 +490,21 @@ namespace MCEntity
             {
                 elapsedTime += Time.deltaTime;
 
-                // 插值计算旋转
-                transform.rotation = Quaternion.Slerp(
+                // 插值计算旋转（仅在XZ平面旋转）
+                BodyObject.transform.rotation = Quaternion.Slerp(
                     initialRotation,
                     targetRotation,
                     elapsedTime / _elapseTime
                 );
-
-                // 保持XZ平面旋转，Y值固定
-                Vector3 eulerAngles = transform.rotation.eulerAngles;
-                transform.rotation = Quaternion.Euler(0, eulerAngles.y, 0);
 
                 // 等待下一帧
                 yield return null;
             }
 
             // 最终确保完全对准目标方向
-            transform.rotation = Quaternion.Euler(0, targetRotation.eulerAngles.y, 0);
+            BodyObject.transform.rotation = targetRotation;
         }
+
 
 
 
@@ -518,7 +516,7 @@ namespace MCEntity
         public void EntityRotation(float _HorizonInput, float _VerticalInput)
         {
             // 完成水平的旋转
-            transform.Rotate(Vector3.up, _HorizonInput * RotationSensitivity * Time.fixedDeltaTime);
+            BodyObject.transform.Rotate(Vector3.up, _HorizonInput * RotationSensitivity * Time.fixedDeltaTime);
 
             // 如果头存在，则完成垂直的旋转
             if (HeadObject != null)
