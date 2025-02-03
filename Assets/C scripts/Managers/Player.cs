@@ -947,8 +947,12 @@ public class Player : MonoBehaviour
                 {
                     _index = _rayCast.targetEntity._obj.GetComponent<MC_Music_Component>().BeHurtIndex;
                 }
-                
-                managerhub.NewmusicManager.PlayOneShot(_index);
+
+                if (_index != 0)
+                {
+                    managerhub.NewmusicManager.PlayOneShot(_index);
+                }
+               
             }
 
             //print(OnLoadResource.Instance.Goods[1]);
@@ -2595,21 +2599,24 @@ public class Player : MonoBehaviour
             if (targetEntity._id == -1 && isHit == 0)
             {
                 // 获取范围内的实体
-                var entitiesInRange = world.GetOverlapSphereEntity(_origin, _maxDistance);
-
-                // 检查是否有实体与射线相交，并且该实体与射线碰撞
-                foreach (var entity in entitiesInRange)
+                if (world.GetOverlapSphereEntity(_origin, _maxDistance, out var entitiesInRange))
                 {
-                    // 获取实体的碰撞检测组件
-                    var collider = entity._obj.GetComponent<MC_Collider_Component>();
-                    if (collider != null && collider.CheckHitBox(pos))
+                    // 检查是否有实体与射线相交，并且该实体与射线碰撞
+                    foreach (var entity in entitiesInRange)
                     {
-                        targetEntity._id = entity._id;
-                        targetEntity._obj = entity._obj;
-                        isHit = 2;
-                        break; // 找到第一个符合条件的实体，退出循环
+                        // 获取实体的碰撞检测组件
+                        var collider = entity._obj.GetComponent<MC_Collider_Component>();
+                        if (collider != null && collider.CheckHitBox(pos))
+                        {
+                            targetEntity._id = entity._id;
+                            targetEntity._obj = entity._obj;
+                            isHit = 2;
+                            break; // 找到第一个符合条件的实体，退出循环
+                        }
                     }
                 }
+
+                
             }
 
             // 方块命中检测
@@ -2695,25 +2702,28 @@ public class Player : MonoBehaviour
             if (targetEntity._id == -1 && isHit == 0)
             {
                 // 获取范围内的实体
-                var entitiesInRange = world.GetOverlapSphereEntity(_origin, _maxDistance);
-
-                // 检查是否有实体与射线相交，并且该实体与射线碰撞
-                foreach (var entity in entitiesInRange)
+                if (world.GetOverlapSphereEntity(_origin, _maxDistance, out var entitiesInRange))
                 {
-                    // 排除当前实体自身
-                    if (entity._id == castingEntityId)
-                        continue;
-
-                    // 获取实体的碰撞检测组件
-                    var collider = entity._obj.GetComponent<MC_Collider_Component>();
-                    if (collider != null && collider.CheckHitBox(pos))
+                    // 检查是否有实体与射线相交，并且该实体与射线碰撞
+                    foreach (var entity in entitiesInRange)
                     {
-                        targetEntity._id = entity._id;
-                        targetEntity._obj = entity._obj;
-                        isHit = 2;
-                        break; // 找到第一个符合条件的实体，退出循环
+                        // 排除当前实体自身
+                        if (entity._id == castingEntityId)
+                            continue;
+
+                        // 获取实体的碰撞检测组件
+                        var collider = entity._obj.GetComponent<MC_Collider_Component>();
+                        if (collider != null && collider.CheckHitBox(pos))
+                        {
+                            targetEntity._id = entity._id;
+                            targetEntity._obj = entity._obj;
+                            isHit = 2;
+                            break; // 找到第一个符合条件的实体，退出循环
+                        }
                     }
                 }
+
+                
             }
 
             // 方块命中检测
@@ -3289,7 +3299,7 @@ public class Player : MonoBehaviour
         //tnt.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
 
         managerhub.world.AddEntity(EntityData.TNT, _point, out EntityStruct _result);
-        _result._obj.GetComponent<Entity_TNT>().OnStartEntity(_result._id, GetCenterPoint(_point), _acybytnt);
+        _result._obj.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
     }
 
     //记录玩家状态

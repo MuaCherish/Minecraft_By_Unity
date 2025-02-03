@@ -22608,51 +22608,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 382330740}
   m_CullTransparentMesh: 1
---- !u!1 &383075257
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 383075258}
-  - component: {fileID: 383075259}
-  m_Layer: 0
-  m_Name: Ray cast
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &383075258
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 383075257}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 834957833}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &383075259
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 383075257}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7702ddb2a8a7144a8824ca8f6e35250, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  reach: 5.2
 --- !u!1 &384132218
 GameObject:
   m_ObjectHideFlags: 0
@@ -51808,13 +51763,16 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 834957833}
+  - component: {fileID: 834957834}
+  - component: {fileID: 834957835}
+  - component: {fileID: 834957836}
   m_Layer: 0
   m_Name: Analysis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &834957833
 Transform:
   m_ObjectHideFlags: 0
@@ -51827,10 +51785,54 @@ Transform:
   m_LocalPosition: {x: 95.64038, y: 55.046646, z: -465.17578}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 383075258}
+  m_Children: []
   m_Father: {fileID: 475922108}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &834957834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 834957832}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7702ddb2a8a7144a8824ca8f6e35250, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reach: 5.2
+--- !u!114 &834957835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 834957832}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5337520de40a7a848842e4d94a838898, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ColliderA: {fileID: 0}
+  ColliderB: {fileID: 0}
+  isCollision: 0
+--- !u!114 &834957836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 834957832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52399560bf12aca4da01270b997414cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  world: {fileID: 699955241}
+  TargetObj: {fileID: 1504082079}
+  Radius: 2
+  isFindEntity: 0
+  EntityNumber: 0
 --- !u!1 &837200012
 GameObject:
   m_ObjectHideFlags: 0
@@ -83576,6 +83578,7 @@ MonoBehaviour:
   NotCheckPlayerCollision: 0
   isHitEntity: 0
   isSpectatorMode: 0
+  isDead: 0
   managerhub: {fileID: 843154432}
   commandManager: {fileID: 2031280225}
   world: {fileID: 699955241}
@@ -120424,8 +120427,10 @@ MonoBehaviour:
   fleeSpeed: 2
   RotationSpeed: 0.3
   AI_CanSwiming: 0
+  Floating_CheckTime: 1
   FloatingForce: 1
   Debug_ShowEyesRayCast: 0
+  Debug_PauseAI: 0
 --- !u!1 &657449828340878638
 GameObject:
   m_ObjectHideFlags: 0
@@ -125736,6 +125741,7 @@ GameObject:
   - component: {fileID: 530195448916827994}
   - component: {fileID: 5677314668864383021}
   - component: {fileID: 9028175148662843195}
+  - component: {fileID: 9028175148662843196}
   m_Layer: 0
   m_Name: Pig
   m_TagString: Untagged
@@ -127991,6 +127997,8 @@ MonoBehaviour:
   hitBoxEyes: 0.85
   hitBoxWidth: 0.9
   hitBoxHeight: 1
+  EntityScanInterval: 2
+  BounceSpeed: 1
 --- !u!222 &5695592441307528530
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -133954,6 +133962,30 @@ MonoBehaviour:
   EntityID: -1
   checkInterval: 3
   WateToDead_Time: 2
+--- !u!114 &9028175148662843196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2150187056877997723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 271e28a400d40694da37057d95193f32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEntity_Hurt: 0
+  isEntity_Dead: 0
+  isEntity_Dive: 0
+  Renderer: {fileID: 0}
+  Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
+  Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
+  EntityBlood: 20
+  Hurt_ElapseTime: 0.3
+  Hurt_Force: 35
+  Evaporation_Particle: {fileID: 0}
+  EntityOxygen: 10
+  maxFallDis: 4
 --- !u!1 &9095183840070998812
 GameObject:
   m_ObjectHideFlags: 0

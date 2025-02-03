@@ -144,6 +144,7 @@ public class MC_Music_Component : MonoBehaviour
     #region 脚步声实现
 
     [Foldout("脚步声", true)]
+    [Header("实体是否有脚步声")] public bool hasFootStep = true;
     [Header("脚步声间隔时间")] public float FootStep_InterTime = 0.3f;
     int item = 0;   //用来区分左右脚的
     private float nextFoot = 0f;
@@ -152,7 +153,8 @@ public class MC_Music_Component : MonoBehaviour
     void _ReferUpdate_FootStep()
     {
         // 提前返回 - 玩家静止或在空中
-        if (!Velocity_Component.isMoving || !Collider_Component.isGround) return;
+        if (!Velocity_Component.isMoving || !Collider_Component.isGround || hasFootStep == false) 
+            return;
 
         // 检查是否到达下一个播放时间
         if (Time.time >= nextFoot)

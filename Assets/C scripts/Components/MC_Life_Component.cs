@@ -2,6 +2,7 @@ using Homebrew;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -42,6 +43,8 @@ namespace MCEntity
             Registration_Component = GetComponent<MC_Registration_Component>();
 
             CreateMaterialInstance();
+
+            
         }
 
 
@@ -60,6 +63,7 @@ namespace MCEntity
             {
                 _ReferUpdate_CheckOxy();
                 _ReferUpdate_FallingCheck();
+                _ReferUpdate_IntheWaterBeBlack();
             }
         }
 
@@ -75,12 +79,45 @@ namespace MCEntity
         //创建材质实例
         [Foldout("Transforms", true)]
         [Header("渲染器")] public Renderer Renderer;
+        [Header("水中颜色")] public Color Color_UnderWater = new Color(0x5B / 255f, 0x5B / 255f, 0x5B / 255f, 1f); private Color save_Color;
+        [Header("被挤压颜色")] public Color Color_UnderBlock = new Color(0x00 / 255f, 0x00 / 255f, 0x00 / 255f, 1f);
+
         private Material EntityMat;
         void CreateMaterialInstance()
         {
             EntityMat = new Material(Renderer.sharedMaterial);
             Renderer.material = EntityMat;
+            save_Color = EntityMat.color;
         }
+
+        void _ReferUpdate_IntheWaterBeBlack()
+        {
+            // 提前返回 - 如果hurt则退出
+            if (isEntity_Hurt)
+                return;
+
+            Color targetColor = save_Color;  // 默认颜色
+
+            // 如果被挤压
+            if (world.blocktypes[world.GetBlockType(Collider_Component.EyesPoint)].isSolid)
+            {
+                targetColor = Color_UnderBlock;
+            }
+            // 如果在水里
+            else if (Collider_Component.IsInTheWater(Collider_Component.HeadPoint))
+            {
+                targetColor = Color_UnderWater;
+            }
+
+            // 如果当前目标颜色与之前不同，则更新材质颜色
+            if (EntityMat.GetColor("_Color") != targetColor)
+            {
+                EntityMat.SetColor("_Color", targetColor);
+            }
+        }
+
+
+
 
         #endregion
 
@@ -278,9 +315,15 @@ namespace MCEntity
         void _ReferUpdate_FallingCheck()
         {
 
-            //落地检测
-            if (Collider_Component.isGround)
+            if (!Collider_Component.isGround || Collider_Component.IsInTheWater(Collider_Component.EyesPoint))
             {
+                //实时更新
+                if (Collider_Component.FootPoint.y > realMaxY)
+                    realMaxY = Collider_Component.FootPoint.y;
+            }
+            else
+            {
+                //落地检测
                 float _Drop = realMaxY - Collider_Component.FootPoint.y;
                 if (_Drop > maxFallDis)
                 {
@@ -289,16 +332,7 @@ namespace MCEntity
                     realMaxY = Collider_Component.FootPoint.y;
                 }
             }
-            else
-            {
-                //实时更新
-                if (Collider_Component.FootPoint.y > realMaxY)
-                {
-                    realMaxY = Collider_Component.FootPoint.y;
-                }
-            }
 
-            
 
         }
 

@@ -2710,7 +2710,7 @@ public class World : MonoBehaviour
     /// <returns>是否添加成功</returns>
     public bool AddEntity(int _index, Vector3 _Startpos, out EntityStruct _Result)
     {
-        // 检查实体数量是否达到最大值
+        // 提起返回-检查实体数量是否达到最大值
         if (AllEntity.Count >= maxSize)
         {
             Debug.LogWarning("实体数量已达到最大值，无法添加新实体！");
@@ -2718,7 +2718,7 @@ public class World : MonoBehaviour
             return false;
         }
 
-        // 检查下标是否有效
+        // 提起返回-检查下标是否有效
         if (_index < 0 || _index >= Entity_Prefeb.Length)
         {
             Debug.LogError("索引超出范围，请提供有效的预制体索引！");
@@ -2728,6 +2728,15 @@ public class World : MonoBehaviour
 
         // 实例化预制体
         GameObject newEntity = Instantiate(Entity_Prefeb[_index]);
+
+        // 提起返回-如果没有注册组件
+        if (newEntity.GetComponent<MC_Registration_Component>() == null)
+        {
+            print($"{_index}实体未添加注册组件，无法添加到游戏中");
+            _Result = null;
+            Destroy(newEntity);
+            return false;
+        }
 
         // 将实例化的实体设置为子对象
         newEntity.transform.SetParent(Entity_Parent.transform);
@@ -2834,10 +2843,11 @@ public class World : MonoBehaviour
     /// <param name="center">范围检测的球心</param>
     /// <param name="_r">检测范围的半径</param>
     /// <returns>范围内的实体列表</returns>
-    public List<EntityStruct> GetOverlapSphereEntity(Vector3 center, float _r)
+    public bool GetOverlapSphereEntity(Vector3 center, float _r, out List<EntityStruct> result)
     {
-        List<EntityStruct> result = new List<EntityStruct>();
+        result = new List<EntityStruct>();  // 初始化输出列表
         float sqrRadius = _r * _r; // 使用平方半径以避免重复开平方运算
+        bool hasEntitiesInRange = false;  // 记录是否有实体在范围内
 
         foreach (var entityStruct in AllEntity)
         {
@@ -2851,11 +2861,47 @@ public class World : MonoBehaviour
             if (offset.sqrMagnitude <= sqrRadius)
             {
                 result.Add(entityStruct);
+                hasEntitiesInRange = true;  // 有实体在范围内
             }
         }
 
-        return result;
+        return hasEntitiesInRange;
     }
+
+
+    /// <summary>
+    /// 重载，可以忽略自己
+    /// </summary>
+    /// <param name="center"></param>
+    /// <param name="_r"></param>
+    /// <param name="_myID"></param>
+    /// <param name="result"></param>
+    /// <returns></returns>
+    public bool GetOverlapSphereEntity(Vector3 center, float _r, int _myID, out List<EntityStruct> result)
+    {
+        result = new List<EntityStruct>();  // 初始化输出列表
+        float sqrRadius = _r * _r; // 使用平方半径以避免重复开平方运算
+        bool hasEntitiesInRange = false;  // 记录是否有实体在范围内
+
+        foreach (var entityStruct in AllEntity)
+        {
+            if (entityStruct._obj == null || entityStruct._id == _myID)
+                continue; // 防止空引用错误，同时跳过自身
+
+            // 计算实体与球心的距离
+            Vector3 offset = entityStruct._obj.transform.position - center;
+
+            // 如果实体的平方距离小于等于检测范围的平方半径，添加到结果列表
+            if (offset.sqrMagnitude <= sqrRadius)
+            {
+                result.Add(entityStruct);
+                hasEntitiesInRange = true;  // 有实体在范围内
+            }
+        }
+
+        return hasEntitiesInRange;
+    }
+
 
 
 

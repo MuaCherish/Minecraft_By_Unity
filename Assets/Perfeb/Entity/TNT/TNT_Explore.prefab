@@ -1,5 +1,38 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2785348913528569290
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4992766367659251175}
+  m_Layer: 0
+  m_Name: Body
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4992766367659251175
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2785348913528569290}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7718103507068455329}
+  - {fileID: 4800190018095484688}
+  m_Father: {fileID: 1324728588039126074}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3439136083845619960
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,8 +43,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1324728588039126074}
   - component: {fileID: 3172742156366279222}
+  - component: {fileID: 1587517694356621498}
   - component: {fileID: 7777850410083273045}
   - component: {fileID: 3132149049422116973}
+  - component: {fileID: 2032824006510128465}
   m_Layer: 0
   m_Name: TNT_Explore
   m_TagString: Untagged
@@ -32,8 +67,7 @@ Transform:
   m_LocalScale: {x: 0.98, y: 0.98, z: 0.98}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 7718103507068455329}
-  - {fileID: 4800190018095484688}
+  - {fileID: 4992766367659251175}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3172742156366279222
@@ -55,9 +89,28 @@ MonoBehaviour:
   normalDelay: 0.25
   ColorA: 150
   FuseDuration: 4
+  crustRenderer: {fileID: 4842115037991788007}
   SwellDuration: 0.3
   SwellMaxScale: 1.1
-  "\u70B9\u71C3\u4E00\u6B21": 0
+--- !u!114 &1587517694356621498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3439136083845619960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6990a6dd2445f2f4a8feab6046d72c39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EntityID: -1
+  isDeadImmediately: 1
+  isPlayDeadAnimation: 1
+  isPlayDeadMusic: 1
+  WateToDead_Time: 1
+  isPlayEvaporationParticle: 1
+  hasDropBox: 1
 --- !u!114 &7777850410083273045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,12 +124,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isGround: 0
-  GroundY: 0
+  canBeRayCastHit: 1
   isDrawHitBox: 0
   hitBoxEyes: 0.8
   hitBoxWidth: 1
   hitBoxHeight: 1
-  DebugValue: 0
+  EntityScanInterval: 2
+  BounceSpeed: 1
 --- !u!114 &3132149049422116973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,15 +143,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ae56b58385f3504d9f2aa3948869802, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isMoving: 0
+  isJumpRequest: 0
   velocity: {x: 0, y: 0, z: 0}
   momentum: {x: 0, y: 0, z: 0}
   Othermomentum: {x: 0, y: 0, z: 0}
-  mass: 1
+  mass: 0.6
   speed_move: 1
   speedDown_ultimate: -10
+  WaterspeedDown_ultimate: -2
   force_jump: 77
-  force_gravity: -9.8
-  Damping_Horizontal: 3
+  force_gravity: -12
+  force_Watergravity: -2
+  JumpColdTime: 0.1
+  HeadObject: {fileID: 0}
+  BodyObject: {fileID: 0}
+  RotationSensitivity: 50
+  Damping_Horizontal: 7
+--- !u!114 &2032824006510128465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3439136083845619960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c94e2644df0d52744bf09ab9fde6adb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isInTheWater: 0
+  BeHurtIndex: 0
+  DeathIndex: 28
+  MaxDistanceToHear: 0
+  OtherAudioSources: []
+  hasFootStep: 0
+  FootStep_InterTime: 0.3
 --- !u!1 &5804364710764570313
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,7 +212,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 1324728588039126074}
+  m_Father: {fileID: 4992766367659251175}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3113888517488325530
 MonoBehaviour:
@@ -461,7 +542,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1324728588039126074}
+  m_Father: {fileID: 4992766367659251175}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3377591169549717579
 MonoBehaviour:

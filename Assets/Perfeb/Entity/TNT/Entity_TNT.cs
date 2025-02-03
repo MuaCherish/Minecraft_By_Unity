@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MCEntity;
+using Homebrew;
 
-
+[RequireComponent(typeof(MC_Collider_Component))]
 public class Entity_TNT : MonoBehaviour, IEntityBrain
 {
 
@@ -12,14 +13,13 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
 
     ManagerHub managerhub;
     MC_Velocity_Component Velocity_Component;
+    MC_Collider_Component Collider_Component;
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
         Velocity_Component = GetComponent<MC_Velocity_Component>();
+        Collider_Component = GetComponent<MC_Collider_Component>();
     }
-
-
-    public int MyEntityID;
 
     public void OnStartEntity()
     {
@@ -27,9 +27,8 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
     }
 
     // 带参数的重载方法
-    public void OnStartEntity(int _id, Vector3 _pos, bool _ActByTNT)
+    public void OnStartEntity(Vector3 _pos, bool _ActByTNT)
     {
-        MyEntityID = _id;
 
         InitTNT();
         transform.position = _pos;
@@ -45,107 +44,21 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
         StartCoroutine(TNTBlink());
     }
 
-    public void OnEndEntity()
-    {
-        //数值
-        Vector3 _center = managerhub.player.GetCenterPoint(transform.position);
-
-        //爆炸粒子效果
-        GameObject particle_explore = GameObject.Instantiate(managerhub.player.particle_explosion);
-        particle_explore.transform.position = this.transform.position;
-        GameObject particleInstance = Instantiate(managerhub.player.Particle_TNT_Prefeb);
-        particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
-        particleInstance.transform.position = _center;
-        particleInstance.GetComponent<ParticleCollision>().Particle_Play(VoxelData.TNT);
-
-        // 玩家炸飞
-        Vector3 _Direction = managerhub.player.cam.transform.position - _center;  //炸飞方向
-        float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
-        _Direction.y = Mathf.Lerp(0, 1, _value);
-        float Distance = Mathf.Lerp(3, 0, _value);
-        managerhub.player.ForceMoving(_Direction, Distance, 0.1f);
-
-        //玩家扣血
-        if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
-        {
-            managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
-        }
-
-        //Music
-        managerhub.NewmusicManager.PlayOneShot(MusicData.explore);
-
-
-        //激活范围内的所有TNT
-        BlocksFunction.GetAllTNTPositions(this.transform.position, out List<Vector3> TNTpositions);
-        if (TNTpositions.Count != 0)
-        {
-            //print($"搜索到了{TNTpositions.Count}个TNT");
-
-            foreach (Vector3 item in TNTpositions)
-            {
-                Vector3 _direct = (item - transform.position).normalized;
-                float value = _direct.magnitude / BlocksFunction.TNT_explore_Radius;
-
-                //爆炸半径为4m
-                //如果force
-                float _force = Mathf.Lerp(500, 10, value);
-
-                managerhub.player.CreateTNT(item, true);
-            }
-
-        }
-
-
-        //搜索范围内所有实体
-        List<EntityStruct> _entities = managerhub.world.GetOverlapSphereEntity(_center, BlocksFunction.TNT_explore_Radius);
-
-        foreach (var item in _entities)
-        {
-            Vector3 _forceDirect = item._obj.transform.position - _center;
-            _forceDirect.y = 0.8f;
-            _forceDirect = _forceDirect.normalized;
-
-            float _forceValue = 150f;
-
-            item._obj.GetComponent<MC_Velocity_Component>().AddForce(_forceDirect, _forceValue);
-        }
-
-        //Chunk
-        BlocksFunction.Boom(_center);
-
-
-        //结束注册
-        managerhub.world.RemoveEntity(MyEntityID);
-
-        Destroy(gameObject); // 销毁当前对象
-    }
-
+    
     //初始化
     void InitTNT()
     {
-        ExploreWhite = transform.Find("Crust").gameObject.GetComponent<MeshRenderer>().material;
+        ExploreWhite = crustRenderer.material;
 
         // 获取Crust的Renderer组件
-        GameObject crust = transform.Find("Crust").gameObject;
-        if (crust != null)
-        {
-            crustRenderer = crust.GetComponent<Renderer>();
-            if (crustRenderer != null)
-            {
-                originalMaterial = crustRenderer.material; // 保存原始材质
-            }
-        }
-        else
-        {
-            Debug.LogError("未找到Crust对象");
-        }
+        originalMaterial = crustRenderer.material; // 保存原始材质
     }
 
 
     #endregion
 
 
-    #region TNTjump
+    #region 1.点燃跳跃
 
     [Header("跳跃力")] public float forcevalue = 45f; // 施加的力
     [Header("跳跃高度")] public float jumpheight = 0.9f; // 跳跃高度
@@ -174,7 +87,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
     #endregion
 
 
-    #region TNTBlink
+    #region 2.TNT闪烁
 
 
     [Header("闪烁次数")] public int frequency = 9; // 闪烁次数
@@ -184,8 +97,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
     [Header("引信时间")] public float FuseDuration = 4f;
     private Material ExploreWhite; // 预设的闪烁材质
     private Material originalMaterial; // 原始材质
-    private Renderer crustRenderer; // crust的Renderer组件
-
+    public Renderer crustRenderer; // crust的Renderer组件
 
     IEnumerator TNTBlink()
     {
@@ -241,7 +153,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
     #endregion
 
 
-    #region TNTswell
+    #region 3.TNT膨胀
 
     [Header("膨胀时间")] public float SwellDuration = 0.1f;
     [Header("膨胀大小")] public float SwellMaxScale = 1.2f;
@@ -274,6 +186,103 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
         OnEndEntity();
         
     }
+
+    #endregion
+
+
+    #region 3.TNT爆炸
+
+    public void OnEndEntity()
+    {
+        //数值
+        Vector3 _center = managerhub.player.GetCenterPoint(transform.position);
+
+        //爆炸粒子效果
+        GameObject particle_explore = GameObject.Instantiate(managerhub.player.particle_explosion);
+        particle_explore.transform.position = this.transform.position;
+        GameObject particleInstance = Instantiate(managerhub.player.Particle_TNT_Prefeb);
+        particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
+        particleInstance.transform.position = _center;
+        particleInstance.GetComponent<ParticleCollision>().Particle_Play(VoxelData.TNT);
+
+        // 玩家炸飞
+        Vector3 _Direction = managerhub.player.cam.transform.position - _center;  //炸飞方向
+        float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
+        _Direction.y = Mathf.Lerp(0, 1, _value);
+        float Distance = Mathf.Lerp(3, 0, _value);
+        managerhub.player.ForceMoving(_Direction, Distance, 0.1f);
+
+        //玩家扣血
+        if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
+        {
+            managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
+        }
+
+        //Music
+        managerhub.NewmusicManager.PlayOneShot(MusicData.explore);
+
+
+        //激活范围内的所有TNT
+        BlocksFunction.GetAllTNTPositions(transform.position, out List<Vector3> TNTpositions);
+        if (TNTpositions.Count != 0)
+        {
+            //print($"搜索到了{TNTpositions.Count}个TNT");
+
+            foreach (Vector3 item in TNTpositions)
+            {
+                Vector3 _direct = (item - transform.position).normalized;
+                float value = _direct.magnitude / BlocksFunction.TNT_explore_Radius;
+                managerhub.player.CreateTNT(item, true);
+            }
+
+        }
+
+
+        //搜索范围内所有实体
+        if (managerhub.world.GetOverlapSphereEntity(_center, BlocksFunction.TNT_explore_Radius + 2f, GetComponent<MC_Registration_Component>().EntityID, out List<EntityStruct> _entities))
+        {
+            foreach (var item in _entities)
+            {
+                Vector3 _forceDirect = (item._obj.transform.position - _center).normalized;
+                _forceDirect.y = 0.8f;
+                _forceDirect = _forceDirect.normalized;
+
+                //施加力度
+                float _dis = (item._obj.transform.position - _center).magnitude;
+                float _forceValue = 0f;
+
+                // 如果距离在0到4米之间，力值从400到160之间变化
+                if (_dis >= 0f && _dis <= BlocksFunction.TNT_explore_Radius)
+                {
+                    _forceValue = Mathf.Lerp(400f, 160f, _dis / BlocksFunction.TNT_explore_Radius);
+                }
+                // 如果距离在4到6米之间，力值固定为50
+                else if (_dis > BlocksFunction.TNT_explore_Radius && _dis <= BlocksFunction.TNT_explore_Radius + 2f)
+                {
+                    _forceValue = 50f;
+                }
+                // 如果距离超过6米，力值为0或其他
+                else
+                {
+                    _forceValue = 0f;  // 或者设置为你需要的默认值
+                }
+
+                item._obj.GetComponent<MC_Velocity_Component>().AddForce(_forceDirect, _forceValue);
+            }
+        }
+
+
+        //Chunk
+        if (!Collider_Component.IsInTheWater(Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f)))
+        {
+            BlocksFunction.Boom(_center);
+        }
+        
+
+        GetComponent<MC_Registration_Component>().LogOffEntity();
+        //Destroy(gameObject); // 销毁当前对象
+    }
+
 
     #endregion
 

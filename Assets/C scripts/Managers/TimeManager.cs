@@ -693,8 +693,10 @@ public class TimeManager : MonoBehaviour
 
     void SetWaterColor()
     {
+        
+        float a = Mathf.Lerp(WeatherStates[TimeData.Night].Water_Lightness, WeatherStates[TimeData.Day].Water_Lightness, gameTime._value);
+        Mat_Water.SetFloat("_1", a);
 
-        Mat_TerrainObject.SetFloat("__2", Mathf.Lerp(WeatherStates[TimeData.Night].Water_Lightness, WeatherStates[TimeData.Day].Water_Lightness, gameTime._value));
     }
 
 

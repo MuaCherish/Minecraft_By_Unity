@@ -206,7 +206,11 @@ namespace MCEntity
 
             while (true)
             {
-
+                if (Debug_PauseAI)
+                {
+                    yield return null;
+                    continue;
+                }
 
                 //史莱姆
                 if (myMovingType == AIMovingType.JumpType)
@@ -351,6 +355,10 @@ namespace MCEntity
             if (world.game_mode != GameMode.Survival)
                 return;
 
+            //提前返回-暂停AI活动
+            if (Debug_PauseAI)
+                return;
+
             //如果AI距离玩家低于一定范围，且正在发出攻击时
             //时刻检测实体与玩家的碰撞盒，并予以玩家伤害
             Player player = Collider_Component.managerhub.player;
@@ -441,21 +449,26 @@ namespace MCEntity
 
         [Foldout("上浮能力", true)]
         [Header("在水中会向上浮")] public bool AI_CanSwiming;
+        [Header("检测时间")] public float Floating_CheckTime = 1f; private float lastCheckTime = 0f;
         [Header("上浮力")] public float FloatingForce = 1f;
+        
 
-
-        //该函数在Update中
         void _ReferUpdate_AICompetent()
         {
-            if (AI_CanSwiming)
+            // 如果可以游泳并且时间到达检查间隔
+            if (AI_CanSwiming && Time.time - lastCheckTime >= Floating_CheckTime)
             {
-                //如果中心入水，则尝试跳一下
-                if (Collider_Component.IsInTheWater(transform.position))
+                // 更新上次检查的时间
+                lastCheckTime = Time.time;
+
+                // 如果中心入水，则尝试跳一下
+                if (Collider_Component.IsInTheWater(Collider_Component.EyesPoint))
                 {
                     Velocity_Component.AddForce(Vector3.up, FloatingForce);
                 }
             }
         }
+
 
 
         #endregion
@@ -464,7 +477,8 @@ namespace MCEntity
         #region Debug
 
         [Foldout("Debug", true)]
-        public bool Debug_ShowEyesRayCast;
+        [Header("打开射线调试")] public bool Debug_ShowEyesRayCast;
+        [Header("暂停Ai活动")] public bool Debug_PauseAI;
 
         void _ReferUpdate_Debug_ShowEyesRayCast()
         {

@@ -730,8 +730,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EntityID: -1
-  checkInterval: 3
+  isDeadImmediately: 0
+  isPlayDeadAnimation: 1
+  isPlayDeadMusic: 1
   WateToDead_Time: 1
+  isPlayEvaporationParticle: 1
+  hasDropBox: 1
 --- !u!114 &5655461878237033926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -745,10 +749,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isGround: 0
+  canBeRayCastHit: 1
   isDrawHitBox: 0
   hitBoxEyes: 0.65
   hitBoxWidth: 1.2
   hitBoxHeight: 1.2
+  canBeBounced: 1
+  BounceSpeed: 3
 --- !u!114 &4144285069365769149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -795,6 +802,7 @@ MonoBehaviour:
   DeathIndex: 28
   MaxDistanceToHear: 0
   OtherAudioSources: []
+  hasFootStep: 1
   FootStep_InterTime: 0.5
 --- !u!114 &4639980755837328323
 MonoBehaviour:
@@ -822,8 +830,10 @@ MonoBehaviour:
   fleeSpeed: 2
   RotationSpeed: 0.3
   AI_CanSwiming: 1
-  FloatingForce: 3
+  Floating_CheckTime: 2
+  FloatingForce: 80
   Debug_ShowEyesRayCast: 0
+  Debug_PauseAI: 0
 --- !u!114 &6128268072501705658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -840,6 +850,8 @@ MonoBehaviour:
   isEntity_Dead: 0
   isEntity_Dive: 0
   Renderer: {fileID: 21535066822826032}
+  Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
+  Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
   EntityBlood: 20
   Hurt_ElapseTime: 0.3
   Hurt_Force: 60

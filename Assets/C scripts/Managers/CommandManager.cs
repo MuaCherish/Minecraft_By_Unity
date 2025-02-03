@@ -287,7 +287,7 @@ public class CommandManager : MonoBehaviour
             //addSlim
             case 9:
 
-                managerhub.world.AddEntity(EntityData.TestSlim, managerhub.player.transform.position, out EntityStruct _a);
+                managerhub.world.AddEntity(EntityData.Slime, managerhub.player.transform.position, out EntityStruct _a);
                 
                 return "<系统消息> " + "已添加史莱姆";
 

@@ -4,6 +4,7 @@ using MCEntity;
 using Homebrew;
 using static UsefulFunction;
 using static UnityEngine.Rendering.DebugUI;
+using System.Collections.Generic;
 
 namespace MCEntity
 {
@@ -29,7 +30,7 @@ namespace MCEntity
 
         MC_Velocity_Component Velocity_Component;
         private ManagerHub _managerhub;
-
+        World world;
         public ManagerHub managerhub
         {
             get
@@ -46,6 +47,7 @@ namespace MCEntity
         private void Awake()
         {
             Velocity_Component = GetComponent<MC_Velocity_Component>();
+            world = managerhub.world;
         }
 
         private void Update()
@@ -54,6 +56,7 @@ namespace MCEntity
             {
                 _ReferUpdate_State();
                 _ReferUpdate_HitBox();
+                _ReferUpdate_EntityBounceCheck();
             }
            
         }
@@ -64,13 +67,20 @@ namespace MCEntity
         #endregion
 
 
-        #region 公开函数
+        #region 判断是否重叠
+
+        [Foldout("实体重叠参数", true)]
+        [Header("是否可被打到")] public bool canBeRayCastHit = true;
+        
 
         /// <summary>
         /// 判定该点是否在判定向内
         /// </summary>
         public bool CheckHitBox(Vector3 _targetPos)
         {
+            //提前返回-禁止射线检测
+            if (!canBeRayCastHit)
+                return false;
 
             Vector3 _selfPos = selfPos;
             float selfHalfWidth = hitBoxWidth / 2f;
@@ -118,19 +128,48 @@ namespace MCEntity
             }
         }
 
-        // 暂时关闭所有点的碰撞检测
-        public void CloseCollisionForAWhile(float _time)
+        /// <summary>
+        /// 检查两个Collider是否重叠
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckHitBox(MC_Collider_Component _ColliderA, MC_Collider_Component _ColliderB)
         {
-            isCollisionLocked = true;
-            collisionLockTimer = _time;
-            StartCoroutine(CollisionLockTimerCoroutine());
+            // 获取物体A和物体B的位置
+            Vector3 positionA = _ColliderA.transform.position;
+            Vector3 positionB = _ColliderB.transform.position;
+
+            // 获取碰撞盒的尺寸（宽度、高度和深度）
+            float widthA = _ColliderA.hitBoxWidth;
+            float heightA = _ColliderA.hitBoxHeight;
+            float widthB = _ColliderB.hitBoxWidth;
+            float heightB = _ColliderB.hitBoxHeight;
+
+            // 计算碰撞盒的尺寸
+            Vector3 sizeA = new Vector3(widthA, heightA, widthA);  // 三维尺寸
+            Vector3 sizeB = new Vector3(widthB, heightB, widthB);  // 三维尺寸
+
+            // 计算A和B的碰撞盒的边界
+            Vector3 minA = positionA - sizeA * 0.5f;
+            Vector3 maxA = positionA + sizeA * 0.5f;
+
+            Vector3 minB = positionB - sizeB * 0.5f;
+            Vector3 maxB = positionB + sizeB * 0.5f;
+
+            // 检查是否有重叠
+            bool isOverlapping = (minA.x < maxB.x && maxA.x > minB.x) &&
+                                  (minA.y < maxB.y && maxA.y > minB.y) &&
+                                  (minA.z < maxB.z && maxA.z > minB.z);
+
+            return isOverlapping;
         }
+
+
 
 
         #endregion
 
 
-        #region 碰撞检测
+        #region 各个方向的碰撞检测
 
         // 前方
         public bool collider_Front
@@ -735,6 +774,16 @@ namespace MCEntity
 
         #region 暂时关闭碰撞检测
 
+
+        // 暂时关闭所有点的碰撞检测
+        public void CloseCollisionForAWhile(float _time)
+        {
+            isCollisionLocked = true;
+            collisionLockTimer = _time;
+            StartCoroutine(CollisionLockTimerCoroutine());
+        }
+
+
         // 关于暂时停止碰撞检测的代码
         private bool isCollisionLocked = false;
         private float collisionLockTimer = 0f;
@@ -912,6 +961,64 @@ namespace MCEntity
         #endregion
 
 
+        #region 实体挤压
+
+        [Foldout("实体挤压", true)]
+        [Header("是否会被动挤压")] public bool canBeBounced;
+        [Header("分离速度")] public float BounceSpeed = 2f;
+
+        //该函数在Update中
+        void _ReferUpdate_EntityBounceCheck()
+        {
+            // 提前返回 - 如果自己不会被动挤压
+            if (!canBeBounced)
+                return;
+
+            // 获取范围内的实体，如果没有则提前返回
+            float _maxR = Mathf.Max(hitBoxWidth, hitBoxHeight);
+            if (!world.GetOverlapSphereEntity(transform.position, _maxR, GetComponent<MC_Registration_Component>().EntityID, out List<EntityStruct> _entities))
+                return;
+
+            // 进一步过滤，剔除没有和自己重叠的实体
+            List<EntityStruct> overlappingEntities = new List<EntityStruct>();
+            foreach (var item in _entities)
+            {
+                bool a = CheckHitBox(this, item._obj.GetComponent<MC_Collider_Component>());
+                if (a) // 如果有重叠则保留
+                {
+                    overlappingEntities.Add(item);
+                }
+            }
+
+            // 如果没有重叠的实体，直接返回
+            if (overlappingEntities.Count == 0)
+                return;
+
+            // 计算所有重叠实体的反方向
+            Vector3 _backDirect = Vector3.zero;
+            foreach (var item in overlappingEntities)
+            {
+                // 计算与当前实体的反向向量（包括X、Y和Z方向）
+                Vector3 direction = transform.position - item._obj.transform.position;
+                _backDirect += direction;  // 加上所有轴向量（X, Y, Z）
+
+            }
+
+            // 将总的反方向标准化并乘上反速度
+            _backDirect = _backDirect.normalized * BounceSpeed;
+
+            // 将反方向应用到实体的速度组件，X、Y、Z方向
+            Velocity_Component.SetVelocity("x", _backDirect.x);
+            Velocity_Component.SetVelocity("y", _backDirect.y);
+            Velocity_Component.SetVelocity("z", _backDirect.z);
+
+        }
+
+
+
+        #endregion
+
+
         #region 获取点
 
 
@@ -990,6 +1097,17 @@ namespace MCEntity
                 return transform.position + Vector3.up * hitBoxHeight / 2f * hitBoxEyes;
             }
         }
+
+        //头顶
+        public Vector3 HeadPoint
+        {
+            get
+            {
+                return selfPos + Vector3.up * hitBoxHeight / 2f;
+            }
+        }
+
+
 
         //脚下点
         public Vector3 FootPoint

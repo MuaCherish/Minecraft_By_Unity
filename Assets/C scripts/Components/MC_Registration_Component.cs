@@ -44,14 +44,7 @@ public class MC_Registration_Component : MonoBehaviour
 
     void Handle_GameState_Playing()
     {
-        // 每隔 checkInterval 秒检查一次 Chunk 的显示状态
-        if (Time.time - lastCheckTime >= checkInterval)
-        {
-            lastCheckTime = Time.time; // 更新上次检查的时间
-
-            DestroyCheck_YtooSlow();
-            DestroyCheck_ChunkHide();
-        }
+        _ReferUpdate_DestroyCheck();
     }
 
     #endregion
@@ -59,10 +52,15 @@ public class MC_Registration_Component : MonoBehaviour
 
     #region 设置
 
-    // 检查间隔时间（单位：秒）
-    [Foldout("设置", true)]
-    [Header("销毁条件检测间隔")] public float checkInterval = 3f; private float lastCheckTime = -5f; // 初始化为负值以确保首次检测
+    [Foldout("销毁个性化设置", true)]
+    [Header("是否立即死亡, 没有任何多余的操作")] public bool isDeadImmediately = false;
+    [Header("是否播放死亡动画")] public bool isPlayDeadAnimation = true;
+    [Header("是否播放死亡音效")] public bool isPlayDeadMusic = true;
     [Header("死亡延迟时间")] public float WateToDead_Time = 1f;
+    [Header("是否播放蒸汽粒子")] public bool isPlayEvaporationParticle = true;
+    [Header("是否有掉落物")] public bool hasDropBox = true;
+    [Header("掉落物列表")] public List<BlockItem> DropBoxList;
+
 
 
     #endregion
@@ -87,52 +85,73 @@ public class MC_Registration_Component : MonoBehaviour
             return;
         }
 
-       
-        StartCoroutine(WaitToDead());
+        if (isDeadImmediately)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            StartCoroutine(WaitToDead());
+        }
+        
     }
 
     IEnumerator WaitToDead()
     {
         //死亡动画
-        if (animationCoponent != null && animationCoponent.GetClip("EntityDead") != null)
+        if (isPlayDeadAnimation)
         {
-            animationCoponent.Play("EntityDead");
+            if (animationCoponent != null && animationCoponent.GetClip("EntityDead") != null)
+            {
+                animationCoponent.Play("EntityDead");
+            }
+            else
+            {
+                print("找不到");
+            }
         }
-        else
-        {
-            print("找不到");
-        }
-
+        
         //死亡音效
-        int _index = MusicData.Creeper_Death;
-        if (GetComponent<MC_Music_Component>() != null)
+        if (isPlayDeadMusic)
         {
-            _index = GetComponent<MC_Music_Component>().DeathIndex;
-        }
-        managerhub.NewmusicManager.Create3DSound(transform.position, _index);
+            int _index = MusicData.Creeper_Death;
+            if (GetComponent<MC_Music_Component>() != null)
+            {
+                _index = GetComponent<MC_Music_Component>().DeathIndex;
+            }
+            managerhub.NewmusicManager.Create3DSound(transform.position, _index);
 
+        }
 
         //Wait
         yield return new WaitForSeconds(WateToDead_Time);
 
-
         //蒸汽粒子
-        // 创建实例，并将父对象设置为 particleParent
-        GameObject _particleParent = SceneData.GetParticleParent();
-        GameObject deadParticle = GameObject.Instantiate(
-            world.Evaporation_Particle,
-            transform.position,
-            Quaternion.LookRotation(Vector3.up),
-            _particleParent.transform  // 设置父对象
-        );
-
+        if (isPlayEvaporationParticle)
+        {
+            GameObject _particleParent = SceneData.GetParticleParent();
+            GameObject deadParticle = GameObject.Instantiate(
+                world.Evaporation_Particle,
+                transform.position,
+                Quaternion.LookRotation(Vector3.up),
+                _particleParent.transform  // 设置父对象
+            );
+        }
 
         //创建掉落物
-        Vector3 randomPoint = Random.insideUnitSphere / 2f;
-        Collider_Component.managerhub.backpackManager.CreateDropBox(this.transform.position, new BlockItem(VoxelData.Slimeball, 1), false);
-        Collider_Component.managerhub.backpackManager.CreateDropBox(this.transform.position + randomPoint, new BlockItem(VoxelData.Apple, 2), false);
+        if (hasDropBox)
+        {
 
-        Destroy(this.gameObject);
+            foreach (var item in DropBoxList)
+            {
+                Vector3 randomPoint = Random.insideUnitSphere / 2f;
+                Collider_Component.managerhub.backpackManager.CreateDropBox(this.transform.position + randomPoint, item, false);
+            }
+
+        }
+        
+        //最后销毁
+        Destroy(gameObject);
     }
 
 
@@ -141,26 +160,16 @@ public class MC_Registration_Component : MonoBehaviour
 
     #region 实体销毁条件检测
 
-  
-    void DestroyCheck_YtooSlow()
-    {
-        //Destroy_OutOfPlayer();
 
+    void _ReferUpdate_DestroyCheck()
+    {
         // 检查Y坐标条件，立即销毁
         if (Collider_Component.FootPoint.y <= EntityData.MinYtoRemoveEntity)
         {
-            
             LogOffEntity();
-            return;
         }
 
-
-    }
-
-
-    void DestroyCheck_ChunkHide()
-    {
-        // 仅在满足条件时销毁
+        // 脚下区块被隐藏
         if (managerhub.world.GetChunkObject(Collider_Component.FootPoint).isShow == false)
         {
             LogOffEntity();
