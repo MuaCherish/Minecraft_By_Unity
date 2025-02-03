@@ -5,7 +5,7 @@ using UnityEngine;
 
 public enum Enum_Weather
 {
-    Sunshine,
+    Sunny,
     Rainy
 }
 
@@ -77,7 +77,7 @@ public class Weather : MonoBehaviour
         {
             lastWeatherCheckTime = Time.time;
 
-            if (weather == Enum_Weather.Sunshine && Random.value < weather_Cloudy_robability)
+            if (weather == Enum_Weather.Sunny && Random.value < weather_Cloudy_robability)
             {
                 SetWeatherRainy();
             }
@@ -109,7 +109,13 @@ public class Weather : MonoBehaviour
         haExec_StartToRain = true;
     }
 
-
+    public void SetWeatherRainy(float _transitionDuration, float _RainDutation)
+    {
+        weather = Enum_Weather.Rainy;
+        rainDuration = _RainDutation; // 随机设置雨持续时间
+        transitionDuration = _transitionDuration;
+        haExec_StartToRain = true;
+    }
 
     /// <summary>
     /// 处理Cloudy天气的逻辑：时间值逐渐归零、下雨，雨结束后天气恢复
@@ -164,7 +170,7 @@ public class Weather : MonoBehaviour
         elapsedTime += Time.deltaTime;
         if (elapsedTime >= transitionDuration)
         {
-            weather = Enum_Weather.Sunshine;
+            weather = Enum_Weather.Sunny;
             RainObject.GetComponent<Rain>().StopRain();
             managerhub.timeManager.FromGameTimeToUpdateAll_Smooth(transitionDuration);
             managerhub.NewmusicManager.BackGroundTime();
@@ -206,5 +212,7 @@ public class Weather : MonoBehaviour
     }
 
     #endregion
+
+
 
 }

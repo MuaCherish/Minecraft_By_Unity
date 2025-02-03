@@ -7,6 +7,7 @@ using UnityEngine;
 using System;
 using UnityEditor;
 using Homebrew;
+using MCEntity;
 
 
 
@@ -389,7 +390,7 @@ public class World : MonoBehaviour
 
     }
 
-
+  
 
     void OnApplicationQuit()
     {
@@ -435,6 +436,45 @@ public class World : MonoBehaviour
             managerhub.hasExec_无黑夜模式 = false;
         }
 
+        if (game_state == Game_State.Playing)
+        {
+            _ReferUpdate_CheckShowEntityHitbox();
+        }
+    }
+
+
+    bool hasExec_ShowEntityHitbox = true;
+    void _ReferUpdate_CheckShowEntityHitbox()
+    {
+
+        if (player.ShowEntityHitbox)
+        {
+            if (hasExec_ShowEntityHitbox)
+            {
+
+                ShowAllEntityHitbox();
+
+                hasExec_ShowEntityHitbox = false;
+            }
+        }
+        else
+        {
+            if (hasExec_ShowEntityHitbox == false)
+            {
+                hasExec_ShowEntityHitbox = true;
+            }
+        }
+
+        
+    }
+
+    //检查所有碰撞盒，并打开他们的hitbox选项
+    void ShowAllEntityHitbox()
+    {
+        foreach (var item in AllEntity)
+        {
+            item._obj.GetComponent<MC_Collider_Component>().isDrawHitBox = true;
+        }
     }
 
 

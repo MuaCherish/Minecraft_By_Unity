@@ -670,7 +670,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7515427365650157053}
-  - component: {fileID: 3651870050865777575}
+  - component: {fileID: 6588487779662591201}
   - component: {fileID: 8228599163256003785}
   - component: {fileID: 5655461878237033926}
   - component: {fileID: 4144285069365769149}
@@ -678,6 +678,7 @@ GameObject:
   - component: {fileID: 4639980755837328323}
   - component: {fileID: 6128268072501705658}
   - component: {fileID: 2989092885312629195}
+  - component: {fileID: 2633483463225291222}
   m_Layer: 0
   m_Name: Entity_Slime
   m_TagString: Untagged
@@ -701,22 +702,27 @@ Transform:
   - {fileID: 9197555315754931034}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!111 &3651870050865777575
-Animation:
+--- !u!95 &6588487779662591201
+Animator:
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1294902419089504476}
   m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 66bc0dd01e6cdd048a2bb5a654736c71, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 66bc0dd01e6cdd048a2bb5a654736c71, type: 2}
-  m_WrapMode: 1
-  m_PlayAutomatically: 0
-  m_AnimatePhysics: 0
-  m_CullingType: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: add3cd352926d2a4dafa666aa8d5a34a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &8228599163256003785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -736,6 +742,11 @@ MonoBehaviour:
   WateToDead_Time: 1
   isPlayEvaporationParticle: 1
   hasDropBox: 1
+  DropBoxList:
+  - _blocktype: 59
+    _number: 2
+  - _blocktype: 65
+    _number: 1
 --- !u!114 &5655461878237033926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -782,7 +793,7 @@ MonoBehaviour:
   force_Watergravity: -2
   JumpColdTime: 0.1
   HeadObject: {fileID: 0}
-  BodyObject: {fileID: 7453306101884016661}
+  ModelObject: {fileID: 7453306101884016661}
   RotationSensitivity: 50
   Damping_Horizontal: 20
 --- !u!114 &15544916372309249
@@ -887,6 +898,22 @@ MonoBehaviour:
   Toggle_UpdateBlood: 0
   SetValue: 20
   Toggle_UpdateSetBlood: 0
+--- !u!114 &2633483463225291222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294902419089504476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa129a5e597dfae49b9cdf73e042e79a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isWalk: 0
+  isRun: 0
+  isAttack: 0
+  isDead: 0
 --- !u!1 &2347977520285036761
 GameObject:
   m_ObjectHideFlags: 0
@@ -1892,7 +1919,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9197555315754931034}
   m_Layer: 0
-  m_Name: Body
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

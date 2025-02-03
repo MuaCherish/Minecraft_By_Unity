@@ -18,6 +18,7 @@ public static class EntityData
     //生物类型
     public static readonly int Slime = 0;
     public static readonly int TNT = 1;
+    public static readonly int Pig = 2;
 }
 
 

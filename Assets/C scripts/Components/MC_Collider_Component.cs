@@ -50,6 +50,12 @@ namespace MCEntity
             world = managerhub.world;
         }
 
+
+        private void Start()
+        {
+            isDrawHitBox = managerhub.player.ShowEntityHitbox;
+        }
+
         private void Update()
         {
             if (managerhub.world.game_state == Game_State.Playing)

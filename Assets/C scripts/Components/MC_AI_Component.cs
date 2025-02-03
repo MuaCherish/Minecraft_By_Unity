@@ -26,6 +26,7 @@ namespace MCEntity
     [RequireComponent(typeof(MC_Velocity_Component))]
     [RequireComponent(typeof(MC_Collider_Component))]
     [RequireComponent(typeof(MC_Life_Component))]
+    [RequireComponent(typeof(MC_Animator_Component))]
     public class MC_AI_Component : MonoBehaviour
     {
 
@@ -49,6 +50,8 @@ namespace MCEntity
         MC_Life_Component Life_Component;
         World world;
         Player player;
+        MC_Animator_Component Animator_Component;
+
         private void Awake()
         {
             Velocity_Component = GetComponent<MC_Velocity_Component>();
@@ -57,6 +60,7 @@ namespace MCEntity
             player = Collider_Component.managerhub.player;
             Registration_Component = GetComponent<MC_Registration_Component>();
             Life_Component = GetComponent<MC_Life_Component>();
+            Animator_Component = GetComponent<MC_Animator_Component>();
         }
 
         private void Start()
@@ -74,7 +78,6 @@ namespace MCEntity
             }
         }
 
-        public bool Toggle_Flee;
         private void Update()
         {
 
@@ -85,11 +88,6 @@ namespace MCEntity
                     break;
             }
 
-            if (Toggle_Flee)
-            {
-                SwitchFleeState();
-                Toggle_Flee = false;
-            }
 
         }
 
@@ -98,6 +96,7 @@ namespace MCEntity
             _ReferUpdate_AICompetent();
             _ReferUpdate_AIAttack();
             _ReferUpdate_Debug_ShowEyesRayCast();
+            _ReferUpdate_AutoJump();
         }
 
 
@@ -189,7 +188,7 @@ namespace MCEntity
         [Foldout("非攻击性AI", true)]
         [Header("是否会逃跑")] public bool isCanFlee = false;
         [Header("逃跑时间")] public float fleeTime = 5f;
-        [Header("逃跑速度")] public float fleeSpeed = 2f;
+        [Header("逃跑速度")] public float fleeSpeed = 5f;
         [Header("旋转速度")] public float RotationSpeed = 0.3f;
 
 
@@ -199,6 +198,15 @@ namespace MCEntity
         #region AI移动
 
         Coroutine Coroutine_AIMoving;
+
+        //自动跳跃
+        void _ReferUpdate_AutoJump()
+        {
+            if (myMovingType == AIMovingType.WalkType && Collider_Component.Collider_Surround)
+            {
+                Velocity_Component.EntityJump();
+            }
+        }
 
         IEnumerator Corou_AIMoving()
         {
@@ -279,17 +287,44 @@ namespace MCEntity
 
                     }
                 }
-                //僵尸
+                //猪
                 else if (myMovingType == AIMovingType.WalkType)
                 {
-                    //每次行动都要检查
+                    // 延迟若干秒
+                    float waitTime = Random.Range(3f, 7f);
+                    yield return new WaitForSeconds(waitTime);
+
+                    // 随机方向
+                    Vector3 direction = Random.onUnitSphere; // 使用随机方向
+                    direction.y = 0f; // 确保不会向上或向下移动
+                    Vector3 direct = direction.normalized; // 标准化向量
+
                     if (!Life_Component.isEntity_Dead)
                     {
-
+                        Velocity_Component.EntitySmoothRotation(direct, 0.7f);
+                        yield return new WaitForSeconds(0.7f);
                     }
 
-                    yield return null;
+                    // 随机移动时间
+                    float walkTime = Random.Range(5f, 15f);
+                    float elapsedTime = 0f;
+
+                    // 向该方向移动规定时间
+                    if (!Life_Component.isEntity_Dead)
+                    {
+                        while (elapsedTime < walkTime)
+                        {
+                            Velocity_Component.SetVelocity("x", direct.x * Velocity_Component.speed_move);
+                            Velocity_Component.SetVelocity("z", direct.z * Velocity_Component.speed_move);
+                            elapsedTime += Time.deltaTime;
+                            yield return null;
+                        }
+                    }
+
+                    
+
                 }
+
             }
 
 
@@ -396,6 +431,7 @@ namespace MCEntity
         Coroutine Coroutine_AIFlee;
         IEnumerator Corou_AIFlee()
         {
+            Animator_Component.isRun = true;
             float _time = 0;
             Vector3 fleeDirection = Vector3.zero;
 
@@ -422,7 +458,7 @@ namespace MCEntity
                 }
 
                 // 可以考虑给AI加一些随机因素，使其逃跑不那么线性
-                if (Random.Range(0f, 1f) < 0.05f) // 每0.05概率改变逃跑方向
+                if (Random.Range(0f, 1f) < 0.005f) // 每0.05概率改变逃跑方向
                 {
                     fleeDirection = Random.insideUnitSphere;
                     fleeDirection.y = 0; // 保持水平逃跑
@@ -436,7 +472,9 @@ namespace MCEntity
             }
 
             // 逃跑结束后切换到Idle状态
+            Animator_Component.isRun = false;
             myState = AIState.Idle;
+            Coroutine_AIFlee = null;
         }
 
 

@@ -29,6 +29,7 @@ public class Player : MonoBehaviour
     [ReadOnly] public bool isHitEntity = false; //打到实体了
     [ReadOnly] public bool isSpectatorMode; 
     [ReadOnly] public bool isDead; 
+    [ReadOnly] public bool ShowEntityHitbox; 
 
 
     [Foldout("Transforms", true)]
@@ -787,6 +788,12 @@ public class Player : MonoBehaviour
 
             Eye_Light.SetActive(!Eye_Light.activeSelf);
 
+        }
+
+        //打开碰撞盒
+        if (Input.GetKeyDown(KeyCode.F6))
+        {
+            ShowEntityHitbox = !ShowEntityHitbox;
         }
 
 

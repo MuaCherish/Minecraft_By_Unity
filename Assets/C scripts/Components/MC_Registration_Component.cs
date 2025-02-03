@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MC_Collider_Component))]
+[RequireComponent(typeof(MC_Animator_Component))]
 public class MC_Registration_Component : MonoBehaviour
 {
 
@@ -24,12 +25,14 @@ public class MC_Registration_Component : MonoBehaviour
     ManagerHub managerhub;
     World world;
     Animation animationCoponent;
+    MC_Animator_Component Animator_Component;
     private void Awake()
     {
         Collider_Component = GetComponent<MC_Collider_Component>();
         managerhub = Collider_Component.managerhub;
         world = managerhub.world;
         animationCoponent = GetComponent<Animation>();
+        Animator_Component = GetComponent<MC_Animator_Component>();
     }
 
     private void Update()
@@ -99,18 +102,8 @@ public class MC_Registration_Component : MonoBehaviour
     IEnumerator WaitToDead()
     {
         //À¿Õˆ∂Øª≠
-        if (isPlayDeadAnimation)
-        {
-            if (animationCoponent != null && animationCoponent.GetClip("EntityDead") != null)
-            {
-                animationCoponent.Play("EntityDead");
-            }
-            else
-            {
-                print("’“≤ªµΩ");
-            }
-        }
-        
+        Animator_Component.isDead = true;
+
         //À¿Õˆ“Ù–ß
         if (isPlayDeadMusic)
         {

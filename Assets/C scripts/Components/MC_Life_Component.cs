@@ -152,7 +152,7 @@ namespace MCEntity
             //如果没有攻击性，则会开始逃跑
             if (AI_Component.isAggressive == false)
             {
-                //AI_Component.myState = AIState.Flee;
+                AI_Component.SwitchFleeState();
             }
 
 

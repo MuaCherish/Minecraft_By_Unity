@@ -253,7 +253,7 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
 }
 
-[SerializeField]
+[System.Serializable]
 public class BlockItem
 {
     public byte _blocktype = 0;

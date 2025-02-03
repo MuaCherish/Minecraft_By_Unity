@@ -284,12 +284,51 @@ public class CommandManager : MonoBehaviour
                 }
                 return "<系统消息> " + "请查看帮助文档";
 
-            //addSlim
+            // addEntity
             case 9:
+                string pattern9 = @"\/addEntity\s+(\d+)"; // 匹配 /addEntity 后面的整数
 
-                managerhub.world.AddEntity(EntityData.Slime, managerhub.player.transform.position, out EntityStruct _a);
-                
-                return "<系统消息> " + "已添加史莱姆";
+                Match match9 = Regex.Match(_input, pattern9);
+
+                if (match9.Success)
+                {
+                    string entityIdStr = match9.Groups[1].Value;
+
+                    if (int.TryParse(entityIdStr, out int entityId))
+                    {
+
+                        if (entityId == EntityData.TNT)
+                        {
+                            _color = Color.red;
+                            return "<系统消息> " + "暂时不允许直接添加TNT实体";
+                        }
+
+                        Vector3 _pos = managerhub.player.transform.position + managerhub.player.cam.forward * 2f;
+
+                        if (managerhub.world.AddEntity(entityId, _pos, out var _result))
+                        {
+                            return "<系统消息> " + $"已添加实体 ID: {entityId}";
+                        }
+                        else
+                        {
+                            _color = Color.red;
+                            return "<系统消息> " + "添加实体失败，也许是下标越界";
+                        }
+
+                        
+                    }
+                    else
+                    {
+                        _color = Color.red;
+                        return "<系统消息> " + "/addEntity 参数错误";
+                    }
+                }
+                else
+                {
+                    _color = Color.red;
+                    return "<系统消息> " + "addEntity 转换失败";
+                }
+
 
             // 旁观者模式
             case 10:
@@ -404,6 +443,37 @@ public class CommandManager : MonoBehaviour
                 {
                     _color = Color.red;
                     return "<系统消息> " + "<name>转换失败";
+                }
+
+            // Rain
+            case 14:
+                string pattern14 = @"\/rain\s+([0-9]*\.?[0-9]+)";  // 匹配/rain 后面跟随的浮动数字
+
+                // 使用正则表达式匹配内容
+                Match match14 = Regex.Match(_input, pattern14);
+
+                if (match14.Success)
+                {
+                    string rainDurationStr = match14.Groups[1].Value.Trim();  // 获取雨天持续时间的值并去除空格
+
+                    // 如果rainDurationStr为空或者不是有效的数字，则返回错误信息
+                    if (string.IsNullOrEmpty(rainDurationStr) || !float.TryParse(rainDurationStr, out float rainDuration))
+                    {
+                        _color = Color.red;
+                        return "<系统消息> " + "无效的雨天持续时间";
+                    }
+                    else
+                    {
+                        // 调用 SetWeatherRainy 并传入持续时间和第二个参数
+                        managerhub.weather.SetWeatherRainy(5f, rainDuration);  // 5f表示第一参数，rainDuration为用户输入的持续时间
+                        _color = Color.green;
+                        return "<系统消息> " + "雨天已设置，持续时间：" + rainDuration + "秒";
+                    }
+                }
+                else
+                {
+                    _color = Color.red;
+                    return "<系统消息> " + "<rain>转换失败";
                 }
 
 
