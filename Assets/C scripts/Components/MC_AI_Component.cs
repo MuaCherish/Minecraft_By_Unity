@@ -2,7 +2,10 @@ using Homebrew;
 using MCEntity;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
+using UnityEngine.UIElements;
 
 
 namespace MCEntity
@@ -204,8 +207,16 @@ namespace MCEntity
         {
             if (myMovingType == AIMovingType.WalkType && Collider_Component.Collider_Surround)
             {
-                Velocity_Component.EntityJump();
+               
+
+                if (Random.Range(0f, 1f) < 0.01f) // 每0.05概率改变逃跑方向
+                {
+                    Velocity_Component.EntityJump();
+
+                }
             }
+
+           
         }
 
         IEnumerator Corou_AIMoving()
@@ -421,8 +432,14 @@ namespace MCEntity
         //转为逃跑模式
         public void SwitchFleeState()
         {
+            //提前返回-如果暂停Ai活动
+            if (Debug_PauseAI)
+            {
+                return;
+            }
+            //print("逃跑");
             myState = AIState.Flee;
-            StartCoroutine(WateToTurnBackIdleState());
+            
             if (Coroutine_AIFlee == null)
                 Coroutine_AIFlee = StartCoroutine(Corou_AIFlee());
         }
@@ -431,6 +448,7 @@ namespace MCEntity
         Coroutine Coroutine_AIFlee;
         IEnumerator Corou_AIFlee()
         {
+            StartCoroutine(WateToTurnBackIdleState());
             Animator_Component.isRun = true;
             float _time = 0;
             Vector3 fleeDirection = Vector3.zero;
@@ -441,31 +459,25 @@ namespace MCEntity
             fleeDirection.Normalize(); // 标准化方向
 
             // 初始时旋转朝向逃跑方向
-            Velocity_Component.EntitySmoothRotation(fleeDirection, 0.7f);
+            Velocity_Component.EntitySmoothRotation(fleeDirection, 0.3f);
 
             while (_time < fleeTime)
             {
                 _time += Time.deltaTime;
 
                 // 每一帧都向逃跑方向加速
-                Velocity_Component.SetVelocity("x", fleeDirection.x * fleeSpeed);
-                Velocity_Component.SetVelocity("z", fleeDirection.z * fleeSpeed);
-
-                // 碰撞检测：如果周围有障碍物，尝试跳跃
-                if (Collider_Component.Collider_Surround)
-                {
-                    Velocity_Component.EntityJump();
-                }
+                Velocity_Component.SetVelocity("x", fleeDirection.x * fleeSpeed * 1.5f);
+                Velocity_Component.SetVelocity("z", fleeDirection.z * fleeSpeed * 1.5f);
 
                 // 可以考虑给AI加一些随机因素，使其逃跑不那么线性
-                if (Random.Range(0f, 1f) < 0.005f) // 每0.05概率改变逃跑方向
+                if (Random.Range(0f, 1f) < 0.001f) // 每0.05概率改变逃跑方向
                 {
                     fleeDirection = Random.insideUnitSphere;
                     fleeDirection.y = 0; // 保持水平逃跑
                     fleeDirection.Normalize();
 
                     // 每次改变逃跑方向时重新旋转
-                    Velocity_Component.EntitySmoothRotation(fleeDirection, 0.7f);
+                    Velocity_Component.EntitySmoothRotation(fleeDirection, 0.3f);
                 }
 
                 yield return null;
@@ -539,5 +551,133 @@ namespace MCEntity
 
         #endregion
 
+
+
+
     }
+}
+
+
+public class MC_AI_Slime_Component : MonoBehaviour
+{
+
+    #region 变量
+
+    [Foldout("状态")]
+    [Header("当前状态")] public AIState currentState = AIState.Idle;
+    [Header("是否发现玩家")] [ReadOnly] public bool isSeePlayer;
+
+
+    #endregion
+
+
+    #region 周期函数
+
+    MC_Collider_Component Collider_Component;
+    World world;
+
+    private void Awake()
+    {
+        Collider_Component = GetComponent<MC_Collider_Component>();
+        world = Collider_Component.managerhub.world;
+    }
+
+    private void Update()
+    {
+        switch (world.game_state)
+        {
+            case Game_State.Playing:
+                Handle_GameState_Playing();
+                break;
+        }
+    }
+
+    void Handle_GameState_Playing()
+    {
+        StateController();
+        AIVision();
+    }
+
+
+    #endregion
+
+
+    #region 状态机控制器
+
+    
+    void StateController()
+    {
+        switch (currentState)
+        {
+            case AIState.Idle:
+                OnIdle();
+                break;
+
+            case AIState.Chase:
+                OnChase();
+                break;
+
+            case AIState.Flee:
+                OnFlee();
+                break;
+        }
+    }
+
+    
+    #endregion
+
+
+    #region Idle
+
+    void OnIdle()
+    {
+
+    }
+
+    #endregion
+
+
+    #region Chase
+
+    void OnChase()
+    {
+
+    }
+
+
+
+    #endregion
+
+
+    #region Flee
+
+    void OnFlee()
+    {
+
+    }
+
+    #endregion
+
+
+    #region 视觉系统
+
+    [Foldout("AI视觉")]
+    [Header("视力范围")] public float VisionDistance = 10f;
+
+
+    void AIVision()
+    {
+        //如果实体与玩家距离小于VisionDistance
+
+        //每帧进行射线检测,更新isSeePlayer状态
+    }
+
+    #endregion
+
+
+    #region Debug
+
+    #endregion
+
+
 }

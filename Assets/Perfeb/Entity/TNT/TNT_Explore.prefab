@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 7777850410083273045}
   - component: {fileID: 3132149049422116973}
   - component: {fileID: 2032824006510128465}
+  - component: {fileID: 8207745083738811319}
   m_Layer: 0
   m_Name: TNT_Explore
   m_TagString: Untagged
@@ -111,6 +112,7 @@ MonoBehaviour:
   WateToDead_Time: 1
   isPlayEvaporationParticle: 1
   hasDropBox: 1
+  DropBoxList: []
 --- !u!114 &7777850410083273045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,7 +131,7 @@ MonoBehaviour:
   hitBoxEyes: 0.8
   hitBoxWidth: 1
   hitBoxHeight: 1
-  EntityScanInterval: 2
+  canBeBounced: 0
   BounceSpeed: 1
 --- !u!114 &3132149049422116973
 MonoBehaviour:
@@ -157,7 +159,7 @@ MonoBehaviour:
   force_Watergravity: -2
   JumpColdTime: 0.1
   HeadObject: {fileID: 0}
-  BodyObject: {fileID: 0}
+  ModelObject: {fileID: 0}
   RotationSensitivity: 50
   Damping_Horizontal: 7
 --- !u!114 &2032824006510128465
@@ -179,6 +181,22 @@ MonoBehaviour:
   OtherAudioSources: []
   hasFootStep: 0
   FootStep_InterTime: 0.3
+--- !u!114 &8207745083738811319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3439136083845619960}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa129a5e597dfae49b9cdf73e042e79a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isWalk: 0
+  isRun: 0
+  isAttack: 0
+  isDead: 0
 --- !u!1 &5804364710764570313
 GameObject:
   m_ObjectHideFlags: 0

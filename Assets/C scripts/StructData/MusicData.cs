@@ -69,7 +69,7 @@ public static class MusicData
     public static readonly int Slime_Behurt = 26;
     public static readonly int Pig_Death = 27;
     public static readonly int Creeper_Death = 28;
-    //public static readonly int TNT_Fuse = 29;
+    public static readonly int Pig_Hurt = 29;
     //public static readonly int TNT_Fuse = 30;
 
 }

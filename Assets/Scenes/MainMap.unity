@@ -19525,6 +19525,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: dd1e50abae6f3e84a956d954dc721f9f, type: 3}
   - {fileID: 8300000, guid: 759a82649cf249e4dbcad81045aa28db, type: 3}
   - {fileID: 8300000, guid: a3fcd1052b1db9a4295cf508ee73d0a9, type: 3}
+  - {fileID: 8300000, guid: 627ba7e64bd56274f80e7b7ac9460743, type: 3}
 --- !u!1 &328216470
 GameObject:
   m_ObjectHideFlags: 0
@@ -42945,8 +42946,8 @@ MonoBehaviour:
     walk_clips:
     - {fileID: 0}
     - {fileID: 0}
-    broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
-    broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
+    broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+    broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
     backFaceTexture: 116
     frontFaceTexture: 116
     topFaceTexture: 116
@@ -82682,6 +82683,7 @@ MonoBehaviour:
   isHitEntity: 0
   isSpectatorMode: 0
   isDead: 0
+  ShowEntityHitbox: 0
   managerhub: {fileID: 843154432}
   commandManager: {fileID: 2031280225}
   world: {fileID: 699955241}

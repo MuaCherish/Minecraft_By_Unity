@@ -936,6 +936,7 @@ public class Player : MonoBehaviour
 
             //print($"射线发射长度 = {_rayCast.rayDistance}");
 
+            //攻击实体
             if (_rayCast.isHit == 2)
             {
                 isHitEntity = true;

@@ -626,8 +626,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isMoving: 0
   isJumpRequest: 0
-  RotationToggle: 0
-  horizon: 0
   velocity: {x: 0, y: 0, z: 0}
   momentum: {x: 0, y: 0, z: 0}
   Othermomentum: {x: 0, y: 0, z: 0}
@@ -640,6 +638,7 @@ MonoBehaviour:
   force_Watergravity: -2
   JumpColdTime: 0.1
   HeadObject: {fileID: 0}
+  ModelObject: {fileID: 0}
   RotationSensitivity: 50
   Damping_Horizontal: 3
 --- !u!114 &3657433570392770169
@@ -655,11 +654,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isGround: 0
-  managerhub: {fileID: 0}
+  canBeRayCastHit: 1
+  LockDrawHitBox: 1
   isDrawHitBox: 0
   hitBoxEyes: 0.8
   hitBoxWidth: 0.3
   hitBoxHeight: 0.3
+  canBeBounced: 0
+  BounceSpeed: 2
 --- !u!114 &5286057932417734234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -685,6 +687,10 @@ MonoBehaviour:
   Toggle_EntityOnceMove: 0
   EntityControlerEnable: 0
   RotationSpeed: 0.3
+  UpdateValue: -1
+  Toggle_UpdateBlood: 0
+  SetValue: 20
+  Toggle_UpdateSetBlood: 0
 --- !u!1 &5864546935591180756
 GameObject:
   m_ObjectHideFlags: 0

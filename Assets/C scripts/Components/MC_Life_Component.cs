@@ -41,10 +41,7 @@ namespace MCEntity
             AI_Component = GetComponent<MC_AI_Component>();
             world = Collider_Component.managerhub.world;
             Registration_Component = GetComponent<MC_Registration_Component>();
-
-            CreateMaterialInstance();
-
-            
+            _ReferAwake_CreateMaterialInstance();
         }
 
 
@@ -77,17 +74,23 @@ namespace MCEntity
         #region 材质实例
 
         //创建材质实例
-        [Foldout("Transforms", true)]
-        [Header("渲染器")] public Renderer Renderer;
+        [Foldout("材质实例", true)]
+        [Header("渲染器")] public Renderer[] Renderers;
         [Header("水中颜色")] public Color Color_UnderWater = new Color(0x5B / 255f, 0x5B / 255f, 0x5B / 255f, 1f); private Color save_Color;
         [Header("被挤压颜色")] public Color Color_UnderBlock = new Color(0x00 / 255f, 0x00 / 255f, 0x00 / 255f, 1f);
-
         private Material EntityMat;
-        void CreateMaterialInstance()
+
+        void _ReferAwake_CreateMaterialInstance()
         {
-            EntityMat = new Material(Renderer.sharedMaterial);
-            Renderer.material = EntityMat;
+            EntityMat = new Material(Renderers[0].sharedMaterial);
+            
             save_Color = EntityMat.color;
+
+            foreach (var item in Renderers)
+            {
+                item.material = EntityMat;
+            }
+
         }
 
         void _ReferUpdate_IntheWaterBeBlack()

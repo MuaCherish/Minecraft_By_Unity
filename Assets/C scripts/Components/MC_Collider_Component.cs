@@ -814,6 +814,7 @@ namespace MCEntity
         [Header("<!警告!>：判定箱尺寸最好不要超过1.2m")]
         [Header("- 不然可能会有意料之外的Bug")]
         [Space]
+        [Header("锁定绘制判定箱")] public bool LockDrawHitBox;
         [Header("绘制判定箱")] public bool isDrawHitBox; private bool hasExec_isDrawHitBox = true;
         [Header("判定箱眼睛相对高度")] public float hitBoxEyes = 0.8f;
         [Header("判定箱宽度")] public float hitBoxWidth = 1f;
@@ -838,6 +839,11 @@ namespace MCEntity
         //绘制判定箱
         void DrawHitBox()
         {
+
+            //提前返回-锁定绘制碰撞盒
+            if (LockDrawHitBox)
+                return;
+
 
             if (isDrawHitBox)
             {

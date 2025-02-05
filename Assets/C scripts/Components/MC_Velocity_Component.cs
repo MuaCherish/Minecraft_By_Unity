@@ -182,6 +182,8 @@ namespace MCEntity
         {
             _direct = Vector3.Normalize(_direct);
 
+            //print($"强制位移{_direct * _value}");
+
             //print($"施加了{_force.magnitude}的力");
             StartCoroutine(waitFrameToAddOtherForce(_direct, _value));
 
@@ -471,10 +473,15 @@ namespace MCEntity
         /// <summary>
         /// 将Entity转向某个方向，仅旋转XZ平面，保持Y值不变，平滑过渡
         /// </summary>
+        private Coroutine Coroutine_Rotation;
         public void EntitySmoothRotation(Vector3 _direct, float _elapseTime)
         {
             // 启动协程执行平滑旋转
-            StartCoroutine(SmoothRotateCoroutine(_direct, _elapseTime));
+            if (Coroutine_Rotation == null)
+            {
+                Coroutine_Rotation = StartCoroutine(SmoothRotateCoroutine(_direct, _elapseTime));
+            }
+            
         }
 
         private IEnumerator SmoothRotateCoroutine(Vector3 _direct, float _elapseTime)
@@ -513,6 +520,7 @@ namespace MCEntity
 
             // 最终确保完全对准目标方向
             ModelObject.transform.rotation = targetRotation;
+            Coroutine_Rotation = null;
         }
 
 

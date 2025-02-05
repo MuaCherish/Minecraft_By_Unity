@@ -830,7 +830,6 @@ MonoBehaviour:
   myState: 0
   isAttacking: 0
   isSucceded_HitPlayer: 0
-  Toggle_Flee: 0
   myMovingType: 0
   isAggressive: 1
   AIseeDistance: 15
@@ -860,7 +859,8 @@ MonoBehaviour:
   isEntity_Hurt: 0
   isEntity_Dead: 0
   isEntity_Dive: 0
-  Renderer: {fileID: 21535066822826032}
+  Renderers:
+  - {fileID: 21535066822826032}
   Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
   EntityBlood: 20

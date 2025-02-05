@@ -246,6 +246,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
                 Vector3 _forceDirect = (item._obj.transform.position - _center).normalized;
                 _forceDirect.y = 0.8f;
                 _forceDirect = _forceDirect.normalized;
+                int updateBlood = 0;
 
                 //施加力度
                 float _dis = (item._obj.transform.position - _center).magnitude;
@@ -255,19 +256,30 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
                 if (_dis >= 0f && _dis <= BlocksFunction.TNT_explore_Radius)
                 {
                     _forceValue = Mathf.Lerp(400f, 160f, _dis / BlocksFunction.TNT_explore_Radius);
+                    updateBlood = (int)Mathf.Lerp(23, 10, _dis / BlocksFunction.TNT_explore_Radius);
                 }
                 // 如果距离在4到6米之间，力值固定为50
                 else if (_dis > BlocksFunction.TNT_explore_Radius && _dis <= BlocksFunction.TNT_explore_Radius + 2f)
                 {
                     _forceValue = 50f;
+                    updateBlood = (int)Mathf.Lerp(10, 0, (_dis - BlocksFunction.TNT_explore_Radius) / 2f);
                 }
                 // 如果距离超过6米，力值为0或其他
                 else
                 {
+                    updateBlood = 0;
                     _forceValue = 0f;  // 或者设置为你需要的默认值
                 }
 
-                item._obj.GetComponent<MC_Velocity_Component>().AddForce(_forceDirect, _forceValue);
+                if (item._obj.GetComponent<MC_Life_Component>() != null) 
+                {
+                    item._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-updateBlood, _forceDirect * _forceValue);
+                }
+                else
+                {
+                    item._obj.GetComponent<MC_Velocity_Component>().AddForce(_forceDirect , _forceValue);
+                }
+                
             }
         }
 

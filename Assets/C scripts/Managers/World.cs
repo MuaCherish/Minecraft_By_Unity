@@ -452,7 +452,7 @@ public class World : MonoBehaviour
             if (hasExec_ShowEntityHitbox)
             {
 
-                ShowAllEntityHitbox();
+                SwitchAllEntityHitbox(true);
 
                 hasExec_ShowEntityHitbox = false;
             }
@@ -461,6 +461,7 @@ public class World : MonoBehaviour
         {
             if (hasExec_ShowEntityHitbox == false)
             {
+                SwitchAllEntityHitbox(false);
                 hasExec_ShowEntityHitbox = true;
             }
         }
@@ -469,11 +470,11 @@ public class World : MonoBehaviour
     }
 
     //检查所有碰撞盒，并打开他们的hitbox选项
-    void ShowAllEntityHitbox()
+    void SwitchAllEntityHitbox(bool _bool)
     {
         foreach (var item in AllEntity)
         {
-            item._obj.GetComponent<MC_Collider_Component>().isDrawHitBox = true;
+            item._obj.GetComponent<MC_Collider_Component>().isDrawHitBox = _bool;
         }
     }
 

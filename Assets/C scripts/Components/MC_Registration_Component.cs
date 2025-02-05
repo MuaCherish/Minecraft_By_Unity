@@ -84,7 +84,7 @@ public class MC_Registration_Component : MonoBehaviour
 
         if(!world.RemoveEntity(EntityID))
         {
-            print("销毁失败，实体未注册");
+            print($"销毁失败，实体未注册,id = {EntityID}");
             return;
         }
 
