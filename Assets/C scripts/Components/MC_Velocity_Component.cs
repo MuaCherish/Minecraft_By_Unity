@@ -275,8 +275,10 @@ namespace MCEntity
 
         [Foldout("旋转参数", true)]
         [Header("实体头(选填)")] public GameObject HeadObject; // 头部对象，用于垂直旋转
-        [Header("实体整体(必填)")] public GameObject ModelObject; 
+        [Header("实体整体(必填)")] public GameObject ModelObject;
+        [Header("旋转速度")] public float rotationSpeed = 90f; // 默认旋转速度
         [Header("实体旋转灵敏度")] public float RotationSensitivity = 50.0f; // 设置旋转灵敏度
+       
 
         private float verticalRotation = 0f; // 用于存储垂直旋转的累计值
         //衰减系数
@@ -466,9 +468,9 @@ namespace MCEntity
 
         #region Entity旋转
 
-        private Vector3 targetDirection = Vector3.forward; // 默认朝向
-        private float rotationSpeed = 90f; // 默认旋转速度
-        private bool isInstantRotation = false; // 默认非瞬时旋转
+        
+        //private Vector3 targetDirection = Vector3.forward; // 默认朝向
+        //private bool isInstantRotation = false; // 默认非瞬时旋转
 
         /// <summary>
         /// 将Entity转向某个方向，仅旋转XZ平面，保持Y值不变，平滑过渡

@@ -33,7 +33,7 @@ namespace MCEntity
         MC_AI_Component AI_Component;
         World world;
         MC_Registration_Component Registration_Component;
-
+        ManagerHub managerhub;
         private void Awake()
         {
             Velocity_Component = GetComponent<MC_Velocity_Component>();
@@ -42,6 +42,7 @@ namespace MCEntity
             world = Collider_Component.managerhub.world;
             Registration_Component = GetComponent<MC_Registration_Component>();
             _ReferAwake_CreateMaterialInstance();
+            managerhub = Collider_Component.managerhub;
         }
 
 
@@ -154,9 +155,7 @@ namespace MCEntity
 
             //如果没有攻击性，则会开始逃跑
             if (AI_Component.isAggressive == false)
-            {
-                AI_Component.SwitchFleeState();
-            }
+                AI_Component.EntityFlee();
 
 
             //修改血量并检查死亡程序
@@ -186,8 +185,6 @@ namespace MCEntity
         void Handle_Dead()
         {
             isEntity_Dead = true;
-
-
             Registration_Component.LogOffEntity();
         }
 
@@ -313,6 +310,7 @@ namespace MCEntity
 
         [Foldout("摔落参数", true)]
         [Header("最大摔落高度")] public float maxFallDis = 4f;
+        [Header("摔落音效ID")] public int Default_DropGround = 37;
         private float realMaxY = -Mathf.Infinity;  //当前触及的最大高度
 
         void _ReferUpdate_FallingCheck()
@@ -333,11 +331,14 @@ namespace MCEntity
                     //print($"扣除血量:{_Drop - maxFallDis}");
                     UpdateEntityLife(-(int)(_Drop - maxFallDis), Vector3.zero);
                     realMaxY = Collider_Component.FootPoint.y;
+
+                    //播放落地音效
+                    managerhub.NewmusicManager.Create3DSound(transform.position, Default_DropGround);
                 }
             }
 
 
-        }
+        } 
 
         #endregion
 

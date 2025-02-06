@@ -19,6 +19,8 @@ public static class EntityData
     public static readonly int Slime = 0;
     public static readonly int TNT = 1;
     public static readonly int Pig = 2;
+    public static readonly int TestSlime = 3;
+    public static readonly int TestPig = 4;
 }
 
 

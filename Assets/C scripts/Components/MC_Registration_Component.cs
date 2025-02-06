@@ -22,16 +22,14 @@ public class MC_Registration_Component : MonoBehaviour
 
 
     MC_Collider_Component Collider_Component;
+    MC_Animator_Component Animator_Component;
     ManagerHub managerhub;
     World world;
-    Animation animationCoponent;
-    MC_Animator_Component Animator_Component;
     private void Awake()
     {
         Collider_Component = GetComponent<MC_Collider_Component>();
         managerhub = Collider_Component.managerhub;
         world = managerhub.world;
-        animationCoponent = GetComponent<Animation>();
         Animator_Component = GetComponent<MC_Animator_Component>();
     }
 

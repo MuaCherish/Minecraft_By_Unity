@@ -70,6 +70,13 @@ public static class MusicData
     public static readonly int Pig_Death = 27;
     public static readonly int Creeper_Death = 28;
     public static readonly int Pig_Hurt = 29;
-    //public static readonly int TNT_Fuse = 30;
+    public static readonly int Zombie_Death = 30;
+    public static readonly int Zombie_Hurt1 = 31;
+    public static readonly int Zombie_Hurt2 = 32;
+    public static readonly int Zombie_Say1 = 33;
+    public static readonly int Zombie_Say2 = 34;
+    public static readonly int Zombie_Say3 = 35; 
+    public static readonly int Slime_DropGround = 36;
+    public static readonly int Default_DropGround = 37;
 
 }

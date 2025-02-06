@@ -2683,7 +2683,7 @@ public class Player : MonoBehaviour
         _direct.Normalize(); // 将方向向量标准化为单位向量
 
         // 初始化结构体
-        float step = checkIncrement;
+        float step = 0f;
         Vector3 lastPos = new Vector3();  // 用于记录上一个点的位置
         Vector3 hitPoint = Vector3.zero;  // 用于记录命中的点
         byte blockType = 255;             // 用于记录打中方块的类型，默认为255表示未命中

@@ -96,7 +96,7 @@ public class Weather : MonoBehaviour
     [Header("过渡时长")] public float transitionDuration = 5f; // 时间值过渡的总时长
     [Header("下雨持续时间范围")] public Vector2 Range_rainDuration = new Vector2(10f, 30f); // 雨持续时间
     [Header("头顶射线检测")] public float checkHeadTime = 1f;
-    private float HeadTime_elapsedTime = 0f; // 用于计时
+    //private float HeadTime_elapsedTime = 0f; // 用于计时
 
 
     /// <summary>
