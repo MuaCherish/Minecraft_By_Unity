@@ -2,15 +2,6 @@ using UnityEngine;
 
 namespace MCEntity
 {
-    //实体接口
-    public interface IEntity
-    {
-        // 初始化
-        public void OnStartEntity();
-
-        // 销毁
-        public void OnEndEntity();
-    }
 
     //一些Entity需要的公用函数
     public static class MC_UtilityFunctions

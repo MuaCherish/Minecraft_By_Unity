@@ -32,8 +32,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 1526748580849907593}
+  m_Children: []
   m_Father: {fileID: 9197555315754931034}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4965838981772960482
@@ -677,10 +676,11 @@ GameObject:
   - component: {fileID: 15544916372309249}
   - component: {fileID: 4639980755837328323}
   - component: {fileID: 6128268072501705658}
-  - component: {fileID: 2989092885312629195}
   - component: {fileID: 2633483463225291222}
+  - component: {fileID: 2989092885312629195}
+  - component: {fileID: -5960032713669505838}
   m_Layer: 0
-  m_Name: Slime
+  m_Name: Slime_Medium
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -761,6 +761,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isGround: 0
   canBeRayCastHit: 1
+  LockDrawHitBox: 0
   isDrawHitBox: 0
   hitBoxEyes: 0.65
   hitBoxWidth: 1.2
@@ -779,21 +780,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ae56b58385f3504d9f2aa3948869802, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isMoving: 0
+  isMoving: 1
   isJumpRequest: 0
-  velocity: {x: 0, y: 0, z: 0}
-  momentum: {x: 0, y: 0, z: 0}
+  velocity: {x: -0.00057748344, y: 4.3418045, z: -0.005774834}
+  momentum: {x: 0, y: -9.8, z: 0}
   Othermomentum: {x: 0, y: 0, z: 0}
-  mass: 0.3
+  mass: 0.6
   speed_move: 1.8
   speedDown_ultimate: -20
   WaterspeedDown_ultimate: -2
-  force_jump: 140
+  force_jump: 250
   force_gravity: -9.8
   force_Watergravity: -2
   JumpColdTime: 0.1
   HeadObject: {fileID: 0}
   ModelObject: {fileID: 7453306101884016661}
+  rotationSpeed: 90
   RotationSensitivity: 50
   Damping_Horizontal: 20
 --- !u!114 &15544916372309249
@@ -827,22 +829,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a9bd0976fb09743840a44f48277fd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myState: 0
-  isAttacking: 0
-  isSucceded_HitPlayer: 0
-  myMovingType: 0
+  currentState: 0
+  current_IdleState: 1
+  current_ChaseState: 0
+  current_FleeState: 1
+  isSeePlayer: 1
+  currentMovingType: 0
   isAggressive: 1
-  AIseeDistance: 15
-  Idle_WaitTime: 1
-  Chase_WaitTime: 5
-  isCanFlee: 0
-  fleeTime: 5
-  fleeSpeed: 2
-  RotationSpeed: 0.3
-  AI_CanSwiming: 1
-  Floating_CheckTime: 2
-  FloatingForce: 80
-  Debug_ShowEyesRayCast: 0
+  IdleJumpY: 3
+  IdlewaitTimeRange: {x: 2, y: 4}
+  IdleMovingProbability: 0.6
+  IdleJumpForceRange: {x: 200, y: 220}
+  ChaseJumpY: 2
+  ChaseJumpForceRange: {x: 180, y: 200}
+  ChaseWaitTimeRange: {x: 0.5, y: 2.5}
+  JumpFleeTimeRange: {x: 10, y: 20}
+  FleeJumpY: 0.5
+  FleewaitTimeRange: {x: 0.5, y: 1}
+  FleeMovingProbability: 1
+  FleeJumpForceRange: {x: 200, y: 250}
+  WalkFleeTimeRange: {x: 10, y: 20}
+  canWatchPlayer: 0
+  visionDistance: 15
+  WatchrotateTime: 0.2
+  AI_CanSwiming: 0
+  Floating_CheckTime: 0.1
+  FloatingForce: 5
+  AttackRangeMultiplier: 1.2
+  AttackDamage: 2
+  AttackColdTime: 1
+  Debug_DrawRay: 0
   Debug_PauseAI: 0
 --- !u!114 &6128268072501705658
 MonoBehaviour:
@@ -863,12 +879,29 @@ MonoBehaviour:
   - {fileID: 21535066822826032}
   Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
-  EntityBlood: 20
+  EntityBlood: 10
   Hurt_ElapseTime: 0.3
   Hurt_Force: 60
   Evaporation_Particle: {fileID: 9114416006497185209, guid: 49b21542e437d7c40a17cd534b10318b, type: 3}
   EntityOxygen: 10
   maxFallDis: 4
+  Default_DropGround: 36
+--- !u!114 &2633483463225291222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294902419089504476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa129a5e597dfae49b9cdf73e042e79a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isWalk: 0
+  isRun: 0
+  isAttack: 0
+  isDead: 0
 --- !u!114 &2989092885312629195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -898,7 +931,7 @@ MonoBehaviour:
   Toggle_UpdateBlood: 0
   SetValue: 20
   Toggle_UpdateSetBlood: 0
---- !u!114 &2633483463225291222
+--- !u!114 &-5960032713669505838
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -907,13 +940,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1294902419089504476}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa129a5e597dfae49b9cdf73e042e79a, type: 3}
+  m_Script: {fileID: 11500000, guid: 6184d9fd2e30fc84cae5bdfd6ae4f766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isWalk: 0
-  isRun: 0
-  isAttack: 0
-  isDead: 0
+  MyType: 1
+  splitRange: {x: 2, y: 4}
+  elasticity: 180
+  disY: 0.3
 --- !u!1 &2347977520285036761
 GameObject:
   m_ObjectHideFlags: 0
@@ -1942,35 +1975,4 @@ Transform:
   - {fileID: 8883734769602465602}
   - {fileID: 7777141537150025510}
   m_Father: {fileID: 7515427365650157053}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7544388032718282903
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1526748580849907593}
-  m_Layer: 0
-  m_Name: foot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1526748580849907593
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7544388032718282903}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7777141537150025510}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

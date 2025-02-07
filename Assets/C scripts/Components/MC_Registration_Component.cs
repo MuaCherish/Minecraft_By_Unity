@@ -117,6 +117,13 @@ public class MC_Registration_Component : MonoBehaviour
         //Wait
         yield return new WaitForSeconds(WateToDead_Time);
 
+        //自定义OnEndEntity
+        EntityBase entityBase = GetComponent<EntityBase>();
+        if (entityBase != null)
+        {
+            entityBase.OnEndEntity();
+        }
+
         //蒸汽粒子
         if (isPlayEvaporationParticle)
         {

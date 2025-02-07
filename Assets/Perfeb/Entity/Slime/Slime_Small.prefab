@@ -30,10 +30,9 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.32, y: 0.32, z: 0.32}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 1526748580849907593}
+  m_Children: []
   m_Father: {fileID: 9197555315754931034}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4965838981772960482
@@ -360,8 +359,8 @@ Transform:
   m_GameObject: {fileID: 832852773556083121}
   serializedVersion: 2
   m_LocalRotation: {x: 1.1102231e-17, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.332, y: 0.129, z: 0.319}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalPosition: {x: 0.131, y: 0.063, z: 0.132}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8883734769602465602}
@@ -681,7 +680,7 @@ GameObject:
   - component: {fileID: 2989092885312629195}
   - component: {fileID: -5960032713669505838}
   m_Layer: 0
-  m_Name: Test_Slime
+  m_Name: Slime_Small
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -765,8 +764,8 @@ MonoBehaviour:
   LockDrawHitBox: 0
   isDrawHitBox: 0
   hitBoxEyes: 0.65
-  hitBoxWidth: 1.2
-  hitBoxHeight: 1.2
+  hitBoxWidth: 0.48
+  hitBoxHeight: 0.48
   canBeBounced: 1
   BounceSpeed: 3
 --- !u!114 &4144285069365769149
@@ -837,12 +836,12 @@ MonoBehaviour:
   isSeePlayer: 1
   currentMovingType: 0
   isAggressive: 1
-  IdleJumpY: 2
+  IdleJumpY: 3
   IdlewaitTimeRange: {x: 2, y: 4}
   IdleMovingProbability: 0.6
-  IdleJumpForceRange: {x: 140, y: 160}
+  IdleJumpForceRange: {x: 100, y: 120}
   ChaseJumpY: 2
-  ChaseJumpForceRange: {x: 160, y: 180}
+  ChaseJumpForceRange: {x: 120, y: 140}
   ChaseWaitTimeRange: {x: 0.5, y: 2.5}
   JumpFleeTimeRange: {x: 10, y: 20}
   FleeJumpY: 0.5
@@ -851,7 +850,7 @@ MonoBehaviour:
   FleeJumpForceRange: {x: 200, y: 250}
   WalkFleeTimeRange: {x: 10, y: 20}
   canWatchPlayer: 0
-  visionDistance: 15
+  visionDistance: 10
   WatchrotateTime: 0.2
   AI_CanSwiming: 0
   Floating_CheckTime: 0.1
@@ -880,7 +879,7 @@ MonoBehaviour:
   - {fileID: 21535066822826032}
   Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
-  EntityBlood: 20
+  EntityBlood: 2
   Hurt_ElapseTime: 0.3
   Hurt_Force: 60
   Evaporation_Particle: {fileID: 9114416006497185209, guid: 49b21542e437d7c40a17cd534b10318b, type: 3}
@@ -944,7 +943,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6184d9fd2e30fc84cae5bdfd6ae4f766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  elasticity: 180
+  MyType: 2
+  splitRange: {x: 2, y: 4}
+  elasticity: 160
   disY: 0.3
 --- !u!1 &2347977520285036761
 GameObject:
@@ -975,8 +976,8 @@ Transform:
   m_GameObject: {fileID: 2347977520285036761}
   serializedVersion: 2
   m_LocalRotation: {x: 1.1102231e-17, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.319, y: 0.129, z: 0.324}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalPosition: {x: -0.131, y: 0.063, z: 0.132}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8883734769602465602}
@@ -1305,8 +1306,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 9197555315754931034}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1640,8 +1641,8 @@ Transform:
   m_GameObject: {fileID: 6514550894828401986}
   serializedVersion: 2
   m_LocalRotation: {x: 1.1102231e-17, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.074, y: -0.189, z: 0.409}
-  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
+  m_LocalPosition: {x: -0.047, y: -0.095, z: 0.132}
+  m_LocalScale: {x: 0.06, y: 0.06, z: 0.06}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8883734769602465602}
@@ -1968,41 +1969,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1995300918147114354}
   - {fileID: 8883734769602465602}
   - {fileID: 7777141537150025510}
   m_Father: {fileID: 7515427365650157053}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7544388032718282903
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1526748580849907593}
-  m_Layer: 0
-  m_Name: foot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1526748580849907593
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7544388032718282903}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7777141537150025510}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
