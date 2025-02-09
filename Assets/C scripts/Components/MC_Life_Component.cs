@@ -100,6 +100,10 @@ namespace MCEntity
             if (isEntity_Hurt)
                 return;
 
+            //提前返回-返回255
+            if (world.GetBlockType(Collider_Component.EyesPoint) == 255)
+                return;
+
             Color targetColor = save_Color;  // 默认颜色
 
             // 如果被挤压

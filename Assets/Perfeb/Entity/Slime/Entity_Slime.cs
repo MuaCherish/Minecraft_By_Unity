@@ -111,12 +111,16 @@ public class Entity_Slime : EntityBase
     #region 落地会弹一下
 
     [Foldout("弹性设置", true)]
+    [Header("是否会发生弹跳")] public bool canBound = true;
     [Header("弹跳力度")] public float elasticity = 10.0f;
     [Header("高度阈值")] public float disY = 1f;
     private float maxY = -Mathf.Infinity;
     private bool hasExec_GroundJump;
     void _ReferUpdate_BoundWithGround()
     {
+        //提前返回-不发生弹跳
+        if (canBound == false)
+            return;
 
         //弹跳检测
         if (Collider_Component.isGround)

@@ -177,4 +177,54 @@ public static class BlocksFunction
         }
     }
 
+
+    //6个指定方向
+    //public static readonly Vector3[] faceChecks = new Vector3[6]
+    //{
+
+    //    new Vector3(0.0f, 0.0f, -1.0f), //Back
+    //    new Vector3(0.0f, 0.0f, 1.0f),  //Front
+    //    new Vector3(0.0f, 1.0f, 0.0f),  //Up
+    //    new Vector3(0.0f, -1.0f, 0.0f), //Down
+    //    new Vector3(-1.0f, 0.0f, 0.0f), //Left
+    //    new Vector3(1.0f, 0.0f, 0.0f),  //Right
+
+    //};
+
+    /// <summary>
+    /// 给定起始点，返回一个目标点
+    /// </summary>
+    /// <param name="_StartPos"></param>
+    /// <returns></returns>
+    //public static Vector3 GetNavigationDestination(Vector3 _StartPos)
+    //{
+    //    Vector3 _EndPos = Vector3.zero;
+    //    World world = SceneData.GetManagerhub().world;
+
+    //    //将_StartPos放在方块的正中心
+    //    UsefulFunction.GetCenterVector3(_StartPos);
+
+    //    //检查4个方向 
+    //    for (int i = 0; i < 6; i ++)
+    //    {
+    //        Vector3 _TargetPos = _StartPos + VoxelData.faceChecks[i];
+
+    //        //提前返回-没有方块数据
+    //        if (world.GetBlockType(_TargetPos) == 255)
+    //            continue;
+
+    //        bool _TargetPos_isSolid = world.blocktypes[world.GetBlockType(_TargetPos)].isSolid;
+
+            
+    //    }
+
+
+
+
+
+    //    return _EndPos;
+    //}
+
 }
+
+

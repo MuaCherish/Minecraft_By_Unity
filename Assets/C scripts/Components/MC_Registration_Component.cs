@@ -3,9 +3,9 @@ using MCEntity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.ProBuilder.Shapes;
 
 [RequireComponent(typeof(MC_Collider_Component))]
-[RequireComponent(typeof(MC_Animator_Component))]
 public class MC_Registration_Component : MonoBehaviour
 {
 
@@ -20,17 +20,15 @@ public class MC_Registration_Component : MonoBehaviour
 
     #region 周期函数
 
-
     MC_Collider_Component Collider_Component;
-    MC_Animator_Component Animator_Component;
     ManagerHub managerhub;
     World world;
+
     private void Awake()
     {
         Collider_Component = GetComponent<MC_Collider_Component>();
         managerhub = Collider_Component.managerhub;
         world = managerhub.world;
-        Animator_Component = GetComponent<MC_Animator_Component>();
     }
 
     private void Update()
@@ -67,24 +65,26 @@ public class MC_Registration_Component : MonoBehaviour
     #endregion
 
 
-    #region 实体注册与注销
-
-
+    #region 实体注册
 
     public void RegistEntity(int _id)
     {
         EntityID = _id;
     }
 
+    #endregion
 
+
+    #region 实体注销
+
+    private bool isRemoveEntity = false;
     public void LogOffEntity()
     {
-
-        if(!world.RemoveEntity(EntityID))
-        {
-            print($"销毁失败，实体未注册,id = {EntityID}");
+        //提前返回-已经销毁实体
+        if (isRemoveEntity)
             return;
-        }
+
+        isRemoveEntity = world.RemoveEntity(EntityID);
 
         if (isDeadImmediately)
         {
@@ -100,7 +100,8 @@ public class MC_Registration_Component : MonoBehaviour
     IEnumerator WaitToDead()
     {
         //死亡动画
-        Animator_Component.isDead = true;
+        //Animator_Component.isDead = true;
+        DeadAnimation();
 
         //死亡音效
         if (isPlayDeadMusic)
@@ -173,6 +174,60 @@ public class MC_Registration_Component : MonoBehaviour
             LogOffEntity();
         }
 
+    }
+
+
+    #endregion
+
+
+    #region 死亡动画
+
+    [Foldout("死亡动画", true)]
+    [Header("动画时间")] public float DeadRotationDuration = 0.5f;
+
+    void DeadAnimation()
+    {
+        GameObject _Model = GameObject.Find("Model");
+
+        if (_Model == null)
+        {
+            print("找不到Model");
+            return;
+        }
+        
+        StartCoroutine(RotateCubeAroundPoint(_Model, 90f, DeadRotationDuration));
+    }
+
+    IEnumerator RotateCubeAroundPoint(GameObject obj, float angle, float duration)
+    {
+        // 找到根节点
+        Vector3 footRoot = Collider_Component.FootPoint;
+
+        // 获取起始旋转
+        Quaternion startRotation = obj.transform.rotation;
+
+        // 计算目标旋转，绕着 Cube 的 forward 轴旋转
+        Quaternion endRotation = startRotation * Quaternion.Euler(angle, 0, 0);
+
+        // 计算旋转轴为 Cube.transform.forward
+        Vector3 rotationAxis = obj.transform.forward;
+
+        // 旋转开始时间
+        float timeElapsed = 0f;
+
+        while (timeElapsed < duration)
+        {
+            float t = timeElapsed / duration;
+
+            // 将旋转角度插值，使用 Slerp 来平滑旋转
+            obj.transform.RotateAround(footRoot, rotationAxis, angle * Time.deltaTime / duration);
+
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // 确保最终的旋转角度
+        obj.transform.RotateAround(footRoot, rotationAxis, angle * Time.deltaTime / duration);
     }
 
 
