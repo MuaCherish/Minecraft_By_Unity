@@ -81973,6 +81973,89 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1490704601}
   m_CullTransparentMesh: 1
+--- !u!1 &1493174919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1493174923}
+  - component: {fileID: 1493174922}
+  - component: {fileID: 1493174921}
+  m_Layer: 0
+  m_Name: EndPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!23 &1493174921
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493174919}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: d9093f8abf5c17a4690156dbebcb7d63, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1493174922
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493174919}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1493174923
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493174919}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 2709.5, y: 4.5, z: 2865.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1494012092
 GameObject:
   m_ObjectHideFlags: 0
@@ -90236,7 +90319,7 @@ GameObject:
   - component: {fileID: 1646458096}
   - component: {fileID: 1646458098}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: StartPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90251,7 +90334,7 @@ Transform:
   m_GameObject: {fileID: 1646458094}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2710.5, y: 4.5, z: 2858.5}
+  m_LocalPosition: {x: 2709.5, y: 4.5, z: 2859.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -90319,33 +90402,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e9e4e66e61025d45a20f0c18820ddfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Toggle_StartToFindDestination: 0
-  WalkSteps: 1
-  prevDirectionProbability: 0.6
-  CubeWidth: 0.8
-  StepDelay: 0.5
-  VisitPositions:
-  - {x: 2710.5, y: 4.5, z: 2858.5}
-  - {x: 2709.5, y: 4.5, z: 2858.5}
-  - {x: 2708.5, y: 4.5, z: 2858.5}
-  - {x: 2708.5, y: 4.5, z: 2859.5}
-  - {x: 2708.5, y: 4.5, z: 2860.5}
-  - {x: 2708.5, y: 4.5, z: 2861.5}
-  - {x: 2708.5, y: 4.5, z: 2862.5}
-  - {x: 2707.5, y: 4.5, z: 2861.5}
-  - {x: 2706.5, y: 4.5, z: 2860.5}
-  - {x: 2705.5, y: 4.5, z: 2860.5}
-  - {x: 2705.5, y: 4.5, z: 2861.5}
-  - {x: 2705.5, y: 4.5, z: 2862.5}
-  - {x: 2706.5, y: 4.5, z: 2861.5}
-  - {x: 2707.5, y: 4.5, z: 2860.5}
-  - {x: 2707.5, y: 4.5, z: 2861.5}
-  - {x: 2707.5, y: 4.5, z: 2862.5}
-  - {x: 2706.5, y: 4.5, z: 2863.5}
-  - {x: 2705.5, y: 4.5, z: 2864.5}
-  - {x: 2704.5, y: 4.5, z: 2865.5}
-  - {x: 2703.5, y: 4.5, z: 2865.5}
-  - {x: 2702.5, y: 4.5, z: 2865.5}
+  Toggle_RandomWalk: 0
+  Toggle_ShowDynamicPath: 0
+  RandomWalk_WalkSteps: 10
+  RandomWalk_prevDirectionProbability: 0
+  RandomWalk_ResultPath: []
+  Toggle_StartAstar: 0
+  Toggle_DynamicAstar: 0
+  StartPos: {fileID: 1646458094}
+  EndPos: {fileID: 1493174919}
+  AstartMaxStep: 512
+  _OpenList: []
+  _CloseList: []
+  _AstarResultPath: []
+  TestPathWidth: 0.8
+  StepDelay: 0.1
 --- !u!1 &1646562080
 GameObject:
   m_ObjectHideFlags: 0
@@ -130539,3 +130610,4 @@ SceneRoots:
   - {fileID: 1504082081}
   - {fileID: 192965816}
   - {fileID: 1646458095}
+  - {fileID: 1493174923}

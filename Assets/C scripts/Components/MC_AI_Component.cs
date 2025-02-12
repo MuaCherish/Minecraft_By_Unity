@@ -313,6 +313,8 @@ namespace MCEntity
         void Handle_IdleState_WalkType_Wait()
         {
             //随机等待
+
+            //确定下一次导航路径
         }
 
 
@@ -600,40 +602,52 @@ namespace MCEntity
         #region AI能力
 
 
+        #region AI自动跳跃
+
+        #endregion
+
+
         #region AI寻路
 
-        /// <summary>
-        /// 给定途径点，AI走到目的地
-        /// 1. 如果中间有面墙怎么办----继续分化找到中间的途径点
-        /// </summary>
-        /// <param name="_pos"></param>
-        void Navigate(Vector3 _pos)
-        {
-
-        }
+        [Foldout("AI寻路", true)]
+        [Header("到达中间节点的距离误差")] public float nodeAcceptanceDistance = 0.25f;
+        [Header("单个节点最大寻路等待时间")] public float maxNavigationWaitTime = 3f;
 
         /// <summary>
-        /// 获取一条完整的导航路线
-        /// 包括若干条路径点
-        /// 1. 如果过于狭窄怎么办
+        /// 实体导航
         /// </summary>
-        void GetAINavigatePath(Vector3 _StartPos, out List<Vector3> pathPoints)
+        public void EntityNavigation()
         {
-            pathPoints = new List<Vector3> ();
+
+        } 
 
 
-
-        }
-
-
-        /// <summary>
-        /// 从起点开始，算法遍历找到一个一定长度且可到达的目的地
-        /// </summary>
-        Vector3 SearchReachablePos(Vector3 _StartPos)
+        IEnumerator EntityNavigation_Old(List<Vector3> _Nodes)
         {
-            Vector3 _EndPos = Vector3.zero;
+            //AI看向目的地
 
-            return _EndPos;
+            //挨个经过每一个节点
+            foreach (var _pos in _Nodes)
+            {
+                //计时
+                float _moveTime = 0;
+
+                //向_pos移动直到误差小于nodeAcceptanceDistance
+                while (true)
+                {
+                    //如果超时则停止移动
+
+                    //获得实体的朝向
+
+                    //移动
+
+                    //end
+                    _moveTime += Time.deltaTime;
+                    yield return null;
+                }
+            }
+
+            
         }
 
 
