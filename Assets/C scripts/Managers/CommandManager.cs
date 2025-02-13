@@ -303,8 +303,16 @@ public class CommandManager : MonoBehaviour
                             return "<系统消息> " + "暂时不允许直接添加TNT实体";
                         }
 
-                        Vector3 _pos = managerhub.player.transform.position + managerhub.player.cam.forward * 2f;
+                        //Location
+                        Vector3 _PlayerPos = managerhub.player.transform.position;
 
+                        //Forward
+                        Vector3 _Forward = new Vector3(managerhub.player.cam.forward.x, 0, managerhub.player.cam.forward.z);
+
+                        //EndPos
+                        Vector3 _pos = _PlayerPos + _Forward * 2f;
+
+                        //Add
                         if (managerhub.world.AddEntity(entityId, _pos, out var _result))
                         {
                             return "<系统消息> " + $"已添加实体 ID: {entityId}";

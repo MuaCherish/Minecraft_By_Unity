@@ -1,12 +1,10 @@
 using Homebrew;
 using MCEntity;
 using UnityEngine;
-//using UnityEngine.XR;
 using System.Collections;
-using UnityEngine.XR;
 using System.Collections.Generic;
-using static UsefulFunction;
 using System.Linq;
+using static MC_UtilityFunctions;
 
 public class DropBlock: MonoBehaviour, IEntityBrain
 {

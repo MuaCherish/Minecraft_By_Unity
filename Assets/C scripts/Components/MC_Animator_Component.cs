@@ -65,25 +65,25 @@ public class MC_Animator_Component : MonoBehaviour
     void _ReferUpdate_PassiveAnimation()
     {
         //isWalk
-        if (isWalk)
+        if (isWalk && HasAttackParam("isWalk"))
             animator.SetBool("isWalk", true);
         else
             animator.SetBool("isWalk", false);
 
         //isRun
-        if (isRun)
+        if (isRun && HasAttackParam("isRun"))
             animator.SetBool("isRun", true);
         else
             animator.SetBool("isRun", false);
 
         //isAttack
-        if (isAttack)
+        if (isAttack && HasAttackParam("isAttack"))
             animator.SetBool("isAttack", true);
         else
             animator.SetBool("isAttack", false);
 
         //isDead
-        if (isDead)
+        if (isDead && HasAttackParam("isDead"))
             animator.SetBool("isDead", true);
 
 
@@ -105,6 +105,24 @@ public class MC_Animator_Component : MonoBehaviour
             isWalk = false;
         }
     }
+
+    #endregion
+
+
+    #region Tool
+
+    bool HasAttackParam(string _para)
+    {
+        foreach (var param in animator.parameters)
+        {
+            if (param.name == _para && param.type == AnimatorControllerParameterType.Bool)
+            {
+                return true; // 找到名为 isAttack 的布尔类型参数
+            }
+        }
+        return false; // 没有找到
+    }
+
 
     #endregion
 

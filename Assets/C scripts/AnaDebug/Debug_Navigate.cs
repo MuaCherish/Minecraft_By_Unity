@@ -1,4 +1,5 @@
 using Homebrew;
+using MCEntity;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +8,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 using static UnityEditor.Progress;
-
+using static MC_UtilityFunctions;
 public class Debug_Navigate : MonoBehaviour
 {
 
@@ -79,7 +80,10 @@ public class Debug_Navigate : MonoBehaviour
     void Idle_RandomWalk(Vector3 _StartPos, int _Steps, float _prevDirectionProbability, out List<Vector3> _Nodes)
     {
         // 初始化
-        Vector3 _thisPos = UsefulFunction.GetCenterVector3(_StartPos);
+        Vector3 _thisPos = 
+            
+            
+            GetCenterVector3(_StartPos);
         Vector3 _thisDirect = EntityData.NearNodes[Random.Range(0, EntityData.NearNodes.Length)];
         _Nodes = new List<Vector3>{ _thisPos };
 
@@ -199,7 +203,10 @@ public class Debug_Navigate : MonoBehaviour
         //静态路线
         if (Toggle_StartAstar)
         {
-            Chase_Astar(StartPos.transform.position, EndPos.transform.position, 2, out List<Vector3> _result);
+            //Chase_Astar(StartPos.transform.position, EndPos.transform.position, 4, out List<Vector3> _result);
+
+            MC_UtilityFunctions.Algo_Astar(StartPos.transform.position, EndPos.transform.position, 4, out List<Vector3> _result);
+
             _Astar_LineResultPath = new List<Vector3>(_result);
             Toggle_StartAstar = false;
         }
@@ -226,9 +233,9 @@ public class Debug_Navigate : MonoBehaviour
             return;
 
         //规范化起点和终点
-        _StartPos = UsefulFunction.GetCenterVector3(_StartPos);
-        _EndPos = UsefulFunction.GetCenterVector3(_EndPos);
-        int maxStep = _RenderSize * TerrainData.ChunkWidth * TerrainData.ChunkWidth;
+        _StartPos = GetCenterVector3(_StartPos);
+        _EndPos = GetCenterVector3(_EndPos);
+        int maxStep = _RenderSize * (int)(_EndPos - _StartPos).magnitude * TerrainData.ChunkWidth;
 
         //创建开放列表 / 关闭列表
         List<AstarNode> OpenList = new List<AstarNode>();
@@ -236,13 +243,14 @@ public class Debug_Navigate : MonoBehaviour
 
         //初始化开始节点
         int stepCount = 0;
-        Vector3 _startP = UsefulFunction.GetCenterVector3(_StartPos);
+        Vector3 _startP = GetCenterVector3(_StartPos);
         float _startG = 0f;
         float _startH = EuclideanDistance3D(_StartPos, _EndPos);
         AstarNode _startparentPos = null;
         AstarNode StartNode = new AstarNode(_startP, _startG, _startH, _startparentPos);
         OpenList.Add(StartNode); UpdateOpenList(OpenList);
 
+        //Debug
 
         //一直循环到DeQueue包含终点 或者超出最大步长
         while (OpenList.Count > 0)
@@ -325,12 +333,12 @@ public class Debug_Navigate : MonoBehaviour
             yield break;
 
         //规范化起点和终点
-        _StartPos = UsefulFunction.GetCenterVector3(_StartPos);
-        _EndPos = UsefulFunction.GetCenterVector3(_EndPos);
+        _StartPos = GetCenterVector3(_StartPos);
+        _EndPos = GetCenterVector3(_EndPos);
 
         //初始化开始节点
         int stepCount = 0;
-        Vector3 _startP = UsefulFunction.GetCenterVector3(_StartPos);
+        Vector3 _startP = GetCenterVector3(_StartPos);
         float _startG = 0f;
         float _startH = EuclideanDistance3D(_StartPos, _EndPos);
         AstarNode _startparentPos = null;

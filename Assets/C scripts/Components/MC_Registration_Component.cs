@@ -67,6 +67,11 @@ public class MC_Registration_Component : MonoBehaviour
 
     #region ÊµÌå×¢²á
 
+    public int GetEntityId()
+    {
+        return EntityID;
+    }
+
     public void RegistEntity(int _id)
     {
         EntityID = _id;

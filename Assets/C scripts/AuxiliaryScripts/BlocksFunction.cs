@@ -1,8 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
-
 
 public struct AlgoBlockStruct
 {
@@ -202,7 +199,7 @@ public static class BlocksFunction
     //    World world = SceneData.GetManagerhub().world;
 
     //    //将_StartPos放在方块的正中心
-    //    UsefulFunction.GetCenterVector3(_StartPos);
+    //    GetCenterVector3(_StartPos);
 
     //    //检查4个方向 
     //    for (int i = 0; i < 6; i ++)

@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.LowLevel;
-
+using static MC_UtilityFunctions;
 
 
 public class Player : MonoBehaviour
@@ -1063,7 +1063,7 @@ public class Player : MonoBehaviour
                             {
 
                                 //managerhub.NewmusicManager.SwitchBackgroundMusic(MusicData.MusicBox, 1f, 0.5f);
-                                managerhub.NewmusicManager.Create3DSound(UsefulFunction.GetCenterVector3(_rayCast.hitPoint_Previous) , MusicData.MusicBox);
+                                managerhub.NewmusicManager.Create3DSound(GetCenterVector3(_rayCast.hitPoint_Previous) , MusicData.MusicBox);
                                 managerhub.backpackManager.update_slots(1, 50);
                             }
                             break;
@@ -2574,6 +2574,14 @@ public class Player : MonoBehaviour
     [Foldout("射线检测", true)]
     [Header("射线长度")] public float reach = 5.2f;
     [Header("射线间隔")] public float checkIncrement = 0.1f;
+
+    /// <summary>
+    /// 射线检测(起始点, 方向, 最大长度)
+    /// </summary>
+    /// <param name="_origin">起始点</param>
+    /// <param name="_direct">方向</param>
+    /// <param name="_maxDistance">最大长度</param>
+    /// <returns></returns>
     public RayCastStruct NewRayCast(Vector3 _origin, Vector3 _direct, float _maxDistance)
     {
         //预处理
@@ -2677,6 +2685,14 @@ public class Player : MonoBehaviour
         };
     }
 
+    /// <summary>
+    /// castingEntityId是自己的id，防止检测到自己
+    /// </summary>
+    /// <param name="_origin"></param>
+    /// <param name="_direct"></param>
+    /// <param name="_maxDistance"></param>
+    /// <param name="castingEntityId"></param>
+    /// <returns></returns>
     public RayCastStruct NewRayCast(Vector3 _origin, Vector3 _direct, float _maxDistance, int castingEntityId)
     {
         //预处理
@@ -3518,8 +3534,9 @@ public class Player : MonoBehaviour
 [System.Serializable]
 public struct RayCastStruct
 {
-    // 是否命中
-    //【0没有命中】【1命中方块】【2命中实体】
+    /// <summary>
+    /// 是否命中: 0没有命中, 1命中方块, 2命中实体
+    /// </summary>
     public byte isHit;
 
     // 射线起点

@@ -27,13 +27,11 @@ public static class EntityData
 
 
     //生物类型
-    public static readonly int Slime_Big = 0;
-    public static readonly int TNT = 1;
-    public static readonly int Pig = 2;
-    public static readonly int Slime_Medium = 3;
-    public static readonly int TestPig = 4;
-    public static readonly int Slime_Small = 5;
-
+    public static readonly int Slime_Small = 0;
+    public static readonly int Slime_Medium = 1;
+    public static readonly int Slime_Big = 2;
+    public static readonly int TNT = 3;
+    public static readonly int Pig = 4;
 
     //实体寻路的邻接节点
     public static readonly Vector3[] NearNodes = new Vector3[24]

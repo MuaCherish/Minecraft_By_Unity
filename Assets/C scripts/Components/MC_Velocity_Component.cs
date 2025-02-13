@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using MCEntity;
 using Homebrew;
-using static UsefulFunction;
 using System.IO;
 
 namespace MCEntity
@@ -136,24 +135,24 @@ namespace MCEntity
         /// 无法立刻改变速度？调用一点点AddForce即可解除y的锁
         /// </summary>
         /// <param name="_v"></param>
-        public void SetVelocity(BlockDirection _Direct, float _value)
+        public void SetVelocity(MC_UtilityFunctions.BlockDirection _Direct, float _value)
         {
             // 根据方向设置对应的速度分量，只调用第一种重载函数修改特定轴
             switch (_Direct)
             {
-                case BlockDirection.前:
+                case MC_UtilityFunctions.BlockDirection.前:
                     SetVelocity("x", transform.forward.x * _value);
                     SetVelocity("z", transform.forward.z * _value);
                     break;
-                case BlockDirection.后:
+                case MC_UtilityFunctions.BlockDirection.后:
                     SetVelocity("x", -transform.forward.x * _value);
                     SetVelocity("z", -transform.forward.z * _value);
                     break;
-                case BlockDirection.左:
+                case MC_UtilityFunctions.BlockDirection.左:
                     SetVelocity("x", -transform.right.x * _value);
                     SetVelocity("z", -transform.right.z * _value);
                     break;
-                case BlockDirection.右:
+                case MC_UtilityFunctions.BlockDirection.右:
                     SetVelocity("x", transform.right.x * _value);
                     SetVelocity("z", transform.right.z * _value);
                     break;
@@ -475,15 +474,10 @@ namespace MCEntity
         /// <summary>
         /// 将Entity转向某个方向，仅旋转XZ平面，保持Y值不变，平滑过渡
         /// </summary>
-        private Coroutine Coroutine_Rotation;
         public void EntitySmoothRotation(Vector3 _direct, float _elapseTime)
         {
             // 启动协程执行平滑旋转
-            if (Coroutine_Rotation == null)
-            {
-                Coroutine_Rotation = StartCoroutine(SmoothRotateCoroutine(_direct, _elapseTime));
-            }
-            
+            StartCoroutine(SmoothRotateCoroutine(_direct, _elapseTime));
         }
 
         private IEnumerator SmoothRotateCoroutine(Vector3 _direct, float _elapseTime)
@@ -522,7 +516,6 @@ namespace MCEntity
 
             // 最终确保完全对准目标方向
             ModelObject.transform.rotation = targetRotation;
-            Coroutine_Rotation = null;
         }
 
 
@@ -621,8 +614,7 @@ namespace MCEntity
                 Vector3 _NoY_selfPos = new Vector3(selfPos.x, 0f, selfPos.z);
 
                 // 条件返回
-                if (!MC_UtilityFunctions.IsTargetVisible(_targetPos_MoveTo) || // 看不见了
-                    (_NoY_selfPos - _NoY_targetPos_MoveTo).magnitude <= 0.5f || // 小于最小误差
+                if ((_NoY_selfPos - _NoY_targetPos_MoveTo).magnitude <= 0.5f || // 小于最小误差
                     isMovingToTarget == false) // 被人为停止
                 {
                     StopVelocity();
@@ -715,5 +707,16 @@ namespace MCEntity
         #endregion
 
 
+        #region 获取方向
+
+        public Vector3 EntityForward
+        {
+            get
+            {
+                return ModelObject.transform.forward;
+            }
+        }
+
+        #endregion
     }
 }

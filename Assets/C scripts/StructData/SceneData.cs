@@ -26,6 +26,27 @@ public static class SceneData
     }
 
     /// <summary>
+    /// 获取场景里的World
+    /// </summary>
+    /// <returns></returns>
+    public static World GetWorld()
+    {
+        // 在场景中查找名为 "ManagerHub" 的 GameObject
+        GameObject worldObject = GameObject.Find("Manager/World Manager");
+
+        if (worldObject != null)
+        {
+            World world = worldObject.GetComponent<World>();
+            return world;
+        }
+        else
+        {
+            Debug.LogError("World Manager找不到");
+            return null;
+        }
+    }
+
+    /// <summary>
     /// 获取场景里的Clones
     /// </summary>
     /// <returns></returns>

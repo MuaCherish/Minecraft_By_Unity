@@ -1,12 +1,7 @@
-//using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
-using System.Linq;
-using static UnityEngine.GraphicsBuffer;
-using System;
-
+using static MC_UtilityFunctions;
 
 
 
@@ -2814,7 +2809,7 @@ public class Chunk : MonoBehaviour
             return true;
 
         //出界判断
-        if (UsefulFunction.isOutOfChunkRange(_vec))
+        if (isOutOfChunkRange(_vec))
             return true;
 
         //前后相等不需要刷新
@@ -2882,7 +2877,7 @@ public class Chunk : MonoBehaviour
                     //树叶掉落苹果
                     else if (thisType == VoxelData.Leaves)
                     {
-                        if (UsefulFunction.GetProbability(30))
+                        if (GetProbability(30))
                         {
                             managerhub.backpackManager.CreateDropBox(new Vector3(Mathf.FloorToInt(_EditList[i].editPos.x), Mathf.FloorToInt(_EditList[i].editPos.y), Mathf.FloorToInt(_EditList[i].editPos.z)), new BlockItem(VoxelData.Apple, 1), false);
                         }
@@ -2990,22 +2985,22 @@ public class Chunk : MonoBehaviour
             return;
 
         //树叶掉落苹果
-        if (_beBrokenType == VoxelData.Leaves && UsefulFunction.GetProbability(15))
+        if (_beBrokenType == VoxelData.Leaves && GetProbability(15))
         {
-            managerhub.backpackManager.CreateDropBox(UsefulFunction.GetCenterVector3(_pos), new BlockItem(VoxelData.Apple, 1), false);
+            managerhub.backpackManager.CreateDropBox(GetCenterVector3(_pos), new BlockItem(VoxelData.Apple, 1), false);
             return;
         }
 
         //草地掉落泥土
         if (_beBrokenType == VoxelData.Grass)
         {
-            managerhub.backpackManager.CreateDropBox(UsefulFunction.GetIntVector3(_pos), new BlockItem(VoxelData.Soil, 1), false);
+            managerhub.backpackManager.CreateDropBox(GetIntVector3(_pos), new BlockItem(VoxelData.Soil, 1), false);
             return;
         }
 
 
         //Else
-        managerhub.backpackManager.CreateDropBox(UsefulFunction.GetIntVector3(_pos), new BlockItem(_beBrokenType, 1), false);
+        managerhub.backpackManager.CreateDropBox(GetIntVector3(_pos), new BlockItem(_beBrokenType, 1), false);
     }
 
 

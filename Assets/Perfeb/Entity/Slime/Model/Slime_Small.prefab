@@ -747,6 +747,7 @@ MonoBehaviour:
     _number: 2
   - _blocktype: 65
     _number: 1
+  DeadRotationDuration: 0.5
 --- !u!114 &5655461878237033926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -836,6 +837,8 @@ MonoBehaviour:
   isSeePlayer: 1
   currentMovingType: 0
   isAggressive: 1
+  TOggle: 0
+  obj: {fileID: 0}
   IdleJumpY: 3
   IdlewaitTimeRange: {x: 2, y: 4}
   IdleMovingProbability: 0.6
@@ -849,12 +852,18 @@ MonoBehaviour:
   FleeMovingProbability: 1
   FleeJumpForceRange: {x: 200, y: 250}
   WalkFleeTimeRange: {x: 10, y: 20}
+  isAIcanAutoJump: 0
+  AutoJump_CheckMaxDistance: 0.3
+  AutoJump_ColdTime: 1
   canWatchPlayer: 0
   visionDistance: 10
   WatchrotateTime: 0.2
+  nodeAcceptanceDistance: 0.25
+  maxNavigationWaitTime: 3
   AI_CanSwiming: 0
   Floating_CheckTime: 0.1
   FloatingForce: 5
+  canAttack: 1
   AttackRangeMultiplier: 1.2
   AttackDamage: 2
   AttackColdTime: 1
@@ -945,6 +954,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyType: 2
   splitRange: {x: 2, y: 4}
+  canBound: 1
   elasticity: 160
   disY: 0.3
 --- !u!1 &2347977520285036761

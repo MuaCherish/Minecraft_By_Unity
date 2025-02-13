@@ -1,10 +1,9 @@
 using Homebrew;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using static MC_UtilityFunctions;
 
 public class ChatManager : MonoBehaviour
 {
@@ -69,7 +68,7 @@ public class ChatManager : MonoBehaviour
         // 按下T键且控制台未激活时才激活控制台
         if (Input.GetKeyDown(KeyCode.T) && !isInputing && !managerhub.player.isSpectatorMode)
         {
-            UsefulFunction.LockMouse(false);
+            LockMouse(false);
 
             ActivateConsole();
             
@@ -79,7 +78,7 @@ public class ChatManager : MonoBehaviour
         // 按下回车键时关闭控制台
         else if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && isInputing)
         {
-            UsefulFunction.LockMouse(true);
+            LockMouse(true);
 
             FinishInput();
             DeactivateConsole();

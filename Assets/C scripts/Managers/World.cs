@@ -5,11 +5,9 @@ using System.IO;
 using System.Threading;
 using UnityEngine;
 using System;
-using UnityEditor;
 using Homebrew;
 using MCEntity;
-using static UnityEditor.PlayerSettings;
-
+using static MC_UtilityFunctions;
 
 
 //全局游戏状态
@@ -126,8 +124,6 @@ public class World : MonoBehaviour
     //玩家
     [Header("Player-玩家脚底坐标")]
     public Transform PlayerFoot;
-    [HideInInspector]
-    public byte ERROR_CODE_OUTOFVOXELMAP = 255;
     public Vector3 Start_Position = new Vector3(1600f, 127f, 1600f);
 
 
@@ -354,7 +350,8 @@ public class World : MonoBehaviour
 
             if (hasExec)
             {
-                UsefulFunction.LockMouse(true);
+                
+                LockMouse(true);
                 hasExec = false;
             }
 
@@ -1766,33 +1763,30 @@ public class World : MonoBehaviour
 
     }
 
-     
-    //返回方块类型:绝对坐标
+
+    /// <summary>
+    /// 返回方块类型,输入的是绝对坐标
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
     public byte GetBlockType(Vector3 pos)
     {
+        //提前返回-找不到区块
+        if (!Allchunks.TryGetValue(GetChunkLocation(pos), out Chunk chunktemp))
+            return 0;
 
-        if(Allchunks.TryGetValue(GetChunkLocation(pos), out Chunk chunktemp))
-        {
-            //提前返回-出界判断
-            if (UsefulFunction.isOutOfChunkRange(pos))
-                return ERROR_CODE_OUTOFVOXELMAP;
+        //提前返回-超过单个区块边界
+        if (isOutOfChunkRange(pos))
+            return 0;
 
-            Vector3 _vec = UsefulFunction.GetRelaPos(pos);
+        //获取相对坐标
+        Vector3 _vec = GetRelaPos(pos);
 
-            byte block_type = chunktemp.GetBlock((int)_vec.x, (int)_vec.y, (int)_vec.z).voxelType;
+        //获取Block类型
+        byte block_type = chunktemp.GetBlock((int)_vec.x, (int)_vec.y, (int)_vec.z).voxelType;
 
-            return block_type;
-
-        }
-        else
-        {
-            //print($"GetBlockType: 坐标 {pos} 所在Chunk不存在");
-            return ERROR_CODE_OUTOFVOXELMAP;
-        }
-
-        
-
-
+        //Return
+        return block_type;
 
     }
 

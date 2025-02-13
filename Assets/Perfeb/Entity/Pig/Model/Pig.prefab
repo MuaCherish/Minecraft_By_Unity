@@ -1724,7 +1724,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5740939535749958476}
-  - component: {fileID: 4825154565482168236}
   - component: {fileID: 1952223949346664962}
   - component: {fileID: 4893529506008096790}
   - component: {fileID: 4520152352091334445}
@@ -1732,8 +1731,8 @@ GameObject:
   - component: {fileID: 7419018121667285968}
   - component: {fileID: 6455224432342325428}
   - component: {fileID: 771901100728194918}
-  - component: {fileID: 2079344973399606110}
   - component: {fileID: 4081042132503203050}
+  - component: {fileID: 2079344973399606110}
   m_Layer: 0
   m_Name: Pig
   m_TagString: Untagged
@@ -1757,18 +1756,6 @@ Transform:
   - {fileID: 3379574863134491635}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4825154565482168236
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6327743673650613013}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff03c1956258d8f47b739a1c9ec48b62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!95 &1952223949346664962
 Animator:
   serializedVersion: 5
@@ -1883,10 +1870,13 @@ MonoBehaviour:
   isSeePlayer: 0
   currentMovingType: 1
   isAggressive: 0
+  WalkToPlayer: 0
   IdleJumpY: 1
   IdlewaitTimeRange: {x: 3, y: 7}
   IdleMovingProbability: 0.6
   IdleJumpForceRange: {x: 100, y: 200}
+  RandomWalk_Steps: 10
+  PrevDirectionProbability: 0.8
   ChaseJumpY: 1
   ChaseJumpForceRange: {x: 180, y: 200}
   ChaseWaitTimeRange: {x: 1, y: 3}
@@ -1896,12 +1886,17 @@ MonoBehaviour:
   FleeMovingProbability: 0.6
   FleeJumpForceRange: {x: 100, y: 200}
   WalkFleeTimeRange: {x: 10, y: 20}
+  isAIcanAutoJump: 1
+  AutoJump_CheckMaxDistance: 1
+  AutoJump_ColdTime: 0.5
   canWatchPlayer: 0
-  visionDistance: 10
+  visionDistance: 2
   WatchrotateTime: 0.2
-  AI_CanSwiming: 1
-  Floating_CheckTime: 0.01
-  FloatingForce: 4
+  nodeAcceptanceDistance: 0.25
+  AI_CanSwiming: 0
+  Floating_CheckTime: 0.1
+  FloatingForce: 10
+  canAttack: 0
   AttackRangeMultiplier: 1.2
   AttackDamage: 3
   AttackColdTime: 0.5
@@ -1955,6 +1950,25 @@ MonoBehaviour:
   isRun: 0
   isAttack: 0
   isDead: 0
+--- !u!114 &4081042132503203050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6327743673650613013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c94e2644df0d52744bf09ab9fde6adb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isInTheWater: 0
+  BeHurtIndex: 29
+  DeathIndex: 29
+  MaxDistanceToHear: 0
+  OtherAudioSources: []
+  hasFootStep: 1
+  FootStep_InterTime: 0.3
 --- !u!114 &2079344973399606110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1984,25 +1998,6 @@ MonoBehaviour:
   Toggle_UpdateBlood: 0
   SetValue: 20
   Toggle_UpdateSetBlood: 0
---- !u!114 &4081042132503203050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6327743673650613013}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c94e2644df0d52744bf09ab9fde6adb3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isInTheWater: 0
-  BeHurtIndex: 29
-  DeathIndex: 29
-  MaxDistanceToHear: 0
-  OtherAudioSources: []
-  hasFootStep: 1
-  FootStep_InterTime: 0.3
 --- !u!1 &6419650046576947683
 GameObject:
   m_ObjectHideFlags: 0

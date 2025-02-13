@@ -1,20 +1,13 @@
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.XR;
-//using static UnityEditor.Progress;
 using System.IO;
 using System.Diagnostics;
-using UnityEngine.EventSystems;
-using System.Reflection;
 using Homebrew;
-using static CommandManager;
-using System.Linq.Expressions;
+using static MC_UtilityFunctions;
 
 public class CanvasManager : MonoBehaviour
 {
@@ -278,7 +271,7 @@ public class CanvasManager : MonoBehaviour
             //print("E 关闭背包");
             CheckSwapBlockAndDropOut();
 
-            UsefulFunction.LockMouse(true);
+            LockMouse(true);
         }
 
 
@@ -530,7 +523,7 @@ public class CanvasManager : MonoBehaviour
                 //其他
                 //HideCursor();
 
-                UsefulFunction.LockMouse(true);
+                LockMouse(true);
             }
 
 
@@ -539,7 +532,7 @@ public class CanvasManager : MonoBehaviour
         //玩家模式
         else if (_TargetID == CanvasData.ui玩家)
         {
-            UsefulFunction.LockMouse(true);
+            LockMouse(true);
 
 
             if (world.game_mode == GameMode.Survival)
@@ -558,7 +551,7 @@ public class CanvasManager : MonoBehaviour
         {
             //Cursor.lockState = CursorLockMode.None;
             //Cursor.visible = true;
-            UsefulFunction.LockMouse(false);
+            LockMouse(false);
         }
 
         //死亡
@@ -566,7 +559,7 @@ public class CanvasManager : MonoBehaviour
         {
             //Cursor.lockState = CursorLockMode.None;
             //Cursor.visible = true;
-            UsefulFunction.LockMouse(false);
+            LockMouse(false);
 
 
             UIManager[_TargetID].childs[0]._object.GetComponent<TextMeshProUGUI>().text = $"分数：{(int)(endTime - startTime)}";
@@ -955,7 +948,7 @@ public class CanvasManager : MonoBehaviour
             if (isPausing == false)
             {
                 isPausing = true;
-                UsefulFunction.LockMouse(false);
+                LockMouse(false);
                 UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_其他界面]._object.SetActive(true);
                 UIManager[CanvasData.ui玩家].childs[_index]._object.SetActive(true);
                 UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_准心]._object.SetActive(false);
@@ -1719,7 +1712,7 @@ public class CanvasManager : MonoBehaviour
                 world.game_state = Game_State.Pause;
 
                 // 解锁鼠标以便在暂停时使用
-                UsefulFunction.LockMouse(false);
+                LockMouse(false);
             }
             // 解除暂停
             else
@@ -1746,7 +1739,7 @@ public class CanvasManager : MonoBehaviour
                 }
 
                 // 重新锁定鼠标
-                UsefulFunction.LockMouse(true);
+                LockMouse(true);
                 world.game_state = Game_State.Playing;
             }
         }
@@ -1758,7 +1751,7 @@ public class CanvasManager : MonoBehaviour
 
         isPausing = !isPausing;
 
-        UsefulFunction.LockMouse(true);
+        MC_UtilityFunctions.LockMouse(true);
 
         SwitchToUI(CanvasData.ui玩家);
         world.game_state = Game_State.Playing;

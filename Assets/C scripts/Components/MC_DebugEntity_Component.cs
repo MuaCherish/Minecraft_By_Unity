@@ -1,8 +1,7 @@
 using Homebrew;
 using MCEntity;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using static MC_UtilityFunctions;
 
 [RequireComponent(typeof(MC_Velocity_Component))]
 public class MC_DebugEntity_Component : MonoBehaviour
@@ -123,20 +122,20 @@ public class MC_DebugEntity_Component : MonoBehaviour
         // 检查输入并设置x和z方向的速度
         if (Input.GetKey(KeyCode.I)) // 向前
         {
-            Velocity_Component.SetVelocity(UsefulFunction.BlockDirection.前, Velocity_Component.speed_move);
+            Velocity_Component.SetVelocity(BlockDirection.前, Velocity_Component.speed_move);
         }
         else if (Input.GetKey(KeyCode.K)) // 向后
         {
-            Velocity_Component.SetVelocity(UsefulFunction.BlockDirection.后, Velocity_Component.speed_move);
+            Velocity_Component.SetVelocity(BlockDirection.后, Velocity_Component.speed_move);
         }
 
         if (Input.GetKey(KeyCode.J)) // 向左
         {
-            Velocity_Component.SetVelocity(UsefulFunction.BlockDirection.左, Velocity_Component.speed_move);
+            Velocity_Component.SetVelocity(BlockDirection.左, Velocity_Component.speed_move);
         }
         else if (Input.GetKey(KeyCode.L)) // 向右
         {
-            Velocity_Component.SetVelocity(UsefulFunction.BlockDirection.右, Velocity_Component.speed_move);
+            Velocity_Component.SetVelocity(BlockDirection.右, Velocity_Component.speed_move);
         }
 
         // 使用RightShift进行跳跃
