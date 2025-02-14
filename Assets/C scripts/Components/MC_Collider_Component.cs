@@ -1021,7 +1021,7 @@ namespace MCEntity
 
             // 将反方向应用到实体的速度组件，X、Y、Z方向
             Velocity_Component.SetVelocity("x", _backDirect.x);
-            Velocity_Component.SetVelocity("y", _backDirect.y);
+            //Velocity_Component.SetVelocity("y", _backDirect.y);
             Velocity_Component.SetVelocity("z", _backDirect.z);
 
         }

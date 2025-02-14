@@ -1870,13 +1870,13 @@ MonoBehaviour:
   isSeePlayer: 0
   currentMovingType: 1
   isAggressive: 0
-  WalkToPlayer: 0
   IdleJumpY: 1
   IdlewaitTimeRange: {x: 3, y: 7}
   IdleMovingProbability: 0.6
   IdleJumpForceRange: {x: 100, y: 200}
-  RandomWalk_Steps: 10
-  PrevDirectionProbability: 0.8
+  IdleWalkWaitTimeRange: {x: 3, y: 20}
+  IdleWalk_RandomWalk_Steps: 10
+  IdleWalk_PrevDirectionProbability: 0.8
   ChaseJumpY: 1
   ChaseJumpForceRange: {x: 180, y: 200}
   ChaseWaitTimeRange: {x: 1, y: 3}
@@ -1886,6 +1886,10 @@ MonoBehaviour:
   FleeMovingProbability: 0.6
   FleeJumpForceRange: {x: 100, y: 200}
   WalkFleeTimeRange: {x: 10, y: 20}
+  WalkFleeSpeed: 5
+  FleeWalkWaitTimeRange: {x: 0, y: 0}
+  FleeWalk_RandomWalk_Steps: 10
+  FleeWalk_PrevDirectionProbability: 0.9
   isAIcanAutoJump: 1
   AutoJump_CheckMaxDistance: 1
   AutoJump_ColdTime: 0.5

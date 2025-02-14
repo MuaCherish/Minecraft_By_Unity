@@ -109,6 +109,13 @@ namespace MCEntity
                 if (world.game_mode != GameMode.Survival)
                     return;
 
+                //提前返回-如果玩家死亡则返回Idle状态
+                if (player.isDead)
+                {
+                    currentState = AIState.Idle;
+                    return;
+                }
+
                 //看到玩家进入追逐状态
                 if (isSeePlayer)
                 {
@@ -295,8 +302,8 @@ namespace MCEntity
 
         [Foldout("Idle/Walk设置", true)]
         [Header("IdleWalk等待时间")] public Vector2 IdleWalkWaitTimeRange = new Vector2(3, 20f);
-        [Header("随机游走-迭代步数")] public int RandomWalk_Steps = 10;
-        [Header("随机游走-遵循上次方向的概率")] public float PrevDirectionProbability = 0.8f;
+        [Header("随机游走-迭代步数")] public int IdleWalk_RandomWalk_Steps = 10;
+        [Header("随机游走-遵循上次方向的概率")] public float IdleWalk_PrevDirectionProbability = 0.8f;
 
         private Vector3 TargetPos;
         bool isReachTargetPos = true;
@@ -322,7 +329,6 @@ namespace MCEntity
             }
         }
 
-
         void Handle_IdleState_WalkType_Wait()
         {
             //一次性函数
@@ -345,8 +351,6 @@ namespace MCEntity
 
         }
 
-
-        
         void Handle_IdleState_WalkType_Moving()
         {
             //一次性函数
@@ -355,9 +359,9 @@ namespace MCEntity
 
                 //获取随机游走函数返回的路径
                 Vector3 _StartPos = transform.position;
-                MC_UtilityFunctions.Algo_RandomWalk(_StartPos, RandomWalk_Steps, PrevDirectionProbability, out List<Vector3> _Result);
+                MC_UtilityFunctions.Algo_RandomWalk(_StartPos, IdleWalk_RandomWalk_Steps, IdleWalk_PrevDirectionProbability, out List<Vector3> _Result);
                 TargetPos = _Result[_Result.Count - 1];
-                EntityMoveTo(TargetPos);
+                EntityMoveTo(TargetPos, Velocity_Component.speed_move);
                 isReachTargetPos = false;
 
                 hasExec_Handle_IdleState_WalkType_Moving = false;
@@ -466,9 +470,25 @@ namespace MCEntity
 
         #region ChaseState / WalkType
 
+
+        bool hasExec_Handle_ChaseState_WalkType_Moving = true;
         void Handle_ChaseState_WalkType()
         {
+            Handle_ChaseState_WalkType_Moving();
+        }
 
+
+        void Handle_ChaseState_WalkType_Moving()
+        {
+            if (hasExec_Handle_ChaseState_WalkType_Moving)
+            {
+
+                //一直追逐玩家
+                EntityMoveTo(player.gameObject, Velocity_Component.speed_move);
+
+                hasExec_Handle_ChaseState_WalkType_Moving = false;
+            }
+            
         }
 
         #endregion
@@ -635,11 +655,77 @@ namespace MCEntity
 
         [Foldout("Flee/Walk设置", true)]
         [Header("逃跑时间")] public Vector2 WalkFleeTimeRange = new Vector2(10f, 20f);
+        [Header("逃跑速度")] public float WalkFleeSpeed = 5f;
+        [Header("Flee/Walk等待时间")] public Vector2 FleeWalkWaitTimeRange = new Vector2(0f, 2f);
+        [Header("随机游走-迭代步数")] public int FleeWalk_RandomWalk_Steps = 10;
+        [Header("随机游走-遵循上次方向的概率")] public float FleeWalk_PrevDirectionProbability = 0.8f;
 
+        bool hasExec_Handle_FleeState_WalkType_Wait = true;
+        bool hasExec_Handle_FleeState_WalkType_Moving = true;
         void Handle_FleeState_WalkType() 
         {
+            switch (current_FleeState)
+            {
+                case FleeState.Wait:
+                    Handle_FleeState_WalkType_Wait();
+                    if (!hasExec_Handle_FleeState_WalkType_Moving)
+                        hasExec_Handle_FleeState_WalkType_Moving = true;
+                    break;
 
+                case FleeState.Moving:
+                    Handle_FleeState_WalkType_Moving();
+                    if (!hasExec_Handle_FleeState_WalkType_Wait)
+                        hasExec_Handle_FleeState_WalkType_Wait = true;
+                    break;
+            }
         }
+
+
+        void Handle_FleeState_WalkType_Wait()
+        {
+            if (hasExec_Handle_FleeState_WalkType_Wait)
+            {
+
+                // 设置随机等待时间
+                waitTime = Random.Range(FleeWalkWaitTimeRange.x, FleeWalkWaitTimeRange.y);
+                waitStartTime = Time.time;  // 记录开始等待的时间
+                isWaiting = true;  // 标记已开始等待
+
+                hasExec_Handle_FleeState_WalkType_Wait = false;
+            }
+
+            // 如果等待时间已到
+            if (Time.time - waitStartTime >= waitTime)
+            {
+                current_FleeState = FleeState.Moving;  // 旋转状态
+                isWaiting = false;
+            }
+        }
+
+        void Handle_FleeState_WalkType_Moving()
+        {
+            if (hasExec_Handle_FleeState_WalkType_Moving)
+            {
+
+                //获取随机游走函数返回的路径
+                Vector3 _StartPos = transform.position;
+                MC_UtilityFunctions.Algo_RandomWalk(_StartPos, FleeWalk_RandomWalk_Steps, FleeWalk_PrevDirectionProbability, out List<Vector3> _Result);
+                TargetPos = _Result[_Result.Count - 1];
+                EntityMoveTo(TargetPos, WalkFleeSpeed);
+                isReachTargetPos = false;
+
+                hasExec_Handle_FleeState_WalkType_Moving = false;
+            }
+
+
+            //While-等待走到目的地
+            if (isReachTargetPos)
+            {
+                //走到目的地
+                current_FleeState = FleeState.Wait;
+            }
+        }
+
 
         #endregion
 
@@ -689,7 +775,7 @@ namespace MCEntity
             }
 
             // 实体触发跳跃，随后进入冷却
-            print("实体跳跃");
+            //print("实体跳跃");
             Velocity_Component.EntityJump();
 
             // 跳跃后开始冷却
@@ -774,31 +860,27 @@ namespace MCEntity
         /// <summary>
         /// 实体移动到目标方向
         /// </summary>
-        void EntityMoveTo(Vector3 _TargetPos)
+        void EntityMoveTo(Vector3 _TargetPos, float _Speed)
         {
-            StartCoroutine(EntityMoveToCoroutine(_TargetPos));
+            StartCoroutine(EntityMoveToCoroutine(_TargetPos, _Speed));
         }
-
-        void EntityMoveTo(GameObject _TargetPos)
-        {
-            StartCoroutine(EntityMoveToCoroutine(_TargetPos));
-        }
-
-        IEnumerator EntityMoveToCoroutine(Vector3 _TargetPos)
+        IEnumerator EntityMoveToCoroutine(Vector3 _TargetPos, float _Speed)
         {
             //预处理
             //Vector3 _currentForward = Velocity_Component.EntityForward.normalized;
             Vector3 _Direct = (_TargetPos - transform.position).normalized;
-            float _Speed = Velocity_Component.speed_move;
             float startTime = 0f;
             float maxNavigationWaitTime = (_TargetPos - transform.position).magnitude / _Speed;
 
             //标记动画组件Walk
             if (Animator_Component != null)
+            {
                 Animator_Component.isWalk = true;
+                Animator_Component.GetComponent<Animator>().speed = 0.7f * _Speed / Velocity_Component.speed_move;
+            }
 
             //Rotation
-            Velocity_Component.EntitySmoothRotation(_Direct, 0.2f);
+            Velocity_Component.EntitySmoothRotation(_Direct, 0.5f);
 
             while (true)
             {
@@ -810,6 +892,12 @@ namespace MCEntity
                     break;
                 }
 
+                //提前返回-如果进入追逐状态则立即停止
+                if (currentState == AIState.Chase)
+                {
+                    yield break;
+                }
+
                 //向Forward移动
                 Velocity_Component.SetVelocity("x", _Direct.x * _Speed);
                 Velocity_Component.SetVelocity("z", _Direct.z * _Speed);
@@ -824,31 +912,45 @@ namespace MCEntity
 
         }
 
-        IEnumerator EntityMoveToCoroutine(GameObject _TargetPos)
+
+        /// <summary>
+        /// 实体移动到目标方向
+        /// </summary>
+        void EntityMoveTo(GameObject _TargetPos, float _Speed)
+        {
+            StartCoroutine(EntityMoveToCoroutine(_TargetPos, _Speed));
+        }
+        IEnumerator EntityMoveToCoroutine(GameObject _TargetPos, float _Speed)
         {
             //预处理
             //Vector3 _currentForward = Velocity_Component.EntityForward.normalized;
-            float _Speed = Velocity_Component.speed_move;
             float startTime = 0f;
             float maxNavigationWaitTime = (_TargetPos.transform.position - transform.position).magnitude / _Speed;
 
             //标记动画组件Walk
             if (Animator_Component != null)
+            {
                 Animator_Component.isWalk = true;
+                Animator_Component.GetComponent<Animator>().speed = 0.7f * _Speed / Velocity_Component.speed_move;
+            }
+
 
             while (true)
             {
                 //提前退出-到达目的地
-                if ((transform.position - _TargetPos.transform.position).magnitude < nodeAcceptanceDistance ||
-                    startTime > maxNavigationWaitTime)  //超时
+                //如果是追逐模式则不进行这些判断
+                if (currentState != AIState.Chase)
                 {
-                    isReachTargetPos = true;
-                    break;
+                    if ((transform.position - _TargetPos.transform.position).magnitude < nodeAcceptanceDistance ||
+                    startTime > maxNavigationWaitTime)  //超时
+                    {
+                        isReachTargetPos = true;
+                        break;
+                    }
                 }
 
-
                 Vector3 _Direct = (_TargetPos.transform.position - transform.position).normalized;
-                Velocity_Component.EntitySmoothRotation(_Direct, 0.2f);
+                Velocity_Component.EntitySmoothRotation(_Direct, 0.5f);
 
                 //向Forward移动
                 Velocity_Component.SetVelocity("x", _Direct.x * _Speed);
@@ -861,7 +963,7 @@ namespace MCEntity
 
             //End
             Animator_Component.isWalk = false;
-
+            hasExec_Handle_ChaseState_WalkType_Moving = true;  //这个不要动
         }
 
 
@@ -898,7 +1000,6 @@ namespace MCEntity
         #region AI攻击
 
         [Foldout("AI攻击", true)]
-        [Header("是否可以攻击")] public bool canAttack = false;
         [Header("攻击范围扩大倍数")] public float AttackRangeMultiplier = 1.2f;
         [Header("攻击伤害值")] public int AttackDamage = 3;
         [Header("攻击冷却")] public float AttackColdTime = 0.5f;
@@ -906,8 +1007,8 @@ namespace MCEntity
 
         void _ReferUpdate_AIAttack()
         {
-            //提前返回-如果不能攻击
-            if (!canAttack)
+            //提前返回-如果没有攻击性
+            if (!isAggressive)
                 return;
 
             // 提前返回-如果不是生存模式

@@ -717,10 +717,13 @@ public class Player : MonoBehaviour
     private void GetPlayerInputs()
     {
 
+        //提前返回-如果玩家死亡，停止键盘输入
+        if (isDead)
+            return;
+
         // 获取当前的输入值
         float currentHorizontalInput = Input.GetAxis("Horizontal");
         float currentVerticalInput = Input.GetAxis("Vertical");
-
 
         // 检查是否有输入
         if (currentHorizontalInput != 0 || currentVerticalInput != 0)
