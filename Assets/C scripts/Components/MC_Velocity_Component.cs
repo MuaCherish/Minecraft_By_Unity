@@ -52,11 +52,11 @@ namespace MCEntity
         #region ÖÜÆÚº¯Êý 
 
         MC_Collider_Component Collider_Component;
-
+        Animator animator;
         private void Awake()
         {
             Collider_Component = GetComponent<MC_Collider_Component>();
-            
+            animator = GetComponent<Animator>();
         }
 
         private void Start()

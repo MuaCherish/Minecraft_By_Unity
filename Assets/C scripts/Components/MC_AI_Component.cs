@@ -12,6 +12,7 @@ namespace MCEntity
     [RequireComponent(typeof(MC_Life_Component))]
     [RequireComponent(typeof(MC_Animator_Component))]
     [RequireComponent(typeof(MC_Registration_Component))]
+    [RequireComponent(typeof(MC_Animator_Component))]
     public class MC_AI_Component : MonoBehaviour
     {
 
@@ -48,9 +49,15 @@ namespace MCEntity
             Collider_Component = GetComponent<MC_Collider_Component>();
             Registration_Component = GetComponent<MC_Registration_Component>();
             Life_Component = GetComponent<MC_Life_Component>();
-            Animator_Component = GetComponent<MC_Animator_Component>();
             world = Collider_Component.managerhub.world;
             player = Collider_Component.managerhub.player;
+            Animator_Component = GetComponent<MC_Animator_Component>();
+        }
+
+        private void Start()
+        {
+            previous_visionDistance = visionDistance;
+            previous_WatchrotateTime = WatchrotateTime;
         }
 
         private void Update()
@@ -179,7 +186,7 @@ namespace MCEntity
 
         void OnIdleState()
         {
-
+            OnIdleState_Update();
             switch (currentMovingType)
             {
                 case AIMovingType.Jump:
@@ -190,6 +197,30 @@ namespace MCEntity
                     Hanle_IdleState_WalkType();
                     break;
 
+            }
+        }
+
+        //更新一些Idle的变量
+        private float previous_visionDistance;
+        private float previous_WatchrotateTime;
+        void OnIdleState_Update()
+        {
+            //提前返回-如果不是Idle状态
+            if (currentState != AIState.Idle)
+                return;
+
+            //AI在等待期间可以注视玩家
+            if (current_IdleState == IdleState.Wait)
+            {
+                canWatchPlayer = true;
+                visionDistance = 3f;
+                WatchrotateTime = 1f;
+            }
+            else
+            {
+                canWatchPlayer = false;
+                visionDistance = previous_visionDistance;
+                WatchrotateTime = previous_WatchrotateTime;
             }
         }
 
@@ -358,7 +389,7 @@ namespace MCEntity
             {
 
                 //获取随机游走函数返回的路径
-                Vector3 _StartPos = transform.position;
+                Vector3 _StartPos = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
                 MC_UtilityFunctions.Algo_RandomWalk(_StartPos, IdleWalk_RandomWalk_Steps, IdleWalk_PrevDirectionProbability, out List<Vector3> _Result);
                 TargetPos = _Result[_Result.Count - 1];
                 EntityMoveTo(TargetPos, Velocity_Component.speed_move);
@@ -504,10 +535,16 @@ namespace MCEntity
         /// </summary>
         public void EntityFlee()
         {
-            //提前返回-如果已经在逃跑
+            // 提前返回 - 如果已经在逃跑中
             if (Corou_FleeTimer != null)
+            {
+                // 重新延长逃跑时间
+                StopCoroutine(Corou_FleeTimer);
+                Corou_FleeTimer = StartCoroutine(FleeTimer(currentFleeTime));
                 return;
+            }
 
+            // 初始逃跑时间
             float _fleeTime = 10f;
             switch (currentMovingType)
             {
@@ -519,25 +556,29 @@ namespace MCEntity
                     break;
             }
 
-            //Start
-            Corou_FleeTimer = StartCoroutine(FleeTimer(_fleeTime));
+            // 设置当前逃跑时间
+            currentFleeTime = _fleeTime;
 
+            // 启动逃跑计时器
+            Corou_FleeTimer = StartCoroutine(FleeTimer(currentFleeTime));
         }
 
         Coroutine Corou_FleeTimer;
+        float currentFleeTime;
+
         IEnumerator FleeTimer(float _fleeTime)
         {
             currentState = AIState.Flee;
             yield return new WaitForSeconds(_fleeTime);
 
-            //End
-            if (currentState == AIState.Flee)  //如果是Chase状态则不用动他
+            // 逃跑结束
+            if (currentState == AIState.Flee)
             {
                 currentState = AIState.Idle;
                 Corou_FleeTimer = null;
             }
-
         }
+
 
 
         void OnFleeState()
@@ -708,7 +749,7 @@ namespace MCEntity
             {
 
                 //获取随机游走函数返回的路径
-                Vector3 _StartPos = transform.position;
+                Vector3 _StartPos = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
                 MC_UtilityFunctions.Algo_RandomWalk(_StartPos, FleeWalk_RandomWalk_Steps, FleeWalk_PrevDirectionProbability, out List<Vector3> _Result);
                 TargetPos = _Result[_Result.Count - 1];
                 EntityMoveTo(TargetPos, WalkFleeSpeed);
@@ -743,9 +784,9 @@ namespace MCEntity
         #region AI自动跳跃
 
         [Foldout("AI自动跳跃", true)]
-        [Header("AI是否会自动跳跃")] public bool isAIcanAutoJump;
-        [Header("前进距离检测阈值")] public float AutoJump_CheckMaxDistance = 0.3f;
-        [Header("自动跳跃冷却时间")] public float AutoJump_ColdTime = 1f; private float AutoJumpTimer = 0f;
+        [Header("AI是否会自动跳跃")] public bool isAIcanAutoJump = true;
+        [Header("前进距离检测阈值")] public float AutoJump_CheckMaxDistance = 1;
+        [Header("自动跳跃冷却时间")] public float AutoJump_ColdTime = 0.5f; private float AutoJumpTimer = 0f;
 
         void _ReferUpdate_AutoJump()
         {
@@ -855,7 +896,7 @@ namespace MCEntity
         #region AI运动
 
         [Foldout("AI运动", true)]
-        [Header("到达中间节点的距离误差")] public float nodeAcceptanceDistance = 0.25f;
+        [Header("到达中间节点的距离误差")] public float nodeAcceptanceDistance = 1f;
 
         /// <summary>
         /// 实体移动到目标方向
@@ -873,14 +914,9 @@ namespace MCEntity
             float maxNavigationWaitTime = (_TargetPos - transform.position).magnitude / _Speed;
 
             //标记动画组件Walk
-            if (Animator_Component != null)
-            {
-                Animator_Component.isWalk = true;
-                Animator_Component.GetComponent<Animator>().speed = 0.7f * _Speed / Velocity_Component.speed_move;
-            }
-
-            //Rotation
-            Velocity_Component.EntitySmoothRotation(_Direct, 0.5f);
+            if (Animator_Component != null && Animator_Component.CanWalk)
+                Animator_Component.SetSpeed(_Speed);
+            
 
             while (true)
             {
@@ -893,7 +929,7 @@ namespace MCEntity
                 }
 
                 //提前返回-如果进入追逐状态则立即停止
-                if (currentState == AIState.Chase)
+                if (currentState == AIState.Chase || Debug_PauseAI)
                 {
                     yield break;
                 }
@@ -902,19 +938,18 @@ namespace MCEntity
                 Velocity_Component.SetVelocity("x", _Direct.x * _Speed);
                 Velocity_Component.SetVelocity("z", _Direct.z * _Speed);
 
+                //Rotation
+                _Direct = (_TargetPos - transform.position).normalized;
+                Velocity_Component.EntitySmoothRotation(_Direct, 0.2f);
+
                 //end
                 startTime += Time.deltaTime;
                 yield return null;
             }
-
-            //End
-            Animator_Component.isWalk = false;
-
         }
 
-
         /// <summary>
-        /// 实体移动到目标方向
+        /// 实体追踪玩家
         /// </summary>
         void EntityMoveTo(GameObject _TargetPos, float _Speed)
         {
@@ -928,18 +963,15 @@ namespace MCEntity
             float maxNavigationWaitTime = (_TargetPos.transform.position - transform.position).magnitude / _Speed;
 
             //标记动画组件Walk
-            if (Animator_Component != null)
-            {
-                Animator_Component.isWalk = true;
-                Animator_Component.GetComponent<Animator>().speed = 0.7f * _Speed / Velocity_Component.speed_move;
-            }
+            if (Animator_Component != null && Animator_Component.CanWalk)
+                Animator_Component.SetSpeed(_Speed);
 
 
             while (true)
             {
                 //提前退出-到达目的地
                 //如果是追逐模式则不进行这些判断
-                if (currentState != AIState.Chase)
+                if (currentState != AIState.Chase || Debug_PauseAI)
                 {
                     if ((transform.position - _TargetPos.transform.position).magnitude < nodeAcceptanceDistance ||
                     startTime > maxNavigationWaitTime)  //超时
@@ -962,10 +994,8 @@ namespace MCEntity
             }
 
             //End
-            Animator_Component.isWalk = false;
             hasExec_Handle_ChaseState_WalkType_Moving = true;  //这个不要动
         }
-
 
         #endregion
 
@@ -1040,6 +1070,9 @@ namespace MCEntity
                 hitVec.y = 1f;
                 player.ForceMoving(hitVec, 2.5f, 0.2f);
                 Collider_Component.managerhub.lifeManager.UpdatePlayerBlood(AttackDamage, true, true);
+
+                if (Animator_Component != null && Animator_Component.CanAttack)
+                    Animator_Component.PlayAttackAnimation();
             }
         }
 
@@ -1059,6 +1092,9 @@ namespace MCEntity
 
         void OnDrawGizmos()
         {
+            //不绘制
+            if (world == null || world.game_state != Game_State.Playing)
+                return;
 
             //提前返回-如果没有开debug
             if (!Debug_DrawRay)

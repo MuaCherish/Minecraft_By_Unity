@@ -7,19 +7,9 @@ using UnityEngine;
 
 [RequireComponent(typeof(MC_Collider_Component))]
 [RequireComponent(typeof(MC_Velocity_Component))]
+[RequireComponent(typeof(MC_AI_Component))]
 public class MC_Animator_Component : MonoBehaviour
 {
-
-    #region 状态
-
-    [Foldout("动画状态", true)]
-    [Header("走路")] public bool isWalk;
-    [Header("奔跑")] public bool isRun;
-    [Header("攻击")] public bool isAttack;
-    [Header("死亡")] public bool isDead;
-
-
-    #endregion
 
 
     #region 周期函数
@@ -37,6 +27,11 @@ public class MC_Animator_Component : MonoBehaviour
         Velocity_Component = GetComponent<MC_Velocity_Component>();
     }
 
+    private void Start()
+    {
+        previous_speed = animator.speed;
+    }
+
     void Update()
     {
         switch (world.game_state)
@@ -51,8 +46,7 @@ public class MC_Animator_Component : MonoBehaviour
     void Handle_GameState_Playing()
     {
 
-        _ReferUpdate_ActiveAnimation();
-        _ReferUpdate_PassiveAnimation();
+        _ReferUpdate_AutoWalk();
 
     }
 
@@ -60,71 +54,52 @@ public class MC_Animator_Component : MonoBehaviour
     #endregion
 
 
-    #region 被动动画
+    #region 设置
 
-    void _ReferUpdate_PassiveAnimation()
+    [Foldout("动画设置", true)]
+    [Header("拥有行走动画")] public bool CanWalk;
+    [Header("拥有攻击动画")] public bool CanAttack;
+
+
+    #endregion
+
+
+    #region Auto-Walk
+
+    /// <summary>
+    /// 设置动画速度
+    /// </summary>
+    /// <param name="_currentSpeed"></param>
+    private float previous_speed;
+    public void SetSpeed(float _currentSpeed)
     {
-        //isWalk
-        if (isWalk && HasAttackParam("isWalk"))
-            animator.SetBool("isWalk", true);
-        else
-            animator.SetBool("isWalk", false);
-
-        //isRun
-        if (isRun && HasAttackParam("isRun"))
-            animator.SetBool("isRun", true);
-        else
-            animator.SetBool("isRun", false);
-
-        //isAttack
-        if (isAttack && HasAttackParam("isAttack"))
-            animator.SetBool("isAttack", true);
-        else
-            animator.SetBool("isAttack", false);
-
-        //isDead
-        if (isDead && HasAttackParam("isDead"))
-            animator.SetBool("isDead", true);
-
-
+        animator.speed = previous_speed * _currentSpeed / Velocity_Component.speed_move;
     }
 
-    #endregion
 
-
-    #region 主动动画
-
-    void _ReferUpdate_ActiveAnimation()
+    void _ReferUpdate_AutoWalk()
     {
         if (Velocity_Component.isMoving)
         {
-            isWalk = true;
+            animator.SetBool("isWalk", true);
         }
         else
         {
-            isWalk = false;
+            animator.SetBool("isWalk", false);
         }
     }
 
     #endregion
 
 
-    #region Tool
+    #region Auto-Attack
 
-    bool HasAttackParam(string _para)
+    public void PlayAttackAnimation()
     {
-        foreach (var param in animator.parameters)
-        {
-            if (param.name == _para && param.type == AnimatorControllerParameterType.Bool)
-            {
-                return true; // 找到名为 isAttack 的布尔类型参数
-            }
-        }
-        return false; // 没有找到
+        animator.SetTrigger("isAttack");
     }
 
 
     #endregion
-
 
 }

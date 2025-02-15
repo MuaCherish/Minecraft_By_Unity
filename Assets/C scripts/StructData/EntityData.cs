@@ -32,6 +32,8 @@ public static class EntityData
     public static readonly int Slime_Big = 2;
     public static readonly int TNT = 3;
     public static readonly int Pig = 4;
+    public static readonly int Sheep = 5;
+    public static readonly int Zombie = 6;
 
     //实体寻路的邻接节点
     public static readonly Vector3[] NearNodes = new Vector3[24]

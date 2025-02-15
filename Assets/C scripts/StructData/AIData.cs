@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SerializeField]
+//AIState
 public enum AIState
 {
     Idle,
@@ -10,14 +10,14 @@ public enum AIState
     Flee,
 }
 
-[SerializeField]
+//移动方式
 public enum AIMovingType
 {
     Jump,
     Walk,
 }
 
-[SerializeField]
+//AIState-Idle子状态
 public enum IdleState
 {
     Wait,
@@ -25,14 +25,14 @@ public enum IdleState
     Moving,
 }
 
-[SerializeField]
+//AIState-Chase子状态
 public enum ChaseState
 {
     Wait,
     Moving,
 }
 
-[SerializeField]
+//AIState-Flee子状态
 public enum FleeState
 {
     Wait,
