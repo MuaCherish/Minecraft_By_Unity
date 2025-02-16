@@ -26,7 +26,7 @@ namespace MCEntity
         #endregion
 
 
-        #region 生命周期函数
+        #region 生命周期
 
         MC_Velocity_Component Velocity_Component;
         private ManagerHub _managerhub;
@@ -48,6 +48,8 @@ namespace MCEntity
         {
             Velocity_Component = GetComponent<MC_Velocity_Component>();
             world = managerhub.world;
+
+            _ReferAwake_AutoGetModel();
         }
 
 
@@ -778,6 +780,40 @@ namespace MCEntity
         #endregion
 
 
+        #region 实体身体结构
+
+        [Foldout("(可隐藏)实体身体结构", true)]
+        [Header("模型(头+身的父类)")] public GameObject Model; //只用于死亡动画
+        [Header("头部")] public GameObject Head;
+        [Header("身体(除了头都是身体)")] public GameObject Body;
+
+
+        //自动获取身体结构
+        void _ReferAwake_AutoGetModel()
+        {
+            Model = transform.Find("Model").gameObject;
+            Head = transform.Find("Model/Head").gameObject;
+            Body = transform.Find("Model/Body").gameObject;
+            MC_Registration_Component Registration_Component = GetComponent<MC_Registration_Component>();
+            EntityInfo _info = new EntityInfo(-1, "Unknown Entity", null);
+
+            if (Registration_Component != null)
+                _info = Registration_Component.GetEntityId();
+
+            if (Model == null)
+                print($"Model搜索不到, id:{_info._id}, name:{_info._name}");
+
+            if (Head == null)
+                print($"Head搜索不到, id:{_info._id}, name:{_info._name}");
+
+            if (Body == null)
+                print($"Body搜索不到, id:{_info._id}, name:{_info._name}");
+        }
+
+
+        #endregion
+
+
         #region 暂时关闭碰撞检测
 
 
@@ -988,11 +1024,11 @@ namespace MCEntity
 
             // 获取范围内的实体，如果没有则提前返回
             float _maxR = Mathf.Max(hitBoxWidth, hitBoxHeight);
-            if (!world.GetOverlapSphereEntity(transform.position, _maxR, GetComponent<MC_Registration_Component>().EntityID, out List<EntityStruct> _entities))
+            if (!world.GetOverlapSphereEntity(transform.position, _maxR, GetComponent<MC_Registration_Component>().GetEntityId()._id, out List<EntityInfo> _entities))
                 return;
 
             // 进一步过滤，剔除没有和自己重叠的实体
-            List<EntityStruct> overlappingEntities = new List<EntityStruct>();
+            List<EntityInfo> overlappingEntities = new List<EntityInfo>();
             foreach (var item in _entities)
             {
                 bool a = CheckHitBox(this, item._obj.GetComponent<MC_Collider_Component>());
@@ -1214,8 +1250,22 @@ namespace MCEntity
 
 
 
-        
 
+
+
+        #endregion
+
+
+        #region 获取方向
+
+        //实体面朝方向
+        public Vector3 EntityFaceForward
+        {
+            get
+            {
+                return Head.transform.forward;
+            }
+        }
 
         #endregion
 

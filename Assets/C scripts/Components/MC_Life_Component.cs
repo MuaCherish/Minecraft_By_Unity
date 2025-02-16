@@ -41,8 +41,9 @@ namespace MCEntity
             AI_Component = GetComponent<MC_AI_Component>();
             world = Collider_Component.managerhub.world;
             Registration_Component = GetComponent<MC_Registration_Component>();
-            _ReferAwake_CreateMaterialInstance();
             managerhub = Collider_Component.managerhub;
+
+            _ReferAwake_GetAllRenderersAndCreateMaterialInstance();
         }
 
 
@@ -52,6 +53,7 @@ namespace MCEntity
             {
                 originalColor = EntityMat.color; // 获取材质的原始颜色
             }
+
         }
 
 
@@ -76,23 +78,59 @@ namespace MCEntity
 
         //创建材质实例
         [Foldout("材质实例", true)]
-        [Header("渲染器")] public Renderer[] Renderers;
+        [Header("(注意渲染器会选择第一个捕获的渲染器的材质作为材质实例\n如果有透明皮肤的实体需要注意)")]
+        [Header("受伤渲染器")] public Renderer[] hurtRenderers;
+        [Header("受伤颜色")] public Color Color_BeHurt = new Color(220 / 255f, 81 / 255f, 136 / 255f, 1f);
         [Header("水中颜色")] public Color Color_UnderWater = new Color(0x5B / 255f, 0x5B / 255f, 0x5B / 255f, 1f); private Color save_Color;
         [Header("被挤压颜色")] public Color Color_UnderBlock = new Color(0x00 / 255f, 0x00 / 255f, 0x00 / 255f, 1f);
         private Material EntityMat;
 
-        void _ReferAwake_CreateMaterialInstance()
+        //获取旗下子类的所有Renderer
+        //并为他们创建材质实例
+        void _ReferAwake_GetAllRenderersAndCreateMaterialInstance()
         {
-            EntityMat = new Material(Renderers[0].sharedMaterial);
+            //找到所有渲染器
+            if(hurtRenderers.Length == 0)
+            {
+                // 用一个 List 来存储所有的 Renderer，方便处理
+                List<Renderer> renderersList = new List<Renderer>();
+
+                // 递归遍历当前对象和所有子对象
+                Stack<Transform> stack = new Stack<Transform>();
+                stack.Push(transform);
+
+                while (stack.Count > 0)
+                {
+                    Transform current = stack.Pop();
+
+                    // 获取当前对象的 Renderer 组件
+                    Renderer[] renderers = current.GetComponents<Renderer>();
+                    renderersList.AddRange(renderers);
+
+                    // 将所有子对象压入栈中，递归遍历
+                    foreach (Transform child in current)
+                    {
+                        stack.Push(child);
+                    }
+                }
+
+                // 将获取的 Renderer 转换为数组并存储到 Renderers
+                hurtRenderers = renderersList.ToArray();
+            }
+
             
+
+            //创建材质实例
+            EntityMat = new Material(hurtRenderers[0].sharedMaterial);
+
             save_Color = EntityMat.color;
 
-            foreach (var item in Renderers)
+            foreach (var item in hurtRenderers)
             {
                 item.material = EntityMat;
             }
-
         }
+
 
         void _ReferUpdate_IntheWaterBeBlack()
         {
@@ -135,8 +173,6 @@ namespace MCEntity
         [Foldout("生命值设置", true)]
         [Header("实体生命值")] public int EntityBlood = 20;
         [Header("受伤持续时间")] public float Hurt_ElapseTime = 0.3f;
-        [Header("受伤力度")] public float Hurt_Force = 35f;
-        [Header("蒸汽粒子")] public GameObject Evaporation_Particle;
         private Color originalColor; // 保存材质的原始颜色
 
         /// <summary>
@@ -157,8 +193,8 @@ namespace MCEntity
                 Handle_Hurt(_hutyDirect);
 
 
-            //如果没有攻击性，则会开始逃跑
-            if (AI_Component.isAggressive == false)
+            //如果没有攻击性且可以逃跑则会开始逃跑
+            if (!AI_Component.isAggressive && AI_Component.EntityCanFlee)
                 AI_Component.EntityFlee();
 
 
@@ -182,7 +218,7 @@ namespace MCEntity
 
             //强制位移
             if (_hurtDirect != Vector3.zero)
-                Velocity_Component.AddForce(_hurtDirect, Hurt_Force);
+                Velocity_Component.AddForce(_hurtDirect, Velocity_Component.force_hurt);
 
         }
 
@@ -197,7 +233,7 @@ namespace MCEntity
         IEnumerator ChangeColorCoroutine()
         {
             // 将材质颜色变为红色
-            EntityMat.color = Color.red;
+            EntityMat.color = Color_BeHurt;
 
             // 等待1秒
             yield return new WaitForSeconds(Hurt_ElapseTime);

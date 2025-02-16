@@ -64,7 +64,7 @@ public class MC_Music_Component : MonoBehaviour
     [Header("死亡音效下标")] public int DeathIndex = 28; //默认为苦力怕音效
 
     [Foldout("播放器参数", true)]
-    [Header("玩家可听到的最远距离")] public float MaxDistanceToHear;
+    [Header("玩家可听到的最远距离")] public float MaxDistanceToHear = 8f;
 
     //其他播放器
     [Foldout("更多播放器设置", true)]

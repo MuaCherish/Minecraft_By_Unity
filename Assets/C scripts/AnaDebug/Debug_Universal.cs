@@ -19,7 +19,7 @@ public class Debug_Universal : MonoBehaviour
         if (TargetObj == null)
             return;
 
-        if (world.GetOverlapSphereEntity(TargetObj.transform.position, Radius, out List<EntityStruct> entities))
+        if (world.GetOverlapSphereEntity(TargetObj.transform.position, Radius, out List<EntityInfo> entities))
         {
             isFindEntity = true;
             EntityNumber = entities.Count;

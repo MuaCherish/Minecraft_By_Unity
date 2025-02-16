@@ -26,7 +26,7 @@ public static class EntityData
     public static readonly float MinYtoRemoveEntity = -20f;
 
 
-    //生物类型
+    //生物类型---添加生物的时候需要完成实体姓名列表
     public static readonly int Slime_Small = 0;
     public static readonly int Slime_Medium = 1;
     public static readonly int Slime_Big = 2;
@@ -34,6 +34,34 @@ public static class EntityData
     public static readonly int Pig = 4;
     public static readonly int Sheep = 5;
     public static readonly int Zombie = 6;
+    public static readonly int Alex = 7;
+
+    //实体姓名列表
+    public static string GetEntityName(int entityId)
+    {
+        switch (entityId)
+        {
+            case 0:
+                return "Slime_Small";
+            case 1:
+                return "Slime_Medium";
+            case 2:
+                return "Slime_Big";
+            case 3:
+                return "TNT";
+            case 4:
+                return "Pig";
+            case 5:
+                return "Sheep";
+            case 6:
+                return "Zombie";
+            case 7:
+                return "Alex";
+            default:
+                return "Unknown Entity"; // 默认返回值，处理非法输入
+        }
+    }
+
 
     //实体寻路的邻接节点
     public static readonly Vector3[] NearNodes = new Vector3[24]
@@ -69,19 +97,22 @@ public static class EntityData
         new Vector3(-1.0f, -1f, 1.0f),  //NorthWest
     };
 
+
 }
 
 
 //实体类
 [Serializable]
-public class EntityStruct
+public class EntityInfo
 {
     public int _id = -1;
+    public string _name;
     public GameObject _obj = null;
 
-    public EntityStruct(int _id, GameObject _obj)
+    public EntityInfo(int _id, string _name, GameObject _obj) 
     {
         this._id = _id;
+        this._name = _name;
         this._obj = _obj;
     }
 }

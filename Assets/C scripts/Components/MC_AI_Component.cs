@@ -9,10 +9,7 @@ namespace MCEntity
 
     [RequireComponent(typeof(MC_Velocity_Component))]
     [RequireComponent(typeof(MC_Collider_Component))]
-    [RequireComponent(typeof(MC_Life_Component))]
-    [RequireComponent(typeof(MC_Animator_Component))]
     [RequireComponent(typeof(MC_Registration_Component))]
-    [RequireComponent(typeof(MC_Animator_Component))]
     public class MC_AI_Component : MonoBehaviour
     {
 
@@ -99,7 +96,7 @@ namespace MCEntity
         void _ReferUpdate_AIState_Controller()
         {
             //提前返回-如果实体已经死亡
-            if (Life_Component.isEntity_Dead)
+            if (Life_Component != null && Life_Component.isEntity_Dead)
                 return;
 
             AutoUpdateAIState();
@@ -142,7 +139,7 @@ namespace MCEntity
         {
 
             //提前返回-暂停AI活动
-            if (Debug_PauseAI)
+            if (Debug_PauseAI || Life_Component.isEntity_Dead)
                 return;
 
             switch (currentState)
@@ -154,6 +151,8 @@ namespace MCEntity
                     if (current_ChaseState != ChaseState.Wait)
                         current_ChaseState = ChaseState.Wait;
                     //Flee
+                    if (current_FleeState != FleeState.Wait)
+                        current_FleeState = FleeState.Wait;
 
                     break;
 
@@ -164,7 +163,8 @@ namespace MCEntity
                     if (current_IdleState != IdleState.Wait)
                         current_IdleState = IdleState.Wait;
                     //Flee
-
+                    if (current_FleeState != FleeState.Wait)
+                        current_FleeState = FleeState.Wait;
                     break;
 
                 case AIState.Flee:
@@ -176,7 +176,7 @@ namespace MCEntity
                     //Chase
                     if (current_ChaseState != ChaseState.Wait)
                         current_ChaseState = ChaseState.Wait;
-
+                    
                     break;
             }
         }
@@ -209,19 +209,7 @@ namespace MCEntity
             if (currentState != AIState.Idle)
                 return;
 
-            //AI在等待期间可以注视玩家
-            if (current_IdleState == IdleState.Wait)
-            {
-                canWatchPlayer = true;
-                visionDistance = 3f;
-                WatchrotateTime = 1f;
-            }
-            else
-            {
-                canWatchPlayer = false;
-                visionDistance = previous_visionDistance;
-                WatchrotateTime = previous_WatchrotateTime;
-            }
+            _AutoWatchToPlayer();
         }
 
 
@@ -284,7 +272,7 @@ namespace MCEntity
         void Handle_IdleState_JumpType_Rotate()
         {
             // 计算当前方向与目标方向的角度差（仅在XZ平面旋转）
-            Vector3 currentForward = Velocity_Component.EntityForward;
+            Vector3 currentForward = Collider_Component.EntityFaceForward;
             currentForward.y = 0;  // 保持y轴为0，确保只在XZ平面计算
             float angle = Vector3.SignedAngle(currentForward, targetDirection, Vector3.up);  // 计算角度差
 
@@ -530,11 +518,18 @@ namespace MCEntity
 
         #region FleeState
 
+        [Foldout("Flee总设置", true)]
+        [Header("实体是否会逃跑")] public bool EntityCanFlee = true;
+
         /// <summary>
         /// AI逃跑，这个是有时间限制的
         /// </summary>
         public void EntityFlee()
         {
+            //提前返回-如果暂停AI行为
+            if (Debug_PauseAI)
+                return;
+
             // 提前返回 - 如果已经在逃跑中
             if (Corou_FleeTimer != null)
             {
@@ -578,8 +573,6 @@ namespace MCEntity
                 Corou_FleeTimer = null;
             }
         }
-
-
 
         void OnFleeState()
         {
@@ -652,7 +645,7 @@ namespace MCEntity
         void Handle_FleeState_JumpType_Rotate()
         {
             // 计算当前方向与目标方向的角度差（仅在XZ平面旋转）
-            Vector3 currentForward = Velocity_Component.EntityForward;
+            Vector3 currentForward = Collider_Component.EntityFaceForward;
             currentForward.y = 0;  // 保持y轴为0，确保只在XZ平面计算
             float angle = Vector3.SignedAngle(currentForward, targetDirection, Vector3.up);  // 计算角度差
 
@@ -800,8 +793,8 @@ namespace MCEntity
 
             // 向腿的正前方发射射线
             Vector3 _Origin = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
-            Vector3 _Direct = Velocity_Component.EntityForward;
-            RayCastStruct _RayCast = player.NewRayCast(_Origin, _Direct, AutoJump_CheckMaxDistance, Registration_Component.GetEntityId());
+            Vector3 _Direct = Collider_Component.EntityFaceForward;
+            RayCastStruct _RayCast = player.NewRayCast(_Origin, _Direct, AutoJump_CheckMaxDistance, Registration_Component.GetEntityId()._id);
             //print(_RayCast);
 
             // 如果没检测到方块则返回
@@ -829,10 +822,14 @@ namespace MCEntity
 
         #region AI视觉
 
-        [Foldout("AI视觉", true)]
+        [Foldout("AI视觉-警戒视力", true)]
         [Header("是否会注视玩家")] public bool canWatchPlayer;
         [Header("视力范围")] public float visionDistance = 10f;
         [Header("多久转一次头")] public float WatchrotateTime = 0.2f;
+
+        [Foldout("AI视觉-注视视力", true)]
+        [Header("注视的视力范围")] public float WatchvisionDistance = 3f;
+        [Header("注视的转向时间")] public float WatchPLayerrotateTime = 0.4f;
         private float WatchTimer = 0f;
 
         void _ReferUpdate_VisionSystem()
@@ -844,7 +841,7 @@ namespace MCEntity
             {
                 // 每帧进行射线检测，更新 isSeePlayer 状态
                 Vector3 _direct = player.cam.transform.position - Collider_Component.EyesPoint;
-                RayCastStruct _rayCast = player.NewRayCast(Collider_Component.EyesPoint, _direct, _dis, Registration_Component.GetEntityId());
+                RayCastStruct _rayCast = player.NewRayCast(Collider_Component.EyesPoint, _direct, _dis, Registration_Component.GetEntityId()._id);
 
                 // 被墙挡着则看不见
                 if (_rayCast.isHit == 1)
@@ -889,6 +886,26 @@ namespace MCEntity
             WatchTimer = 0f;
         }
 
+
+        void _AutoWatchToPlayer()
+        {
+            //提前返回-如果是生存模式且具备攻击性则跳过
+            if (world.game_mode == GameMode.Survival && isAggressive)
+                return;
+
+            //提前返回-如果不是Idle-Wait阶段
+            if(current_IdleState != IdleState.Wait)
+            {
+                canWatchPlayer = false;
+                visionDistance = previous_visionDistance;
+                WatchrotateTime = previous_WatchrotateTime;
+            }
+
+            //AI在等待期间可以注视玩家
+            canWatchPlayer = true;
+            visionDistance = WatchvisionDistance;
+            WatchrotateTime = WatchPLayerrotateTime;
+        }
 
         #endregion
 
@@ -1030,14 +1047,14 @@ namespace MCEntity
         #region AI攻击
 
         [Foldout("AI攻击", true)]
-        [Header("攻击范围扩大倍数")] public float AttackRangeMultiplier = 1.2f;
+        [Header("攻击范围扩大倍数(x为宽度,y为高度)")] public Vector2 AttackRangeMultiplier = new Vector2(1.2f, 1.2f);
         [Header("攻击伤害值")] public int AttackDamage = 3;
-        [Header("攻击冷却")] public float AttackColdTime = 0.5f;
+        [Header("攻击冷却")] public float AttackColdTime = 1f;
         private float lastAttackTime = 0f;  // 记录上次攻击时间
 
         void _ReferUpdate_AIAttack()
         {
-            //提前返回-如果没有攻击性
+            // 提前返回-如果没有攻击性
             if (!isAggressive)
                 return;
 
@@ -1050,31 +1067,33 @@ namespace MCEntity
                 return;
 
             // 提前返回-实体与玩家离得太远了
-            float _dis = (transform.position - player.transform.position).magnitude;
-            float _maxDis = Mathf.Abs(Collider_Component.hitBoxWidth - player.playerWidth);
-            if (_dis > _maxDis)
-                return;
+            //float _dis = (transform.position - player.transform.position).magnitude;
+            //float _maxDis = Mathf.Abs(Collider_Component.hitBoxWidth - player.playerWidth);
+            //if (_dis > _maxDis)
+            //    return;
 
-            // 检查是否处于冷却状态，如果冷却时间还没到，就不攻击
-            if (Time.time - lastAttackTime < AttackColdTime)
-                return;
+            // 每帧检测玩家是否在攻击范围内
+            Vector3 hitVec = player.CheckHitBox(transform.position, Collider_Component.hitBoxWidth * AttackRangeMultiplier.x, Collider_Component.hitBoxHeight * AttackRangeMultiplier.y);
 
-            // 更新最后一次攻击时间
-            lastAttackTime = Time.time;
-
-            // 检测实体与玩家的碰撞盒，并予以玩家伤害
-            Vector3 hitVec = player.CheckHitBox(transform.position, Collider_Component.hitBoxWidth * AttackRangeMultiplier, Collider_Component.hitBoxHeight * AttackRangeMultiplier);
-            if (hitVec != Vector3.zero)
+            if (hitVec != Vector3.zero && Time.time - lastAttackTime >= AttackColdTime)
             {
-                //print("成功打到玩家");
-                hitVec.y = 1f;
+                // 如果检测到碰撞且冷却时间已过，则执行攻击
+                lastAttackTime = Time.time; // 更新攻击时间
+
+                // 处理玩家移动和伤害
+                hitVec.y = 1f; // 确保攻击方向适当
                 player.ForceMoving(hitVec, 2.5f, 0.2f);
                 Collider_Component.managerhub.lifeManager.UpdatePlayerBlood(AttackDamage, true, true);
 
-                if (Animator_Component != null && Animator_Component.CanAttack)
+                // 播放攻击动画
+                if (Animator_Component != null)
                     Animator_Component.PlayAttackAnimation();
+
+                // 打印攻击信息（可选）
+                // print("成功打到玩家");
             }
         }
+
 
 
         #endregion
@@ -1089,6 +1108,14 @@ namespace MCEntity
         [Foldout("Debug", true)]
         [Header("显示调试射线")] public bool Debug_DrawRay;
         [Header("暂停Ai活动")] public bool Debug_PauseAI;
+
+        /// <summary>
+        /// 暂停AI行为
+        /// </summary>
+        public void PauseAI(bool _bool)
+        {
+            Debug_PauseAI = _bool;
+        }
 
         void OnDrawGizmos()
         {
@@ -1135,8 +1162,8 @@ namespace MCEntity
             //攻击范围调试
             if (currentState == AIState.Chase)
             {
-                float _width = Collider_Component.hitBoxWidth * AttackRangeMultiplier;
-                float _height = Collider_Component.hitBoxHeight * AttackRangeMultiplier;
+                float _width = Collider_Component.hitBoxWidth * AttackRangeMultiplier.x;
+                float _height = Collider_Component.hitBoxHeight * AttackRangeMultiplier.y;
                 Gizmos.color = Color.red;
                 Gizmos.DrawWireCube(transform.position, new Vector3(_width, _height, _width));
             }

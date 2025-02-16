@@ -79,6 +79,11 @@ public class MC_Animator_Component : MonoBehaviour
 
     void _ReferUpdate_AutoWalk()
     {
+
+        //提前返回-如果可以走路
+        if (!CanWalk)
+            return;
+
         if (Velocity_Component.isMoving)
         {
             animator.SetBool("isWalk", true);
@@ -92,10 +97,14 @@ public class MC_Animator_Component : MonoBehaviour
     #endregion
 
 
-    #region Auto-Attack
+    #region Attack
 
     public void PlayAttackAnimation()
     {
+        //提前返回-如果不能攻击
+        if (!CanAttack)
+            return;
+
         animator.SetTrigger("isAttack");
     }
 

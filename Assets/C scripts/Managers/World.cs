@@ -8,6 +8,7 @@ using System;
 using Homebrew;
 using MCEntity;
 using static MC_UtilityFunctions;
+using System.Xml.Linq;
 
 
 //全局游戏状态
@@ -2701,7 +2702,7 @@ public class World : MonoBehaviour
     [Header("实体父类")] public GameObject Entity_Parent;
     [Header("蒸汽粒子")] public GameObject Evaporation_Particle;
     [Header("实体预制体")] public GameObject[] Entity_Prefeb;
-    [Header("活着的所有实体")] public List<EntityStruct> AllEntity = new List<EntityStruct>();
+    [Header("活着的所有实体")] public List<EntityInfo> AllEntity = new List<EntityInfo>();
     [Header("最大实体数量")][SerializeField] private int maxSize = 100; // 默认值为100，可在Inspector中调整
     private int Unique_Id = 0; // 用于生成新的唯一ID
 
@@ -2744,7 +2745,7 @@ public class World : MonoBehaviour
     /// <param name="_index">需要添加的预制体的下标</param>
     /// <param name="_Startpos">实体的起始位置</param>
     /// <returns>是否添加成功</returns>
-    public bool AddEntity(int _index, Vector3 _Startpos, out EntityStruct _Result)
+    public bool AddEntity(int _index, Vector3 _Startpos, out EntityInfo _Result)
     {
         // 提起返回-检查实体数量是否达到最大值
         if (AllEntity.Count >= maxSize)
@@ -2774,18 +2775,24 @@ public class World : MonoBehaviour
             return false;
         }
 
-        // 将实例化的实体设置为子对象
-        newEntity.transform.SetParent(Entity_Parent.transform);
-        newEntity.transform.position = _Startpos;
 
         // 生成一个唯一的ID
         int entityId = Unique_Id++;
 
+        //生成名字
+        string entityName = EntityData.GetEntityName(_index);
+
+        //生成Struct
+        EntityInfo _entityInfo = new EntityInfo(entityId, entityName, newEntity);
+
         //对实体进行注册
-        newEntity.GetComponent<MC_Registration_Component>().RegistEntity(entityId);
+        newEntity.transform.SetParent(Entity_Parent.transform);
+        newEntity.transform.position = _Startpos;
+        newEntity.name = $"[{entityId}] {entityName}";
+        newEntity.GetComponent<MC_Registration_Component>().RegistEntity(_entityInfo);
 
         // 将新实例加入数据结构
-        _Result = new EntityStruct(entityId, newEntity);
+        _Result = _entityInfo;
         AllEntity.Add(_Result);
 
         //Debug.Log($"实体 {newEntity.name} 已添加成功，ID为{entityId}！");
@@ -2798,14 +2805,14 @@ public class World : MonoBehaviour
     /// </summary>
     /// <param name="entity">需要移除的实体</param>
     /// <returns>是否移除成功</returns>
-    public bool RemoveEntity(GameObject entity)
+    public bool RemoveEntity(EntityInfo _EntityID)
     {
-        EntityStruct entityToRemove = null;
+        EntityInfo entityToRemove = null;
 
         // 获取该实体对应的EntityStruct
         foreach (var entityStruct in AllEntity)
         {
-            if (entityStruct._obj == entity)
+            if (entityStruct._obj == _EntityID._obj)
             {
                 entityToRemove = entityStruct;
                 break;
@@ -2815,7 +2822,7 @@ public class World : MonoBehaviour
         if (entityToRemove != null)
         {
             AllEntity.Remove(entityToRemove);
-            Debug.Log($"实体 {entity.name} 已移除成功！");
+            //Debug.Log($"实体 {_EntityID._name} 已移除成功！");
             return true;
         }
 
@@ -2831,7 +2838,7 @@ public class World : MonoBehaviour
     /// <returns>是否移除成功</returns>
     public bool RemoveEntity(int _id)
     {
-        EntityStruct entityToRemove = null;
+        EntityInfo entityToRemove = null;
 
         // 获取该实体对应的EntityStruct
         foreach (var entityStruct in AllEntity)
@@ -2879,9 +2886,9 @@ public class World : MonoBehaviour
     /// <param name="center">范围检测的球心</param>
     /// <param name="_r">检测范围的半径</param>
     /// <returns>范围内的实体列表</returns>
-    public bool GetOverlapSphereEntity(Vector3 center, float _r, out List<EntityStruct> result)
+    public bool GetOverlapSphereEntity(Vector3 center, float _r, out List<EntityInfo> result)
     {
-        result = new List<EntityStruct>();  // 初始化输出列表
+        result = new List<EntityInfo>();  // 初始化输出列表
         float sqrRadius = _r * _r; // 使用平方半径以避免重复开平方运算
         bool hasEntitiesInRange = false;  // 记录是否有实体在范围内
 
@@ -2913,9 +2920,9 @@ public class World : MonoBehaviour
     /// <param name="_myID"></param>
     /// <param name="result"></param>
     /// <returns></returns>
-    public bool GetOverlapSphereEntity(Vector3 center, float _r, int _myID, out List<EntityStruct> result)
+    public bool GetOverlapSphereEntity(Vector3 center, float _r, int _myID, out List<EntityInfo> result)
     {
-        result = new List<EntityStruct>();  // 初始化输出列表
+        result = new List<EntityInfo>();  // 初始化输出列表
         float sqrRadius = _r * _r; // 使用平方半径以避免重复开平方运算
         bool hasEntitiesInRange = false;  // 记录是否有实体在范围内
 

@@ -44839,6 +44839,7 @@ MonoBehaviour:
   - {fileID: 6327743673650613013, guid: 00834a436a19f87429e55a827a241a3c, type: 3}
   - {fileID: 8347151624010629815, guid: 89cc3402e467af74fb7caa1d235542fb, type: 3}
   - {fileID: 7312945126675265723, guid: 948f5aa80e33dee4b9183b7052b7c1cf, type: 3}
+  - {fileID: 6569283705541333388, guid: c7455d4a505e0374eb6cabe06c6edf59, type: 3}
   AllEntity: []
   maxSize: 20
 --- !u!4 &699955242
@@ -124398,8 +124399,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aea4393f059a2d41bbf355c4cc8ae04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Y_Offset: -0.2
-  gravity: {x: 0, y: -20, z: 0}
 --- !u!114 &1529065942473776834
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
 
+
 [RequireComponent(typeof(MC_Collider_Component))]
 public class MC_Registration_Component : MonoBehaviour
 {
 
-    #region 实体状态
+    #region 状态
 
     [Foldout("状态", true)]
-    [Header("实体编号")][ReadOnly] public int EntityID = -1;
-
+    [Header("ID")] [SerializeField] private EntityInfo currentID;
 
     #endregion
 
@@ -67,14 +67,15 @@ public class MC_Registration_Component : MonoBehaviour
 
     #region 实体注册
 
-    public int GetEntityId()
+    
+    public EntityInfo GetEntityId()
     {
-        return EntityID;
+        return currentID;
     }
 
-    public void RegistEntity(int _id)
+    public void RegistEntity(EntityInfo _ID)
     {
-        EntityID = _id;
+        currentID = new EntityInfo(_ID._id, _ID._name, _ID._obj);
     }
 
     #endregion
@@ -89,7 +90,7 @@ public class MC_Registration_Component : MonoBehaviour
         if (isRemoveEntity)
             return;
 
-        isRemoveEntity = world.RemoveEntity(EntityID);
+        isRemoveEntity = world.RemoveEntity(currentID);
 
         if (isDeadImmediately)
         {
@@ -104,6 +105,7 @@ public class MC_Registration_Component : MonoBehaviour
 
     IEnumerator WaitToDead()
     {
+
         //死亡动画
         //Animator_Component.isDead = true;
         DeadAnimation();
@@ -192,19 +194,14 @@ public class MC_Registration_Component : MonoBehaviour
 
     void DeadAnimation()
     {
-        GameObject _Model = GameObject.Find("Model");
-
-        if (_Model == null)
-        {
-            print("找不到Model");
-            return;
-        }
+        GameObject _Model = Collider_Component.Model;
         
         StartCoroutine(RotateCubeAroundPoint(_Model, 90f, DeadRotationDuration));
     }
 
     IEnumerator RotateCubeAroundPoint(GameObject obj, float angle, float duration)
     {
+
         // 找到根节点
         Vector3 footRoot = Collider_Component.FootPoint;
 

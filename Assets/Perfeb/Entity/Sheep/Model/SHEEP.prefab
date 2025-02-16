@@ -66,7 +66,7 @@ Transform:
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4249248728371674058}
+  m_Father: {fileID: 3046927635655308957}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6891481515507112495
 MonoBehaviour:
@@ -1749,6 +1749,39 @@ Transform:
   - {fileID: 2476863046528113051}
   m_Father: {fileID: 3745854576877028780}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2857862850060304728
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3046927635655308957}
+  m_Layer: 0
+  m_Name: Body
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3046927635655308957
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2857862850060304728}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2891924873848737563}
+  - {fileID: 3745854576877028780}
+  m_Father: {fileID: 4249248728371674058}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3503085698701520990
 GameObject:
   m_ObjectHideFlags: 0
@@ -2439,8 +2472,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2996320453029658240}
-  - {fileID: 2891924873848737563}
-  - {fileID: 3745854576877028780}
+  - {fileID: 3046927635655308957}
   m_Father: {fileID: 1296708427630417330}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
 --- !u!1 &5111013447020418583
@@ -2476,7 +2508,7 @@ Transform:
   - {fileID: 4969162978861749700}
   - {fileID: 8813984876425428598}
   - {fileID: 3173467698135683277}
-  m_Father: {fileID: 4249248728371674058}
+  m_Father: {fileID: 3046927635655308957}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5534436133823636251
 GameObject:
@@ -3607,7 +3639,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6990a6dd2445f2f4a8feab6046d72c39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EntityID: -1
+  currentID:
+    _id: 0
+    _name: 
+    _obj: {fileID: 0}
   isDeadImmediately: 0
   isPlayDeadAnimation: 1
   isPlayDeadMusic: 1
@@ -3632,6 +3667,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isGround: 0
   canBeRayCastHit: 1
+  Model: {fileID: 0}
+  Head: {fileID: 0}
+  Body: {fileID: 0}
   LockDrawHitBox: 0
   isDrawHitBox: 0
   hitBoxEyes: 0.9
@@ -3656,19 +3694,18 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   momentum: {x: 0, y: 0, z: 0}
   Othermomentum: {x: 0, y: 0, z: 0}
-  mass: 1
   speed_move: 1.5
   speedDown_ultimate: -20
   WaterspeedDown_ultimate: -2
   force_jump: 270
+  force_hurt: 125
   force_gravity: -13
   force_Watergravity: -2
   JumpColdTime: 0.1
-  HeadObject: {fileID: 0}
-  ModelObject: {fileID: 4714115767678319219}
   rotationSpeed: 90
   RotationSensitivity: 50
   Damping_Horizontal: 10
+  BodyRotationPercent: 1.8
 --- !u!114 &5803946298061801025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3697,8 +3734,6 @@ MonoBehaviour:
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
   EntityBlood: 20
   Hurt_ElapseTime: 0.3
-  Hurt_Force: 35
-  Evaporation_Particle: {fileID: 9114416006497185209, guid: 49b21542e437d7c40a17cd534b10318b, type: 3}
   EntityOxygen: 10
   maxFallDis: 4
   Default_DropGround: 37
@@ -3761,11 +3796,13 @@ MonoBehaviour:
   canWatchPlayer: 0
   visionDistance: 3
   WatchrotateTime: 0.2
+  WatchvisionDistance: 3
+  WatchPLayerrotateTime: 0.4
   nodeAcceptanceDistance: 0.25
   AI_CanSwiming: 1
   Floating_CheckTime: 0.1
   FloatingForce: 5
-  AttackRangeMultiplier: 1.2
+  AttackRangeMultiplier: {x: 1.2, y: 1.2}
   AttackDamage: 3
   AttackColdTime: 0.5
   Debug_DrawRay: 1

@@ -239,7 +239,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
 
 
         //搜索范围内所有实体
-        if (managerhub.world.GetOverlapSphereEntity(_center, BlocksFunction.TNT_explore_Radius + 2f, GetComponent<MC_Registration_Component>().EntityID, out List<EntityStruct> _entities))
+        if (managerhub.world.GetOverlapSphereEntity(_center, BlocksFunction.TNT_explore_Radius + 2f, GetComponent<MC_Registration_Component>().GetEntityId()._id, out List<EntityInfo> _entities))
         {
             foreach (var item in _entities)
             {

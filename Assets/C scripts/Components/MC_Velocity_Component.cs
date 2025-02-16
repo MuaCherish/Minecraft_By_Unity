@@ -52,11 +52,11 @@ namespace MCEntity
         #region 周期函数 
 
         MC_Collider_Component Collider_Component;
-        Animator animator;
+        MC_Life_Component life_Component;
         private void Awake()
         {
             Collider_Component = GetComponent<MC_Collider_Component>();
-            animator = GetComponent<Animator>();
+            life_Component = GetComponent<MC_Life_Component>();
         }
 
         private void Start()
@@ -258,23 +258,18 @@ namespace MCEntity
         [Header("瞬时动量")][SerializeField][ReadOnly] private Vector3 momentum = new Vector3(0, 0, 0);
         [Header("瞬时外界动量")][SerializeField][ReadOnly] private Vector3 Othermomentum = Vector3.zero; //受击使用这个向量，AddMomentum(Force)
 
-        //实体参数
-        [Foldout("实体参数", true)]
-        [Header("实体重量")] public float mass = 1f;
-
         //速度和力参数
         [Foldout("速度和力参数", true)]
         [Header("实体移动速度")] public float speed_move = 1.5f;
         [Header("实体终端下降速度")] public float speedDown_ultimate = -20f;
         [Header("实体水中终端速度")] public float WaterspeedDown_ultimate = -2f;
         [Header("实体跳跃力")] public float force_jump = 270f; 
+        [Header("实体受伤力")] public float force_hurt = 125f; 
         [Header("实体重力")] public float force_gravity = -13f;
         [Header("实体水下重力")] public float force_Watergravity = -2f;
         [Header("实体跳跃冷却")] public float JumpColdTime = 0.1f;  private float jumpCooldownTimer = 0f;   // 计时器
 
         [Foldout("旋转参数", true)]
-        [Header("实体头(选填)")] public GameObject HeadObject; // 头部对象，用于垂直旋转
-        [Header("实体整体(必填)")] public GameObject ModelObject;
         [Header("旋转速度")] public float rotationSpeed = 90f; // 默认旋转速度
         [Header("实体旋转灵敏度")] public float RotationSensitivity = 50.0f; // 设置旋转灵敏度
        
@@ -407,7 +402,7 @@ namespace MCEntity
             //---------------------------计算区域-----------------------
 
             // 根据动量计算加速度
-            Vector3 acceleration = momentum / mass; // 根据动量计算加速度
+            Vector3 acceleration = momentum; // 根据动量计算加速度
 
             // 更新速度
             velocity += acceleration * Time.fixedDeltaTime; // 使用加速度更新速度
@@ -467,20 +462,50 @@ namespace MCEntity
 
         #region Entity旋转
 
-        
+
+
         //private Vector3 targetDirection = Vector3.forward; // 默认朝向
         //private bool isInstantRotation = false; // 默认非瞬时旋转
 
         /// <summary>
         /// 将Entity转向某个方向，仅旋转XZ平面，保持Y值不变，平滑过渡
         /// </summary>
-        public void EntitySmoothRotation(Vector3 _direct, float _elapseTime)
+        GameObject _Model
         {
-            // 启动协程执行平滑旋转
-            StartCoroutine(SmoothRotateCoroutine(_direct, _elapseTime));
+            get
+            {
+                return Collider_Component.Model;
+            }
+        }
+        GameObject _Head
+        {
+            get
+            {
+                return Collider_Component.Head;
+            }
+        }
+        GameObject _Body
+        {
+            get
+            {
+                return Collider_Component.Body;
+            }
         }
 
-        private IEnumerator SmoothRotateCoroutine(Vector3 _direct, float _elapseTime)
+        [Foldout("实体旋转", true)]
+        [Header("身体比头慢的时间百分比")] public float BodyRotationPercent = 1.8f;
+        private Coroutine _rotationCoroutine;  // 用于保存当前旋转的协程
+
+        public void EntitySmoothRotation(Vector3 _direct, float _elapseTime)
+        {
+            // 如果当前已有旋转协程在进行，则不重复启动
+            if (_rotationCoroutine == null)
+            {
+                _rotationCoroutine = StartCoroutine(SmoothRotationCoroutine(_direct, _elapseTime));
+            }
+        }
+
+        private IEnumerator SmoothRotationCoroutine(Vector3 _direct, float _elapseTime)
         {
             // 将目标方向的Y值设置为0，确保只在XZ平面旋转
             _direct.y = 0;
@@ -492,58 +517,63 @@ namespace MCEntity
             // 计算目标方向的旋转四元数
             Quaternion targetRotation = Quaternion.LookRotation(_direct);
 
-            // 记录初始旋转
-            Quaternion initialRotation = ModelObject.transform.rotation;
+            // 记录头部和身体的初始旋转
+            Quaternion initialHeadRotation = _Head.transform.rotation;
+            Quaternion initialBodyRotation = _Body.transform.rotation;
 
             // 累计时间
             float elapsedTime = 0f;
+            float headRotationTime = _elapseTime;  // 头部的旋转时间
+            float bodyRotationTime = _elapseTime * BodyRotationPercent;  // 身体的旋转时间
 
-            // 平滑旋转
-            while (elapsedTime < _elapseTime)
+            // while循环中根据身体的旋转时间进行控制
+            while (elapsedTime < bodyRotationTime)
             {
+                // 提前返回-如果实体已死亡
+                if (life_Component != null && life_Component.isEntity_Dead)
+                    yield break;
+
                 elapsedTime += Time.deltaTime;
 
-                // 插值计算旋转（仅在XZ平面旋转）
-                ModelObject.transform.rotation = Quaternion.Slerp(
-                    initialRotation,
+                // 头部旋转（按头部旋转时间平滑旋转） - 只有在头部没有完成时才旋转
+                if (elapsedTime < headRotationTime)
+                {
+                    _Head.transform.rotation = Quaternion.Slerp(
+                        initialHeadRotation,
+                        targetRotation,
+                        elapsedTime / headRotationTime
+                    );
+                }
+                // 身体旋转
+                _Body.transform.rotation = Quaternion.Slerp(
+                    initialBodyRotation,
                     targetRotation,
-                    elapsedTime / _elapseTime
+                    Mathf.Clamp01(elapsedTime / bodyRotationTime) // 控制身体旋转
                 );
 
                 // 等待下一帧
                 yield return null;
             }
 
-            // 最终确保完全对准目标方向
-            ModelObject.transform.rotation = targetRotation;
+            // 确保最终头部和身体都对准目标方向
+            _Head.transform.rotation = targetRotation;
+            _Body.transform.rotation = targetRotation;
+
+            // 协程结束后重置旋转协程标志
+            _rotationCoroutine = null;
         }
 
 
 
-
-
         /// <summary>
-        /// 实体旋转
+        /// 实体整体旋转旋转
         /// 输入值在[-1,1]之间
         /// </summary>
         public void EntityRotation(float _HorizonInput, float _VerticalInput)
         {
             // 完成水平的旋转
-            ModelObject.transform.Rotate(Vector3.up, _HorizonInput * RotationSensitivity * Time.fixedDeltaTime);
-
-            // 如果头存在，则完成垂直的旋转
-            if (HeadObject != null)
-            {
-                // 垂直旋转计算，限制在[-90, 90]度之间
-                verticalRotation -= _VerticalInput * RotationSensitivity * Time.fixedDeltaTime;
-                verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
-
-                // 更新头部对象的局部旋转，仅影响X轴
-                HeadObject.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-            }
+            _Model.transform.Rotate(Vector3.up, _HorizonInput * RotationSensitivity * Time.fixedDeltaTime);
         }
-
-
 
 
         #endregion
@@ -707,16 +737,5 @@ namespace MCEntity
         #endregion
 
 
-        #region 获取方向
-
-        public Vector3 EntityForward
-        {
-            get
-            {
-                return ModelObject.transform.forward;
-            }
-        }
-
-        #endregion
     }
 }

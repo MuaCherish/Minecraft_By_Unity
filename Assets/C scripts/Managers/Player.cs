@@ -948,15 +948,15 @@ public class Player : MonoBehaviour
                 Vector3 direct = managerhub.player.transform.forward;
                 direct.y = 1f;
 
-                if (_rayCast.targetEntity._obj.GetComponent<MC_Life_Component>() != null)
+                if (_rayCast.targetEntityInfo._obj.GetComponent<MC_Life_Component>() != null)
                 {
-                    _rayCast.targetEntity._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-1, direct);
+                    _rayCast.targetEntityInfo._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-1, direct);
                 }
 
                 int _index = MusicData.Slime_Behurt;
-                if (_rayCast.targetEntity._obj.GetComponent<MC_Music_Component>() != null)
+                if (_rayCast.targetEntityInfo._obj.GetComponent<MC_Music_Component>() != null)
                 {
-                    _index = _rayCast.targetEntity._obj.GetComponent<MC_Music_Component>().BeHurtIndex;
+                    _index = _rayCast.targetEntityInfo._obj.GetComponent<MC_Music_Component>().BeHurtIndex;
                 }
 
                 if (_index != 0)
@@ -2598,7 +2598,7 @@ public class Player : MonoBehaviour
         Vector3 hitNormal = Vector3.zero; // 用于记录法线方向
         float rayDistance = _maxDistance;           // 用于记录射线距离
         byte isHit = 0;               // 用于记录是否命中【0没有名字】【1命中方块】【2命中实体】
-        EntityStruct targetEntity = new EntityStruct(-1, null); // 目标实体
+        EntityInfo targetEntity = new EntityInfo(-1, "unknown Entity", null); // 目标实体
 
         // 从射线起点开始，沿目标方向进行检测
         while (step < _maxDistance)
@@ -2684,7 +2684,7 @@ public class Player : MonoBehaviour
             blockType = blockType,
             hitNormal = hitNormal,
             rayDistance = rayDistance,
-            targetEntity = targetEntity._id != -1 ? targetEntity : new EntityStruct(-1, null),
+            targetEntityInfo = targetEntity._id != -1 ? targetEntity : new EntityInfo(-1, "unknown Entity",null),
         };
     }
 
@@ -2709,7 +2709,7 @@ public class Player : MonoBehaviour
         Vector3 hitNormal = Vector3.zero; // 用于记录法线方向
         float rayDistance = _maxDistance;           // 用于记录射线距离
         byte isHit = 0;               // 用于记录是否命中【0没有命中】【1命中方块】【2命中实体】
-        EntityStruct targetEntity = new EntityStruct(-1, null); // 目标实体
+        EntityInfo targetEntity = new EntityInfo(-1, "Unknown Entity", null); // 目标实体
 
         // 从射线起点开始，沿目标方向进行检测
         while (step < _maxDistance)
@@ -2820,7 +2820,7 @@ public class Player : MonoBehaviour
             blockType = blockType,
             hitNormal = hitNormal,
             rayDistance = rayDistance,
-            targetEntity = targetEntity._id != -1 ? targetEntity : new EntityStruct(-1, null),
+            targetEntityInfo = targetEntity._id != -1 ? targetEntity : new EntityInfo(-1, "Unknown Entity", null),
         };
     }
 
@@ -3139,8 +3139,8 @@ public class Player : MonoBehaviour
     {
         // 玩家判定箱，假设已知
         Vector3 _selfCenter = transform.position;
-        float _selfWidth = playerWidth - 0.1f; // 玩家宽度（底边正方形的边长）
-        float _selfHeight = playerHeight - 1.8f; // 玩家高度
+        float _selfWidth = playerWidth; // 玩家宽度（底边正方形的边长）
+        float _selfHeight = playerHeight; // 玩家高度
 
         // 计算玩家的边界
         float selfMinX = _selfCenter.x - _selfWidth / 2;
@@ -3162,6 +3162,8 @@ public class Player : MonoBehaviour
         bool isCollision = selfMaxX >= targetMinX && selfMinX <= targetMaxX &&
                            selfMaxY >= targetMinY && selfMinY <= targetMaxY &&
                            selfMaxZ >= targetMinZ && selfMinZ <= targetMaxZ; // 增加 Z 轴的碰撞检测
+
+        print(isCollision);
 
         // 返回
         if (isCollision)
@@ -3325,7 +3327,7 @@ public class Player : MonoBehaviour
         //GameObject tnt = GameObject.Instantiate(Entity_TNT);
         //tnt.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
 
-        managerhub.world.AddEntity(EntityData.TNT, _point, out EntityStruct _result);
+        managerhub.world.AddEntity(EntityData.TNT, _point, out EntityInfo _result);
         _result._obj.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
     }
 
@@ -3561,10 +3563,10 @@ public struct RayCastStruct
     public float rayDistance;
 
     // 目标实体（可为空）
-    public EntityStruct targetEntity;
+    public EntityInfo targetEntityInfo;
 
     // 构造函数
-    public RayCastStruct(byte isHit, Vector3 rayOrigin, Vector3 hitPoint, Vector3 hitPoint_Previous, byte blockType, Vector3 hitNormal, float rayDistance, EntityStruct targetEntitystruct)
+    public RayCastStruct(byte isHit, Vector3 rayOrigin, Vector3 hitPoint, Vector3 hitPoint_Previous, byte blockType, Vector3 hitNormal, float rayDistance, EntityInfo targetEntityInfo)
     {
         this.isHit = isHit;
         this.rayOrigin = rayOrigin;
@@ -3573,7 +3575,7 @@ public struct RayCastStruct
         this.blockType = blockType;
         this.hitNormal = hitNormal;
         this.rayDistance = rayDistance;
-        this.targetEntity = targetEntitystruct;
+        this.targetEntityInfo = targetEntityInfo;
     }
 
     // 覆盖ToString方法，用于打印输出
@@ -3587,7 +3589,7 @@ public struct RayCastStruct
                $"  Block Type: {blockType}\n" +
                $"  Hit Normal: {hitNormal}\n" +
                $"  Ray Distance: {rayDistance}\n" +
-               $"  Target Entity: {targetEntity._id}, {targetEntity._obj}";
+               $"  Target Entity: {targetEntityInfo._id}, {targetEntityInfo._name}, {targetEntityInfo._obj}";
     }
 }
 
