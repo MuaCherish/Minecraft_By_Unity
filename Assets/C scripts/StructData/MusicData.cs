@@ -10,6 +10,7 @@ public static class MusicData
 
     //管理器宏定义
     public static readonly int AudioSource_Swimming = 0;
+    public static readonly int AudioSource_AnyOneShot = 1;
 
 
     //音乐宏定义
@@ -78,5 +79,6 @@ public static class MusicData
     public static readonly int Zombie_Say3 = 35; 
     public static readonly int Slime_DropGround = 36;
     public static readonly int Default_DropGround = 37;
+    public static readonly int Player_Attack = 38;
 
 }

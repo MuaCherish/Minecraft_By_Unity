@@ -19534,6 +19534,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e64a81f6d3a63c9439b0ea3fbd766fc9, type: 3}
   - {fileID: 8300000, guid: 36fd77f66b2560540b13e5283108563b, type: 3}
   - {fileID: 8300000, guid: 9df4f29368e43e44693c02316b2cfc57, type: 3}
+  - {fileID: 8300000, guid: 29122396fa44d8841bbeef7406bfc549, type: 3}
 --- !u!1 &328216470
 GameObject:
   m_ObjectHideFlags: 0
@@ -44840,6 +44841,7 @@ MonoBehaviour:
   - {fileID: 8347151624010629815, guid: 89cc3402e467af74fb7caa1d235542fb, type: 3}
   - {fileID: 7312945126675265723, guid: 948f5aa80e33dee4b9183b7052b7c1cf, type: 3}
   - {fileID: 6569283705541333388, guid: c7455d4a505e0374eb6cabe06c6edf59, type: 3}
+  - {fileID: 645660588227450139, guid: 880150d64ae2ecf41afea07894388673, type: 3}
   AllEntity: []
   maxSize: 20
 --- !u!4 &699955242

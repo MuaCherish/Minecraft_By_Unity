@@ -113,12 +113,12 @@ public class MC_Registration_Component : MonoBehaviour
         //À¿Õˆ“Ù–ß
         if (isPlayDeadMusic)
         {
-            int _index = MusicData.Creeper_Death;
-            if (GetComponent<MC_Music_Component>() != null)
+            MC_Music_Component Music_Component = GetComponent<MC_Music_Component>();
+            if (Music_Component != null)
             {
-                _index = GetComponent<MC_Music_Component>().DeathIndex;
+                managerhub.NewmusicManager.Create3DSound(transform.position, Music_Component.DeathClip);
             }
-            managerhub.NewmusicManager.Create3DSound(transform.position, _index);
+            
 
         }
 

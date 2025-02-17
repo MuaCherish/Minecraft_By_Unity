@@ -12,6 +12,7 @@ namespace MCEntity
     [RequireComponent(typeof(MC_Collider_Component))]
     [RequireComponent(typeof(MC_AI_Component))]
     [RequireComponent(typeof(MC_Registration_Component))]
+    [RequireComponent(typeof(MC_Music_Component))]
     public class MC_Life_Component : MonoBehaviour
     {
 
@@ -31,6 +32,7 @@ namespace MCEntity
         MC_Velocity_Component Velocity_Component;
         MC_Collider_Component Collider_Component;
         MC_AI_Component AI_Component;
+        MC_Music_Component Music_Component;
         World world;
         MC_Registration_Component Registration_Component;
         ManagerHub managerhub;
@@ -39,6 +41,7 @@ namespace MCEntity
             Velocity_Component = GetComponent<MC_Velocity_Component>();
             Collider_Component = GetComponent<MC_Collider_Component>();
             AI_Component = GetComponent<MC_AI_Component>();
+            Music_Component = GetComponent<MC_Music_Component>(); 
             world = Collider_Component.managerhub.world;
             Registration_Component = GetComponent<MC_Registration_Component>();
             managerhub = Collider_Component.managerhub;
@@ -192,11 +195,9 @@ namespace MCEntity
             if (_updateLifeValue < 0)
                 Handle_Hurt(_hutyDirect);
 
-
-            //如果没有攻击性且可以逃跑则会开始逃跑
+            //逃跑
             if (!AI_Component.isAggressive && AI_Component.EntityCanFlee)
                 AI_Component.EntityFlee();
-
 
             //修改血量并检查死亡程序
             if (CheckDead_EditBlood(_updateLifeValue))
@@ -209,6 +210,10 @@ namespace MCEntity
         void Handle_Hurt(Vector3 _hurtDirect)
         {
             isEntity_Hurt = true;
+
+            //受伤音效
+            //Music_Component.PlaySound(Music_Component.BehurtClip);
+            managerhub.NewmusicManager.Create3DSound(transform.position, Music_Component.BehurtClip);
 
             //材质变红
             if (EntityMat != null)

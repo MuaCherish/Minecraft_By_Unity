@@ -26,6 +26,7 @@ namespace MCEntity
         [Foldout("实体类型", true)]
         [Header("移动方式")] public AIMovingType currentMovingType = AIMovingType.Walk;
         [Header("是否具有攻击性")] public bool isAggressive;
+        [Header("实体是否会逃跑")] public bool EntityCanFlee = true;
 
         #endregion
 
@@ -49,12 +50,6 @@ namespace MCEntity
             world = Collider_Component.managerhub.world;
             player = Collider_Component.managerhub.player;
             Animator_Component = GetComponent<MC_Animator_Component>();
-        }
-
-        private void Start()
-        {
-            previous_visionDistance = visionDistance;
-            previous_WatchrotateTime = WatchrotateTime;
         }
 
         private void Update()
@@ -201,8 +196,6 @@ namespace MCEntity
         }
 
         //更新一些Idle的变量
-        private float previous_visionDistance;
-        private float previous_WatchrotateTime;
         void OnIdleState_Update()
         {
             //提前返回-如果不是Idle状态
@@ -380,7 +373,7 @@ namespace MCEntity
                 Vector3 _StartPos = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
                 MC_UtilityFunctions.Algo_RandomWalk(_StartPos, IdleWalk_RandomWalk_Steps, IdleWalk_PrevDirectionProbability, out List<Vector3> _Result);
                 TargetPos = _Result[_Result.Count - 1];
-                EntityMoveTo(TargetPos, Velocity_Component.speed_move);
+                EntityMoveTo(TargetPos, Velocity_Component.speed_move, currentState);
                 isReachTargetPos = false;
 
                 hasExec_Handle_IdleState_WalkType_Moving = false;
@@ -517,9 +510,6 @@ namespace MCEntity
 
 
         #region FleeState
-
-        [Foldout("Flee总设置", true)]
-        [Header("实体是否会逃跑")] public bool EntityCanFlee = true;
 
         /// <summary>
         /// AI逃跑，这个是有时间限制的
@@ -688,7 +678,7 @@ namespace MCEntity
         #region FleeState / WalkType
 
         [Foldout("Flee/Walk设置", true)]
-        [Header("逃跑时间")] public Vector2 WalkFleeTimeRange = new Vector2(10f, 20f);
+        [Header("逃跑时间")] public Vector2 WalkFleeTimeRange = new Vector2(5f, 10f);
         [Header("逃跑速度")] public float WalkFleeSpeed = 5f;
         [Header("Flee/Walk等待时间")] public Vector2 FleeWalkWaitTimeRange = new Vector2(0f, 2f);
         [Header("随机游走-迭代步数")] public int FleeWalk_RandomWalk_Steps = 10;
@@ -745,7 +735,7 @@ namespace MCEntity
                 Vector3 _StartPos = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
                 MC_UtilityFunctions.Algo_RandomWalk(_StartPos, FleeWalk_RandomWalk_Steps, FleeWalk_PrevDirectionProbability, out List<Vector3> _Result);
                 TargetPos = _Result[_Result.Count - 1];
-                EntityMoveTo(TargetPos, WalkFleeSpeed);
+                EntityMoveTo(TargetPos, WalkFleeSpeed, currentState);
                 isReachTargetPos = false;
 
                 hasExec_Handle_FleeState_WalkType_Moving = false;
@@ -822,14 +812,12 @@ namespace MCEntity
 
         #region AI视觉
 
-        [Foldout("AI视觉-警戒视力", true)]
+        [Foldout("AI视觉", true)]
         [Header("是否会注视玩家")] public bool canWatchPlayer;
-        [Header("视力范围")] public float visionDistance = 10f;
-        [Header("多久转一次头")] public float WatchrotateTime = 0.2f;
-
-        [Foldout("AI视觉-注视视力", true)]
-        [Header("注视的视力范围")] public float WatchvisionDistance = 3f;
-        [Header("注视的转向时间")] public float WatchPLayerrotateTime = 0.4f;
+        [Header("警戒视力范围")] public float visionDistance = 10f;
+        [Header("追逐状态的转向时间")] public float ChaseVisionrotateTime = 0.2f;
+        [Header("注视视力范围")] public float WatchvisionDistance = 3f;
+        [Header("注视玩家的转向时间")] public float WatchPLayerrotateTime = 0.4f;
         private float WatchTimer = 0f;
 
         void _ReferUpdate_VisionSystem()
@@ -871,7 +859,7 @@ namespace MCEntity
                 return;
 
             // 提前返回 - 如果计时器未达到旋转时间
-            if (WatchTimer < WatchrotateTime)
+            if (WatchTimer < ChaseVisionrotateTime)
             {
                 WatchTimer += Time.deltaTime;  // 累加计时器
                 return;  // 等待下次旋转
@@ -880,7 +868,7 @@ namespace MCEntity
             // 旋转
             Vector3 playerPosition = player.transform.position;
             Vector3 direction = (playerPosition - transform.position).normalized;
-            Velocity_Component.EntitySmoothRotation(direction, WatchrotateTime);
+            Velocity_Component.EntitySmoothRotation(direction, ChaseVisionrotateTime);
 
             // 重置计时器，等待下次旋转
             WatchTimer = 0f;
@@ -897,14 +885,14 @@ namespace MCEntity
             if(current_IdleState != IdleState.Wait)
             {
                 canWatchPlayer = false;
-                visionDistance = previous_visionDistance;
-                WatchrotateTime = previous_WatchrotateTime;
+                visionDistance = WatchvisionDistance;
+                ChaseVisionrotateTime = WatchPLayerrotateTime;
             }
 
             //AI在等待期间可以注视玩家
             canWatchPlayer = true;
             visionDistance = WatchvisionDistance;
-            WatchrotateTime = WatchPLayerrotateTime;
+            ChaseVisionrotateTime = WatchPLayerrotateTime;
         }
 
         #endregion
@@ -918,11 +906,13 @@ namespace MCEntity
         /// <summary>
         /// 实体移动到目标方向
         /// </summary>
-        void EntityMoveTo(Vector3 _TargetPos, float _Speed)
+        private Coroutine _EntityMoveToCoroutine;
+        void EntityMoveTo(Vector3 _TargetPos, float _Speed, AIState _LastState)
         {
-            StartCoroutine(EntityMoveToCoroutine(_TargetPos, _Speed));
+            if(_EntityMoveToCoroutine == null)
+                _EntityMoveToCoroutine = StartCoroutine(EntityMoveToCoroutine(_TargetPos, _Speed, _LastState));
         }
-        IEnumerator EntityMoveToCoroutine(Vector3 _TargetPos, float _Speed)
+        IEnumerator EntityMoveToCoroutine(Vector3 _TargetPos, float _Speed, AIState _LastState)
         {
             //预处理
             //Vector3 _currentForward = Velocity_Component.EntityForward.normalized;
@@ -948,6 +938,14 @@ namespace MCEntity
                 //提前返回-如果进入追逐状态则立即停止
                 if (currentState == AIState.Chase || Debug_PauseAI)
                 {
+                    _EntityMoveToCoroutine = null;
+                    yield break;
+                }
+
+                //提前返回-如果上次是Idle状态，当前状态变为Flee则立即停止
+                if(_LastState == AIState.Idle && currentState == AIState.Flee)
+                {
+                    _EntityMoveToCoroutine = null;
                     yield break;
                 }
 
@@ -963,6 +961,8 @@ namespace MCEntity
                 startTime += Time.deltaTime;
                 yield return null;
             }
+
+            _EntityMoveToCoroutine = null;
         }
 
         /// <summary>
@@ -1172,7 +1172,6 @@ namespace MCEntity
         }
 
         #endregion
-
 
 
     }

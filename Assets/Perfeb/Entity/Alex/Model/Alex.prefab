@@ -1986,7 +1986,7 @@ MonoBehaviour:
   rotationSpeed: 90
   RotationSensitivity: 50
   Damping_Horizontal: 10
-  BodyRotationPercent: 1.8
+  BodySlowRotationPercent: 1.4
 --- !u!114 &5921264928648517616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2002,13 +2002,8 @@ MonoBehaviour:
   isEntity_Hurt: 0
   isEntity_Dead: 0
   isEntity_Dive: 0
-  Renderers:
-  - {fileID: 6168412803129166401}
-  - {fileID: 106306145077009663}
-  - {fileID: 6650621571625372182}
-  - {fileID: 1903807672460157812}
-  - {fileID: 9090822369381862351}
-  - {fileID: 5365907458458976861}
+  hurtRenderers: []
+  Color_BeHurt: {r: 0.8627451, g: 0.31764707, b: 0.53333336, a: 1}
   Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
   EntityBlood: 20
@@ -2030,6 +2025,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CanWalk: 1
   CanAttack: 0
+  canAct: 0
 --- !u!114 &5095501756777380264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2049,6 +2045,7 @@ MonoBehaviour:
   isSeePlayer: 0
   currentMovingType: 1
   isAggressive: 0
+  EntityCanFlee: 0
   IdleJumpY: 1
   IdlewaitTimeRange: {x: 3, y: 7}
   IdleMovingProbability: 0.6
@@ -2059,7 +2056,6 @@ MonoBehaviour:
   ChaseJumpY: 1
   ChaseJumpForceRange: {x: 180, y: 200}
   ChaseWaitTimeRange: {x: 1, y: 3}
-  EntityCanFlee: 0
   JumpFleeTimeRange: {x: 10, y: 20}
   FleeJumpY: 0.5
   FleewaitTimeRange: {x: 3, y: 7}
@@ -2075,7 +2071,7 @@ MonoBehaviour:
   AutoJump_ColdTime: 0.5
   canWatchPlayer: 1
   visionDistance: 10
-  WatchrotateTime: 0.2
+  ChaseVisionrotateTime: 0.2
   WatchvisionDistance: 3
   WatchPLayerrotateTime: 0.4
   nodeAcceptanceDistance: 0.25
@@ -2100,8 +2096,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInTheWater: 0
-  BeHurtIndex: 26
-  DeathIndex: 28
+  BehurtClip: {fileID: 8300000, guid: dd1e50abae6f3e84a956d954dc721f9f, type: 3}
+  DeathClip: {fileID: 8300000, guid: a3fcd1052b1db9a4295cf508ee73d0a9, type: 3}
+  SayingClips: []
   MaxDistanceToHear: 10
   OtherAudioSources: []
   hasFootStep: 1

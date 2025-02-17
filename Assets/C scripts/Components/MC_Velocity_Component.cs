@@ -493,7 +493,7 @@ namespace MCEntity
         }
 
         [Foldout("实体旋转", true)]
-        [Header("身体比头慢的时间百分比")] public float BodyRotationPercent = 1.8f;
+        [Header("身体比头慢的时间百分比")] public float BodySlowRotationPercent = 1.4f;
         private Coroutine _rotationCoroutine;  // 用于保存当前旋转的协程
 
         public void EntitySmoothRotation(Vector3 _direct, float _elapseTime)
@@ -524,7 +524,7 @@ namespace MCEntity
             // 累计时间
             float elapsedTime = 0f;
             float headRotationTime = _elapseTime;  // 头部的旋转时间
-            float bodyRotationTime = _elapseTime * BodyRotationPercent;  // 身体的旋转时间
+            float bodyRotationTime = _elapseTime * BodySlowRotationPercent;  // 身体的旋转时间
 
             // while循环中根据身体的旋转时间进行控制
             while (elapsedTime < bodyRotationTime)

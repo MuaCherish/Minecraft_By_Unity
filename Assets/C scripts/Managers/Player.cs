@@ -945,25 +945,24 @@ public class Player : MonoBehaviour
                 isHitEntity = true;
                 //print("打到实体了");
 
+                //实体击飞方向
                 Vector3 direct = managerhub.player.transform.forward;
                 direct.y = 1f;
 
+                //播放玩家攻击音效
+                managerhub.NewmusicManager.PlayOneShot(MusicData.Player_Attack);
+
+                //实体扣血
                 if (_rayCast.targetEntityInfo._obj.GetComponent<MC_Life_Component>() != null)
-                {
                     _rayCast.targetEntityInfo._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-1, direct);
-                }
 
-                int _index = MusicData.Slime_Behurt;
-                if (_rayCast.targetEntityInfo._obj.GetComponent<MC_Music_Component>() != null)
-                {
-                    _index = _rayCast.targetEntityInfo._obj.GetComponent<MC_Music_Component>().BeHurtIndex;
-                }
+                //播放实体被攻击音效
+                //int _index = MusicData.Slime_Behurt;
+                //if (_rayCast.targetEntityInfo._obj.GetComponent<MC_Music_Component>() != null)
+                //    _index = _rayCast.targetEntityInfo._obj.GetComponent<MC_Music_Component>().BeHurtIndex;
+                //if (_index != 0)
+                //    managerhub.NewmusicManager.PlayOneShot(_index);
 
-                if (_index != 0)
-                {
-                    managerhub.NewmusicManager.PlayOneShot(_index);
-                }
-               
             }
 
             //print(OnLoadResource.Instance.Goods[1]);
@@ -3163,7 +3162,7 @@ public class Player : MonoBehaviour
                            selfMaxY >= targetMinY && selfMinY <= targetMaxY &&
                            selfMaxZ >= targetMinZ && selfMinZ <= targetMaxZ; // 增加 Z 轴的碰撞检测
 
-        print(isCollision);
+        //print(isCollision);
 
         // 返回
         if (isCollision)

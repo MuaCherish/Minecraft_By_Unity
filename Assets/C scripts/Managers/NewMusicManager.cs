@@ -172,6 +172,15 @@ public class NewMusicManager : MonoBehaviour
         _obj.GetComponent<MusicObject3D>().StartMusic(audioclips[_id]);
 
     }
+    public void Create3DSound(Vector3 _pos, AudioClip _clip)
+    {
+        GameObject _obj = Instantiate(Prefeb_3dMusicObject);
+
+        _obj.transform.SetParent(SceneData.GetClonesParent().transform);
+        _obj.transform.position = _pos;
+        _obj.GetComponent<MusicObject3D>().StartMusic(_clip);
+
+    }
 
 
     /// <summary>

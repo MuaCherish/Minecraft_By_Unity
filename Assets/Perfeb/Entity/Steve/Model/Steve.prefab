@@ -139,7 +139,7 @@ MonoBehaviour:
   rotationSpeed: 90
   RotationSensitivity: 50
   Damping_Horizontal: 10
-  BodyRotationPercent: 1.8
+  BodySlowRotationPercent: 1.4
 --- !u!114 &6767469622152274827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,13 +155,8 @@ MonoBehaviour:
   isEntity_Hurt: 0
   isEntity_Dead: 0
   isEntity_Dive: 0
-  Renderers:
-  - {fileID: 951276234303175258}
-  - {fileID: 2676852251216517810}
-  - {fileID: 3649978782345817298}
-  - {fileID: 7107840486098742081}
-  - {fileID: 6184000098305894782}
-  - {fileID: 1131420065254150484}
+  hurtRenderers: []
+  Color_BeHurt: {r: 0.8627451, g: 0.31764707, b: 0.53333336, a: 1}
   Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
   EntityBlood: 20
@@ -183,6 +178,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CanWalk: 1
   CanAttack: 1
+  canAct: 1
 --- !u!114 &6045951671991813775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,7 +197,8 @@ MonoBehaviour:
   current_FleeState: 0
   isSeePlayer: 0
   currentMovingType: 1
-  isAggressive: 1
+  isAggressive: 0
+  EntityCanFlee: 0
   IdleJumpY: 1
   IdlewaitTimeRange: {x: 3, y: 7}
   IdleMovingProbability: 0.6
@@ -227,7 +224,7 @@ MonoBehaviour:
   AutoJump_ColdTime: 0.5
   canWatchPlayer: 1
   visionDistance: 10
-  WatchrotateTime: 0.2
+  ChaseVisionrotateTime: 0.2
   WatchvisionDistance: 3
   WatchPLayerrotateTime: 0.4
   nodeAcceptanceDistance: 0.25
@@ -252,8 +249,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInTheWater: 0
-  BeHurtIndex: 26
-  DeathIndex: 28
+  BehurtClip: {fileID: 8300000, guid: dd1e50abae6f3e84a956d954dc721f9f, type: 3}
+  DeathClip: {fileID: 8300000, guid: a3fcd1052b1db9a4295cf508ee73d0a9, type: 3}
+  SayingClips: []
   MaxDistanceToHear: 10
   OtherAudioSources: []
   hasFootStep: 1
@@ -1318,7 +1316,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: efc48e2d1b234c3429deeb3160b771ea, type: 2}
+  - {fileID: 2100000, guid: 556c152c7ea0a32499781c3db218960f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

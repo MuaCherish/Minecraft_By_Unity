@@ -29,9 +29,73 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8726744342815458360}
+  - {fileID: 6266906854980265956}
+  m_Father: {fileID: 1324728588039126074}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2812542231745046901
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6266906854980265956}
+  m_Layer: 0
+  m_Name: Body
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6266906854980265956
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2812542231745046901}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4992766367659251175}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3180611276989446499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8726744342815458360}
+  m_Layer: 0
+  m_Name: Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8726744342815458360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3180611276989446499}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
   - {fileID: 7718103507068455329}
   - {fileID: 4800190018095484688}
-  m_Father: {fileID: 1324728588039126074}
+  m_Father: {fileID: 4992766367659251175}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3439136083845619960
 GameObject:
@@ -46,9 +110,6 @@ GameObject:
   - component: {fileID: 1587517694356621498}
   - component: {fileID: 7777850410083273045}
   - component: {fileID: 3132149049422116973}
-  - component: {fileID: 2032824006510128465}
-  - component: {fileID: 8207745083738811319}
-  - component: {fileID: 1311276030227890186}
   m_Layer: 0
   m_Name: TNT
   m_TagString: Untagged
@@ -106,7 +167,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6990a6dd2445f2f4a8feab6046d72c39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EntityID: -1
+  currentID:
+    _id: 0
+    _name: 
+    _obj: {fileID: 0}
   isDeadImmediately: 1
   isPlayDeadAnimation: 1
   isPlayDeadMusic: 1
@@ -129,6 +193,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isGround: 0
   canBeRayCastHit: 0
+  Model: {fileID: 0}
+  Head: {fileID: 0}
+  Body: {fileID: 0}
   LockDrawHitBox: 0
   isDrawHitBox: 0
   hitBoxEyes: 0.8
@@ -157,101 +224,14 @@ MonoBehaviour:
   speedDown_ultimate: -10
   WaterspeedDown_ultimate: -2
   force_jump: 77
+  force_hurt: 125
   force_gravity: -12
   force_Watergravity: -2
   JumpColdTime: 0.1
-  HeadObject: {fileID: 0}
-  ModelObject: {fileID: 2785348913528569290}
   rotationSpeed: 90
   RotationSensitivity: 50
   Damping_Horizontal: 7
---- !u!114 &2032824006510128465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3439136083845619960}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c94e2644df0d52744bf09ab9fde6adb3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isInTheWater: 0
-  BeHurtIndex: 0
-  DeathIndex: 28
-  MaxDistanceToHear: 0
-  OtherAudioSources: []
-  hasFootStep: 0
-  FootStep_InterTime: 0.3
---- !u!114 &8207745083738811319
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3439136083845619960}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa129a5e597dfae49b9cdf73e042e79a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CanWalk: 0
-  CanAttack: 0
---- !u!114 &1311276030227890186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3439136083845619960}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a9bd0976fb09743840a44f48277fd0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentState: 0
-  current_IdleState: 0
-  current_ChaseState: 0
-  current_FleeState: 0
-  isSeePlayer: 0
-  currentMovingType: 1
-  isAggressive: 0
-  IdleJumpY: 1
-  IdlewaitTimeRange: {x: 3, y: 7}
-  IdleMovingProbability: 0.6
-  IdleJumpForceRange: {x: 100, y: 200}
-  IdleWalkWaitTimeRange: {x: 3, y: 20}
-  IdleWalk_RandomWalk_Steps: 10
-  IdleWalk_PrevDirectionProbability: 0.8
-  ChaseJumpY: 1
-  ChaseJumpForceRange: {x: 180, y: 200}
-  ChaseWaitTimeRange: {x: 1, y: 3}
-  JumpFleeTimeRange: {x: 10, y: 20}
-  FleeJumpY: 0.5
-  FleewaitTimeRange: {x: 3, y: 7}
-  FleeMovingProbability: 0.6
-  FleeJumpForceRange: {x: 100, y: 200}
-  WalkFleeTimeRange: {x: 10, y: 20}
-  WalkFleeSpeed: 5
-  FleeWalkWaitTimeRange: {x: 0, y: 2}
-  FleeWalk_RandomWalk_Steps: 10
-  FleeWalk_PrevDirectionProbability: 0.8
-  isAIcanAutoJump: 1
-  AutoJump_CheckMaxDistance: 1
-  AutoJump_ColdTime: 0.5
-  canWatchPlayer: 0
-  visionDistance: 10
-  WatchrotateTime: 0.2
-  nodeAcceptanceDistance: 1
-  AI_CanSwiming: 0
-  Floating_CheckTime: 0.1
-  FloatingForce: 5
-  AttackRangeMultiplier: 1.2
-  AttackDamage: 3
-  AttackColdTime: 0.5
-  Debug_DrawRay: 0
-  Debug_PauseAI: 0
+  BodySlowRotationPercent: 1.4
 --- !u!1 &5804364710764570313
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,7 +265,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 4992766367659251175}
+  m_Father: {fileID: 8726744342815458360}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3113888517488325530
 MonoBehaviour:
@@ -615,7 +595,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4992766367659251175}
+  m_Father: {fileID: 8726744342815458360}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3377591169549717579
 MonoBehaviour:

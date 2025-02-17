@@ -59,6 +59,7 @@ public class MC_Animator_Component : MonoBehaviour
     [Foldout("动画设置", true)]
     [Header("拥有行走动画")] public bool CanWalk;
     [Header("拥有攻击动画")] public bool CanAttack;
+    [Header("拥有互动动画")] public bool canAct;
 
 
     #endregion
@@ -110,5 +111,16 @@ public class MC_Animator_Component : MonoBehaviour
 
 
     #endregion
+
+
+    #region Act
+
+    public void SetAnimation_Act()
+    {
+        animator.SetTrigger("isAct");
+    }
+
+    #endregion
+
 
 }

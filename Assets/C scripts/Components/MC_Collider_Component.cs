@@ -794,20 +794,35 @@ namespace MCEntity
             Model = transform.Find("Model").gameObject;
             Head = transform.Find("Model/Head").gameObject;
             Body = transform.Find("Model/Body").gameObject;
-            MC_Registration_Component Registration_Component = GetComponent<MC_Registration_Component>();
-            EntityInfo _info = new EntityInfo(-1, "Unknown Entity", null);
+           
 
-            if (Registration_Component != null)
-                _info = Registration_Component.GetEntityId();
 
-            if (Model == null)
-                print($"Model搜索不到, id:{_info._id}, name:{_info._name}");
+            //如果Model找不到才会显示Info
+            if(Model == null || Head == null || Body == null)
+            {
+                MC_Registration_Component Registration_Component = GetComponent<MC_Registration_Component>();
 
-            if (Head == null)
-                print($"Head搜索不到, id:{_info._id}, name:{_info._name}");
+                //提前返回-没有注册组件
+                if (Registration_Component == null)
+                {
+                    print("实体未挂载注册组件且找不到Model");
+                    return;
+                }
 
-            if (Body == null)
-                print($"Body搜索不到, id:{_info._id}, name:{_info._name}");
+                EntityInfo _info = Registration_Component.GetEntityId();
+                if (Model == null)
+                    print($"Model搜索不到, id:{_info._id}, name:{_info._name}");
+
+                if (Head == null)
+                    print($"Head搜索不到, id:{_info._id}, name:{_info._name}");
+
+                if (Body == null)
+                    print($"Body搜索不到, id:{_info._id}, name:{_info._name}");
+
+            }
+
+
+            
         }
 
 

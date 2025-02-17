@@ -38,6 +38,10 @@ public class MusicObject3D : MonoBehaviour
     public bool isStart = false;
     public void StartMusic(AudioClip _clip)
     {
+        //提前返回-片段为空不执行
+        if (_clip == null)
+            return;
+
         isStart = true;
         musicSource.clip = _clip;
         musicSource.Play();

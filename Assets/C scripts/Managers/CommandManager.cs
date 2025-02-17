@@ -303,6 +303,12 @@ public class CommandManager : MonoBehaviour
                             return "<系统消息> " + "暂时不允许直接添加TNT实体";
                         }
 
+                        //if (entityId == EntityData.Sheep)
+                        //{
+                        //    _color = Color.red;
+                        //    return "<系统消息> " + "暂时不允许直接添加Sheep实体";
+                        //}
+
                         //Location
                         Vector3 _PlayerPos = managerhub.player.transform.position;
 
@@ -336,7 +342,6 @@ public class CommandManager : MonoBehaviour
                     _color = Color.red;
                     return "<系统消息> " + "addEntity 转换失败";
                 }
-
 
             // 旁观者模式
             case 10:
@@ -378,7 +383,7 @@ public class CommandManager : MonoBehaviour
                     return "<系统消息> " + "spectatormode转换失败";
                 }
 
-            //poslightcast
+            //poslightcast  
             case 11:
                 managerhub.sunMoving.isOpenLightCast = !managerhub.sunMoving.isOpenLightCast;
 

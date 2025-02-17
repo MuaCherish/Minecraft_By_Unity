@@ -1,7 +1,5 @@
 using Homebrew;
 using MCEntity;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -38,6 +36,7 @@ public class MC_Music_Component : MonoBehaviour
     private void Start()
     {
         InitAudioSource();
+        _ReferStart_ClipCheck();
     }
 
     private void Update()
@@ -56,20 +55,29 @@ public class MC_Music_Component : MonoBehaviour
 
     //必备播放器
     GameObject AudioSourceObject;
-    AudioSource[] MainAudioSources;
+    public AudioSource[] MainAudioSources;
     private int MainAudioSourceCount = 3;
 
-    [Foldout("个性化片段", true)]
-    [Header("受伤音效下标")] public int BeHurtIndex = 26; //默认为史莱姆音效
-    [Header("死亡音效下标")] public int DeathIndex = 28; //默认为苦力怕音效
+    [Foldout("实体个性化片段", true)]
+    [Header("受伤音效")] public AudioClip BehurtClip; //默认为史莱姆音效
+    [Header("死亡音效")] public AudioClip DeathClip; //默认为苦力怕音效
+    [Header("旁白音效")] public AudioClip[] SayingClips;
 
     [Foldout("播放器参数", true)]
-    [Header("玩家可听到的最远距离")] public float MaxDistanceToHear = 8f;
+    [Header("玩家可听到的最远距离")] public float MaxDistanceToHear = 5f;
 
-    //其他播放器
-    [Foldout("更多播放器设置", true)]
-    [Header("更多播放器")] public AudioSource[] OtherAudioSources;
+    void _ReferStart_ClipCheck()
+    {
+        if(BehurtClip == null)
+        {
+            print("BehurtClip未设置");
+        }
 
+        if (DeathClip == null)
+        {
+            print("DeathClip未设置");
+        }
+    }
 
     // 初始化播放器
     void InitAudioSource()
@@ -95,9 +103,11 @@ public class MC_Music_Component : MonoBehaviour
             // 设置最大听觉距离
             sourceTemp.maxDistance = MaxDistanceToHear;
 
+            sourceTemp.volume = 0.8f;
+
             // 其他参数配置（可选）
-            //sourceTemp.rolloffMode = AudioRolloffMode.Linear; // 设置音量随距离衰减模式
-            //sourceTemp.dopplerLevel = 0; // 禁用多普勒效应
+            sourceTemp.rolloffMode = AudioRolloffMode.Linear; // 设置音量随距离衰减模式
+            sourceTemp.dopplerLevel = 0; // 禁用多普勒效应
 
             //配置音量等设置
 
@@ -111,44 +121,29 @@ public class MC_Music_Component : MonoBehaviour
         }
     }
 
+    #endregion
 
+
+    #region 播放
+
+    /// <summary>
+    /// 播放片段
+    /// </summary>
+    public void PlaySound(AudioClip _Clip)
+    {
+        MainAudioSources[MusicData.AudioSource_AnyOneShot].PlayOneShot(_Clip);
+    }
 
     #endregion
 
 
-    #region [Public]+改变音量+播放音频
-
-    /// <summary>
-    /// 给定百分比，将其下所有播放器设置改变
-    /// </summary>
-    /// <param name="_value">百分比</param>
-    public void ChangeSoundSetting(float _value)
-    {
-
-    }
-
-
-    /// <summary>
-    /// 播放更多播放器
-    /// </summary>
-    public void PlayOtherSound(int _index, int _id)
-    {
-        //记得要缓慢切换
-    }
-
-
-
-    #endregion
-
-
-    #region 脚步声实现
+    #region 脚步声
 
     [Foldout("脚步声", true)]
     [Header("实体是否有脚步声")] public bool hasFootStep = true;
     [Header("脚步声间隔时间")] public float FootStep_InterTime = 0.3f;
     int item = 0;   //用来区分左右脚的
     private float nextFoot = 0f;
-
 
     void _ReferUpdate_FootStep()
     {
@@ -189,8 +184,7 @@ public class MC_Music_Component : MonoBehaviour
     #endregion 
 
 
-    #region 水面切换音效和游泳实现
-
+    #region 游泳音效
 
     void _ReferUpdate_Water()
     {
@@ -199,9 +193,44 @@ public class MC_Music_Component : MonoBehaviour
         // 切换入水/出水状态
         if (isCurrentlyInWater != isInTheWater)
         {
+            // 检查音频源是否为 null
+            if (MainAudioSources[0] == null)
+            {
+                Debug.LogError("AudioSource is null.");
+                return;
+            }
+
+            // 检查音频剪辑是否有效
+            if (managerhub.NewmusicManager.audioclips[MusicData.fall_water] == null)
+            {
+                Debug.LogError("AudioClip for fall_water is null.");
+                return;
+            }
+
+            // 检查音频源的音量设置
+            if (MainAudioSources[0].volume == 0)
+            {
+                Debug.LogWarning("AudioSource volume is set to 0.");
+            }
+
+            // 检查 AudioListener 是否处于静音状态
+            if (AudioListener.volume == 0)
+            {
+                Debug.LogWarning("AudioListener volume is set to 0.");
+            }
+
+            // 检查音频源是否正在播放
+            if (MainAudioSources[0].isPlaying)
+            {
+                Debug.LogWarning("AudioSource is already playing another clip.");
+                return; // 如果正在播放，避免新的音效被覆盖
+            }
+
             // 播放音效
+            print("播放oneshot");
             MainAudioSources[0].PlayOneShot(managerhub.NewmusicManager.audioclips[MusicData.fall_water]);
 
+            // 更新状态
             isInTheWater = isCurrentlyInWater;
         }
 
