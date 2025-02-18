@@ -36,6 +36,7 @@ public static class EntityData
     public static readonly int Zombie = 6;
     public static readonly int Alex = 7;
     public static readonly int Steve = 8;
+    public static readonly int Creeper = 9;
 
     //实体姓名列表
     public static string GetEntityName(int entityId)
@@ -60,6 +61,8 @@ public static class EntityData
                 return "Alex";
             case 8:
                 return "Steve";
+            case 9:
+                return "Creeper";
             default:
                 return "Unknown Entity"; // 默认返回值，处理非法输入
         }

@@ -2096,11 +2096,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInTheWater: 0
+  _clip: {fileID: 8300000, guid: ae19a1ab96c3fcc4b901b9647d26ce96, type: 3}
+  MaxDistanceToHear: 30
+  AudioVolume: 1
   BehurtClip: {fileID: 8300000, guid: dd1e50abae6f3e84a956d954dc721f9f, type: 3}
   DeathClip: {fileID: 8300000, guid: a3fcd1052b1db9a4295cf508ee73d0a9, type: 3}
   SayingClips: []
-  MaxDistanceToHear: 10
-  OtherAudioSources: []
   hasFootStep: 1
   FootStep_InterTime: 0.3
 --- !u!1 &8418111411205985633

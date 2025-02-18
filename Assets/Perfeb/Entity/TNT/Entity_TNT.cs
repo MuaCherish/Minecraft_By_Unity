@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MCEntity;
 using Homebrew;
+using UnityEditor.SceneManagement;
 
 [RequireComponent(typeof(MC_Collider_Component))]
 public class Entity_TNT : MonoBehaviour, IEntityBrain

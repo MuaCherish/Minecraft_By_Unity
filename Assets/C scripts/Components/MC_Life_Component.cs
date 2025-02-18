@@ -12,7 +12,6 @@ namespace MCEntity
     [RequireComponent(typeof(MC_Collider_Component))]
     [RequireComponent(typeof(MC_AI_Component))]
     [RequireComponent(typeof(MC_Registration_Component))]
-    [RequireComponent(typeof(MC_Music_Component))]
     public class MC_Life_Component : MonoBehaviour
     {
 
@@ -212,8 +211,9 @@ namespace MCEntity
             isEntity_Hurt = true;
 
             //受伤音效
-            //Music_Component.PlaySound(Music_Component.BehurtClip);
-            managerhub.NewmusicManager.Create3DSound(transform.position, Music_Component.BehurtClip);
+            if(Music_Component != null)
+                Music_Component.PlaySound(Music_Component.BehurtClip);
+            //managerhub.NewmusicManager.Create3DSound(transform.position, Music_Component.BehurtClip);
 
             //材质变红
             if (EntityMat != null)

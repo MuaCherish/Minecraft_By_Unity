@@ -1715,7 +1715,7 @@ MonoBehaviour:
   AI_CanSwiming: 0
   Floating_CheckTime: 0.1
   FloatingForce: 5
-  AttackRangeMultiplier: {x: 2, y: 1.2}
+  AttackRangeMultiplier: {x: 3, y: 1.2}
   AttackDamage: 3
   AttackColdTime: 1
   Debug_DrawRay: 0
@@ -1733,11 +1733,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInTheWater: 0
+  _clip: {fileID: 0}
+  MaxDistanceToHear: 12
+  AudioVolume: 0.8
   BehurtClip: {fileID: 8300000, guid: d77435df3e6499449ac2e798f58ec221, type: 3}
   DeathClip: {fileID: 8300000, guid: 91b8b123e2c87c044a7d0ab066d944d2, type: 3}
-  SayingClips: []
-  MaxDistanceToHear: 12
-  OtherAudioSources: []
+  SayingClips:
+  - {fileID: 8300000, guid: 2743500b6c89cf143b199e9de904ee47, type: 3}
+  - {fileID: 8300000, guid: 9bfef4965a3e5fb4c963bbf2d3eb5b56, type: 3}
+  - {fileID: 8300000, guid: e64a81f6d3a63c9439b0ea3fbd766fc9, type: 3}
+  SayingDelayRange: {x: 5, y: 30}
   hasFootStep: 1
   FootStep_InterTime: 0.3
 --- !u!1 &8455522021168972637

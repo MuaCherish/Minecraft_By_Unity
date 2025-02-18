@@ -2782,6 +2782,9 @@ public class World : MonoBehaviour
         //生成名字
         string entityName = EntityData.GetEntityName(_index);
 
+        if(entityName == "Unknown Entity")
+            print("该实体没有名字！！");
+
         //生成Struct
         EntityInfo _entityInfo = new EntityInfo(entityId, entityName, newEntity);
 
