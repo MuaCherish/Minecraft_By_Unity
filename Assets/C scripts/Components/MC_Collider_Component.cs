@@ -3,7 +3,6 @@ using UnityEngine;
 using MCEntity;
 using Homebrew;
 using static UnityEngine.Rendering.DebugUI;
-using static MC_UtilityFunctions;
 using System.Collections.Generic;
 
 namespace MCEntity
@@ -178,6 +177,9 @@ namespace MCEntity
 
 
         #region 各个方向的碰撞检测
+
+        public float Delta = 0.01f;
+        public float Delta_Pro = 0.0125f;
 
         // 前方
         public bool collider_Front
@@ -462,7 +464,7 @@ namespace MCEntity
 
 
         //动态碰撞细分
-        private bool DynamicSubdivision_CollisionCheck(MC_UtilityFunctions.BlockDirection _DIRECT)
+        private bool DynamicSubdivision_CollisionCheck(BlockDirection _DIRECT)
         {
             //检测矩形
             float _DynamicWidth = 1f;
@@ -532,7 +534,7 @@ namespace MCEntity
         /// 获取目标方向方块的高度或者宽度
         /// </summary>
         /// <param name="_DIRECT">方向，枚举</param>
-        float GetTargetBlockHeightAndWidth(MC_UtilityFunctions.BlockDirection _DIRECT)
+        float GetTargetBlockHeightAndWidth(BlockDirection _DIRECT)
         {
             //比较值
             float _value = 0f;
@@ -543,7 +545,7 @@ namespace MCEntity
 
             switch (_DIRECT)
             {
-                case MC_UtilityFunctions.BlockDirection.前:
+                case BlockDirection.前:
 
                     //确定范围
                     _00 = 前_左下;
@@ -581,7 +583,7 @@ namespace MCEntity
                         }
                     }
                     break;
-                case MC_UtilityFunctions.BlockDirection.后:
+                case BlockDirection.后:
                     //确定范围
                     _00 = 后_左下;
                     _11 = 后_右上;
@@ -618,7 +620,7 @@ namespace MCEntity
                         }
                     }
                     break;
-                case MC_UtilityFunctions.BlockDirection.左:
+                case BlockDirection.左:
 
                     //确定范围
                     _00 = 后_左下;
@@ -656,7 +658,7 @@ namespace MCEntity
                         }
                     }
                     break;
-                case MC_UtilityFunctions.BlockDirection.右:
+                case BlockDirection.右:
 
                     //确定范围
                     _00 = 后_右下;
@@ -692,7 +694,7 @@ namespace MCEntity
                         }
                     }
                     break;
-                case MC_UtilityFunctions.BlockDirection.上:
+                case BlockDirection.上:
 
                     //确定范围
                     _00 = 后_左上;
@@ -729,7 +731,7 @@ namespace MCEntity
                     }
 
                     break;
-                case MC_UtilityFunctions.BlockDirection.下:
+                case BlockDirection.下:
 
                     //确定范围
                     _00 = 后_左下;
@@ -741,7 +743,7 @@ namespace MCEntity
                         for (float _x = _00.x; _x <= _11.x; _x++)
                         {
                             //获取坐标
-                            Vector3 _pos = new Vector3(_x, _00.y - MC_UtilityFunctions.Delta, _z);
+                            Vector3 _pos = new Vector3(_x, _00.y - Delta, _z);
 
                             //获取方块类型
                             byte _targetType = managerhub.world.GetBlockType(_pos);
@@ -1090,7 +1092,7 @@ namespace MCEntity
         /// </summary>
         /// <param name="_direct">方向向量</param>
         /// <returns>目标点</returns>
-        public Vector3 GetPoint_Direct_1m(MC_UtilityFunctions.BlockDirection _DIRECT)
+        public Vector3 GetPoint_Direct_1m(BlockDirection _DIRECT)
         {
 
             switch (_DIRECT)
@@ -1121,7 +1123,7 @@ namespace MCEntity
         /// </summary>
         /// <param name="_direct">方向向量</param>
         /// <returns>目标点</returns>
-        public Vector3 GetPoint_HitBoxEdge(MC_UtilityFunctions.BlockDirection _DIRECT)
+        public Vector3 GetPoint_HitBoxEdge(BlockDirection _DIRECT)
         {
 
             switch (_DIRECT)

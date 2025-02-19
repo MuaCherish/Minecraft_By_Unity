@@ -1,5 +1,37 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &156038729526690642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7964255462849037199}
+  m_Layer: 0
+  m_Name: Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7964255462849037199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156038729526690642}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.37, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1813962190751776292}
+  m_Father: {fileID: 8271595617701598644}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1005002237005768187
 GameObject:
   m_ObjectHideFlags: 0
@@ -1449,11 +1481,11 @@ Transform:
   m_GameObject: {fileID: 4727179472495957779}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.625, z: 0}
+  m_LocalPosition: {x: 0, y: 0.255, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 8271595617701598644}
+  m_Father: {fileID: 7964255462849037199}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8949642384535834510
 MonoBehaviour:
@@ -1843,7 +1875,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1813962190751776292}
+  - {fileID: 7964255462849037199}
   - {fileID: 2981150963971683243}
   m_Father: {fileID: 7912809658134693680}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1984,7 +2016,6 @@ MonoBehaviour:
   force_Watergravity: -2
   JumpColdTime: 0.1
   rotationSpeed: 90
-  RotationSensitivity: 50
   Damping_Horizontal: 10
   BodySlowRotationPercent: 1.4
 --- !u!114 &5921264928648517616
@@ -2097,11 +2128,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isInTheWater: 0
   _clip: {fileID: 8300000, guid: ae19a1ab96c3fcc4b901b9647d26ce96, type: 3}
-  MaxDistanceToHear: 30
+  MaxDistant: 5
   AudioVolume: 1
   BehurtClip: {fileID: 8300000, guid: dd1e50abae6f3e84a956d954dc721f9f, type: 3}
   DeathClip: {fileID: 8300000, guid: a3fcd1052b1db9a4295cf508ee73d0a9, type: 3}
   SayingClips: []
+  SayingDelayRange: {x: 5, y: 30}
   hasFootStep: 1
   FootStep_InterTime: 0.3
 --- !u!1 &8418111411205985633

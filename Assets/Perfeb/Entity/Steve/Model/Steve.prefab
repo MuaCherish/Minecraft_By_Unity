@@ -137,7 +137,6 @@ MonoBehaviour:
   force_Watergravity: -2
   JumpColdTime: 0.1
   rotationSpeed: 90
-  RotationSensitivity: 50
   Damping_Horizontal: 10
   BodySlowRotationPercent: 1.4
 --- !u!114 &6767469622152274827
@@ -249,11 +248,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInTheWater: 0
+  _clip: {fileID: 0}
+  MaxDistant: 5
+  AudioVolume: 0.8
   BehurtClip: {fileID: 8300000, guid: dd1e50abae6f3e84a956d954dc721f9f, type: 3}
   DeathClip: {fileID: 8300000, guid: a3fcd1052b1db9a4295cf508ee73d0a9, type: 3}
   SayingClips: []
-  MaxDistanceToHear: 10
-  OtherAudioSources: []
+  SayingDelayRange: {x: 5, y: 30}
   hasFootStep: 1
   FootStep_InterTime: 0.3
 --- !u!1 &1710250970606730674
@@ -290,6 +291,38 @@ Transform:
   - {fileID: 245924163696712516}
   - {fileID: 342062251056576630}
   - {fileID: 7669499109173477375}
+  m_Father: {fileID: 1536500660480213533}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1721840445626132814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1902936755412473919}
+  m_Layer: 0
+  m_Name: Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1902936755412473919
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721840445626132814}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.375, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7730328701436018912}
   m_Father: {fileID: 1536500660480213533}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2410197986055769932
@@ -1375,7 +1408,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7730328701436018912}
+  - {fileID: 1902936755412473919}
   - {fileID: 1049650437573072794}
   m_Father: {fileID: 7515409042016008703}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2132,11 +2165,11 @@ Transform:
   m_GameObject: {fileID: 8888898621516027296}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.625, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 1536500660480213533}
+  m_Father: {fileID: 1902936755412473919}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1212878140420871313
 MonoBehaviour:

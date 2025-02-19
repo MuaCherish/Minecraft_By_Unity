@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using static MC_UtilityFunctions;
+using static MC_Tool_Game;
 
 public class ChatManager : MonoBehaviour
 {
@@ -306,3 +306,28 @@ public class ChatManager : MonoBehaviour
     #endregion
 
 }
+
+
+//消息结构体
+[Serializable]
+public class Amessage
+{
+    public string content;
+    public float life;
+    public Color color;
+
+    public Amessage(string _content, float _life)
+    {
+        content = _content;
+        life = _life;
+    }
+
+    public Amessage(string _content, float _life, Color _color)
+    {
+        content = _content;
+        life = _life;
+        color = _color;
+    }
+
+}
+

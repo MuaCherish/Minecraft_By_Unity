@@ -25,11 +25,13 @@ public class Weather : MonoBehaviour
     #region 周期函数
 
     ManagerHub managerhub;
+    World world;
     Player player;
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
         player = managerhub.player;
+        world = managerhub.world;
     }
 
     private void Update()
@@ -187,7 +189,7 @@ public class Weather : MonoBehaviour
             elapsedTime = 0f; // 重置计时器
 
             // 执行射线检测逻辑
-            RayCastStruct _rayCast = player.NewRayCast(player.transform.position, Vector3.up, 32f);
+            MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.OnlyFindBlock, player.transform.position, Vector3.up, TerrainData.ChunkHeight, -1, 1f);
             if (_rayCast.isHit == 1)
             {
                 // Do something when head is detected

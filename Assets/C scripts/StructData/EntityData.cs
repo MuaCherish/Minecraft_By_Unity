@@ -124,29 +124,17 @@ public class EntityInfo
 }
 
 
-#region Astar算法所需数据结构
 
 
-[System.Serializable]
-public class AstarNode
+/// <summary>
+/// 方向
+/// </summary>
+public enum BlockDirection
 {
-    public Vector3 P;
-    public float G; // 路径消耗
-    public float H; // 预期消耗
-    public float F; // 总消耗
-    public AstarNode parentNode;
-
-    public AstarNode(Vector3 _currentPos, float _G, float _H, AstarNode _parentNode)
-    {
-        P = _currentPos;
-        G = _G;
-        H = _H;
-        F = G + H;
-        parentNode = _parentNode;
-    }
-
-
+    前,
+    后,
+    左,
+    右,
+    上,
+    下
 }
-
-
-#endregion

@@ -7,7 +7,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(MC_Collider_Component))]
 [RequireComponent(typeof(MC_Velocity_Component))]
-[RequireComponent(typeof(MC_AI_Component))]
 public class MC_Animator_Component : MonoBehaviour
 {
 

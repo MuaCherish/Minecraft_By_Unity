@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Diagnostics;
 using Homebrew;
-using static MC_UtilityFunctions;
+using static MC_Tool_Game;
 
 public class CanvasManager : MonoBehaviour
 {
@@ -21,51 +21,14 @@ public class CanvasManager : MonoBehaviour
     public World world;
     public Transform Camera;
     public MusicManager musicmanager;
-    //public GameObject MainCamera;
-    //public GameObject PlayerObject;
     public Player player;
     public TextMeshProUGUI selectblockname;
     public BackPackManager BackPackManager;
     public LifeManager LifeManager;
-    //public TextMeshProUGUI gamemodeTEXT;
-    //public GameObject CreativeButtom;
-    //public GameObject SurvivalButtom;
-    //public GameObject Survival_Screen;
-
-    //主要屏幕
-    //public GameObject Start_Screen;
-    //public GameObject Init_Screen;
-    //public GameObject Loading_Screen;
-
-    //过渡对象
-    //public Slider slider;
-    //public TextMeshProUGUI tmp;
-    //public GameObject handle;
-
-    //InitScreen
-    //public TextMeshProUGUI ErrorMessage;
-    //public Toggle SuperPlainToggle;
-
-    //Playing屏幕内容
     public GameObject OpenYourEyes;
-    //public GameObject Debug_Screen;
-    //public GameObject ToolBar;
-    //public GameObject CursorCross_Screen;
     public GameObject Swimming_Screen;
-    //public GameObject Pause_Screen;
-    //public GameObject HowToPlay_Screen;
-    //public GameObject Prompt_Screen;
     public GameObject prompt;
     public TextMeshProUGUI prompt_Text;
-    //public GameObject DeadScreen;
-
-    //修改值参数
-    //public Slider slider_bgm;
-    //public Slider slider_sound;
-    //public Slider slider_MouseSensitivity;
-    //public Toggle toggle_SpaceMode;  
-    //public Toggle toggle_SuperMing;
-
 
     //游戏状态判断
     public bool isPausing = false;
@@ -73,33 +36,13 @@ public class CanvasManager : MonoBehaviour
 
     //修改值
     [Header("Options")]
-    //bgm
     public float volume_bgm = 0.5f;
-    //private float previous_bgm = 0.5f;
-
-    //sound
     public float volume_sound = 0.5f;
-    //private float previous_sound = 0.5f;
-
-    //render speed
     public float Mouse_Sensitivity = 1f;
-    //private float previous_Mouse_Sensitivity = 1f;
-
-    //isSpaceMode
     public bool SpaceMode_isOn = false;
-    //private bool previous_spaceMode_isOn = false;
-
-    //isSpaceMode
     public bool SuperMining_isOn = false;
-    //private bool previous_SuperMining_isOn = false;
-
-    //pormpt
     public float promptShowspeed = 400f;
-
-    //eyestime
     public float eyesOpenTime = 0.5f;
-
-    //Jump_MuaCherish
     public GameObject muacherish;
     public float speed = 1.0f; // 控制浮动速度的参数
     public float magnitude = 0.04f; // 控制浮动幅度的参数
@@ -109,21 +52,13 @@ public class CanvasManager : MonoBehaviour
     //ShowBlockName
     Coroutine showblocknameCoroutine;
 
-    //Score
-    //public TextMeshProUGUI scoreText;
-
-
     //一次性代码
     bool hasExec_Playing = true;
     public bool hasExec_PromptScreen_isShow = false;
-    //bool hasExec_PromptScreen_isHide = true;
     bool hasExec_InWater = false;
 
-    //debug
 
-
-    //----------------------------------- 生命周期 ---------------------------------------
-
+    #region 周期函数
 
     private void Start()
     {
@@ -229,10 +164,6 @@ public class CanvasManager : MonoBehaviour
 
     }
 
-
-
-    #region Handles
-
     //Update-Loading处理
     void Handle_GameState_Loading()
     {
@@ -278,6 +209,9 @@ public class CanvasManager : MonoBehaviour
         //LayintSwapBlock();
     }
 
+    #endregion
+
+
     //手电筒提示
     void Handle_ShowFlashLightPrompt()
     {
@@ -292,11 +226,6 @@ public class CanvasManager : MonoBehaviour
 
         }
     }
-
-
-
-    #endregion
-
 
 
     //加载进度条
@@ -1751,7 +1680,7 @@ public class CanvasManager : MonoBehaviour
 
         isPausing = !isPausing;
 
-        MC_UtilityFunctions.LockMouse(true);
+        LockMouse(true);
 
         SwitchToUI(CanvasData.ui玩家);
         world.game_state = Game_State.Playing;
@@ -1849,105 +1778,7 @@ public class CanvasManager : MonoBehaviour
     }
 
 
-    //--------------------------------------------------------------------------------------
-
-
-
-
-
-
-    //---------------------------------- 实时修改值 ------------------------------------------
-
-    //更新值
-    //void UpdatePauseScreenValue()
-    //{
-    //    //bgm volume
-    //    volume_bgm = slider_bgm.value;
-    //    if (volume_bgm != previous_bgm)
-    //    {
-    //        //bgm
-    //        musicmanager.Audio_envitonment.volume = Mathf.Lerp(0f, 1f, volume_bgm);
-
-    //        //更新previous
-    //        previous_bgm = volume_bgm;
-    //    }
-
-
-    //    //sound volume
-    //    volume_sound = slider_sound.value;
-    //    if (volume_sound != previous_sound)
-    //    {
-    //        //sound
-    //        musicmanager.Audio_player_place.volume = Mathf.Lerp(0f, 1f, volume_sound);
-    //        musicmanager.Audio_player_broke.volume = Mathf.Lerp(0f, 1f, volume_sound);
-    //        musicmanager.Audio_player_moving.volume = Mathf.Lerp(0f, 1f, volume_sound);
-    //        musicmanager.Audio_player_falling.volume = Mathf.Lerp(0f, 1f, volume_sound);
-    //        musicmanager.Audio_player_diving.volume = Mathf.Lerp(0f, 1f, volume_sound);
-    //        musicmanager.Audio_Click.volume = Mathf.Lerp(0f, 1f, volume_sound);
-
-    //        //更新previous
-    //        previous_sound = volume_sound;
-    //    }
-
-    //    //MouseSensitivity
-    //    Mouse_Sensitivity = Mathf.Lerp(1f, 4f, slider_MouseSensitivity.value);
-
-    //    if (Mouse_Sensitivity != previous_Mouse_Sensitivity)
-    //    {
-    //        //改变鼠标灵敏度
-
-    //        //更新previous
-    //        previous_Mouse_Sensitivity = Mouse_Sensitivity;
-    //    }
-
-
-    //    //space mode
-    //    SpaceMode_isOn = toggle_SpaceMode.isOn;
-    //    if (SpaceMode_isOn != previous_spaceMode_isOn)
-    //    {
-    //        if (SpaceMode_isOn)
-    //        {
-    //            player.gravity = -3f;
-    //            player.isSpaceMode = true;
-    //        }
-    //        else
-    //        {
-    //            player.gravity = -20f;
-    //            player.isSpaceMode = false;
-    //        }
-
-    //        //更新previous
-    //        previous_spaceMode_isOn = SpaceMode_isOn;
-    //    }
-
-
-    //    //SuperMining
-    //    SuperMining_isOn = toggle_SuperMing.isOn;
-    //    if (SuperMining_isOn != previous_SuperMining_isOn)
-    //    {
-    //        if (SuperMining_isOn)
-    //        {
-    //            player.isSuperMining = true;
-    //        }
-    //        else
-    //        {
-    //            player.isSuperMining = false;
-    //        }
-
-    //        //更新previous
-    //        previous_SuperMining_isOn = SuperMining_isOn;
-    //    }
-
-    //}
-
-
-    //---------------------------------------------------------------------------------------
-
-
-
-
-
-    //---------------------------------- 死亡与重生 -----------------------------------------
+    #region 死亡与重生
 
     /// <summary>
     /// 玩家死亡
@@ -2002,14 +1833,11 @@ public class CanvasManager : MonoBehaviour
 
         openyoureyes();
     }
-    //--------------------------------------------------------------------------------------
+
+    #endregion
 
 
-
-
-
-
-    //------------------------------------ 工具类 -------------------------------------------
+    #region 工具类
 
     public GameObject CanvasMainScreen;
     public GameObject SpectatorScreen;
@@ -2019,8 +1847,6 @@ public class CanvasManager : MonoBehaviour
         CanvasMainScreen.SetActive(!_open);
         SpectatorScreen.SetActive(_open);
     }
-
-   
 
     //显示Block名字
     public void Change_text_selectBlockname(byte prokeblocktype)
@@ -2083,8 +1909,7 @@ public class CanvasManager : MonoBehaviour
         
     }
 
-    //--------------------------------------------------------------------------------------
-
+    #endregion
 
 
 
@@ -2185,27 +2010,4 @@ public class FixedStack<T>
     }
 }
 
-
-//消息结构体
-[Serializable]
-public class Amessage
-{
-    public string content;
-    public float life;
-    public Color color;
-
-    public Amessage(string _content, float _life)
-    {
-        content = _content;
-        life = _life;
-    }
-
-    public Amessage(string _content, float _life, Color _color)
-    {
-        content = _content;
-        life = _life;
-        color = _color;
-    }
-
-}
 

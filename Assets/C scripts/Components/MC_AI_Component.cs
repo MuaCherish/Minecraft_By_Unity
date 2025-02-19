@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static MC_Tool_Navigation;
 
 namespace MCEntity
 {
@@ -71,7 +72,6 @@ namespace MCEntity
             _ReferUpdate_AIAttack();
             _ReferUpdate_AutoJump();
         }
-
 
         #endregion
 
@@ -371,7 +371,7 @@ namespace MCEntity
 
                 //获取随机游走函数返回的路径
                 Vector3 _StartPos = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
-                MC_UtilityFunctions.Algo_RandomWalk(_StartPos, IdleWalk_RandomWalk_Steps, IdleWalk_PrevDirectionProbability, out List<Vector3> _Result);
+                Algo_RandomWalk(_StartPos, IdleWalk_RandomWalk_Steps, IdleWalk_PrevDirectionProbability, out List<Vector3> _Result);
                 TargetPos = _Result[_Result.Count - 1];
                 EntityMoveTo(TargetPos, Velocity_Component.speed_move, currentState);
                 isReachTargetPos = false;
@@ -733,7 +733,7 @@ namespace MCEntity
 
                 //获取随机游走函数返回的路径
                 Vector3 _StartPos = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
-                MC_UtilityFunctions.Algo_RandomWalk(_StartPos, FleeWalk_RandomWalk_Steps, FleeWalk_PrevDirectionProbability, out List<Vector3> _Result);
+                Algo_RandomWalk(_StartPos, FleeWalk_RandomWalk_Steps, FleeWalk_PrevDirectionProbability, out List<Vector3> _Result);
                 TargetPos = _Result[_Result.Count - 1];
                 EntityMoveTo(TargetPos, WalkFleeSpeed, currentState);
                 isReachTargetPos = false;
@@ -784,7 +784,7 @@ namespace MCEntity
             // 向腿的正前方发射射线
             Vector3 _Origin = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
             Vector3 _Direct = Collider_Component.EntityFaceForward;
-            RayCastStruct _RayCast = player.NewRayCast(_Origin, _Direct, AutoJump_CheckMaxDistance, Registration_Component.GetEntityId()._id);
+            MC_RayCastStruct _RayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.OnlyFindBlock, _Origin, _Direct, AutoJump_CheckMaxDistance, Registration_Component.GetEntityId()._id, 0.1f);
             //print(_RayCast);
 
             // 如果没检测到方块则返回
@@ -829,7 +829,7 @@ namespace MCEntity
             {
                 // 每帧进行射线检测，更新 isSeePlayer 状态
                 Vector3 _direct = player.cam.transform.position - Collider_Component.EyesPoint;
-                RayCastStruct _rayCast = player.NewRayCast(Collider_Component.EyesPoint, _direct, _dis, Registration_Component.GetEntityId()._id);
+                MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.OnlyFindBlock,Collider_Component.EyesPoint, _direct, _dis, Registration_Component.GetEntityId()._id, 0.1f);
 
                 // 被墙挡着则看不见
                 if (_rayCast.isHit == 1)

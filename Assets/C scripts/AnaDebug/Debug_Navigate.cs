@@ -1,20 +1,16 @@
 using Homebrew;
-using MCEntity;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
-using static UnityEditor.Progress;
-using static MC_UtilityFunctions;
+using static MC_Tool_Math;
+using static MC_Tool_Navigation;
+
 public class Debug_Navigate : MonoBehaviour
 {
 
 
     #region 周期函数
-
+    
     ManagerHub managerhub;
     World world;
     private void Awake()
@@ -80,10 +76,7 @@ public class Debug_Navigate : MonoBehaviour
     void Idle_RandomWalk(Vector3 _StartPos, int _Steps, float _prevDirectionProbability, out List<Vector3> _Nodes)
     {
         // 初始化
-        Vector3 _thisPos = 
-            
-            
-            GetCenterVector3(_StartPos);
+        Vector3 _thisPos = GetCenterVector3(_StartPos);
         Vector3 _thisDirect = EntityData.NearNodes[Random.Range(0, EntityData.NearNodes.Length)];
         _Nodes = new List<Vector3>{ _thisPos };
 
@@ -205,7 +198,7 @@ public class Debug_Navigate : MonoBehaviour
         {
             //Chase_Astar(StartPos.transform.position, EndPos.transform.position, 4, out List<Vector3> _result);
 
-            MC_UtilityFunctions.Algo_Astar(StartPos.transform.position, EndPos.transform.position, 4, out List<Vector3> _result);
+            Algo_Astar(StartPos.transform.position, EndPos.transform.position, 4, out List<Vector3> _result);
 
             _Astar_LineResultPath = new List<Vector3>(_result);
             Toggle_StartAstar = false;

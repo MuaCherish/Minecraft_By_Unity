@@ -3,7 +3,6 @@ using MCEntity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.ProBuilder.Shapes;
 
 
 [RequireComponent(typeof(MC_Collider_Component))]

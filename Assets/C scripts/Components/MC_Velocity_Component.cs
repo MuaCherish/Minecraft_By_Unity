@@ -131,40 +131,6 @@ namespace MCEntity
 
 
         /// <summary>
-        /// 添加速度，按对象自身方向
-        /// 无法立刻改变速度？调用一点点AddForce即可解除y的锁
-        /// </summary>
-        /// <param name="_v"></param>
-        public void SetVelocity(MC_UtilityFunctions.BlockDirection _Direct, float _value)
-        {
-            // 根据方向设置对应的速度分量，只调用第一种重载函数修改特定轴
-            switch (_Direct)
-            {
-                case MC_UtilityFunctions.BlockDirection.前:
-                    SetVelocity("x", transform.forward.x * _value);
-                    SetVelocity("z", transform.forward.z * _value);
-                    break;
-                case MC_UtilityFunctions.BlockDirection.后:
-                    SetVelocity("x", -transform.forward.x * _value);
-                    SetVelocity("z", -transform.forward.z * _value);
-                    break;
-                case MC_UtilityFunctions.BlockDirection.左:
-                    SetVelocity("x", -transform.right.x * _value);
-                    SetVelocity("z", -transform.right.z * _value);
-                    break;
-                case MC_UtilityFunctions.BlockDirection.右:
-                    SetVelocity("x", transform.right.x * _value);
-                    SetVelocity("z", transform.right.z * _value);
-                    break;
-                default:
-                    print("SetVelocity.BlockDirection参数错误");
-                    break;
-            }
-        }
-
-
-
-        /// <summary>
         /// 实体停止
         /// </summary>
         public void StopVelocity()
@@ -271,10 +237,7 @@ namespace MCEntity
 
         [Foldout("旋转参数", true)]
         [Header("旋转速度")] public float rotationSpeed = 90f; // 默认旋转速度
-        [Header("实体旋转灵敏度")] public float RotationSensitivity = 50.0f; // 设置旋转灵敏度
-       
 
-        private float verticalRotation = 0f; // 用于存储垂直旋转的累计值
         //衰减系数
         [Foldout("衰减系数", true)]
         [Header("水平摩擦系数 (越小越滑)")] public float Damping_Horizontal = 10f;
@@ -569,10 +532,34 @@ namespace MCEntity
         /// 实体整体旋转旋转
         /// 输入值在[-1,1]之间
         /// </summary>
-        public void EntityRotation(float _HorizonInput, float _VerticalInput)
+        public void EntityRotation(float _HorizonInput)
         {
             // 完成水平的旋转
-            _Model.transform.Rotate(Vector3.up, _HorizonInput * RotationSensitivity * Time.fixedDeltaTime);
+            _Model.transform.Rotate(Vector3.up, _HorizonInput * Time.fixedDeltaTime);
+        }
+
+
+        /// <summary>
+        /// 头旋转
+        /// 输入值在[-1,1]之间
+        /// </summary>
+        public void EntityHeadVerticleRotation(float _VerticleInput, Vector2 _CameraLimit, Vector2 _HeadLimit)
+        {
+            // 计算当前的垂直旋转角度
+            float currentVerticalAngle = _Head.transform.localRotation.eulerAngles.x;
+
+            // 将旋转角度限制在0到360之间
+            if (currentVerticalAngle > 180)
+                currentVerticalAngle -= 360;
+
+            // 计算新的旋转角度
+            float newVerticalAngle = currentVerticalAngle - _VerticleInput * Time.fixedDeltaTime;
+
+            // 限制新的旋转角度在[-90, 90]范围内
+            newVerticalAngle = Mathf.Clamp(newVerticalAngle, _HeadLimit.x, _HeadLimit.y);
+
+            // 使用 Quaternion.Euler 设置新的旋转
+            _Head.transform.localRotation = Quaternion.Euler(newVerticalAngle, 0f, 0f);
         }
 
 

@@ -10,7 +10,6 @@ namespace MCEntity
 {
     [RequireComponent(typeof(MC_Velocity_Component))]
     [RequireComponent(typeof(MC_Collider_Component))]
-    [RequireComponent(typeof(MC_AI_Component))]
     [RequireComponent(typeof(MC_Registration_Component))]
     public class MC_Life_Component : MonoBehaviour
     {
@@ -195,8 +194,12 @@ namespace MCEntity
                 Handle_Hurt(_hutyDirect);
 
             //逃跑
-            if (!AI_Component.isAggressive && AI_Component.EntityCanFlee)
-                AI_Component.EntityFlee();
+            if(AI_Component != null)
+            {
+                if (!AI_Component.isAggressive && AI_Component.EntityCanFlee)
+                    AI_Component.EntityFlee();
+            }
+           
 
             //修改血量并检查死亡程序
             if (CheckDead_EditBlood(_updateLifeValue))

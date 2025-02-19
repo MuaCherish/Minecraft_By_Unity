@@ -192,7 +192,7 @@ public class MusicManager : MonoBehaviour
                 if (Input.GetMouseButton(0))
                 {
 
-                    RayCastStruct _rayCast = player.NewRayCast(player.cam.position, player.cam.transform.forward, player.reach);
+                    MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.OnlyFindBlock,player.cam.position, player.cam.transform.forward, player.reach, -1, 0.1f);
 
                     //如果打中
                     if (player.point_Block_type != PlayerData.notHit && _rayCast.isHit == 1)
