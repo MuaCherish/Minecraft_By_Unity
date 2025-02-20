@@ -84,6 +84,7 @@ namespace MCEntity
         [Header("受伤颜色")] public Color Color_BeHurt = new Color(220 / 255f, 81 / 255f, 136 / 255f, 1f);
         [Header("水中颜色")] public Color Color_UnderWater = new Color(0x5B / 255f, 0x5B / 255f, 0x5B / 255f, 1f); private Color save_Color;
         [Header("被挤压颜色")] public Color Color_UnderBlock = new Color(0x00 / 255f, 0x00 / 255f, 0x00 / 255f, 1f);
+        [Header("闪烁颜色(测试用)")] public Color Color_Blink;
         private Material EntityMat;
 
         //获取旗下子类的所有Renderer
@@ -163,8 +164,19 @@ namespace MCEntity
             }
         }
 
+        /// <summary>
+        /// 改变材质实例颜色
+        /// </summary>
+        public void UpdateEntityColor(Color _TargetColor)
+        {
+            EntityMat.SetColor("_Color", _TargetColor);
+        }
 
 
+        public void ResetEntityColor()
+        {
+            EntityMat.SetColor("_Color", save_Color);
+        }
 
         #endregion
 
