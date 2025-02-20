@@ -708,6 +708,7 @@ GameObject:
   - component: {fileID: 6128268072501705658}
   - component: {fileID: 2989092885312629195}
   - component: {fileID: -5960032713669505838}
+  - component: {fileID: 6454335855962026926}
   m_Layer: 0
   m_Name: Slime_Small
   m_TagString: Untagged
@@ -773,6 +774,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isGround: 0
   canBeRayCastHit: 1
+  Delta: 0.01
+  Delta_Pro: 0.0125
   Model: {fileID: 0}
   Head: {fileID: 0}
   Body: {fileID: 0}
@@ -809,7 +812,6 @@ MonoBehaviour:
   force_Watergravity: -2
   JumpColdTime: 0.1
   rotationSpeed: 90
-  RotationSensitivity: 50
   Damping_Horizontal: 20
   BodySlowRotationPercent: 1.4
 --- !u!114 &15544916372309249
@@ -825,11 +827,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInTheWater: 0
+  _clip: {fileID: 0}
+  MaxDistant: 5
+  AudioVolume: 0.8
   BehurtClip: {fileID: 8300000, guid: dd1e50abae6f3e84a956d954dc721f9f, type: 3}
   DeathClip: {fileID: 8300000, guid: a3fcd1052b1db9a4295cf508ee73d0a9, type: 3}
   SayingClips: []
-  MaxDistanceToHear: 0
-  OtherAudioSources: []
+  SayingDelayRange: {x: 5, y: 30}
   hasFootStep: 1
   FootStep_InterTime: 0.5
 --- !u!114 &4639980755837328323
@@ -884,6 +888,7 @@ MonoBehaviour:
   AI_CanSwiming: 0
   Floating_CheckTime: 0.1
   FloatingForce: 5
+  canAttack: 1
   AttackRangeMultiplier: {x: 1.2, y: 1.2}
   AttackDamage: 2
   AttackColdTime: 1
@@ -909,6 +914,7 @@ MonoBehaviour:
   Color_BeHurt: {r: 0.8627451, g: 0.31764707, b: 0.53333336, a: 1}
   Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
+  Color_Blink: {r: 0, g: 0, b: 0, a: 0}
   EntityBlood: 2
   Hurt_ElapseTime: 0.3
   EntityOxygen: 10
@@ -926,23 +932,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 039b14dff4272714e86606b89ba01570, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Front: 0
-  Back: 0
-  Left: 0
-  Right: 0
-  Up: 0
-  Down: 0
-  Jump_Direct: {x: 0, y: 1, z: 0}
-  Jump_Value: 270
-  Toggle_EntityOnceJump: 0
-  Debug_radious: 5
-  Toggle_EntityOnceMove: 0
-  EntityControlerEnable: 1
-  RotationSpeed: 0.5
-  UpdateValue: -1
-  Toggle_UpdateBlood: 0
-  SetValue: 20
-  Toggle_UpdateSetBlood: 0
 --- !u!114 &-5960032713669505838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -960,6 +949,18 @@ MonoBehaviour:
   canBound: 1
   elasticity: 160
   disY: 0.3
+--- !u!114 &6454335855962026926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294902419089504476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef979643c3b627f43853515e58996566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2347977520285036761
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 2338981812288206647}
   - component: {fileID: 6045951671991813775}
   - component: {fileID: 5144480131695311544}
+  - component: {fileID: 5307073605352678190}
   m_Layer: 0
   m_Name: Steve
   m_TagString: Untagged
@@ -101,6 +102,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isGround: 0
   canBeRayCastHit: 1
+  Delta: 0.01
+  Delta_Pro: 0.0125
   Model: {fileID: 0}
   Head: {fileID: 0}
   Body: {fileID: 0}
@@ -158,6 +161,7 @@ MonoBehaviour:
   Color_BeHurt: {r: 0.8627451, g: 0.31764707, b: 0.53333336, a: 1}
   Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
+  Color_Blink: {r: 0, g: 0, b: 0, a: 0}
   EntityBlood: 20
   Hurt_ElapseTime: 0.3
   EntityOxygen: 10
@@ -230,6 +234,7 @@ MonoBehaviour:
   AI_CanSwiming: 0
   Floating_CheckTime: 0.1
   FloatingForce: 5
+  canAttack: 0
   AttackRangeMultiplier: {x: 1.2, y: 1.2}
   AttackDamage: 3
   AttackColdTime: 0.5
@@ -257,6 +262,18 @@ MonoBehaviour:
   SayingDelayRange: {x: 5, y: 30}
   hasFootStep: 1
   FootStep_InterTime: 0.3
+--- !u!114 &5307073605352678190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645660588227450139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef979643c3b627f43853515e58996566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1710250970606730674
 GameObject:
   m_ObjectHideFlags: 0

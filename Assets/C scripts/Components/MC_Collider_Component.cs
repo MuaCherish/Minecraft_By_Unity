@@ -28,8 +28,9 @@ namespace MCEntity
         #region ÉúÃüÖÜÆÚ
 
         MC_Velocity_Component Velocity_Component;
-        private ManagerHub _managerhub;
         World world;
+
+        private ManagerHub _managerhub;
         public ManagerHub managerhub
         {
             get

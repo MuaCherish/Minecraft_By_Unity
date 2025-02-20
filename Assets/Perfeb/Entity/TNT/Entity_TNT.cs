@@ -215,9 +215,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
 
         //玩家扣血
         if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
-        {
             managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
-        }
 
         //Music
         managerhub.NewmusicManager.PlayOneShot(MusicData.explore);
@@ -287,13 +285,11 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
 
         //Chunk
         if (!Collider_Component.IsInTheWater(Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f)))
-        {
             BlocksFunction.Boom(_center);
-        }
-        
+
 
         GetComponent<MC_Registration_Component>().LogOffEntity();
-        //Destroy(gameObject); // 销毁当前对象
+        
     }
 
 

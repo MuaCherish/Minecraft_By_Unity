@@ -102,6 +102,29 @@ public class MC_Registration_Component : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// 由Buff或者别的组件调用是否立即销毁
+    /// </summary>
+    /// <param name="_ImediateDestroy"></param>
+    public void LogOffEntity(bool _ImediateDestroy)
+    {
+        //提前返回-已经销毁实体
+        if (isRemoveEntity)
+            return;
+
+        isRemoveEntity = world.RemoveEntity(currentID);
+
+        if (isDeadImmediately || _ImediateDestroy)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            StartCoroutine(WaitToDead());
+        }
+
+    }
+
     IEnumerator WaitToDead()
     {
 

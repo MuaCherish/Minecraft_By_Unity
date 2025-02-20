@@ -339,7 +339,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7476294087303078865}
+  - component: {fileID: 9056459273425470685}
   - component: {fileID: 5474454921661426889}
+  - component: {fileID: 2607657040739137657}
   - component: {fileID: 7392942523252782806}
   - component: {fileID: 4119823792591021713}
   - component: {fileID: 8084196900322948329}
@@ -370,6 +372,22 @@ Transform:
   - {fileID: 7999498165815670527}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9056459273425470685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411532811017887905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ca8e898dfbd11249b0e92127226db0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startFuse: 0
+  DistanceToFuse: 3
+  DistanceToStopFuse: 5
+  FuseTime: 2
 --- !u!95 &5474454921661426889
 Animator:
   serializedVersion: 5
@@ -391,6 +409,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2607657040739137657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411532811017887905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef979643c3b627f43853515e58996566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7392942523252782806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -405,6 +435,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isGround: 1
   canBeRayCastHit: 1
+  Delta: 0.01
+  Delta_Pro: 0.0125
   Model: {fileID: 0}
   Head: {fileID: 0}
   Body: {fileID: 0}
@@ -519,6 +551,7 @@ MonoBehaviour:
   AI_CanSwiming: 0
   Floating_CheckTime: 0.1
   FloatingForce: 5
+  canAttack: 0
   AttackRangeMultiplier: {x: 3, y: 1.2}
   AttackDamage: 3
   AttackColdTime: 1
@@ -580,6 +613,7 @@ MonoBehaviour:
   Color_BeHurt: {r: 0.8627451, g: 0.31764707, b: 0.53333336, a: 1}
   Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
+  Color_Blink: {r: 0, g: 0, b: 0, a: 0}
   EntityBlood: 20
   Hurt_ElapseTime: 0.3
   EntityOxygen: 10

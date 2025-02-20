@@ -120,6 +120,15 @@ public class MC_Music_Component : MonoBehaviour
         MainAudioSource.PlayOneShot(_Clip);
     }
 
+    /// <summary>
+    /// ²¥·ÅÆ¬¶Î
+    /// </summary>
+    public void PlaySound(int _index)
+    {
+        AudioClip _clip = managerhub.NewmusicManager.audioclips[_index];
+        MainAudioSource.PlayOneShot(_clip);
+    }
+
     #endregion
 
 

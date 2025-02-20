@@ -4,11 +4,13 @@ using System.Collections.Generic;
 public static class BuffData
 {
     public static readonly int Blink = 0;
+    public static readonly int SwellandExplore = 1;
 
     // Buff类型 -> Buff类 类型映射
     private static readonly Dictionary<int, Type> BuffTypeMap = new Dictionary<int, Type>
     {
-        { Blink, typeof(MC_Buff_Blink) }
+        { Blink, typeof(MC_Buff_Blink) },
+        { SwellandExplore, typeof(MC_Buff_SwellandExplore) }
     };
 
     /// <summary>

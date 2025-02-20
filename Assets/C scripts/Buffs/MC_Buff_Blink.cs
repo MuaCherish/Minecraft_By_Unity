@@ -4,34 +4,52 @@ using UnityEngine;
 
 public class MC_Buff_Blink : MC_Buff_Base
 {
+
+    #region 周期函数
+
     MC_Life_Component Life_Component;
+    MC_Music_Component Music_Component;
    
     private void Awake()
     {
         Life_Component = GetComponent<MC_Life_Component>();
+        Music_Component = GetComponent<MC_Music_Component>();
     }
 
+
+    #endregion
+
+    /// <summary>
+    /// 持续闪烁
+    /// </summary>
+    /// <returns></returns>
     public override IEnumerator StartBuffEffect()
     {
         //提前返回-没有生命组件
         if (Life_Component == null)
             yield break;
 
-        while(true)
+        Music_Component.PlaySound(MusicData.TNT_Fuse);
+        Life_Component.DynamicEntityColorLock(true);
+
+        while (true)
         {
             //变白
-            Life_Component.UpdateEntityColor(Life_Component.Color_Blink);
+            Life_Component.GetEntityMat().SetFloat("_Metallic", 0f);  
             yield return new WaitForSeconds(0.25f);
 
             //恢复
-            Life_Component.ResetEntityColor();
+            Life_Component.GetEntityMat().SetFloat("_Metallic", 0.7f);
             yield return new WaitForSeconds(0.25f);
         }
     }
-        
-    public override IEnumerator StartBuffEffect(float[] _floatList)
+
+    /// <summary>
+    /// 恢复一些变量
+    /// </summary>
+    public override void EndBuffEffect()
     {
-        print("MC_Buff_Blink");
-        yield return null;
+        Life_Component.GetEntityMat().SetFloat("_Metallic", 0.7f);
+        Life_Component.DynamicEntityColorLock(false);
     }
 }

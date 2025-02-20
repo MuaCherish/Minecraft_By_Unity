@@ -64,7 +64,7 @@ namespace MCEntity
             {
                 _ReferUpdate_CheckOxy();
                 _ReferUpdate_FallingCheck();
-                _ReferUpdate_IntheWaterBeBlack();
+                _ReferUpdate_DynamicEntityMatColor();
             }
         }
 
@@ -134,8 +134,12 @@ namespace MCEntity
         }
 
 
-        void _ReferUpdate_IntheWaterBeBlack()
+        void _ReferUpdate_DynamicEntityMatColor()
         {
+            //提前返回-如果有Lock
+            if (_DynamicEntityColorLock)
+                return;
+
             // 提前返回 - 如果hurt则退出
             if (isEntity_Hurt)
                 return;
@@ -144,24 +148,41 @@ namespace MCEntity
             if (world.GetBlockType(Collider_Component.EyesPoint) == 255)
                 return;
 
-            Color targetColor = save_Color;  // 默认颜色
+            // 默认颜色
+            Color targetColor = save_Color;  
 
             // 如果被挤压
             if (world.blocktypes[world.GetBlockType(Collider_Component.EyesPoint)].isSolid)
-            {
                 targetColor = Color_UnderBlock;
-            }
             // 如果在水里
             else if (Collider_Component.IsInTheWater(Collider_Component.HeadPoint))
-            {
                 targetColor = Color_UnderWater;
-            }
 
             // 如果当前目标颜色与之前不同，则更新材质颜色
             if (EntityMat.GetColor("_Color") != targetColor)
             {
                 EntityMat.SetColor("_Color", targetColor);
             }
+
+        }
+
+        /// <summary>
+        /// 获取实体材质实例
+        /// </summary>
+        /// <returns></returns>
+        public Material GetEntityMat()
+        {
+            return EntityMat;
+        }
+
+        /// <summary>
+        /// 实例颜色锁定
+        /// </summary>
+        /// <param name="_lock"></param>
+        private bool _DynamicEntityColorLock;
+        public void DynamicEntityColorLock(bool _lock)
+        {
+            _DynamicEntityColorLock = _lock;
         }
 
         /// <summary>
@@ -172,7 +193,9 @@ namespace MCEntity
             EntityMat.SetColor("_Color", _TargetColor);
         }
 
-
+        /// <summary>
+        /// 恢复材质实例颜色
+        /// </summary>
         public void ResetEntityColor()
         {
             EntityMat.SetColor("_Color", save_Color);

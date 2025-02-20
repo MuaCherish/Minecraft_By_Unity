@@ -1896,6 +1896,7 @@ GameObject:
   - component: {fileID: 2158636346373357304}
   - component: {fileID: 5095501756777380264}
   - component: {fileID: 8104925539569772895}
+  - component: {fileID: 6024561078561975475}
   m_Layer: 0
   m_Name: Alex
   m_TagString: Untagged
@@ -1980,6 +1981,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isGround: 0
   canBeRayCastHit: 1
+  Delta: 0.01
+  Delta_Pro: 0.0125
   Model: {fileID: 0}
   Head: {fileID: 0}
   Body: {fileID: 0}
@@ -2037,6 +2040,7 @@ MonoBehaviour:
   Color_BeHurt: {r: 0.8627451, g: 0.31764707, b: 0.53333336, a: 1}
   Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
+  Color_Blink: {r: 1, g: 1, b: 1, a: 1}
   EntityBlood: 20
   Hurt_ElapseTime: 0.3
   EntityOxygen: 10
@@ -2113,7 +2117,7 @@ MonoBehaviour:
   AttackDamage: 3
   AttackColdTime: 0.5
   Debug_DrawRay: 1
-  Debug_PauseAI: 0
+  Debug_PauseAI: 1
 --- !u!114 &8104925539569772895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2136,6 +2140,19 @@ MonoBehaviour:
   SayingDelayRange: {x: 5, y: 30}
   hasFootStep: 1
   FootStep_InterTime: 0.3
+--- !u!114 &6024561078561975475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6569283705541333388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef979643c3b627f43853515e58996566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Toggle_BlinkBuff: 0
 --- !u!1 &8418111411205985633
 GameObject:
   m_ObjectHideFlags: 0

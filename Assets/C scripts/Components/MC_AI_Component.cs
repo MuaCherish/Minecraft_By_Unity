@@ -26,8 +26,8 @@ namespace MCEntity
 
         [Foldout("实体类型", true)]
         [Header("移动方式")] public AIMovingType currentMovingType = AIMovingType.Walk;
-        [Header("是否具有攻击性")] public bool isAggressive;
-        [Header("实体是否会逃跑")] public bool EntityCanFlee = true;
+        [Header("是否会追逐玩家")] public bool isAggressive;
+        [Header("是否会逃跑")] public bool EntityCanFlee = true;
 
         #endregion
 
@@ -1047,6 +1047,7 @@ namespace MCEntity
         #region AI攻击
 
         [Foldout("AI攻击", true)]
+        [Header("是否能触发范围攻击")] public bool canAttack;
         [Header("攻击范围扩大倍数(x为宽度,y为高度)")] public Vector2 AttackRangeMultiplier = new Vector2(1.2f, 1.2f);
         [Header("攻击伤害值")] public int AttackDamage = 3;
         [Header("攻击冷却")] public float AttackColdTime = 1f;
@@ -1064,6 +1065,10 @@ namespace MCEntity
 
             // 提前返回-不是追逐状态
             if (currentState != AIState.Chase)
+                return;
+
+            //提前返回-如果不能触发攻击
+            if (!canAttack)
                 return;
 
             // 提前返回-实体与玩家离得太远了

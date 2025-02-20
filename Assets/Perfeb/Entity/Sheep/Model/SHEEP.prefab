@@ -3550,6 +3550,7 @@ GameObject:
   - component: {fileID: 644092356276998332}
   - component: {fileID: 7816373304208968987}
   - component: {fileID: 9184785532704828453}
+  - component: {fileID: 8155811501920863197}
   m_Layer: 0
   m_Name: Sheep
   m_TagString: Untagged
@@ -3634,6 +3635,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isGround: 0
   canBeRayCastHit: 1
+  Delta: 0.01
+  Delta_Pro: 0.0125
   Model: {fileID: 0}
   Head: {fileID: 0}
   Body: {fileID: 0}
@@ -3670,7 +3673,6 @@ MonoBehaviour:
   force_Watergravity: -2
   JumpColdTime: 0.1
   rotationSpeed: 90
-  RotationSensitivity: 50
   Damping_Horizontal: 10
   BodySlowRotationPercent: 1.4
 --- !u!114 &5803946298061801025
@@ -3692,6 +3694,7 @@ MonoBehaviour:
   Color_BeHurt: {r: 0.8627451, g: 0.31764707, b: 0.53333336, a: 1}
   Color_UnderWater: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
   Color_UnderBlock: {r: 0, g: 0, b: 0, a: 1}
+  Color_Blink: {r: 0, g: 0, b: 0, a: 0}
   EntityBlood: 20
   Hurt_ElapseTime: 0.3
   EntityOxygen: 10
@@ -3764,6 +3767,7 @@ MonoBehaviour:
   AI_CanSwiming: 1
   Floating_CheckTime: 0.1
   FloatingForce: 5
+  canAttack: 0
   AttackRangeMultiplier: {x: 1.2, y: 1.2}
   AttackDamage: 3
   AttackColdTime: 0.5
@@ -3782,15 +3786,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInTheWater: 0
+  _clip: {fileID: 0}
+  MaxDistant: 5
+  AudioVolume: 0.8
   BehurtClip: {fileID: 8300000, guid: dd1e50abae6f3e84a956d954dc721f9f, type: 3}
   DeathClip: {fileID: 8300000, guid: a3fcd1052b1db9a4295cf508ee73d0a9, type: 3}
   SayingClips:
   - {fileID: 8300000, guid: 3bc8515c936d54047a1d6a55b7b79f95, type: 3}
   - {fileID: 8300000, guid: 4ab17a30d446b5641a55ce9fac181869, type: 3}
-  MaxDistanceToHear: 8
-  OtherAudioSources: []
+  SayingDelayRange: {x: 5, y: 30}
   hasFootStep: 1
   FootStep_InterTime: 0.3
+--- !u!114 &8155811501920863197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8347151624010629815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef979643c3b627f43853515e58996566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8582914677624510094
 GameObject:
   m_ObjectHideFlags: 0
