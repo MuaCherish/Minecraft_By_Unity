@@ -1,6 +1,7 @@
 using Homebrew;
 using TMPro;
 using UnityEngine;
+using static MC_Tool_Math;
 
 public class DebugManager : MonoBehaviour
 {
@@ -160,7 +161,7 @@ public class DebugManager : MonoBehaviour
         TextScreens[0].text += $"眼睛坐标: {managerhub.player.cam.position}\n";
         TextScreens[0].text += $"实时重力: {managerhub.player.verticalMomentum}\n";
         //LeftText.text += $"绝对坐标: {(new Vector3((int)footlocation.x, (int)footlocation.y, (int)footlocation.z))}\n";
-        //LeftText.text += $"相对坐标: {managerHub.world.GetRelalocation(footlocation)}\n";
+        //LeftText.text += $"相对坐标: {GetRelaPos(footlocation)}\n";
         TextScreens[0].text += $"已保存方块数量: {managerhub.world.EditNumber.Count}\n";
         TextScreens[0].text += $"碰撞点检测个数:{managerhub.player.CollisionNumber}\n";
         //LeftText.text += $"生存模式玩家走过的路程: {managerHub.player.accumulatedDistance:F2}m\n";
@@ -168,14 +169,14 @@ public class DebugManager : MonoBehaviour
 
 
         TextScreens[0].text += $"[Chunk]\n";
-        TextScreens[0].text += $"区块坐标: {managerhub.world.GetChunkLocation(footlocation)}\n";
+        TextScreens[0].text += $"区块坐标: {GetRelaChunkLocation(footlocation)}\n";
         TextScreens[0].text += $"初始化区块平均渲染时间: {CaculateChunkRenderTime()}\n";
         TextScreens[0].text += $"\n";
 
 
         TextScreens[0].text += $"[FootPosition]\n";
         TextScreens[0].text += $"foot绝对坐标: {(new Vector3(footlocation.x, footlocation.y, footlocation.z))} \n";
-        TextScreens[0].text += $"foot相对坐标: {managerhub.world.GetRelalocation(footlocation)} \n";
+        TextScreens[0].text += $"foot相对坐标: {GetRelaPos(footlocation)} \n";
         TextScreens[0].text += $"foot坐标类型: {managerhub.world.GetBlockType(footlocation)} \n";
         TextScreens[0].text += $"\n";
 
@@ -370,7 +371,7 @@ public class DebugManager : MonoBehaviour
         }
 
 
-        _newChunkLocation = managerhub.world.GetChunkLocation(managerhub.player.transform.position) * 16f;
+        _newChunkLocation = GetRelaChunkLocation(managerhub.player.transform.position) * 16f;
 
         if (_newChunkLocation != _Previous_hunkLocation)
         {

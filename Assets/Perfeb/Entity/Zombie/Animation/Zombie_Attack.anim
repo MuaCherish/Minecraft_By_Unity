@@ -47,7 +47,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Model/LeftHandRoot
+    path: Model/Body/LeftHandRoot
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -81,7 +81,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Model/RightHandRoot
+    path: Model/Body/RightHandRoot
   m_PositionCurves: []
   m_ScaleCurves: []
   m_FloatCurves: []
@@ -94,7 +94,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 1318985859
+      path: 2048533819
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -103,7 +103,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 3130781867
+      path: 2132102928
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -168,7 +168,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Model/LeftHandRoot
+    path: Model/Body/LeftHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -207,7 +207,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Model/LeftHandRoot
+    path: Model/Body/LeftHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -246,7 +246,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Model/LeftHandRoot
+    path: Model/Body/LeftHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -285,7 +285,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Model/RightHandRoot
+    path: Model/Body/RightHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -324,7 +324,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Model/RightHandRoot
+    path: Model/Body/RightHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -363,7 +363,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Model/RightHandRoot
+    path: Model/Body/RightHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -375,8 +375,8 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/LeftHandRoot
+    attribute: m_LocalEulerAngles.z
+    path: Model/Body/LeftHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -388,19 +388,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Model/LeftHandRoot
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/LeftHandRoot
+    path: Model/Body/LeftHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -412,7 +400,19 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Model/RightHandRoot
+    path: Model/Body/LeftHandRoot
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Body/RightHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -424,7 +424,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Model/RightHandRoot
+    path: Model/Body/RightHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -436,7 +436,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Model/RightHandRoot
+    path: Model/Body/RightHandRoot
     classID: 4
     script: {fileID: 0}
     flags: 0

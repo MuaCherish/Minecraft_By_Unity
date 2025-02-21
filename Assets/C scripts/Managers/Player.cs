@@ -389,7 +389,7 @@ public class Player : MonoBehaviour
             //AdjustPlayerToGround();
 
             
-            DynamicState_isCave();
+            //DynamicState_isCave();
 
         }
 
@@ -468,9 +468,8 @@ public class Player : MonoBehaviour
     {
         //print("");
         float playerY = cam.position.y + 10f;
-        Vector3 RelaPosition = managerhub.world.GetRelalocation(cam.position);
-        Vector3 _ChunkLocation = managerhub.world.GetChunkLocation(cam.position);
-
+        Vector3 RelaPosition = GetRelaPos(cam.position);
+        Vector3 _ChunkLocation = GetRelaChunkLocation(cam.position);
         //print($"RelaPosition: {RelaPosition} , ChunkLocation = {_ChunkLocation}");
         float NoiseY = managerhub.world.GetTotalNoiseHigh_Biome((int)RelaPosition.x, (int)RelaPosition.z, new Vector3((int)_ChunkLocation.x * 16f, 0f, (int)_ChunkLocation.z * 16f), managerhub.world.worldSetting.worldtype);
 
@@ -525,7 +524,7 @@ public class Player : MonoBehaviour
     //    {
     //        print("调整一次坐标");
     //        Vector3 myposition = transform.position;
-    //        Vector3 Vec = world.GetRelalocation(foot.position);
+    //        Vector3 Vec = GetRelaPos(foot.position);
     //        transform.position = new Vector3(myposition.x, Vec.y + 1.95f, myposition.z);
     //        hasExec_AdjustPlayerToGround = false;
     //    }
@@ -1022,11 +1021,11 @@ public class Player : MonoBehaviour
                 }
 
 
-                //world.GetChunkObject(RayCast_now()).EditData(world.GetRelalocation(RayCast_now()), 4);
+                //world.GetChunkObject(RayCast_now()).EditData(GetRelaPos(RayCast_now()), 4);
 
 
                 //print($"绝对坐标为：{RayCast_now()}");
-                //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
+                //print($"相对坐标为：{GetRelaPos(RayCast())}");
                 //print($"方块类型为：{world.GetBlockType(RayCast())}");
             }
 
@@ -1071,7 +1070,7 @@ public class Player : MonoBehaviour
                             if (_selecttype == VoxelData.Tool_BoneMeal)
                             {
                                 //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
-                                world.Allchunks[world.GetChunkLocation(_rayCast.hitPoint)].EditData(_rayCast.hitPoint, VoxelData.Air);
+                                world.Allchunks[GetRelaChunkLocation(_rayCast.hitPoint)].EditData(_rayCast.hitPoint, VoxelData.Air);
                                 BlocksFunction.Smoke(_rayCast.hitPoint);
                                 managerhub.backpackManager.update_slots(1, 56);
 
@@ -1164,7 +1163,7 @@ public class Player : MonoBehaviour
                         }
 
                         //print($"绝对坐标为：{RayCast_last()}");
-                        //print($"相对坐标为：{world.GetRelalocation(RayCast())}");
+                        //print($"相对坐标为：{GetRelaPos(RayCast())}");
                         //print($"方块类型为：{world.GetBlockType(RayCast())}");
 
 
@@ -1797,7 +1796,7 @@ public class Player : MonoBehaviour
             if (!world.blocktypes[world.GetBlockType(foot.position)].isDIYCollision)
             {
                 Vector3 myposition = transform.position;
-                Vector3 Vec = world.GetRelalocation(foot.position); // 获取脚部应有的Y坐标
+                Vector3 Vec = GetRelaPos(foot.position); // 获取脚部应有的Y坐标
                 if (Vec.y + 1.95f > myposition.y) // 只调整向上的情况，防止跳跃时干扰
                 {
 
@@ -1939,7 +1938,7 @@ public class Player : MonoBehaviour
         else
         {
 
-            managerhub.world.Start_Position = new Vector3(managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).x, TerrainData.ChunkHeight - 2, managerhub.world.GetRealChunkLocation(managerhub.world.Start_Position).z);
+            managerhub.world.Start_Position = new Vector3(GetRealChunkLocation(managerhub.world.Start_Position).x, TerrainData.ChunkHeight - 2, GetRealChunkLocation(managerhub.world.Start_Position).z);
             //print($"start: {managerhub.world.Start_Position}");
             managerhub.world.Start_Position = managerhub.world.AddressingBlock(managerhub.world.Start_Position, 3);
 
@@ -3104,7 +3103,7 @@ public class Player : MonoBehaviour
     {
         
         //如果等于eyes的坐标提前返回true
-        if (world.GetRelalocation(new Vector3(pos.x, pos.y + 1f, pos.z)) == world.GetRelalocation(cam.position))
+        if (GetRelaPos(new Vector3(pos.x, pos.y + 1f, pos.z)) == GetRelaPos(cam.position))
         {
         
             return true;
@@ -3112,7 +3111,7 @@ public class Player : MonoBehaviour
         }
 
 
-        if (world.GetRelalocation(pos) == world.GetRelalocation(down_左上))
+        if (GetRelaPos(pos) == GetRelaPos(down_左上))
         {
 
             return true;
@@ -3120,19 +3119,19 @@ public class Player : MonoBehaviour
         }
 
 
-        else if (world.GetRelalocation(pos) == world.GetRelalocation(down_右上))
+        else if (GetRelaPos(pos) == GetRelaPos(down_右上))
         {
 
             return true;
 
         }
-        else if (world.GetRelalocation(pos) == world.GetRelalocation(down_左下))
+        else if (GetRelaPos(pos) == GetRelaPos(down_左下))
         {
 
             return true;
 
         }
-        else if (world.GetRelalocation(pos) == world.GetRelalocation(down_右下))
+        else if (GetRelaPos(pos) == GetRelaPos(down_右下))
         {
 
             return true;

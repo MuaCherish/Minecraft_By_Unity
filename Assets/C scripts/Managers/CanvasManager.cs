@@ -8,6 +8,7 @@ using System.IO;
 using System.Diagnostics;
 using Homebrew;
 using static MC_Tool_Game;
+using static MC_Tool_Name;
 
 public class CanvasManager : MonoBehaviour
 {
@@ -257,6 +258,19 @@ public class CanvasManager : MonoBehaviour
     //----------------------------------------------------------------------------------------
 
 
+    //给定日期，将pointsaving修改为给定参数
+    [HideInInspector] public String PointSaving = "";
+    public void SelectSaving(String _PointSaving)
+    {
+        PointSaving = _PointSaving;
+
+        //将进入选中的世界按钮点亮
+        if (isClickSaving == false)
+        {
+            LightButton();
+        }
+
+    }
 
 
 
@@ -515,18 +529,18 @@ public class CanvasManager : MonoBehaviour
         instance.transform.SetParent(NewWorld_Transform, false);
         instance.transform.Find("TMP_WorldName").GetComponent<TextMeshProUGUI>().text = name;
         instance.transform.Find("TMP_Time").GetComponent<TextMeshProUGUI>().text = date;
-        instance.transform.Find("TMP_GameMode").GetComponent<TextMeshProUGUI>().text = world.GetGameModeString(gamemode) + "   " + world.GetWorldTypeString(worldtype) + "   种子：" + seed;
+        instance.transform.Find("TMP_GameMode").GetComponent<TextMeshProUGUI>().text = GetGameModeString(gamemode) + "   " + GetWorldTypeString(worldtype) + "   种子：" + seed;
     }
     //删除存档按钮
     public void ClickToDeleteSaving()
     {
-        if (world.PointSaving == "")
+        if (PointSaving == "")
         {
             return;
         }
 
         // 构造完整路径
-        string fullPath = Path.Combine(world.savingPATH, "Saves", world.PointSaving);
+        string fullPath = Path.Combine(world.savingPATH, "Saves", PointSaving);
 
         // 确保要删除的路径存在
         if (Directory.Exists(fullPath))
@@ -568,7 +582,7 @@ public class CanvasManager : MonoBehaviour
         {
             //加载存档
             //print(world.savingPATH + "\\Saves\\" + world.PointSaving);
-            world.LoadSavingData(world.savingPATH + "\\Saves\\" + world.PointSaving);
+            world.LoadSavingData(world.savingPATH + "\\Saves\\" + PointSaving);
             //print(world.TheSaving.Count);
 
             SwitchToUI(CanvasData.ui加载世界);
@@ -2011,3 +2025,12 @@ public class FixedStack<T>
 }
 
 
+public enum BlockClassfy
+{
+    全部方块 = 0,
+    建筑方块 = 1,
+    功能性方块 = 2,
+    工具 = 3,
+    食物 = 4,
+    禁用 = 5,
+}

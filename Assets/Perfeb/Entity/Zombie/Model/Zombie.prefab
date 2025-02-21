@@ -1742,7 +1742,7 @@ MonoBehaviour:
   AutoJump_CheckMaxDistance: 1
   AutoJump_ColdTime: 0.5
   canWatchPlayer: 1
-  visionDistance: 10
+  visionDistance: 15
   ChaseVisionrotateTime: 0.2
   WatchvisionDistance: 3
   WatchPLayerrotateTime: 0.4

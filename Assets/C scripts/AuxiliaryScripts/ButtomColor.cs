@@ -10,12 +10,18 @@ public class ButtomColor : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public Sprite Default_Sprite;
     public Sprite Select_Sprite;
     public World world;
+    public ManagerHub managerhub;
 
     private Image image;
 
     public string myPathName;
 
     public bool isPointed = false;
+
+    private void Awake()
+    {
+        managerhub = SceneData.GetManagerhub();
+    }
 
     void Start()
     {
@@ -85,13 +91,13 @@ public class ButtomColor : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (world != null)
         {
             // 假设 World 类有一个 HandleButtonClick 方法
-            world.SelectSaving(myPathName);
+            managerhub.canvasManager.SelectSaving(myPathName);
         }
     }
 
     private void FixedUpdate()
     {
-        if (isPointed && world.PointSaving != myPathName)
+        if (isPointed && managerhub.canvasManager.PointSaving != myPathName)
         {
             // 鼠标离开时恢复纹理
             if (Default_Sprite != null)

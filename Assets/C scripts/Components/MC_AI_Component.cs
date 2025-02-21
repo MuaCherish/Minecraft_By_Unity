@@ -814,7 +814,7 @@ namespace MCEntity
 
         [Foldout("AI视觉", true)]
         [Header("是否会注视玩家")] public bool canWatchPlayer;
-        [Header("警戒视力范围")] public float visionDistance = 10f;
+        [Header("警戒视力范围")] public float visionDistance = 15f;
         [Header("追逐状态的转向时间")] public float ChaseVisionrotateTime = 0.2f;
         [Header("注视视力范围")] public float WatchvisionDistance = 3f;
         [Header("注视玩家的转向时间")] public float WatchPLayerrotateTime = 0.4f;

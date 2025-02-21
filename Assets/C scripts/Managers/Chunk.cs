@@ -155,7 +155,7 @@ public class Chunk : MonoBehaviour
         myThread.Start();
 
         //print($"----------------------------------------------");
-        //print($"{world.GetChunkLocation(myposition)}已经生成！");
+        //print($"{GetRelaChunkLocation(myposition)}已经生成！");
     }
 
 
@@ -235,7 +235,7 @@ public class Chunk : MonoBehaviour
         myThread.Start();
 
         //print($"----------------------------------------------");
-        //print($"{world.GetChunkLocation(myposition)}已经生成！");
+        //print($"{GetRelaChunkLocation(myposition)}已经生成！");
     }
 
 
@@ -2216,13 +2216,13 @@ public class Chunk : MonoBehaviour
     //    {
 
     //        world.WaitToRender_temp.Enqueue(this);
-    //        //print($"{world.GetChunkLocation(myposition)}被堵塞，入队temp");
+    //        //print($"{GetRelaChunkLocation(myposition)}被堵塞，入队temp");
 
     //    }
     //    else
     //    {
 
-    //        //print($"{world.GetChunkLocation(myposition)}入队");
+    //        //print($"{GetRelaChunkLocation(myposition)}入队");
     //        world.WaitToRender.Enqueue(this);
 
     //    }
@@ -2246,7 +2246,7 @@ public class Chunk : MonoBehaviour
     //            {
 
     //                //能获取到对面Chunk
-    //                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks_WaterFlow[_p], out Chunk chunktemp))
+    //                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks_WaterFlow[_p], out Chunk chunktemp))
     //                {
 
     //                    Vector3 directlocation = GetDirectChunkVoxelMapLocation(new Vector3(_x, _y, _z) + VoxelData.faceChecks_WaterFlow[_p]);
@@ -2423,22 +2423,22 @@ public class Chunk : MonoBehaviour
         {
 
             Chunk DirectChunk;
-            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
+            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
             {
                 world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                 //DirectChunk.UpdateChunkMesh_WithSurround();
             }
-            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
+            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
             {
                 world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                 //DirectChunk.UpdateChunkMesh_WithSurround();
             }
-            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
+            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
             {
                 world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                 //DirectChunk.UpdateChunkMesh_WithSurround();
             }
-            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
+            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
             {
                 world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                 //DirectChunk.UpdateChunkMesh_WithSurround();
@@ -2463,7 +2463,7 @@ public class Chunk : MonoBehaviour
         else
         {
 
-            //print($"{world.GetChunkLocation(myposition)}Mesh完成");
+            //print($"{GetRelaChunkLocation(myposition)}Mesh完成");
             world.MeshLock = false;
 
         }
@@ -2480,13 +2480,13 @@ public class Chunk : MonoBehaviour
             {
 
                 world.WaitToRender_temp.Enqueue(this);
-                //print($"{world.GetChunkLocation(myposition)}被堵塞，入队temp");
+                //print($"{GetRelaChunkLocation(myposition)}被堵塞，入队temp");
 
             }
             else
             {
 
-                //print($"{world.GetChunkLocation(myposition)}入队");
+                //print($"{GetRelaChunkLocation(myposition)}入队");
                 world.WaitToRender.Enqueue(this);
 
             }
@@ -2566,7 +2566,7 @@ public class Chunk : MonoBehaviour
 
                 if (Orient.x > 0)
                 {
-                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
+                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
                     {
                         world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                         //DirectChunk.UpdateChunkMesh_WithSurround();
@@ -2575,7 +2575,7 @@ public class Chunk : MonoBehaviour
 
                 if (Orient.x < 0)
                 {
-                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
+                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
                     {
                         world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                         //DirectChunk.UpdateChunkMesh_WithSurround();
@@ -2584,7 +2584,7 @@ public class Chunk : MonoBehaviour
 
                 if (Orient.z > 0)
                 {
-                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
+                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
                     {
                         world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                         //DirectChunk.UpdateChunkMesh_WithSurround();
@@ -2593,7 +2593,7 @@ public class Chunk : MonoBehaviour
 
                 if (Orient.z < 0)
                 {
-                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
+                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
                     {
                         world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                         //DirectChunk.UpdateChunkMesh_WithSurround();
@@ -2620,7 +2620,7 @@ public class Chunk : MonoBehaviour
         else
         {
 
-            //print($"{world.GetChunkLocation(myposition)}Mesh完成");
+            //print($"{GetRelaChunkLocation(myposition)}Mesh完成");
             world.MeshLock = false;
 
         }
@@ -2643,13 +2643,13 @@ public class Chunk : MonoBehaviour
                 {
 
                     world.WaitToRender_temp.Enqueue(this);
-                    //print($"{world.GetChunkLocation(myposition)}被堵塞，入队temp");
+                    //print($"{GetRelaChunkLocation(myposition)}被堵塞，入队temp");
 
                 }
                 else
                 {
 
-                    //print($"{world.GetChunkLocation(myposition)}入队");
+                    //print($"{GetRelaChunkLocation(myposition)}入队");
                     world.WaitToRender.Enqueue(this);
 
                 }
@@ -2731,7 +2731,7 @@ public class Chunk : MonoBehaviour
     {
 
         //ClearFInd_Direvtion();
-        Vector3 _relaVec = world.GetRelalocation(pos);
+        Vector3 _relaVec = GetRelaPos(pos);
 
         int x = (int)_relaVec.x;
         int y = (int)_relaVec.y;
@@ -2832,7 +2832,7 @@ public class Chunk : MonoBehaviour
 
             
 
-            Vector3 relaposition = world.GetRelalocation(_EditList[i].editPos);
+            Vector3 relaposition = GetRelaPos(_EditList[i].editPos);
 
             int _x = Mathf.FloorToInt(relaposition.x);
             int _y = Mathf.FloorToInt(relaposition.y);
@@ -2846,9 +2846,9 @@ public class Chunk : MonoBehaviour
             //}
 
             //非本区块则跳过
-            if (world.GetChunkLocation(_EditList[i].editPos) != world.GetChunkLocation(myposition))
+            if (GetRelaChunkLocation(_EditList[i].editPos) != GetRelaChunkLocation(myposition))
             {
-                //Debug.Log($"edit:{world.GetChunkLocation(_EditList[i].editPos)}, myposition:{world.GetChunkLocation(myposition)}");
+                //Debug.Log($"edit:{GetRelaChunkLocation(_EditList[i].editPos)}, myposition:{GetRelaChunkLocation(myposition)}");
                 continue;
             }
 
@@ -3044,7 +3044,7 @@ public class Chunk : MonoBehaviour
                 {
 
                     //如果能查到
-                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
 
                         //[已废弃，代码统一到一个函数里了]
@@ -3101,7 +3101,7 @@ public class Chunk : MonoBehaviour
                 {
 
                     //如果能查到
-                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
 
 
@@ -3157,7 +3157,7 @@ public class Chunk : MonoBehaviour
                 {
 
                     //如果能查到
-                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
 
 
@@ -3208,7 +3208,7 @@ public class Chunk : MonoBehaviour
                 {
 
                     //如果能查到
-                    if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
 
 
@@ -4315,7 +4315,7 @@ public class Chunk : MonoBehaviour
 
         world.RenderLock = true;
 
-        //print($"{world.GetChunkLocation(myposition)}CreateMesh 开始");
+        //print($"{GetRelaChunkLocation(myposition)}CreateMesh 开始");
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
@@ -4363,7 +4363,7 @@ public class Chunk : MonoBehaviour
 
         //print($"triangles:{triangles.Count}, triangles_Water:{triangles_Water.Count}");
 
-        //print($"{world.GetChunkLocation(myposition)}CreateMesh 结束");
+        //print($"{GetRelaChunkLocation(myposition)}CreateMesh 结束");
 
         world.RenderLock = false;
 
@@ -4638,7 +4638,7 @@ public class Chunk : MonoBehaviour
     //        {
     //            _p = 1;
     //            //如果能查到
-    //            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
     //            {
     //                //if (isOutOfRange(_x,_y,_z))
     //                //{
@@ -4661,7 +4661,7 @@ public class Chunk : MonoBehaviour
     //        {
     //            _p = 0;
     //            //如果能查到
-    //            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
     //            {
     //                return chunktemp.voxelMap[_x, _y, TerrainData.ChunkWidth - 1];
 
@@ -4681,7 +4681,7 @@ public class Chunk : MonoBehaviour
     //        {
     //            _p = 4;
     //            //如果能查到
-    //            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
     //            {
 
     //                return chunktemp.voxelMap[TerrainData.ChunkWidth - 1, _y, _z];
@@ -4701,7 +4701,7 @@ public class Chunk : MonoBehaviour
     //        {
     //            _p = 5;
     //            //如果能查到
-    //            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
     //            {
 
     //                return chunktemp.voxelMap[0, _y, _x];
@@ -4764,7 +4764,7 @@ public class Chunk : MonoBehaviour
 
 
 
-            if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + TargetChunkDirection, out Chunk chunktemp))
+            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + TargetChunkDirection, out Chunk chunktemp))
             {
                 if (isOutOfRange(_relaX, _relaY, _relaZ))
                 {
@@ -4806,7 +4806,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
                     return chunktemp.voxelMap[_x, _y, 0];
                 }
@@ -4824,7 +4824,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
                     return chunktemp.voxelMap[_x, _y, TerrainData.ChunkWidth - 1];
 
@@ -4844,7 +4844,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
                     return chunktemp.voxelMap[TerrainData.ChunkWidth - 1, _y, _z];
@@ -4864,7 +4864,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
                     return chunktemp.voxelMap[0, _y, _z];
@@ -4917,7 +4917,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
                     return chunktemp.voxelMap[_x, _y, 0];
                 }
@@ -4935,7 +4935,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
                     return chunktemp.voxelMap[_x, _y, TerrainData.ChunkWidth - 1];
 
@@ -4955,7 +4955,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
                     return chunktemp.voxelMap[TerrainData.ChunkWidth - 1, _y, _z];
@@ -4975,7 +4975,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(world.GetChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
                     return chunktemp.voxelMap[0, _y, _x];

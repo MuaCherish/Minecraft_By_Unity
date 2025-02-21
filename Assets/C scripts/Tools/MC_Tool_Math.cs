@@ -9,14 +9,59 @@ public static class MC_Tool_Math
 
     #region Vector3
 
+
     /// <summary>
-    /// 将相对坐标变成绝对坐标
+    /// 获取所在区块坐标虚拟坐标
     /// </summary>
-    /// <param name="_vec"></param>
+    /// <param name="vec"></param>
     /// <returns></returns>
-    public static Vector3 GetRealPos(Vector3 _vec, Vector3 _ChunkLocation)
+    public static Vector3 GetRelaChunkLocation(Vector3 vec)
     {
-        return Vector3.zero;
+
+        return new Vector3((vec.x - vec.x % TerrainData.ChunkWidth) / TerrainData.ChunkWidth, 0, (vec.z - vec.z % TerrainData.ChunkWidth) / TerrainData.ChunkWidth);
+
+    }
+
+    /// <summary>
+    /// 获取所在区块坐标世界坐标
+    /// </summary>
+    /// <param name="vec"></param>
+    /// <returns></returns>
+    public static Vector3 GetRealChunkLocation(Vector3 vec)
+    {
+
+        return new Vector3(16f * ((vec.x - vec.x % TerrainData.ChunkWidth) / TerrainData.ChunkWidth), 0, 16f * ((vec.z - vec.z % TerrainData.ChunkWidth) / TerrainData.ChunkWidth));
+
+    }
+
+
+    /// <summary>
+    ///  将输入向量归一化到x或z轴
+    /// </summary>
+    /// <param name="v"></param>
+    /// <returns></returns>
+    public static Vector3 NormalizeToAxis(Vector3 v)
+    {
+        // 选择 x 和 z 分量绝对值较大的轴
+        if (Mathf.Abs(v.x) >= Mathf.Abs(v.z))
+        {
+            return new Vector3(Mathf.Sign(v.x), 0, 0); // 返回 x 轴单位向量，保持 x 的符号
+        }
+        else
+        {
+            return new Vector3(0, 0, Mathf.Sign(v.z)); // 返回 z 轴单位向量，保持 z 的符号
+        }
+    }
+
+    /// <summary>
+    /// 求Vector3的2d长度
+    /// </summary>
+    /// <param name="vec"></param>
+    /// <returns></returns>
+    public static float Get2DLengthforVector3(Vector3 vec)
+    {
+        Vector2 vector2 = new Vector2(vec.x, vec.z);
+        return vector2.magnitude;
     }
 
     /// <summary>
