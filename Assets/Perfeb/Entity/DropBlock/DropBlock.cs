@@ -16,13 +16,13 @@ public class DropBlock: MonoBehaviour, IEntityBrain
     BlockItem myItem = new BlockItem(VoxelData.Air, 1);
 
     ManagerHub managerhub;
-    MC_Collider_Component Collider_Component; 
-    MC_Velocity_Component Velocity_Component; 
+    MC_Component_Physics Component_Physics;
+    MC_Component_Velocity Component_Velocity; 
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
-        Collider_Component = GetComponent<MC_Collider_Component>();
-        Velocity_Component = GetComponent<MC_Velocity_Component>();
+        Component_Physics = GetComponent<MC_Component_Physics>();
+        Component_Velocity = GetComponent<MC_Component_Velocity>();
     }
 
     void Update()
@@ -54,13 +54,13 @@ public class DropBlock: MonoBehaviour, IEntityBrain
 
         if (_isRandomJump)
         {
-            Velocity_Component.EntityRandomJump(JumpValue);
+            Component_Velocity.EntityRandomJump(JumpValue);
         }
 
 
         if (FloatingCube == null)
         {
-            FloatingCube = Collider_Component.Body;
+            FloatingCube = Component_Physics.Body;
         }
 
         GenMesh();
@@ -231,14 +231,14 @@ public class DropBlock: MonoBehaviour, IEntityBrain
     {
         if (FloatingCube == null)
         {
-            FloatingCube = Collider_Component.Body;
+            FloatingCube = Component_Physics.Body;
         }
 
         // 顺时针旋转
         FloatingCube.transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
 
         // 落地才开始上下漂浮
-        if (Collider_Component.isGround && !StopFloating)
+        if (Component_Physics.isGround && !StopFloating)
         {
             if (hasExec_isGround)
             {
@@ -284,7 +284,7 @@ public class DropBlock: MonoBehaviour, IEntityBrain
     IEnumerator AbsorbCheck()
     {
         yield return new WaitForSeconds(ColdTimeToAbsorb);
-        Eyes = Collider_Component.EyesPoint;
+        Eyes = Component_Physics.EyesPoint;
 
         //是否可被吸收
         while (true)
@@ -351,12 +351,12 @@ public class DropBlock: MonoBehaviour, IEntityBrain
     // 在 Update 中
     void ReferUpdateBeBuried()
     {
-        bool Front = Collider_Component.collider_Front;
-        bool Back = Collider_Component.collider_Back;
-        bool Left = Collider_Component.collider_Left;
-        bool Right = Collider_Component.collider_Right;
-        bool Up = Collider_Component.collider_Up;
-        bool Down = Collider_Component.collider_Down;
+        bool Front = Component_Physics.collider_Front;
+        bool Back = Component_Physics.collider_Back;
+        bool Left = Component_Physics.collider_Left;
+        bool Right = Component_Physics.collider_Right;
+        bool Up = Component_Physics.collider_Up;
+        bool Down = Component_Physics.collider_Down;
 
         // 如果被方块埋没
         if (Front && Back && Left && Right && Up && Down)
@@ -405,12 +405,12 @@ public class DropBlock: MonoBehaviour, IEntityBrain
         bool foundAir = false;
         foreach (var (direction, force) in directions)
         {
-            if (managerhub.world.GetBlockType(Collider_Component.GetPoint_Direct_1m(direction)) == VoxelData.Air)
+            if (managerhub.world.GetBlockType(Component_Physics.GetPoint_Direct_1m(direction)) == VoxelData.Air)
             {
-                Collider_Component.CloseCollisionForAWhile(CloseCollisionTime_Surrond);
+                Component_Physics.CloseCollisionForAWhile(CloseCollisionTime_Surrond);
                 _Force = force;
                 _Force.y = 0.5f;
-                Velocity_Component.AddForce(_Force, HandleBuriedForceValue);
+                Component_Velocity.AddForce(_Force, HandleBuriedForceValue);
                 foundAir = true;
                 break;
             }
@@ -419,9 +419,9 @@ public class DropBlock: MonoBehaviour, IEntityBrain
         // 如果没找到空气块，执行向上跳跃
         if (!foundAir)
         {
-            Collider_Component.CloseCollisionForAWhile(CloseCollisionTime_Up);
+            Component_Physics.CloseCollisionForAWhile(CloseCollisionTime_Up);
             _Force = Vector3.up;
-            Velocity_Component.AddForce(_Force, HandleBuriedForceValue_Up);
+            Component_Velocity.AddForce(_Force, HandleBuriedForceValue_Up);
         }
 
 

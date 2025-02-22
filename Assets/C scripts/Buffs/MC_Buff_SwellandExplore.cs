@@ -2,6 +2,7 @@ using MCEntity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static MC_Tool_BlocksFunction;
 
 /// <summary>
 /// Warning!!!
@@ -12,13 +13,13 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
 
     #region 周期函数
 
-    MC_Collider_Component Collider_Component;
+    MC_Component_Physics Component_Physics;
     ManagerHub managerhub;
 
     private void Awake()
     {
-        Collider_Component = GetComponent<MC_Collider_Component>();
-        managerhub = Collider_Component.managerhub;
+        Component_Physics = GetComponent<MC_Component_Physics>();
+        managerhub = Component_Physics.managerhub;
     }
 
     private void Update()
@@ -36,7 +37,7 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
         // 设定膨胀时间和目标比例
         float SwellTimer = 0;
         float _swellDuration = 0.3f;
-        GameObject _Model = Collider_Component.Model;
+        GameObject _Model = Component_Physics.Model;
         Vector3 originalScale = _Model.transform.localScale;  // 初始缩放
         Vector3 targetScale = originalScale * 1.1f;  // 目标缩放（膨胀到1.1倍）
 
@@ -85,7 +86,7 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
 
 
         //激活范围内的所有TNT
-        BlocksFunction.GetAllTNTPositions(transform.position, out List<Vector3> TNTpositions);
+        GetAllTNTPositions(transform.position, out List<Vector3> TNTpositions);
         if (TNTpositions.Count != 0)
         {
             //print($"搜索到了{TNTpositions.Count}个TNT");
@@ -93,7 +94,7 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
             foreach (Vector3 item in TNTpositions)
             {
                 Vector3 _direct = (item - transform.position).normalized;
-                float value = _direct.magnitude / BlocksFunction.TNT_explore_Radius;
+                float value = _direct.magnitude / TNT_explore_Radius;
                 managerhub.player.CreateTNT(item, true);
             }
 
@@ -101,7 +102,7 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
 
 
         //搜索范围内所有实体
-        if (managerhub.world.GetOverlapSphereEntity(_center, BlocksFunction.TNT_explore_Radius + 2f, GetComponent<MC_Registration_Component>().GetEntityId()._id, out List<EntityInfo> _entities))
+        if (managerhub.world.GetOverlapSphereEntity(_center, TNT_explore_Radius + 2f, GetComponent<MC_Component_Registration>().GetEntityId()._id, out List<EntityInfo> _entities))
         {
             foreach (var item in _entities)
             {
@@ -115,16 +116,16 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
                 float _forceValue = 0f;
 
                 // 如果距离在0到4米之间，力值从400到160之间变化
-                if (_dis >= 0f && _dis <= BlocksFunction.TNT_explore_Radius)
+                if (_dis >= 0f && _dis <= TNT_explore_Radius)
                 {
-                    _forceValue = Mathf.Lerp(400f, 160f, _dis / BlocksFunction.TNT_explore_Radius);
-                    updateBlood = (int)Mathf.Lerp(23, 10, _dis / BlocksFunction.TNT_explore_Radius);
+                    _forceValue = Mathf.Lerp(400f, 160f, _dis / TNT_explore_Radius);
+                    updateBlood = (int)Mathf.Lerp(23, 10, _dis / TNT_explore_Radius);
                 }
                 // 如果距离在4到6米之间，力值固定为50
-                else if (_dis > BlocksFunction.TNT_explore_Radius && _dis <= BlocksFunction.TNT_explore_Radius + 2f)
+                else if (_dis > TNT_explore_Radius && _dis <= TNT_explore_Radius + 2f)
                 {
                     _forceValue = 50f;
-                    updateBlood = (int)Mathf.Lerp(10, 0, (_dis - BlocksFunction.TNT_explore_Radius) / 2f);
+                    updateBlood = (int)Mathf.Lerp(10, 0, (_dis - TNT_explore_Radius) / 2f);
                 }
                 // 如果距离超过6米，力值为0或其他
                 else
@@ -133,13 +134,13 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
                     _forceValue = 0f;  // 或者设置为你需要的默认值
                 }
 
-                if (item._obj.GetComponent<MC_Life_Component>() != null)
+                if (item._obj.GetComponent<MC_Component_Life>() != null)
                 {
-                    item._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-updateBlood, _forceDirect * _forceValue);
+                    item._obj.GetComponent<MC_Component_Life>().UpdateEntityLife(-updateBlood, _forceDirect * _forceValue);
                 }
                 else
                 {
-                    item._obj.GetComponent<MC_Velocity_Component>().AddForce(_forceDirect, _forceValue);
+                    item._obj.GetComponent<MC_Component_Velocity>().AddForce(_forceDirect, _forceValue);
                 }
 
             }
@@ -147,11 +148,11 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
 
 
         //Chunk
-        if (!Collider_Component.IsInTheWater(Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f)))
-            BlocksFunction.Boom(_center);
+        if (!Component_Physics.IsInTheWater(Component_Physics.FootPoint + new Vector3(0f, 0.125f, 0f)))
+            Boom(_center);
 
 
-        GetComponent<MC_Registration_Component>().LogOffEntity(true);
+        GetComponent<MC_Component_Registration>().LogOffEntity(true);
     }
 
 

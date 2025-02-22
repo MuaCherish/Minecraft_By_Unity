@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using Homebrew;
 
-public class MC_Buff_Component : MonoBehaviour
+public class MC_Component_Buff : MonoBehaviour 
 {
 
     //»îÔ¾µÄbuff

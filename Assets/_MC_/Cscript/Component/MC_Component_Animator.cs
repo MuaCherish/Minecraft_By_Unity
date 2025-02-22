@@ -5,25 +5,25 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[RequireComponent(typeof(MC_Collider_Component))]
-[RequireComponent(typeof(MC_Velocity_Component))]
-public class MC_Animator_Component : MonoBehaviour
+[RequireComponent(typeof(MC_Component_Physics))]
+[RequireComponent(typeof(MC_Component_Velocity))]
+public class MC_Component_Animator : MonoBehaviour
 {
 
 
     #region ÖÜÆÚº¯Êý
 
-    MC_Collider_Component Collider_Component;
-    MC_Velocity_Component Velocity_Component;
+    MC_Component_Physics Component_Physics;
+    MC_Component_Velocity Component_Velocity;
     Animator animator;
     World world;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        Collider_Component = GetComponent<MC_Collider_Component>();
-        world = Collider_Component.managerhub.world;
-        Velocity_Component = GetComponent<MC_Velocity_Component>();
+        Component_Physics = GetComponent<MC_Component_Physics>();
+        world = Component_Physics.managerhub.world;
+        Component_Velocity = GetComponent<MC_Component_Velocity>();
     }
 
     private void Start()
@@ -73,7 +73,7 @@ public class MC_Animator_Component : MonoBehaviour
     private float previous_speed;
     public void SetSpeed(float _currentSpeed)
     {
-        animator.speed = previous_speed * _currentSpeed / Velocity_Component.speed_move;
+        animator.speed = previous_speed * _currentSpeed / Component_Velocity.speed_move;
     }
 
 
@@ -84,7 +84,7 @@ public class MC_Animator_Component : MonoBehaviour
         if (!CanWalk)
             return;
 
-        if (Velocity_Component.isMoving)
+        if (Component_Velocity.isMoving)
         {
             animator.SetBool("isWalk", true);
         }

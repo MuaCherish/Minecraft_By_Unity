@@ -8,10 +8,10 @@ using static MC_Tool_Navigation;
 namespace MCEntity
 {
 
-    [RequireComponent(typeof(MC_Velocity_Component))]
-    [RequireComponent(typeof(MC_Collider_Component))]
-    [RequireComponent(typeof(MC_Registration_Component))]
-    public class MC_AI_Component : MonoBehaviour
+    [RequireComponent(typeof(MC_Component_Velocity))]
+    [RequireComponent(typeof(MC_Component_Physics))]
+    [RequireComponent(typeof(MC_Component_Registration))]
+    public class MC_Component_AI : MonoBehaviour
     {
 
 
@@ -34,23 +34,23 @@ namespace MCEntity
 
         #region 周期函数
 
-        MC_Velocity_Component Velocity_Component;
-        MC_Collider_Component Collider_Component;
-        MC_Registration_Component Registration_Component;
-        MC_Life_Component Life_Component;
-        MC_Animator_Component Animator_Component;
+        MC_Component_Velocity Component_Velocity;
+        MC_Component_Physics Component_Physics;
+        MC_Component_Registration Component_Registration;
+        MC_Component_Life Component_life;
+        MC_Component_Animator Component_Animator;
         World world;
         Player player;
 
         private void Awake()
         {
-            Velocity_Component = GetComponent<MC_Velocity_Component>();
-            Collider_Component = GetComponent<MC_Collider_Component>();
-            Registration_Component = GetComponent<MC_Registration_Component>();
-            Life_Component = GetComponent<MC_Life_Component>();
-            world = Collider_Component.managerhub.world;
-            player = Collider_Component.managerhub.player;
-            Animator_Component = GetComponent<MC_Animator_Component>();
+            Component_Velocity = GetComponent<MC_Component_Velocity>();
+            Component_Physics = GetComponent<MC_Component_Physics>();
+            Component_Registration = GetComponent<MC_Component_Registration>();
+            Component_life = GetComponent<MC_Component_Life>();
+            world = Component_Physics.managerhub.world;
+            player = Component_Physics.managerhub.player;
+            Component_Animator = GetComponent<MC_Component_Animator>();
         }
 
         private void Update()
@@ -91,7 +91,7 @@ namespace MCEntity
         void _ReferUpdate_AIState_Controller()
         {
             //提前返回-如果实体已经死亡
-            if (Life_Component != null && Life_Component.isEntity_Dead)
+            if (Component_life != null && Component_life.isEntity_Dead)
                 return;
 
             AutoUpdateAIState();
@@ -134,7 +134,7 @@ namespace MCEntity
         {
 
             //提前返回-暂停AI活动
-            if (Debug_PauseAI || Life_Component.isEntity_Dead)
+            if (Debug_PauseAI || Component_life.isEntity_Dead)
                 return;
 
             switch (currentState)
@@ -265,18 +265,18 @@ namespace MCEntity
         void Handle_IdleState_JumpType_Rotate()
         {
             // 计算当前方向与目标方向的角度差（仅在XZ平面旋转）
-            Vector3 currentForward = Collider_Component.EntityFaceForward;
+            Vector3 currentForward = Component_Physics.EntityFaceForward;
             currentForward.y = 0;  // 保持y轴为0，确保只在XZ平面计算
             float angle = Vector3.SignedAngle(currentForward, targetDirection, Vector3.up);  // 计算角度差
 
             // 根据旋转速度和角度差计算旋转时间
-            float rotateWaitTime = Mathf.Abs(angle) / Velocity_Component.rotationSpeed;  // 旋转所需时间
+            float rotateWaitTime = Mathf.Abs(angle) / Component_Velocity.rotationSpeed;  // 旋转所需时间
 
             // 如果没有开始等待，记录开始时间
             if (rotateStartTime == -1f)
             {
                 rotateStartTime = Time.time;
-                Velocity_Component.EntitySmoothRotation(targetDirection, rotateWaitTime);  // 开始旋转
+                Component_Velocity.EntitySmoothRotation(targetDirection, rotateWaitTime);  // 开始旋转
             }
 
             // 如果等待时间未达到旋转所需时间
@@ -301,7 +301,7 @@ namespace MCEntity
         {
 
             float _force = Random.Range(IdleJumpForceRange.x, IdleJumpForceRange.y);
-            Velocity_Component.AddForce(targetDirection, _force);
+            Component_Velocity.AddForce(targetDirection, _force);
             current_IdleState = IdleState.Wait;
         }
 
@@ -370,10 +370,10 @@ namespace MCEntity
             {
 
                 //获取随机游走函数返回的路径
-                Vector3 _StartPos = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
+                Vector3 _StartPos = Component_Physics.FootPoint + new Vector3(0f, 0.125f, 0f);
                 Algo_RandomWalk(_StartPos, IdleWalk_RandomWalk_Steps, IdleWalk_PrevDirectionProbability, out List<Vector3> _Result);
                 TargetPos = _Result[_Result.Count - 1];
-                EntityMoveTo(TargetPos, Velocity_Component.speed_move, currentState);
+                EntityMoveTo(TargetPos, Component_Velocity.speed_move, currentState);
                 isReachTargetPos = false;
 
                 hasExec_Handle_IdleState_WalkType_Moving = false;
@@ -462,13 +462,13 @@ namespace MCEntity
         void Handle_ChaseState_JumpType_Moving()
         {
             //提前返回-没落地就不起跳
-            if (!Collider_Component.isGround)
+            if (!Component_Physics.isGround)
                 return;
 
             float _force = Random.Range(ChaseJumpForceRange.x, ChaseJumpForceRange.y);
             targetDirection = (player.transform.position - transform.position).normalized;
             targetDirection.y = ChaseJumpY;
-            Velocity_Component.AddForce(targetDirection, _force);
+            Component_Velocity.AddForce(targetDirection, _force);
 
             //End
             current_ChaseState = ChaseState.Wait;
@@ -496,7 +496,7 @@ namespace MCEntity
             {
 
                 //一直追逐玩家
-                EntityMoveTo(player.gameObject, Velocity_Component.speed_move);
+                EntityMoveTo(player.gameObject, Component_Velocity.speed_move);
 
                 hasExec_Handle_ChaseState_WalkType_Moving = false;
             }
@@ -635,18 +635,18 @@ namespace MCEntity
         void Handle_FleeState_JumpType_Rotate()
         {
             // 计算当前方向与目标方向的角度差（仅在XZ平面旋转）
-            Vector3 currentForward = Collider_Component.EntityFaceForward;
+            Vector3 currentForward = Component_Physics.EntityFaceForward;
             currentForward.y = 0;  // 保持y轴为0，确保只在XZ平面计算
             float angle = Vector3.SignedAngle(currentForward, targetDirection, Vector3.up);  // 计算角度差
 
             // 根据旋转速度和角度差计算旋转时间
-            float rotateWaitTime = Mathf.Abs(angle) / Velocity_Component.rotationSpeed;  // 旋转所需时间
+            float rotateWaitTime = Mathf.Abs(angle) / Component_Velocity.rotationSpeed;  // 旋转所需时间
 
             // 如果没有开始等待，记录开始时间
             if (rotateStartTime == -1f)
             {
                 rotateStartTime = Time.time;
-                Velocity_Component.EntitySmoothRotation(targetDirection, rotateWaitTime);  // 开始旋转
+                Component_Velocity.EntitySmoothRotation(targetDirection, rotateWaitTime);  // 开始旋转
             }
 
             // 如果等待时间未达到旋转所需时间
@@ -668,7 +668,7 @@ namespace MCEntity
         void Handle_FleeState_JumpType_Moving() 
         {
             float _force = Random.Range(FleeJumpForceRange.x, FleeJumpForceRange.y);
-            Velocity_Component.AddForce(targetDirection, _force);
+            Component_Velocity.AddForce(targetDirection, _force);
             current_FleeState = FleeState.Wait;
         }
 
@@ -732,7 +732,7 @@ namespace MCEntity
             {
 
                 //获取随机游走函数返回的路径
-                Vector3 _StartPos = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
+                Vector3 _StartPos = Component_Physics.FootPoint + new Vector3(0f, 0.125f, 0f);
                 Algo_RandomWalk(_StartPos, FleeWalk_RandomWalk_Steps, FleeWalk_PrevDirectionProbability, out List<Vector3> _Result);
                 TargetPos = _Result[_Result.Count - 1];
                 EntityMoveTo(TargetPos, WalkFleeSpeed, currentState);
@@ -778,13 +778,13 @@ namespace MCEntity
                 return;
 
             // 提前返回-如果AI没有移动
-            if (!Velocity_Component.isMoving)
+            if (!Component_Velocity.isMoving)
                 return;
 
             // 向腿的正前方发射射线
-            Vector3 _Origin = Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f);
-            Vector3 _Direct = Collider_Component.EntityFaceForward;
-            MC_RayCastStruct _RayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.OnlyFindBlock, _Origin, _Direct, AutoJump_CheckMaxDistance, Registration_Component.GetEntityId()._id, 0.1f);
+            Vector3 _Origin = Component_Physics.FootPoint + new Vector3(0f, 0.125f, 0f);
+            Vector3 _Direct = Component_Physics.EntityFaceForward;
+            MC_RayCastStruct _RayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.OnlyFindBlock, _Origin, _Direct, AutoJump_CheckMaxDistance, Component_Registration.GetEntityId()._id, 0.1f);
             //print(_RayCast);
 
             // 如果没检测到方块则返回
@@ -800,7 +800,7 @@ namespace MCEntity
 
             // 实体触发跳跃，随后进入冷却
             //print("实体跳跃");
-            Velocity_Component.EntityJump();
+            Component_Velocity.EntityJump();
 
             // 跳跃后开始冷却
             AutoJumpTimer = 0f;  // 跳跃后才开始计时
@@ -823,13 +823,13 @@ namespace MCEntity
         void _ReferUpdate_VisionSystem()
         {
             // 如果实体与玩家距离小于 VisionDistance
-            float _dis = (player.cam.transform.position - Collider_Component.EyesPoint).magnitude;
+            float _dis = (player.cam.transform.position - Component_Physics.EyesPoint).magnitude;
 
             if (_dis <= visionDistance)
             {
                 // 每帧进行射线检测，更新 isSeePlayer 状态
-                Vector3 _direct = player.cam.transform.position - Collider_Component.EyesPoint;
-                MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.OnlyFindBlock,Collider_Component.EyesPoint, _direct, _dis, Registration_Component.GetEntityId()._id, 0.1f);
+                Vector3 _direct = player.cam.transform.position - Component_Physics.EyesPoint;
+                MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.OnlyFindBlock,Component_Physics.EyesPoint, _direct, _dis, Component_Registration.GetEntityId()._id, 0.1f);
 
                 // 被墙挡着则看不见
                 if (_rayCast.isHit == 1)
@@ -868,7 +868,7 @@ namespace MCEntity
             // 旋转
             Vector3 playerPosition = player.transform.position;
             Vector3 direction = (playerPosition - transform.position).normalized;
-            Velocity_Component.EntitySmoothRotation(direction, ChaseVisionrotateTime);
+            Component_Velocity.EntitySmoothRotation(direction, ChaseVisionrotateTime);
 
             // 重置计时器，等待下次旋转
             WatchTimer = 0f;
@@ -915,14 +915,14 @@ namespace MCEntity
         IEnumerator EntityMoveToCoroutine(Vector3 _TargetPos, float _Speed, AIState _LastState)
         {
             //预处理
-            //Vector3 _currentForward = Velocity_Component.EntityForward.normalized;
+            //Vector3 _currentForward = Component_Velocity.EntityForward.normalized;
             Vector3 _Direct = (_TargetPos - transform.position).normalized;
             float startTime = 0f;
             float maxNavigationWaitTime = (_TargetPos - transform.position).magnitude / _Speed;
 
             //标记动画组件Walk
-            if (Animator_Component != null && Animator_Component.CanWalk)
-                Animator_Component.SetSpeed(_Speed);
+            if (Component_Animator != null && Component_Animator.CanWalk)
+                Component_Animator.SetSpeed(_Speed);
             
 
             while (true)
@@ -950,12 +950,12 @@ namespace MCEntity
                 }
 
                 //向Forward移动
-                Velocity_Component.SetVelocity("x", _Direct.x * _Speed);
-                Velocity_Component.SetVelocity("z", _Direct.z * _Speed);
+                Component_Velocity.SetVelocity("x", _Direct.x * _Speed);
+                Component_Velocity.SetVelocity("z", _Direct.z * _Speed);
 
                 //Rotation
                 _Direct = (_TargetPos - transform.position).normalized;
-                Velocity_Component.EntitySmoothRotation(_Direct, 0.2f);
+                Component_Velocity.EntitySmoothRotation(_Direct, 0.2f);
 
                 //end
                 startTime += Time.deltaTime;
@@ -975,13 +975,13 @@ namespace MCEntity
         IEnumerator EntityMoveToCoroutine(GameObject _TargetPos, float _Speed)
         {
             //预处理
-            //Vector3 _currentForward = Velocity_Component.EntityForward.normalized;
+            //Vector3 _currentForward = Component_Velocity.EntityForward.normalized;
             float startTime = 0f;
             float maxNavigationWaitTime = (_TargetPos.transform.position - transform.position).magnitude / _Speed;
 
             //标记动画组件Walk
-            if (Animator_Component != null && Animator_Component.CanWalk)
-                Animator_Component.SetSpeed(_Speed);
+            if (Component_Animator != null && Component_Animator.CanWalk)
+                Component_Animator.SetSpeed(_Speed);
 
 
             while (true)
@@ -999,11 +999,11 @@ namespace MCEntity
                 }
 
                 Vector3 _Direct = (_TargetPos.transform.position - transform.position).normalized;
-                Velocity_Component.EntitySmoothRotation(_Direct, 0.5f);
+                Component_Velocity.EntitySmoothRotation(_Direct, 0.5f);
 
                 //向Forward移动
-                Velocity_Component.SetVelocity("x", _Direct.x * _Speed);
-                Velocity_Component.SetVelocity("z", _Direct.z * _Speed);
+                Component_Velocity.SetVelocity("x", _Direct.x * _Speed);
+                Component_Velocity.SetVelocity("z", _Direct.z * _Speed);
 
                 //end
                 startTime += Time.deltaTime;
@@ -1033,9 +1033,9 @@ namespace MCEntity
                 lastCheckTime = Time.time;
 
                 // 如果中心入水，则尝试跳一下
-                if (Collider_Component.IsInTheWater(transform.position))
+                if (Component_Physics.IsInTheWater(transform.position))
                 {
-                    Velocity_Component.AddForce(Vector3.up, FloatingForce);
+                    Component_Velocity.AddForce(Vector3.up, FloatingForce);
                 }
             }
         }
@@ -1073,12 +1073,12 @@ namespace MCEntity
 
             // 提前返回-实体与玩家离得太远了
             //float _dis = (transform.position - player.transform.position).magnitude;
-            //float _maxDis = Mathf.Abs(Collider_Component.hitBoxWidth - player.playerWidth);
+            //float _maxDis = Mathf.Abs(Component_Physics.hitBoxWidth - player.playerWidth);
             //if (_dis > _maxDis)
             //    return;
 
             // 每帧检测玩家是否在攻击范围内
-            Vector3 hitVec = player.CheckHitBox(transform.position, Collider_Component.hitBoxWidth * AttackRangeMultiplier.x, Collider_Component.hitBoxHeight * AttackRangeMultiplier.y);
+            Vector3 hitVec = player.CheckHitBox(transform.position, Component_Physics.hitBoxWidth * AttackRangeMultiplier.x, Component_Physics.hitBoxHeight * AttackRangeMultiplier.y);
 
             if (hitVec != Vector3.zero && Time.time - lastAttackTime >= AttackColdTime)
             {
@@ -1088,11 +1088,11 @@ namespace MCEntity
                 // 处理玩家移动和伤害
                 hitVec.y = 1f; // 确保攻击方向适当
                 player.ForceMoving(hitVec, 2.5f, 0.2f);
-                Collider_Component.managerhub.lifeManager.UpdatePlayerBlood(AttackDamage, true, true);
+                Component_Physics.managerhub.lifeManager.UpdatePlayerBlood(AttackDamage, true, true);
 
                 // 播放攻击动画
-                if (Animator_Component != null)
-                    Animator_Component.PlayAttackAnimation();
+                if (Component_Animator != null)
+                    Component_Animator.PlayAttackAnimation();
 
                 // 打印攻击信息（可选）
                 // print("成功打到玩家");
@@ -1137,8 +1137,8 @@ namespace MCEntity
                 Gizmos.DrawWireCube(TargetPos, new Vector3(0.8f, 0.8f, 0.8f));
 
             //视力调试
-            Vector3 _direct = player.cam.transform.position - Collider_Component.EyesPoint;
-            float _dis = (player.cam.transform.position - Collider_Component.EyesPoint).magnitude;
+            Vector3 _direct = player.cam.transform.position - Component_Physics.EyesPoint;
+            float _dis = (player.cam.transform.position - Component_Physics.EyesPoint).magnitude;
             if (_dis <= visionDistance)
             {
 
@@ -1147,7 +1147,7 @@ namespace MCEntity
                     Gizmos.color = Color.red;
                 else
                     Gizmos.color = Color.green;
-                Gizmos.DrawRay(Collider_Component.EyesPoint, _direct.normalized * _dis);  // 从眼睛位置到玩家位置的射线
+                Gizmos.DrawRay(Component_Physics.EyesPoint, _direct.normalized * _dis);  // 从眼睛位置到玩家位置的射线
 
                 // 绘制警戒线
                 if (isSeePlayer)
@@ -1167,8 +1167,8 @@ namespace MCEntity
             //攻击范围调试
             if (currentState == AIState.Chase)
             {
-                float _width = Collider_Component.hitBoxWidth * AttackRangeMultiplier.x;
-                float _height = Collider_Component.hitBoxHeight * AttackRangeMultiplier.y;
+                float _width = Component_Physics.hitBoxWidth * AttackRangeMultiplier.x;
+                float _height = Component_Physics.hitBoxHeight * AttackRangeMultiplier.y;
                 Gizmos.color = Color.red;
                 Gizmos.DrawWireCube(transform.position, new Vector3(_width, _height, _width));
             }

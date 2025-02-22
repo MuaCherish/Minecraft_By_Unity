@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MCEntity;
-using Homebrew;
-using UnityEditor.SceneManagement;
+using static MC_Tool_BlocksFunction;
 
-[RequireComponent(typeof(MC_Collider_Component))]
+[RequireComponent(typeof(MC_Component_Physics))]
 public class Entity_TNT : MonoBehaviour, IEntityBrain
 {
 
@@ -13,13 +12,13 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
     #region 周期函数
 
     ManagerHub managerhub;
-    MC_Velocity_Component Velocity_Component;
-    MC_Collider_Component Collider_Component;
+    MC_Component_Velocity Component_Velocity;
+    MC_Component_Physics Component_Physics;
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
-        Velocity_Component = GetComponent<MC_Velocity_Component>();
-        Collider_Component = GetComponent<MC_Collider_Component>();
+        Component_Velocity = GetComponent<MC_Component_Velocity>();
+        Component_Physics = GetComponent<MC_Component_Physics>();
     }
 
     public void OnStartEntity()
@@ -70,15 +69,15 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
         if (_customDirection.HasValue) // 如果有传入自定义方向
         {
             direction = _customDirection.Value; // 使用自定义方向
-            Velocity_Component.AddForce(direction, 1); // 直接施加力，不需要标准化
+            Component_Velocity.AddForce(direction, 1); // 直接施加力，不需要标准化
         }
         else
         {
             //direction = Random.onUnitSphere * 0.5f; // 使用随机方向
             //direction.y = jumpheight; // 设置Y轴为jumpheight
             //Vector3 direct = direction.normalized; // 标准化向量
-            //Velocity_Component.AddForce(direct, forcevalue); // 施加力
-            Velocity_Component.EntityRandomJump(forcevalue);
+            //Component_Velocity.AddForce(direct, forcevalue); // 施加力
+            Component_Velocity.EntityRandomJump(forcevalue);
         }
     }
 
@@ -222,7 +221,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
 
 
         //激活范围内的所有TNT
-        BlocksFunction.GetAllTNTPositions(transform.position, out List<Vector3> TNTpositions);
+        GetAllTNTPositions(transform.position, out List<Vector3> TNTpositions);
         if (TNTpositions.Count != 0)
         {
             //print($"搜索到了{TNTpositions.Count}个TNT");
@@ -230,7 +229,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
             foreach (Vector3 item in TNTpositions)
             {
                 Vector3 _direct = (item - transform.position).normalized;
-                float value = _direct.magnitude / BlocksFunction.TNT_explore_Radius;
+                float value = _direct.magnitude / TNT_explore_Radius;
                 managerhub.player.CreateTNT(item, true);
             }
 
@@ -238,7 +237,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
 
 
         //搜索范围内所有实体
-        if (managerhub.world.GetOverlapSphereEntity(_center, BlocksFunction.TNT_explore_Radius + 2f, GetComponent<MC_Registration_Component>().GetEntityId()._id, out List<EntityInfo> _entities))
+        if (managerhub.world.GetOverlapSphereEntity(_center, TNT_explore_Radius + 2f, GetComponent<MC_Component_Registration>().GetEntityId()._id, out List<EntityInfo> _entities))
         {
             foreach (var item in _entities)
             {
@@ -252,16 +251,16 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
                 float _forceValue = 0f;
 
                 // 如果距离在0到4米之间，力值从400到160之间变化
-                if (_dis >= 0f && _dis <= BlocksFunction.TNT_explore_Radius)
+                if (_dis >= 0f && _dis <= TNT_explore_Radius)
                 {
-                    _forceValue = Mathf.Lerp(400f, 160f, _dis / BlocksFunction.TNT_explore_Radius);
-                    updateBlood = (int)Mathf.Lerp(23, 10, _dis / BlocksFunction.TNT_explore_Radius);
+                    _forceValue = Mathf.Lerp(400f, 160f, _dis / TNT_explore_Radius);
+                    updateBlood = (int)Mathf.Lerp(23, 10, _dis / TNT_explore_Radius);
                 }
                 // 如果距离在4到6米之间，力值固定为50
-                else if (_dis > BlocksFunction.TNT_explore_Radius && _dis <= BlocksFunction.TNT_explore_Radius + 2f)
+                else if (_dis > TNT_explore_Radius && _dis <= TNT_explore_Radius + 2f)
                 {
                     _forceValue = 50f;
-                    updateBlood = (int)Mathf.Lerp(10, 0, (_dis - BlocksFunction.TNT_explore_Radius) / 2f);
+                    updateBlood = (int)Mathf.Lerp(10, 0, (_dis - TNT_explore_Radius) / 2f);
                 }
                 // 如果距离超过6米，力值为0或其他
                 else
@@ -270,13 +269,14 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
                     _forceValue = 0f;  // 或者设置为你需要的默认值
                 }
 
-                if (item._obj.GetComponent<MC_Life_Component>() != null) 
+                MC_Component_Life Component_Life = item._obj.GetComponent<MC_Component_Life>();
+                if (Component_Life != null) 
                 {
-                    item._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-updateBlood, _forceDirect * _forceValue);
+                    Component_Life.UpdateEntityLife(-updateBlood, _forceDirect * _forceValue);
                 }
                 else
                 {
-                    item._obj.GetComponent<MC_Velocity_Component>().AddForce(_forceDirect , _forceValue);
+                    item._obj.GetComponent<MC_Component_Velocity>().AddForce(_forceDirect , _forceValue);
                 }
                 
             }
@@ -284,11 +284,11 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
 
 
         //Chunk
-        if (!Collider_Component.IsInTheWater(Collider_Component.FootPoint + new Vector3(0f, 0.125f, 0f)))
-            BlocksFunction.Boom(_center);
+        if (!Component_Physics.IsInTheWater(Component_Physics.FootPoint + new Vector3(0f, 0.125f, 0f)))
+            Boom(_center);
 
 
-        GetComponent<MC_Registration_Component>().LogOffEntity();
+        GetComponent<MC_Component_Registration>().LogOffEntity();
         
     }
 

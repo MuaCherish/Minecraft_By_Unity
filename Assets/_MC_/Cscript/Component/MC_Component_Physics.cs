@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 namespace MCEntity
 {
-    [RequireComponent(typeof(MC_Velocity_Component))]
-    public class MC_Collider_Component : MonoBehaviour
+    [RequireComponent(typeof(MC_Component_Velocity))]
+    public class MC_Component_Physics : MonoBehaviour
     {
 
         #region 状态
@@ -27,7 +27,7 @@ namespace MCEntity
 
         #region 生命周期
 
-        MC_Velocity_Component Velocity_Component;
+        MC_Component_Velocity Component_Velocity;
         World world;
 
         private ManagerHub _managerhub;
@@ -46,7 +46,7 @@ namespace MCEntity
 
         private void Awake()
         {
-            Velocity_Component = GetComponent<MC_Velocity_Component>();
+            Component_Velocity = GetComponent<MC_Component_Velocity>();
             world = managerhub.world;
 
             _ReferAwake_AutoGetModel();
@@ -140,7 +140,7 @@ namespace MCEntity
         /// 检查两个Collider是否重叠
         /// </summary>
         /// <returns></returns>
-        public bool CheckHitBox(MC_Collider_Component _ColliderA, MC_Collider_Component _ColliderB)
+        public bool CheckHitBox(MC_Component_Physics _ColliderA, MC_Component_Physics _ColliderB)
         {
             // 获取物体A和物体B的位置
             Vector3 positionA = _ColliderA.transform.position;
@@ -196,7 +196,7 @@ namespace MCEntity
                 {
 
                     //进行一次微调
-                    if (!AdjustLock_Collsion_Front && Velocity_Component.GetVelocity().z > 0)
+                    if (!AdjustLock_Collsion_Front && Component_Velocity.GetVelocity().z > 0)
                     {
                         // 计算 X 坐标调整
                         //int _selfZ = (int)(GetPoint_HitBoxEdge(BlockDirection.前).z + Vector3.forward.z * Delta_Pro);
@@ -240,7 +240,7 @@ namespace MCEntity
                 {
 
                     //进行一次微调
-                    if (!AdjustLock_Collsion_Back && Velocity_Component.GetVelocity().z < 0)
+                    if (!AdjustLock_Collsion_Back && Component_Velocity.GetVelocity().z < 0)
                     {
                         // 计算 X 坐标调整
                         //int _selfZ = (int)(GetPoint_HitBoxEdge(BlockDirection.后).z + Vector3.back.z * Delta_Pro);
@@ -284,7 +284,7 @@ namespace MCEntity
                 {
 
                     //进行一次微调
-                    if (!AdjustLock_Collsion_Left && Velocity_Component.GetVelocity().x < 0)
+                    if (!AdjustLock_Collsion_Left && Component_Velocity.GetVelocity().x < 0)
                     {
                         // 计算 X 坐标调整
                         //int _selyX = (int)(GetPoint_HitBoxEdge(BlockDirection.左).x + Vector3.left.x * Delta_Pro);
@@ -331,7 +331,7 @@ namespace MCEntity
 
 
                     //进行一次微调
-                    if (!AdjustLock_Collsion_Right && Velocity_Component.GetVelocity().x > 0)
+                    if (!AdjustLock_Collsion_Right && Component_Velocity.GetVelocity().x > 0)
                     {
 
                         // 计算 X 坐标调整
@@ -376,7 +376,7 @@ namespace MCEntity
                 {
 
                     //进行一次微调
-                    if (!AdjustLock_Collsion_Up && Velocity_Component.GetVelocity().y > 0)
+                    if (!AdjustLock_Collsion_Up && Component_Velocity.GetVelocity().y > 0)
                     {
                         // 计算 Y 坐标调整
                         //int _selyY = (int)(GetPoint_HitBoxEdge(BlockDirection.上).y + Vector3.up.y * Delta_Pro);
@@ -421,7 +421,7 @@ namespace MCEntity
                 {
 
                     //进行一次微调
-                    if (!AdjustLock_Collsion_Down && Velocity_Component.GetVelocity().y < 0)
+                    if (!AdjustLock_Collsion_Down && Component_Velocity.GetVelocity().y < 0)
                     {
                         // 计算 Y 坐标调整
                         int _selyY = (int)(GetPoint_HitBoxEdge(BlockDirection.下).y + Vector3.down.y * Delta_Pro);
@@ -803,16 +803,16 @@ namespace MCEntity
             //如果Model找不到才会显示Info
             if(Model == null || Head == null || Body == null)
             {
-                MC_Registration_Component Registration_Component = GetComponent<MC_Registration_Component>();
+                MC_Component_Registration Component_Registration = GetComponent<MC_Component_Registration>();
 
                 //提前返回-没有注册组件
-                if (Registration_Component == null)
+                if (Component_Registration == null)
                 {
                     print("实体未挂载注册组件且找不到Model");
                     return;
                 }
 
-                EntityInfo _info = Registration_Component.GetEntityId();
+                EntityInfo _info = Component_Registration.GetEntityId();
                 if (Model == null)
                     print($"Model搜索不到, id:{_info._id}, name:{_info._name}");
 
@@ -1042,14 +1042,14 @@ namespace MCEntity
 
             // 获取范围内的实体，如果没有则提前返回
             float _maxR = Mathf.Max(hitBoxWidth, hitBoxHeight);
-            if (!world.GetOverlapSphereEntity(transform.position, _maxR, GetComponent<MC_Registration_Component>().GetEntityId()._id, out List<EntityInfo> _entities))
+            if (!world.GetOverlapSphereEntity(transform.position, _maxR, GetComponent<MC_Component_Registration>().GetEntityId()._id, out List<EntityInfo> _entities))
                 return;
 
             // 进一步过滤，剔除没有和自己重叠的实体
             List<EntityInfo> overlappingEntities = new List<EntityInfo>();
             foreach (var item in _entities)
             {
-                bool a = CheckHitBox(this, item._obj.GetComponent<MC_Collider_Component>());
+                bool a = CheckHitBox(this, item._obj.GetComponent<MC_Component_Physics>());
                 if (a) // 如果有重叠则保留
                 {
                     overlappingEntities.Add(item);
@@ -1074,9 +1074,9 @@ namespace MCEntity
             _backDirect = _backDirect.normalized * BounceSpeed;
 
             // 将反方向应用到实体的速度组件，X、Y、Z方向
-            Velocity_Component.SetVelocity("x", _backDirect.x);
-            //Velocity_Component.SetVelocity("y", _backDirect.y);
-            Velocity_Component.SetVelocity("z", _backDirect.z);
+            Component_Velocity.SetVelocity("x", _backDirect.x);
+            //Component_Velocity.SetVelocity("y", _backDirect.y);
+            Component_Velocity.SetVelocity("z", _backDirect.z);
 
         }
 

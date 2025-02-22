@@ -4,21 +4,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MC_Velocity_Component))]
-[RequireComponent(typeof(MC_Collider_Component))]
-public class MC_PlayerInput_Component : MonoBehaviour
+[RequireComponent(typeof(MC_Component_Velocity))]
+[RequireComponent(typeof(MC_Component_Physics))]
+public class MC_Component_PlayerInput : MonoBehaviour
 {
     #region 周期函数
 
-    MC_Velocity_Component Velocity_Component;
-    MC_Collider_Component Collider_Component;
+    MC_Component_Velocity Component_Velocity;
+    MC_Component_Physics Component_Physics;
     World world;
 
     private void Awake()
     {
         world = SceneData.GetWorld();
-        Velocity_Component = GetComponent<MC_Velocity_Component>();
-        Collider_Component = GetComponent<MC_Collider_Component>();
+        Component_Velocity = GetComponent<MC_Component_Velocity>();
+        Component_Physics = GetComponent<MC_Component_Physics>();
     }
 
     private void Start()
@@ -71,14 +71,14 @@ public class MC_PlayerInput_Component : MonoBehaviour
     void _ReferStart_ComponentInit()
     {
         //禁用AI组件
-        MC_AI_Component AI_Component = GetComponentInParent<MC_AI_Component>();
+        MC_Component_AI AI_Component = GetComponentInParent<MC_Component_AI>();
         if (AI_Component != null)
             AI_Component.enabled = false;
 
         //将ModelHead等模型旋转归零
-        Collider_Component.Model.transform.rotation = Quaternion.Euler(0, 0, 0);
-        Collider_Component.Head.transform.rotation = Quaternion.Euler(0, 0, 0);
-        Collider_Component.Body.transform.rotation = Quaternion.Euler(0, 0, 0);
+        Component_Physics.Model.transform.rotation = Quaternion.Euler(0, 0, 0);
+        Component_Physics.Head.transform.rotation = Quaternion.Euler(0, 0, 0);
+        Component_Physics.Body.transform.rotation = Quaternion.Euler(0, 0, 0);
 
     }
 
@@ -98,7 +98,7 @@ public class MC_PlayerInput_Component : MonoBehaviour
     void CaculateInput()
     {
         // 获取Model的朝向
-        GameObject _Model = Collider_Component.Model;
+        GameObject _Model = Component_Physics.Model;
 
         // 将水平输入方向转换为Vector3，根据Model的朝向进行计算
         moveDirection = (_Model.transform.forward * currentVerticalInput + _Model.transform.right * currentHorizontalInput).normalized;
@@ -110,14 +110,14 @@ public class MC_PlayerInput_Component : MonoBehaviour
     void ApplyInput()
     {
         // 设定Velocity
-        Velocity_Component.SetVelocity("x", moveDirection.x * Velocity_Component.speed_move);
-        Velocity_Component.SetVelocity("z", moveDirection.z * Velocity_Component.speed_move);
+        Component_Velocity.SetVelocity("x", moveDirection.x * Component_Velocity.speed_move);
+        Component_Velocity.SetVelocity("z", moveDirection.z * Component_Velocity.speed_move);
 
         // 设定左右转向
-        Velocity_Component.EntityRotation(mouseHorizonSpeed * RotationHorizonSensitivity);
+        Component_Velocity.EntityRotation(mouseHorizonSpeed * RotationHorizonSensitivity);
 
         // 设定上下转向
-        Velocity_Component.EntityHeadVerticleRotation(mouseVerticalSpeed * RotationVerticleSensitivity, CameraLimitRange, HeadLimitRange);
+        Component_Velocity.EntityHeadVerticleRotation(mouseVerticalSpeed * RotationVerticleSensitivity, CameraLimitRange, HeadLimitRange);
     }
 
     #endregion

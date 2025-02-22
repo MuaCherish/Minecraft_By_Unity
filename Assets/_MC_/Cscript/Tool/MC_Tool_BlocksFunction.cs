@@ -7,7 +7,7 @@ public struct AlgoBlockStruct
 }
 
 
-public static class BlocksFunction
+public static class MC_Tool_BlocksFunction
 {
     public static float TNT_explore_Radius = 4f;
     public static float Smoke_Radius = 2.5f;

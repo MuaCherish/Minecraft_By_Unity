@@ -9,16 +9,16 @@ public class Entity_Creeper : MonoBehaviour
     ManagerHub managerhub;
     World world;
     Player player;
-    MC_AI_Component AI_Component;
-    MC_Buff_Component Buff_Component;
+    MC_Component_AI Component_AI;
+    MC_Component_Buff Buff_Component;
 
     private void Awake()
     {
         world = SceneData.GetWorld();
-        AI_Component = GetComponent<MC_AI_Component>();
+        Component_AI = GetComponent<MC_Component_AI>();
         managerhub = SceneData.GetManagerhub();
         player = managerhub.player;
-        Buff_Component = GetComponent<MC_Buff_Component>();
+        Buff_Component = GetComponent<MC_Component_Buff>();
     }
 
     private void Update()
@@ -51,7 +51,7 @@ public class Entity_Creeper : MonoBehaviour
         float distanceToPlayer = (transform.position - player.transform.position).magnitude;
 
         // 如果引信未触发并且玩家进入触发范围
-        if (!startFuse && AI_Component.isSeePlayer && distanceToPlayer < DistanceToFuse)
+        if (!startFuse && Component_AI.isSeePlayer && distanceToPlayer < DistanceToFuse)
         {
             startFuse = true;
             Buff_Component.AddBuff(BuffData.Blink, 3f); // 触发 Blink Buff

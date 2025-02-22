@@ -8,10 +8,10 @@ using UnityEngine;
 
 namespace MCEntity
 {
-    [RequireComponent(typeof(MC_Velocity_Component))]
-    [RequireComponent(typeof(MC_Collider_Component))]
-    [RequireComponent(typeof(MC_Registration_Component))]
-    public class MC_Life_Component : MonoBehaviour
+    [RequireComponent(typeof(MC_Component_Velocity))]
+    [RequireComponent(typeof(MC_Component_Physics))]
+    [RequireComponent(typeof(MC_Component_Registration))]
+    public class MC_Component_Life : MonoBehaviour
     {
 
         #region 状态
@@ -27,22 +27,22 @@ namespace MCEntity
 
         #region 周期函数
 
-        MC_Velocity_Component Velocity_Component;
-        MC_Collider_Component Collider_Component;
-        MC_AI_Component AI_Component;
-        MC_Music_Component Music_Component;
+        MC_Component_Velocity Component_Velocity;
+        MC_Component_Physics Component_Physics;
+        MC_Component_AI Component_AI;
+        MC_Component_Music Component_Music;
         World world;
-        MC_Registration_Component Registration_Component;
+        MC_Component_Registration Component_Registration;
         ManagerHub managerhub;
         private void Awake()
         {
-            Velocity_Component = GetComponent<MC_Velocity_Component>();
-            Collider_Component = GetComponent<MC_Collider_Component>();
-            AI_Component = GetComponent<MC_AI_Component>();
-            Music_Component = GetComponent<MC_Music_Component>(); 
-            world = Collider_Component.managerhub.world;
-            Registration_Component = GetComponent<MC_Registration_Component>();
-            managerhub = Collider_Component.managerhub;
+            Component_Velocity = GetComponent<MC_Component_Velocity>();
+            Component_Physics = GetComponent<MC_Component_Physics>();
+            Component_AI = GetComponent<MC_Component_AI>();
+            Component_Music = GetComponent<MC_Component_Music>(); 
+            world = Component_Physics.managerhub.world;
+            Component_Registration = GetComponent<MC_Component_Registration>();
+            managerhub = Component_Physics.managerhub;
 
             _ReferAwake_GetAllRenderersAndCreateMaterialInstance();
         }
@@ -145,17 +145,17 @@ namespace MCEntity
                 return;
 
             //提前返回-返回255
-            if (world.GetBlockType(Collider_Component.EyesPoint) == 255)
+            if (world.GetBlockType(Component_Physics.EyesPoint) == 255)
                 return;
 
             // 默认颜色
             Color targetColor = save_Color;  
 
             // 如果被挤压
-            if (world.blocktypes[world.GetBlockType(Collider_Component.EyesPoint)].isSolid)
+            if (world.blocktypes[world.GetBlockType(Component_Physics.EyesPoint)].isSolid)
                 targetColor = Color_UnderBlock;
             // 如果在水里
-            else if (Collider_Component.IsInTheWater(Collider_Component.HeadPoint))
+            else if (Component_Physics.IsInTheWater(Component_Physics.HeadPoint))
                 targetColor = Color_UnderWater;
 
             // 如果当前目标颜色与之前不同，则更新材质颜色
@@ -229,10 +229,10 @@ namespace MCEntity
                 Handle_Hurt(_hutyDirect);
 
             //逃跑
-            if(AI_Component != null)
+            if(Component_AI != null)
             {
-                if (!AI_Component.isAggressive && AI_Component.EntityCanFlee)
-                    AI_Component.EntityFlee();
+                if (!Component_AI.isAggressive && Component_AI.EntityCanFlee)
+                    Component_AI.EntityFlee();
             }
            
 
@@ -249,9 +249,9 @@ namespace MCEntity
             isEntity_Hurt = true;
 
             //受伤音效
-            if(Music_Component != null)
-                Music_Component.PlaySound(Music_Component.BehurtClip);
-            //managerhub.NewmusicManager.Create3DSound(transform.position, Music_Component.BehurtClip);
+            if(Component_Music != null)
+                Component_Music.PlaySound(Component_Music.BehurtClip);
+            //managerhub.NewmusicManager.Create3DSound(transform.position, Component_Music.BehurtClip);
 
             //材质变红
             if (EntityMat != null)
@@ -261,14 +261,14 @@ namespace MCEntity
 
             //强制位移
             if (_hurtDirect != Vector3.zero)
-                Velocity_Component.AddForce(_hurtDirect, Velocity_Component.force_hurt);
+                Component_Velocity.AddForce(_hurtDirect, Component_Velocity.force_hurt);
 
         }
 
         void Handle_Dead()
         {
             isEntity_Dead = true;
-            Registration_Component.LogOffEntity();
+            Component_Registration.LogOffEntity();
         }
 
 
@@ -338,7 +338,7 @@ namespace MCEntity
 
         void _ReferUpdate_CheckOxy()
         {
-            if (world.GetBlockType(Collider_Component.EyesPoint) == VoxelData.Water && Coroutine_CheckOxy == null)
+            if (world.GetBlockType(Component_Physics.EyesPoint) == VoxelData.Water && Coroutine_CheckOxy == null)
             {
                 isEntity_Dive = true;
                 Coroutine_CheckOxy = StartCoroutine(_CheckOxy());
@@ -352,7 +352,7 @@ namespace MCEntity
             while (true)
             {
                 //提前返回-浮出水面
-                if (world.GetBlockType(Collider_Component.EyesPoint) != VoxelData.Water)
+                if (world.GetBlockType(Component_Physics.EyesPoint) != VoxelData.Water)
                 {
                     EntityOxygen = 10;
                     Coroutine_CheckOxy = null;
@@ -399,21 +399,21 @@ namespace MCEntity
         void _ReferUpdate_FallingCheck()
         {
 
-            if (!Collider_Component.isGround || Collider_Component.IsInTheWater(Collider_Component.EyesPoint))
+            if (!Component_Physics.isGround || Component_Physics.IsInTheWater(Component_Physics.EyesPoint))
             {
                 //实时更新
-                if (Collider_Component.FootPoint.y > realMaxY)
-                    realMaxY = Collider_Component.FootPoint.y;
+                if (Component_Physics.FootPoint.y > realMaxY)
+                    realMaxY = Component_Physics.FootPoint.y;
             }
             else
             {
                 //落地检测
-                float _Drop = realMaxY - Collider_Component.FootPoint.y;
+                float _Drop = realMaxY - Component_Physics.FootPoint.y;
                 if (_Drop > maxFallDis)
                 {
                     //print($"扣除血量:{_Drop - maxFallDis}");
                     UpdateEntityLife(-(int)(_Drop - maxFallDis), Vector3.zero);
-                    realMaxY = Collider_Component.FootPoint.y;
+                    realMaxY = Component_Physics.FootPoint.y;
 
                     //播放落地音效
                     managerhub.NewmusicManager.Create3DSound(transform.position, Default_DropGround);

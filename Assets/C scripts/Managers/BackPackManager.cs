@@ -484,7 +484,7 @@ public class BackPackManager : MonoBehaviour
             DropBlock.GetComponent<DropBlock>().OnStartEntity(_position, _InitItem, false);
 
             Vector3 direct = Eyes.forward; direct.y = 0.5f;
-            DropBlock.GetComponent<MC_Velocity_Component>().AddForce(direct, throwForce);
+            DropBlock.GetComponent<MC_Component_Velocity>().AddForce(direct, throwForce);
         }
         else
         {

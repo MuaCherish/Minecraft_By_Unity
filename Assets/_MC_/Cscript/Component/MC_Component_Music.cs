@@ -8,9 +8,9 @@ using UnityEngine;
 /// 玩家潜行没声音
 /// </summary>
 
-[RequireComponent(typeof(MC_Collider_Component))]
-[RequireComponent(typeof(MC_Velocity_Component))]
-public class MC_Music_Component : MonoBehaviour
+[RequireComponent(typeof(MC_Component_Physics))]
+[RequireComponent(typeof(MC_Component_Velocity))]
+public class MC_Component_Music : MonoBehaviour
 {
 
     #region 状态
@@ -24,15 +24,15 @@ public class MC_Music_Component : MonoBehaviour
     #region 周期函数
 
     ManagerHub managerhub;
-    MC_Velocity_Component Velocity_Component;
-    MC_Collider_Component Collider_Component;
+    MC_Component_Velocity Component_Velocity;
+    MC_Component_Physics Component_Physics;
     NewMusicManager musicManager;
 
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
-        Velocity_Component = GetComponent<MC_Velocity_Component>();
-        Collider_Component = GetComponent<MC_Collider_Component>();
+        Component_Velocity = GetComponent<MC_Component_Velocity>();
+        Component_Physics = GetComponent<MC_Component_Physics>();
         musicManager = managerhub.NewmusicManager;
     }
 
@@ -181,14 +181,14 @@ public class MC_Music_Component : MonoBehaviour
     void _ReferUpdate_FootStep()
     {
         // 提前返回 - 玩家静止或在空中
-        if (!Velocity_Component.isMoving || !Collider_Component.isGround || hasFootStep == false) 
+        if (!Component_Velocity.isMoving || !Component_Physics.isGround || hasFootStep == false) 
             return;
 
         // 检查是否到达下一个播放时间
         if (Time.time >= nextFoot)
         {
             // 获取播放的音效，优先使用专属音效，否则默认石头音效
-            AudioClip clipToPlay = GetFootstepClip(Collider_Component.FootBlockType);
+            AudioClip clipToPlay = GetFootstepClip(Component_Physics.FootBlockType);
 
             // 播放音效并切换item
             MainAudioSource.PlayOneShot(clipToPlay);
@@ -221,7 +221,7 @@ public class MC_Music_Component : MonoBehaviour
 
     void _ReferUpdate_Water()
     {
-        bool isCurrentlyInWater = Collider_Component.FootBlockType == VoxelData.Water;
+        bool isCurrentlyInWater = Component_Physics.FootBlockType == VoxelData.Water;
 
         // 切换入水/出水状态
         if (isCurrentlyInWater != isInTheWater)
@@ -234,7 +234,7 @@ public class MC_Music_Component : MonoBehaviour
         }
 
         //游泳
-        //if (isInTheWater && Velocity_Component.isMoving)
+        //if (isInTheWater && Component_Velocity.isMoving)
         //{
         //    MainAudioSources[MusicData.AudioSource_Swimming].Play();
         //}

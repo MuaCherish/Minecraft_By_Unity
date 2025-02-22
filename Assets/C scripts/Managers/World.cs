@@ -2148,7 +2148,7 @@ public class World : MonoBehaviour
         GameObject newEntity = Instantiate(Entity_Prefeb[_index]);
 
         // 提起返回-如果没有注册组件
-        if (newEntity.GetComponent<MC_Registration_Component>() == null)
+        if (newEntity.GetComponent<MC_Component_Registration>() == null)
         {
             print($"{_index}实体未添加注册组件，无法添加到游戏中");
             _Result = null;
@@ -2173,7 +2173,7 @@ public class World : MonoBehaviour
         newEntity.transform.SetParent(Entity_Parent.transform);
         newEntity.transform.position = _Startpos;
         newEntity.name = $"[{entityId}] {entityName}";
-        newEntity.GetComponent<MC_Registration_Component>().RegistEntity(_entityInfo);
+        newEntity.GetComponent<MC_Component_Registration>().RegistEntity(_entityInfo);
 
         // 将新实例加入数据结构
         _Result = _entityInfo;
@@ -2366,7 +2366,7 @@ public class World : MonoBehaviour
     {
         foreach (var item in AllEntity)
         {
-            item._obj.GetComponent<MC_Collider_Component>().isDrawHitBox = _bool;
+            item._obj.GetComponent<MC_Component_Physics>().isDrawHitBox = _bool;
         }
     }
 

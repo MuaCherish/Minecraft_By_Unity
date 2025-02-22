@@ -18,14 +18,14 @@ public class Entity_Slime : EntityBase
 
     #region 周期函数
 
-    MC_Collider_Component Collider_Component;
-    MC_Velocity_Component Velocity_Component;
+    MC_Component_Physics Component_Physics;
+    MC_Component_Velocity Component_Velocity;
     World world;
     private void Awake()
     {
-        Collider_Component = GetComponent<MC_Collider_Component>();
-        Velocity_Component = GetComponent<MC_Velocity_Component>();
-        world = Collider_Component.managerhub.world;
+        Component_Physics = GetComponent<MC_Component_Physics>();
+        Component_Velocity = GetComponent<MC_Component_Velocity>();
+        world = Component_Physics.managerhub.world;
     }
 
     private void Update()
@@ -86,7 +86,7 @@ public class Entity_Slime : EntityBase
 
         //随机选择Position
         List<Vector3> _vecs = new List<Vector3>();
-        float _r = Mathf.Min(Collider_Component.hitBoxWidth, Collider_Component.hitBoxHeight);
+        float _r = Mathf.Min(Component_Physics.hitBoxWidth, Component_Physics.hitBoxHeight);
         for (int i = 0; i < splitNumber; i++)
         {
             // 获取球体内的随机位置
@@ -123,31 +123,31 @@ public class Entity_Slime : EntityBase
             return;
 
         //弹跳检测
-        if (Collider_Component.isGround)
+        if (Component_Physics.isGround)
         {
-            float _dis = maxY - Collider_Component.FootPoint.y;
+            float _dis = maxY - Component_Physics.FootPoint.y;
             if (hasExec_GroundJump && _dis > disY)
             {
-                Velocity_Component.AddForce(new Vector3(0f, 1f, 0f), elasticity);
+                Component_Velocity.AddForce(new Vector3(0f, 1f, 0f), elasticity);
                 hasExec_GroundJump = false;
             }
 
             //最大高度
-            maxY = Collider_Component.FootPoint.y;
+            maxY = Component_Physics.FootPoint.y;
         }
         else
         {
             //最大高度
-            if (Collider_Component.FootPoint.y > maxY)
-                maxY = Collider_Component.FootPoint.y;
+            if (Component_Physics.FootPoint.y > maxY)
+                maxY = Component_Physics.FootPoint.y;
 
             hasExec_GroundJump = true;
         }
 
         //最大高度
-        if (Collider_Component.IsInTheWater(Collider_Component.EyesPoint))
+        if (Component_Physics.IsInTheWater(Component_Physics.EyesPoint))
         {
-            maxY = Collider_Component.FootPoint.y;
+            maxY = Component_Physics.FootPoint.y;
         }
 
     }

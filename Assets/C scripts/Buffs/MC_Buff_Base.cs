@@ -28,7 +28,7 @@ public abstract class MC_Buff_Base : MonoBehaviour
     /// <summary>
     /// 由BuffComponent调用，启动Buff
     /// </summary>
-    public void StartBuff(MC_Buff_Component _Buff_Component, int _BuffType)
+    public void StartBuff(MC_Component_Buff _Buff_Component, int _BuffType)
     {
         Buff_Component = _Buff_Component;
         BuffType = _BuffType;
@@ -61,7 +61,7 @@ public abstract class MC_Buff_Base : MonoBehaviour
     [Header("持续时间")] [ReadOnly] public float BuffDuration = 5f;
     [Header("当前时间")][ReadOnly] public float BuffControllerTimer = 0;
     private Coroutine _BuffEffectCoroutine;
-    MC_Buff_Component Buff_Component;
+    MC_Component_Buff Buff_Component;
 
     IEnumerator StartBuffController()
     {

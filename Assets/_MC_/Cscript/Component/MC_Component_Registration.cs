@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[RequireComponent(typeof(MC_Collider_Component))]
-public class MC_Registration_Component : MonoBehaviour
+[RequireComponent(typeof(MC_Component_Physics))]
+public class MC_Component_Registration : MonoBehaviour
 {
 
     #region 状态
@@ -19,14 +19,14 @@ public class MC_Registration_Component : MonoBehaviour
 
     #region 周期函数
 
-    MC_Collider_Component Collider_Component;
+    MC_Component_Physics Component_Physics;
     ManagerHub managerhub;
     World world;
 
     private void Awake()
     {
-        Collider_Component = GetComponent<MC_Collider_Component>();
-        managerhub = Collider_Component.managerhub;
+        Component_Physics = GetComponent<MC_Component_Physics>();
+        managerhub = Component_Physics.managerhub;
         world = managerhub.world;
     }
 
@@ -135,7 +135,7 @@ public class MC_Registration_Component : MonoBehaviour
         //死亡音效
         if (isPlayDeadMusic)
         {
-            MC_Music_Component Music_Component = GetComponent<MC_Music_Component>();
+            MC_Component_Music Music_Component = GetComponent<MC_Component_Music>();
             if (Music_Component != null)
             {
                 managerhub.NewmusicManager.Create3DSound(transform.position, Music_Component.DeathClip);
@@ -173,7 +173,7 @@ public class MC_Registration_Component : MonoBehaviour
             foreach (var item in DropBoxList)
             {
                 Vector3 randomPoint = Random.insideUnitSphere / 2f;
-                Collider_Component.managerhub.backpackManager.CreateDropBox(this.transform.position + randomPoint, item, false);
+                Component_Physics.managerhub.backpackManager.CreateDropBox(this.transform.position + randomPoint, item, false);
             }
 
         }
@@ -192,13 +192,13 @@ public class MC_Registration_Component : MonoBehaviour
     void _ReferUpdate_DestroyCheck()
     {
         // 检查Y坐标条件，立即销毁
-        if (Collider_Component.FootPoint.y <= EntityData.MinYtoRemoveEntity)
+        if (Component_Physics.FootPoint.y <= EntityData.MinYtoRemoveEntity)
         {
             LogOffEntity();
         }
 
         // 脚下区块被隐藏
-        if (managerhub.world.GetChunkObject(Collider_Component.FootPoint).isShow == false)
+        if (managerhub.world.GetChunkObject(Component_Physics.FootPoint).isShow == false)
         {
             LogOffEntity();
         }
@@ -216,7 +216,7 @@ public class MC_Registration_Component : MonoBehaviour
 
     void DeadAnimation()
     {
-        GameObject _Model = Collider_Component.Model;
+        GameObject _Model = Component_Physics.Model;
         
         StartCoroutine(RotateCubeAroundPoint(_Model, 90f, DeadRotationDuration));
     }
@@ -225,7 +225,7 @@ public class MC_Registration_Component : MonoBehaviour
     {
 
         // 找到根节点
-        Vector3 footRoot = Collider_Component.FootPoint;
+        Vector3 footRoot = Component_Physics.FootPoint;
 
         // 获取起始旋转
         Quaternion startRotation = obj.transform.rotation;

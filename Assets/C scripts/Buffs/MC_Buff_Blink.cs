@@ -7,13 +7,13 @@ public class MC_Buff_Blink : MC_Buff_Base
 
     #region ÖÜÆÚº¯Êý
 
-    MC_Life_Component Life_Component;
-    MC_Music_Component Music_Component;
+    MC_Component_Life Life_Component;
+    MC_Component_Music Music_Component;
    
     private void Awake()
     {
-        Life_Component = GetComponent<MC_Life_Component>();
-        Music_Component = GetComponent<MC_Music_Component>();
+        Life_Component = GetComponent<MC_Component_Life>();
+        Music_Component = GetComponent<MC_Component_Music>();
     }
 
 

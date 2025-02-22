@@ -3,6 +3,7 @@ using MCEntity;
 using System.Collections;
 using UnityEngine;
 using static MC_Tool_Math;
+using static MC_Tool_BlocksFunction;
 
 public class Player : MonoBehaviour
 {
@@ -948,8 +949,8 @@ public class Player : MonoBehaviour
                 managerhub.NewmusicManager.PlayOneShot(MusicData.Player_Attack);
 
                 //实体扣血
-                if (_rayCast.targetEntityInfo._obj.GetComponent<MC_Life_Component>() != null)
-                    _rayCast.targetEntityInfo._obj.GetComponent<MC_Life_Component>().UpdateEntityLife(-1, direct);
+                if (_rayCast.targetEntityInfo._obj.GetComponent<MC_Component_Life>() != null)
+                    _rayCast.targetEntityInfo._obj.GetComponent<MC_Component_Life>().UpdateEntityLife(-1, direct);
 
                 //播放实体被攻击音效
                 //int _index = MusicData.Slime_Behurt;
@@ -1071,7 +1072,8 @@ public class Player : MonoBehaviour
                             {
                                 //canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.SetActive(!canvasManager.UIManager[VoxelData.ui玩家].childs[1]._object.activeSelf);
                                 world.Allchunks[GetRelaChunkLocation(_rayCast.hitPoint)].EditData(_rayCast.hitPoint, VoxelData.Air);
-                                BlocksFunction.Smoke(_rayCast.hitPoint);
+                                
+                                Smoke(_rayCast.hitPoint);
                                 managerhub.backpackManager.update_slots(1, 56);
 
                                 // 玩家被炸飞

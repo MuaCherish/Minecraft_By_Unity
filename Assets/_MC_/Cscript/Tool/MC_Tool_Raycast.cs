@@ -59,7 +59,7 @@ public static class MC_Tool_Raycast
                             continue;
 
                         // 获取实体的碰撞检测组件
-                        var collider = entity._obj.GetComponent<MC_Collider_Component>();
+                        var collider = entity._obj.GetComponent<MC_Component_Physics>();
                         if (collider != null && collider.CheckHitBox(pos))
                         {
                             targetEntity._id = entity._id;

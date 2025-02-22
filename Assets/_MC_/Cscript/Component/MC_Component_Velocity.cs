@@ -1,14 +1,13 @@
 using UnityEngine;
 using System.Collections;
-using MCEntity;
 using Homebrew;
-using System.IO;
+
 
 namespace MCEntity
 {
 
-    [RequireComponent(typeof(MC_Collider_Component))]
-    public class MC_Velocity_Component : MonoBehaviour
+    [RequireComponent(typeof(MC_Component_Physics))]
+    public class MC_Component_Velocity : MonoBehaviour
     {
 
         #region 状态
@@ -22,7 +21,7 @@ namespace MCEntity
             // 更新移动状态
             isMoving = (velocity != Vector3.zero);
 
-            if (Collider_Component.isGround)
+            if (Component_Physics.isGround)
             {
                 // 在地面时更新冷却计时器
                 if (jumpCooldownTimer <= 0)
@@ -51,12 +50,12 @@ namespace MCEntity
 
         #region 周期函数 
 
-        MC_Collider_Component Collider_Component;
-        MC_Life_Component life_Component;
+        MC_Component_Physics Component_Physics;
+        MC_Component_Life Component_life;
         private void Awake()
         {
-            Collider_Component = GetComponent<MC_Collider_Component>();
-            life_Component = GetComponent<MC_Life_Component>();
+            Component_Physics = GetComponent<MC_Component_Physics>();
+            Component_life = GetComponent<MC_Component_Life>();
         }
 
         private void Start()
@@ -71,7 +70,7 @@ namespace MCEntity
         //public float horizon;
         private void FixedUpdate()
         {
-            if (Collider_Component.managerhub.world.game_state == Game_State.Playing)
+            if (Component_Physics.managerhub.world.game_state == Game_State.Playing)
             {
                 _ReferFixedUpdate_Caculate();
 
@@ -167,7 +166,7 @@ namespace MCEntity
         public void EntityJump()
         {
             // 仅在地面上时进行跳跃
-            if (Collider_Component.isGround && RequestforEntityJump)
+            if (Component_Physics.isGround && RequestforEntityJump)
             {
                 //print($"momentum:{momentum}, velocity: {velocity}");
                 AddForce(Vector3.up, force_jump); // 添加跳跃的冲量
@@ -192,7 +191,7 @@ namespace MCEntity
             _direct = _direct.normalized;
 
             // 仅在地面上时进行跳跃
-            if (Collider_Component.isGround && isJumpRequest)
+            if (Component_Physics.isGround && isJumpRequest)
             {
 
                 AddForce(_direct, force_jump); // 添加跳跃的冲量
@@ -248,7 +247,7 @@ namespace MCEntity
         {
             get
             {
-                if (Collider_Component.IsInTheWater(Collider_Component.FootPoint))
+                if (Component_Physics.IsInTheWater(Component_Physics.FootPoint))
                 {
                     return WaterspeedDown_ultimate;
                 }
@@ -264,7 +263,7 @@ namespace MCEntity
         {
             get
             {
-                if (Collider_Component.IsInTheWater(Collider_Component.FootPoint))
+                if (Component_Physics.IsInTheWater(Component_Physics.FootPoint))
                 {
                     return new Vector3(0, force_Watergravity, 0);
                 }
@@ -306,7 +305,7 @@ namespace MCEntity
         void Caculate_Momentum()
         {
             // 检查是否在地面上
-            //if (Collider_Component.colliderDown)
+            //if (Component_Physics.colliderDown)
             //{
             //    // 允许在地面状态下重置动量
             //    if (momentum.y <= force_gravity)
@@ -339,7 +338,7 @@ namespace MCEntity
         void Caculate_Velocity()
         {
             // 条件返回-如果在地面
-            if (Collider_Component.isGround && 
+            if (Component_Physics.isGround && 
                 Othermomentum == Vector3.zero
                 )
             {
@@ -393,11 +392,11 @@ namespace MCEntity
         void CheckSliperVelocity()
         {
             //滑膜检测
-            if ((velocity.z > 0 && Collider_Component.collider_Front) || (velocity.z < 0 && Collider_Component.collider_Back))
+            if ((velocity.z > 0 && Component_Physics.collider_Front) || (velocity.z < 0 && Component_Physics.collider_Back))
                 velocity.z = 0;
-            if ((velocity.x > 0 && Collider_Component.collider_Right) || (velocity.x < 0 && Collider_Component.collider_Left))
+            if ((velocity.x > 0 && Component_Physics.collider_Right) || (velocity.x < 0 && Component_Physics.collider_Left))
                 velocity.x = 0;
-            if (velocity.y > 0 && Collider_Component.collider_Up || velocity.y < 0 && Collider_Component.isGround)
+            if (velocity.y > 0 && Component_Physics.collider_Up || velocity.y < 0 && Component_Physics.isGround)
                 velocity.y = 0;
         }
 
@@ -437,21 +436,21 @@ namespace MCEntity
         {
             get
             {
-                return Collider_Component.Model;
+                return Component_Physics.Model;
             }
         }
         GameObject _Head
         {
             get
             {
-                return Collider_Component.Head;
+                return Component_Physics.Head;
             }
         }
         GameObject _Body
         {
             get
             {
-                return Collider_Component.Body;
+                return Component_Physics.Body;
             }
         }
 
@@ -493,7 +492,7 @@ namespace MCEntity
             while (elapsedTime < bodyRotationTime)
             {
                 // 提前返回-如果实体已死亡
-                if (life_Component != null && life_Component.isEntity_Dead)
+                if (Component_life != null && Component_life.isEntity_Dead)
                     yield break;
 
                 elapsedTime += Time.deltaTime;
