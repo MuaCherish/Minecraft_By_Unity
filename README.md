@@ -5,7 +5,7 @@
 ### ⚙️ Overview
 A long-term project from beginner
 
-<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/4.png" width="600px"> <img src="https://github.com/jrohitofficial/jrohitofficial/blob/master/line-neon.gif" width="100%">
+<img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/4.png" width="1000px"> <img src="https://github.com/jrohitofficial/jrohitofficial/blob/master/line-neon.gif" width="100%">
 
 
 ## ⚙️ Attention:
