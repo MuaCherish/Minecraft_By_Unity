@@ -72,7 +72,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Ignore specific files in Assets/Font/
-Assets/Font/
+Assets\_MC_\Resource\Font
 
 # Ignore Saves
 Assets/Saves/
