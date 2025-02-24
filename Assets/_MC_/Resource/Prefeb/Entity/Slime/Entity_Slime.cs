@@ -21,11 +21,13 @@ public class Entity_Slime : EntityBase
     MC_Component_Physics Component_Physics;
     MC_Component_Velocity Component_Velocity;
     World world;
+    ManagerHub managerhub;
     private void Awake()
     {
         Component_Physics = GetComponent<MC_Component_Physics>();
         Component_Velocity = GetComponent<MC_Component_Velocity>();
         world = Component_Physics.managerhub.world;
+        managerhub = SceneData.GetManagerhub();
     }
 
     private void Update()
@@ -99,7 +101,7 @@ public class Entity_Slime : EntityBase
         //AddEntity()
         foreach (var item in _vecs)
         {
-            world.AddEntity(TargetId, item, out var _result);
+            managerhub.Service_Entity.AddEntity(TargetId, item, out var _result);
         }
 
         

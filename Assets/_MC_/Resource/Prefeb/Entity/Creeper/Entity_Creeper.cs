@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Entity_Creeper : MonoBehaviour
 {
+
     #region 周期函数
 
     ManagerHub managerhub;
@@ -36,6 +37,7 @@ public class Entity_Creeper : MonoBehaviour
 
     #endregion
 
+
     #region Creeper
 
     // 靠近玩家触发引信
@@ -48,6 +50,10 @@ public class Entity_Creeper : MonoBehaviour
 
     void _ReferUpdate_Handle_StartFuse()
     {
+        //提前返回-只在生存模式触发引信
+        if (world.game_mode != GameMode.Survival)
+            return;
+
         float distanceToPlayer = (transform.position - player.transform.position).magnitude;
 
         // 如果引信未触发并且玩家进入触发范围
@@ -101,4 +107,5 @@ public class Entity_Creeper : MonoBehaviour
     }
 
     #endregion
+
 }

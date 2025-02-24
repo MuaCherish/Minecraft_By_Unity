@@ -1042,7 +1042,7 @@ namespace MCEntity
 
             // 获取范围内的实体，如果没有则提前返回
             float _maxR = Mathf.Max(hitBoxWidth, hitBoxHeight);
-            if (!world.GetOverlapSphereEntity(transform.position, _maxR, GetComponent<MC_Component_Registration>().GetEntityId()._id, out List<EntityInfo> _entities))
+            if (!managerhub.Service_Entity.GetOverlapSphereEntity(transform.position, _maxR, GetComponent<MC_Component_Registration>().GetEntityId()._id, out List<EntityInfo> _entities))
                 return;
 
             // 进一步过滤，剔除没有和自己重叠的实体

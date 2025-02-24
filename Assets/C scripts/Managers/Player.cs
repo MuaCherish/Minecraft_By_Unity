@@ -931,7 +931,7 @@ public class Player : MonoBehaviour
         {
             isFirstBrokeBlock = true;
 
-            MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.AllFind,cam.position, cam.forward, reach, -1, checkIncrement);
+            MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(managerhub, MC_RayCast_FindType.AllFind,cam.position, cam.forward, reach, -1, checkIncrement);
 
             //print($"射线发射长度 = {_rayCast.rayDistance}");
 
@@ -985,7 +985,7 @@ public class Player : MonoBehaviour
             //isLeftMouseDown = true;
             //Debug.Log(new Vector3(Mathf.FloorToInt(RayCast_now().x), Mathf.FloorToInt(RayCast_now().y), Mathf.FloorToInt(RayCast_now().z)));
             //Vector3 _raycastNow = RayCast_now();
-            MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(world,MC_RayCast_FindType.AllFind,cam.position, cam.forward, reach, -1, checkIncrement);
+            MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(managerhub,MC_RayCast_FindType.AllFind,cam.position, cam.forward, reach, -1, checkIncrement);
             test_Normal = _rayCast.hitNormal;
 
             if (_rayCast.isHit == 1 && hasExec_isChangedBlock && world.blocktypes[world.GetBlockType(_rayCast.hitPoint)].canBeChoose)
@@ -1038,7 +1038,7 @@ public class Player : MonoBehaviour
         {
 
             isPlacing = true;
-            MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.AllFind, cam.position, cam.forward, reach, -1, checkIncrement);
+            MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(managerhub, MC_RayCast_FindType.AllFind, cam.position, cam.forward, reach, -1, checkIncrement);
 
             if (_rayCast.hitPoint != Vector3.zero)
             {
@@ -1612,7 +1612,7 @@ public class Player : MonoBehaviour
     {
         //如果成功放置，则不需要再更新，直到玩家改变方块isChangeBlock == true或者world.GetBlockType(pos)发生改变
 
-        MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(world, MC_RayCast_FindType.AllFind, cam.position, cam.forward, reach, -1, checkIncrement);
+        MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(managerhub, MC_RayCast_FindType.AllFind, cam.position, cam.forward, reach, -1, checkIncrement);
 
         //如果可以放置
         if (_rayCast.isHit == 1)
@@ -2944,7 +2944,7 @@ public class Player : MonoBehaviour
         //GameObject tnt = GameObject.Instantiate(Entity_TNT);
         //tnt.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
 
-        managerhub.world.AddEntity(EntityData.TNT, _point, out EntityInfo _result);
+        managerhub.Service_Entity.AddEntity(EntityData.TNT, _point, out EntityInfo _result);
         _result._obj.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
     }
 

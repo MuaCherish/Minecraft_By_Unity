@@ -13,11 +13,13 @@ public class CommandManager : MonoBehaviour
     #region 周期函数
 
     private ManagerHub managerhub;
+    public MC_Service_Entity Service_Entity;
     //private World world;
 
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
+        Service_Entity = managerhub.Service_Entity;
     }
 
 
@@ -319,7 +321,7 @@ public class CommandManager : MonoBehaviour
                         Vector3 _pos = _PlayerPos + _Forward * 2f;
 
                         //Add
-                        if (managerhub.world.AddEntity(entityId, _pos, out var _result))
+                        if (Service_Entity.AddEntity(entityId, _pos, out var _result))
                         {
                             return "<系统消息> " + $"已添加实体 ID: {entityId}";
                         }

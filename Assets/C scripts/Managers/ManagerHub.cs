@@ -30,6 +30,10 @@ public class ManagerHub : MonoBehaviour
     public SunMoving sunMoving;
     public ChatManager chatManager;
 
+
+    [Foldout("Services", true)]
+    public MC_Service_Entity Service_Entity;
+
     [Foldout("开发者模式", true)]
     public bool 低区块模式; [HideInInspector] public bool hasExec_低区块模式 = true;
     public bool 无黑夜模式; [HideInInspector] public bool hasExec_无黑夜模式 = true;

@@ -16,7 +16,7 @@ public static class MC_Tool_Raycast
     /// <param name="castingEntityId">排除自己的Id</param>
     /// <param name="checkIncrement">步进最小长度</param>
     /// <returns></returns>
-    public static MC_RayCastStruct RayCast(World _world, MC_RayCast_FindType _FindType, Vector3 _origin, Vector3 _direct, float _maxDistance, int castingEntityId, float checkIncrement, bool debug = false)
+    public static MC_RayCastStruct RayCast(ManagerHub _managerhub, MC_RayCast_FindType _FindType, Vector3 _origin, Vector3 _direct, float _maxDistance, int castingEntityId, float checkIncrement, bool debug = false)
     {
         // 预处理
         _direct.Normalize();
@@ -49,7 +49,7 @@ public static class MC_Tool_Raycast
             if (_FindType != MC_RayCast_FindType.OnlyFindBlock && targetEntity._id == -1)
             {
                 // 获取范围内的实体
-                if (_world.GetOverlapSphereEntity(_origin, _maxDistance, out var entitiesInRange))
+                if (_managerhub.Service_Entity.GetOverlapSphereEntity(_origin, _maxDistance, out var entitiesInRange))
                 {
                     // 检查是否有实体与射线相交，并且该实体与射线碰撞
                     foreach (var entity in entitiesInRange)
@@ -72,14 +72,14 @@ public static class MC_Tool_Raycast
             }
 
             // 方块命中检测
-            if (_FindType != MC_RayCast_FindType.OnlyFindEntity && _world.RayCheckForVoxel(pos))
+            if (_FindType != MC_RayCast_FindType.OnlyFindEntity && _managerhub.world.RayCheckForVoxel(pos))
             {
                 // 记录命中点
                 hitPoint = pos;
                 isHit = 1; // 记录命中
 
                 // 获取命中的方块类型
-                blockType = _world.GetBlockType(pos);
+                blockType = _managerhub.world.GetBlockType(pos);
 
                 // 计算命中的法线方向，基于命中点的相对位置判断法线单位向量
                 Vector3 blockCenter = new Vector3(Mathf.Floor(hitPoint.x) + 0.5f, Mathf.Floor(hitPoint.y) + 0.5f, Mathf.Floor(hitPoint.z) + 0.5f);

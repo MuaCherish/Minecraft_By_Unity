@@ -89,7 +89,7 @@ public class MC_Component_Registration : MonoBehaviour
         if (isRemoveEntity)
             return;
 
-        isRemoveEntity = world.RemoveEntity(currentID);
+        isRemoveEntity = managerhub.Service_Entity.RemoveEntity(currentID);
 
         if (isDeadImmediately)
         {
@@ -112,7 +112,7 @@ public class MC_Component_Registration : MonoBehaviour
         if (isRemoveEntity)
             return;
 
-        isRemoveEntity = world.RemoveEntity(currentID);
+        isRemoveEntity = managerhub.Service_Entity.RemoveEntity(currentID);
 
         if (isDeadImmediately || _ImediateDestroy)
         {
@@ -159,7 +159,7 @@ public class MC_Component_Registration : MonoBehaviour
         {
             GameObject _particleParent = SceneData.GetParticleParent();
             GameObject deadParticle = GameObject.Instantiate(
-                world.Evaporation_Particle,
+                managerhub.Service_Entity.Evaporation_Particle,
                 transform.position,
                 Quaternion.LookRotation(Vector3.up),
                 _particleParent.transform  // …Ë÷√∏∏∂‘œÛ

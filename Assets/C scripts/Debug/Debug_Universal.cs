@@ -7,6 +7,7 @@ using Homebrew;
 public class Debug_Universal : MonoBehaviour
 {
     public World world;
+    public MC_Service_Entity Service_Entity;
     public GameObject TargetObj;
     public float Radius;
 
@@ -19,7 +20,7 @@ public class Debug_Universal : MonoBehaviour
         if (TargetObj == null)
             return;
 
-        if (world.GetOverlapSphereEntity(TargetObj.transform.position, Radius, out List<EntityInfo> entities))
+        if (Service_Entity.GetOverlapSphereEntity(TargetObj.transform.position, Radius, out List<EntityInfo> entities))
         {
             isFindEntity = true;
             EntityNumber = entities.Count;
