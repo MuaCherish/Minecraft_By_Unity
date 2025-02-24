@@ -189,7 +189,7 @@ public class Weather : MonoBehaviour
             elapsedTime = 0f; // 重置计时器
 
             // 执行射线检测逻辑
-            MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(managerhub, MC_RayCast_FindType.OnlyFindBlock, player.transform.position, Vector3.up, TerrainData.ChunkHeight, -1, 1f);
+            MC_RayCastStruct _rayCast = MC_Static_Raycast.RayCast(managerhub, MC_RayCast_FindType.OnlyFindBlock, player.transform.position, Vector3.up, TerrainData.ChunkHeight, -1, 1f);
             if (_rayCast.isHit == 1)
             {
                 // Do something when head is detected

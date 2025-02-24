@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
-using static MC_Tool_World;
-using static MC_Tool_Math;
+using static MC_Static_World;
+using static MC_Static_Math;
 
 public class Chunk : MonoBehaviour
 {

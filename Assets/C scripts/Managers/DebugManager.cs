@@ -1,7 +1,7 @@
 using Homebrew;
 using TMPro;
 using UnityEngine;
-using static MC_Tool_Math;
+using static MC_Static_Math;
 
 public class DebugManager : MonoBehaviour
 {

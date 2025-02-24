@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MCEntity;
-using static MC_Tool_BlocksFunction;
+using static MC_Static_BlocksFunction;
 
 [RequireComponent(typeof(MC_Component_Physics))]
 public class Entity_TNT : MonoBehaviour, IEntityBrain

@@ -2,7 +2,7 @@ using MCEntity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static MC_Tool_BlocksFunction;
+using static MC_Static_BlocksFunction;
 
 /// <summary>
 /// Warning!!!

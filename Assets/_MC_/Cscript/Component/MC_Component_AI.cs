@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static MC_Tool_Navigation;
+using static MC_Static_Navigation;
 
 namespace MCEntity
 {
@@ -786,7 +786,7 @@ namespace MCEntity
             // 向腿的正前方发射射线
             Vector3 _Origin = Component_Physics.FootPoint + new Vector3(0f, 0.125f, 0f);
             Vector3 _Direct = Component_Physics.EntityFaceForward;
-            MC_RayCastStruct _RayCast = MC_Tool_Raycast.RayCast(managerhub, MC_RayCast_FindType.OnlyFindBlock, _Origin, _Direct, AutoJump_CheckMaxDistance, Component_Registration.GetEntityId()._id, 0.1f);
+            MC_RayCastStruct _RayCast = MC_Static_Raycast.RayCast(managerhub, MC_RayCast_FindType.OnlyFindBlock, _Origin, _Direct, AutoJump_CheckMaxDistance, Component_Registration.GetEntityId()._id, 0.1f);
             //print(_RayCast);
 
             // 如果没检测到方块则返回
@@ -831,7 +831,7 @@ namespace MCEntity
             {
                 // 每帧进行射线检测，更新 isSeePlayer 状态
                 Vector3 _direct = player.cam.transform.position - Component_Physics.EyesPoint;
-                MC_RayCastStruct _rayCast = MC_Tool_Raycast.RayCast(managerhub, MC_RayCast_FindType.OnlyFindBlock,Component_Physics.EyesPoint, _direct, _dis, Component_Registration.GetEntityId()._id, 0.1f);
+                MC_RayCastStruct _rayCast = MC_Static_Raycast.RayCast(managerhub, MC_RayCast_FindType.OnlyFindBlock,Component_Physics.EyesPoint, _direct, _dis, Component_Registration.GetEntityId()._id, 0.1f);
 
                 // 被墙挡着则看不见
                 if (_rayCast.isHit == 1)

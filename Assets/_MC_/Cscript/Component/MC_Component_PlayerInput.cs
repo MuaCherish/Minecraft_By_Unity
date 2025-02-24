@@ -16,9 +16,9 @@ public class MC_Component_PlayerInput : MonoBehaviour
 
     private void Awake()
     {
-        world = SceneData.GetWorld();
         Component_Velocity = GetComponent<MC_Component_Velocity>();
         Component_Physics = GetComponent<MC_Component_Physics>();
+        world = Component_Physics.managerhub.world;
     }
 
     private void Start()

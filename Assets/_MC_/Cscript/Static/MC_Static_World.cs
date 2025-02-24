@@ -1,0 +1,107 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using static MC_Static_Math;
+
+public static class MC_Static_World
+{
+
+    #region BlockType
+
+    /// <summary>
+    /// 给定绝对坐标，返回其类型。<para/>
+    /// 不包含自定义形状。
+    /// </summary>
+    /// <param name="_pos">绝对坐标</param>
+    /// <returns></returns>
+    public static byte GetBlockType(Vector3 _pos)
+    {
+        return 0;
+    }
+
+    /// <summary>
+    /// World
+    /// </summary>
+    public static World world
+    {
+        get
+        {
+            if (_world == null)
+            {
+                _world = SceneData.GetManagerhub().world; // 在第一次访问时创建
+            }
+            return _world;
+        }
+    }
+
+    private static World _world;  // 静态变量存储 World 实例
+
+
+    /// <summary>
+    /// 是否是固体
+    /// </summary>
+    /// <param name="_pos"></param>
+    /// <returns></returns>
+    public static bool CheckSolid(Vector3 _pos)
+    {
+        byte _BlockType = world.GetBlockType(_pos);
+
+        if (_BlockType == 255 || world.blocktypes[_BlockType].isSolid)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    #endregion
+
+
+    #region 出界判断
+
+    /// <summary>
+    /// 绝对或者相对坐标判断是否出界
+    /// </summary>
+    /// <param name="_pos"></param>
+    /// <returns></returns>
+    public static bool isOutOfChunkRange(Vector3 _pos)
+    {
+        //获取相对坐标
+        Vector3 _vec = GetRelaPos(_pos);
+
+        //是否出界
+        int _x = (int)_vec.x;
+        int _y = (int)_vec.y;
+        int _z = (int)_vec.z;
+
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
+            return true;
+        else
+            return false;
+    }
+
+    /// <summary>
+    /// 单个值判断
+    /// </summary>
+    /// <param name="_x"></param>
+    /// <param name="_y"></param>
+    /// <param name="_z"></param>
+    /// <returns></returns>
+    public static bool isOutOfChunkRange(int _x, int _y, int _z)
+    {
+        //是否出界
+        if (_x < 0 || _x > TerrainData.ChunkWidth - 1 || _y < 0 || _y > TerrainData.ChunkHeight - 1 || _z < 0 || _z > TerrainData.ChunkWidth - 1)
+            return true;
+        else
+            return false;
+
+    }
+
+
+    #endregion
+
+
+}

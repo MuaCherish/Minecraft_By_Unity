@@ -2,8 +2,8 @@ using Homebrew;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static MC_Tool_Math;
-using static MC_Tool_Navigation;
+using static MC_Static_Math;
+using static MC_Static_Navigation;
 
 public class Debug_Navigate : MonoBehaviour
 {

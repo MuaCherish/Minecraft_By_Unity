@@ -7,8 +7,8 @@ using UnityEngine.UI;
 using System.IO;
 using System.Diagnostics;
 using Homebrew;
-using static MC_Tool_Game;
-using static MC_Tool_Name;
+using static MC_Static_Game;
+using static MC_Static_Name;
 
 public class CanvasManager : MonoBehaviour
 {

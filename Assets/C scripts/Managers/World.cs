@@ -7,9 +7,9 @@ using UnityEngine;
 using System;
 using Homebrew;
 using MCEntity;
-using static MC_Tool_Game;
-using static MC_Tool_Math;
-using static MC_Tool_World;
+using static MC_Static_Game;
+using static MC_Static_Math;
+using static MC_Static_World;
 
 
 //È«¾ÖÓÎÏ·×´Ì¬

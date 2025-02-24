@@ -15,7 +15,7 @@ public class Entity_Creeper : MonoBehaviour
 
     private void Awake()
     {
-        world = SceneData.GetWorld();
+        world = SceneData.GetManagerhub().world;
         Component_AI = GetComponent<MC_Component_AI>();
         managerhub = SceneData.GetManagerhub();
         player = managerhub.player;

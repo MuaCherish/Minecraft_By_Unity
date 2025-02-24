@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using static MC_Tool_Game;
+using static MC_Static_Game;
 
 public class ChatManager : MonoBehaviour
 {
