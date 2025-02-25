@@ -1,50 +1,137 @@
+using Homebrew;
 using MCEntity;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using TMPro;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.XR;
-//using static UnityEditor.Progress;
+
 
 public class BackPackManager : MonoBehaviour
 {
-    [Header("状态")]
-    [ReadOnly] public bool isChanging = false;  //切换方块的冷却锁，但是好像没有用上
 
-    //数据部分
-    [Header("引用")]
-    public ManagerHub managerhub;
+    #region 状态
+
+    [Foldout("状态", true)]
+    [Header("切换方块的冷却锁")][ReadOnly] public bool isChanging = false; 
+
+    #endregion
+
+
+    #region 周期函数
+
+    ManagerHub managerhub;
+
+    private void Awake()
+    {
+        managerhub = SceneData.GetManagerhub();
+    }
+
+
+    private void Update()
+    {
+        
+    }
+
+
+    //初始化Manager
+    public void InitBackPackManager()
+    {
+        foreach (var _slot in slots)
+        {
+            _slot.ResetSlot();
+        }
+        ClearDropBlocks();
+
+        ChangeBlockInHand();
+    }
+
+    #endregion
+
+
+    #region 涉及到UI部分
+
     public Slot[] slots = new Slot[9];
-
-    [Header("掉落物参数")]
-    public float dropblock_destroyTime = 100f;
-    public float absorb_Distance = 2.3f;
-    public float drop_gravity = 4f;
-    public float moveToplayer_duation = 0.2f;
-    public float throwForce = 3f;
-
-    //切换手中物品的
-    [Header("改变手中物品")]
-    private byte previous_HandBlock = 255;   //255代表手本身
-    public float ChangeColdTime = 1f;
-
-
-    //------------------------------------------------ 核心功能 ---------------------------------------------------------------
-
-    /// <summary>
-    /// 同步物品栏和背包物品栏
-    /// _prior = 0：物品栏更新了，同步背包物品栏
-    /// _prior = 1：背包物品栏更新了，同步物品栏
-    /// </summary>
-
-
     public Transform 生存背包物品栏;
     public Transform 创造背包物品栏;
+
+
+    //用于去生存模式背包物品栏将物品放进去
+    public Transform 生存模式背包物品栏;
+    void AddBlockToBackPackSlots(BlockItem _targetItem)
+    {
+        if (managerhub.world.game_mode == GameMode.Survival)
+        {
+            foreach (Transform item in 生存模式背包物品栏)
+            {
+                SlotBlockItem slotScript = item.GetComponent<SlotBlockItem>();
+
+                if (slotScript.MyItem._blocktype == _targetItem._blocktype || slotScript.MyItem._blocktype == 255)
+                {
+                    //print("添加了一个物品");
+                    slotScript.AddBlock(_targetItem);
+                    break;
+                }
+            }
+        }
+
+    }
+
+
+    /// <summary>
+    /// 渲染物品栏，同步背包物品栏
+    /// </summary>
+    public void Render_BackPackSlots(bool _NeedSYN)
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            byte _type = slots[i].blockId;
+
+            if (_type != 255)
+            {
+                //状态
+                slots[i].ishave = true;
+
+                //Icon
+                if (managerhub.world.blocktypes[_type].is2d == false) //3d
+                {
+                    slots[i].Icon3Dobject.SetActive(true);
+                    slots[i].TopFace.sprite = managerhub.world.blocktypes[_type].top_sprit;
+                    slots[i].LeftFace.sprite = managerhub.world.blocktypes[_type].sprite;
+                    slots[i].RightFace.sprite = managerhub.world.blocktypes[_type].sprite;
+
+                    slots[i].icon.color = new Color(1f, 1f, 1f, 0f);
+                }
+                else
+                {
+                    slots[i].Icon3Dobject.SetActive(false);
+                    slots[i].icon.sprite = managerhub.world.blocktypes[_type].icon;
+                    slots[i].icon.color = new Color(1f, 1f, 1f, 1f);
+                }
+
+                //number
+                slots[i].TMP_number.text = $"{slots[i].number}";
+
+            }
+            //不渲染
+            else
+            {
+                slots[i].ResetSlot();
+            }
+        }
+
+        if (_NeedSYN)
+        {
+            SYN_allSlots(0);
+        }
+
+    }
+
+
+    #endregion
+
+
+    #region 物品栏
+
 
     /// <summary>
     /// 用于同步物品栏和背包物品栏
@@ -80,7 +167,7 @@ public class BackPackManager : MonoBehaviour
                 index_背包物品栏++;
             }
 
-            for (int i = 0;i < slots.Length; i ++)
+            for (int i = 0; i < slots.Length; i++)
             {
                 背包物品栏集合[i].GetComponent<SlotBlockItem>().InitBlockItem(new BlockItem(slots[i].blockId, slots[i].number));
                 背包物品栏集合[i].GetComponent<SlotBlockItem>().UpdateBlockItem(false);
@@ -106,11 +193,11 @@ public class BackPackManager : MonoBehaviour
         {
             print("_prior不符合输入");
         }
-        
 
-        
+
+
     }
-   
+
     /// <summary>
     /// 计算物品栏参数
     /// <para>[0]: 方块++ </para>
@@ -118,7 +205,7 @@ public class BackPackManager : MonoBehaviour
     /// </summary>
     /// <param name="brokeOrplace">操作类型，放置或破坏</param>
     /// <param name="blocktype">方块类型</param>
-    public void update_slots (int brokeOrplace,byte blocktype)
+    public void update_slots(int brokeOrplace, byte blocktype)
     {
         //broke,方块++
         if (brokeOrplace == 0)
@@ -225,7 +312,7 @@ public class BackPackManager : MonoBehaviour
                 else if (_index == -1)
                 {
                     //print("添加到背包物品栏");
-                    AddBlockToBackPackSlots(new BlockItem(blocktype, _number)) ;
+                    AddBlockToBackPackSlots(new BlockItem(blocktype, _number));
                 }
 
             }
@@ -254,60 +341,65 @@ public class BackPackManager : MonoBehaviour
                 {
                     slots[managerhub.player.selectindex].number = 0;
                 }
-                
+
             }
 
         }
     }
+
+
+    #endregion
+
+
+    #region 掉落物部分
+
+    [Header("掉落物参数")]
+    public float dropblock_destroyTime = 100f;
+    public float absorb_Distance = 2.3f;
+    public float drop_gravity = 4f;
+    public float moveToplayer_duation = 0.2f;
+    public float throwForce = 3f;
+
 
     /// <summary>
-    /// 渲染物品栏，同步背包物品栏
+    /// 创造掉落物(坐标,类型)
     /// </summary>
-    public void Render_BackPackSlots(bool _NeedSYN)
+    /// <param name="_pos">必须为Int坐标，不需要Center坐标</param>
+    /// <param name="_InitItem"></param>
+    /// <param name="_needThrow"></param>
+    public GameObject NewDropBlock;
+    public void CreateDropBox(Vector3 _pos, BlockItem _InitItem, bool _needThrow)
     {
-        for (int i = 0; i < slots.Length; i++)
+        Transform Eyes = managerhub.player.GetEyesPosition();
+
+        //刷新偏移
+        float x_offset = UnityEngine.Random.Range(2, 8) / 10f;
+        float y_offset = UnityEngine.Random.Range(5, 8) / 10f;
+        float z_offset = UnityEngine.Random.Range(2, 8) / 10f;
+
+        //创建父类
+        GameObject DropBlock = GameObject.Instantiate(NewDropBlock);
+        DropBlock.transform.SetParent(SceneData.GetDropBlockParent().transform);
+
+
+        //是否扔出去
+        if (_needThrow)
         {
-            byte _type = slots[i].blockId;
+            Vector3 _position = Eyes.position;
+            DropBlock.GetComponent<DropBlock>().OnStartEntity(_position, _InitItem, false);
 
-            if (_type != 255)
-            {
-                //状态
-                slots[i].ishave = true;
-
-                //Icon
-                if (managerhub.world.blocktypes[_type].is2d == false) //3d
-                {
-                    slots[i].Icon3Dobject.SetActive(true);
-                    slots[i].TopFace.sprite = managerhub.world.blocktypes[_type].top_sprit;
-                    slots[i].LeftFace.sprite = managerhub.world.blocktypes[_type].sprite;
-                    slots[i].RightFace.sprite = managerhub.world.blocktypes[_type].sprite;
-
-                    slots[i].icon.color = new Color(1f, 1f, 1f, 0f);
-                }
-                else
-                {
-                    slots[i].Icon3Dobject.SetActive(false);
-                    slots[i].icon.sprite = managerhub.world.blocktypes[_type].icon;
-                    slots[i].icon.color = new Color(1f, 1f, 1f, 1f);
-                }
-
-                //number
-                slots[i].TMP_number.text = $"{slots[i].number}";
-
-            }
-            //不渲染
-            else
-            {
-                slots[i].ResetSlot();
-            }
+            Vector3 direct = Eyes.forward; direct.y = 0.5f;
+            DropBlock.GetComponent<MC_Component_Velocity>().AddForce(direct, throwForce);
+        }
+        else
+        {
+            Vector3 _p = new Vector3(_pos.x + x_offset, _pos.y + y_offset, _pos.z + z_offset);
+            DropBlock.GetComponent<DropBlock>().OnStartEntity(_p, _InitItem, true);
         }
 
-        if (_NeedSYN)
-        {
-            SYN_allSlots(0);
-        }
-        
+
     }
+
 
 
     /// <summary>
@@ -343,108 +435,6 @@ public class BackPackManager : MonoBehaviour
 
     }
 
-    //用于替代isFull
-    //外界调用
-    //返回当前物品栏是否可以再装物品
-    public bool CheckSlotsFull(byte _targetType)
-    {
-        if (managerhub.world.game_mode == GameMode.Creative)
-        {
-            bool hasEmptySlot = false;
-            for (int i = 0; i < slots.Length; i++)
-            {
-                byte targetType = _targetType;
-
-                //草块变泥土
-                if (_targetType == VoxelData.Grass)
-                {
-                    targetType = VoxelData.Soil;
-                }
-
-
-                //检测到相同的材质
-                if (slots[i].blockId == targetType)
-                {
-                    //可以合并
-                    return false;
-                }
-
-                //检测空的slot
-                if (slots[i].number == 0)
-                {
-                    hasEmptySlot = true;
-                }
-            }
-
-            //如果没有相同材质，但是由空的slot
-            if (hasEmptySlot)
-            {
-                //没满
-                return false;
-            }
-            else
-            {
-                //满了
-                return true;
-            }
-        }
-
-        else
-        {
-            return false;
-        }
-
-    }
-
-
-    //用于去生存模式背包物品栏将物品放进去
-    public Transform 生存模式背包物品栏;
-    void AddBlockToBackPackSlots(BlockItem _targetItem)
-    {
-        if (managerhub.world.game_mode == GameMode.Survival)
-        {
-            foreach (Transform item in 生存模式背包物品栏)
-            {
-                SlotBlockItem slotScript = item.GetComponent<SlotBlockItem>();
-
-                if (slotScript.MyItem._blocktype == _targetItem._blocktype || slotScript.MyItem._blocktype == 255)
-                {
-                    //print("添加了一个物品");
-                    slotScript.AddBlock(_targetItem);
-                    break;
-                }
-            }
-        }
-        
-    }
-
-
-    //---------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-    //------------------------------------------------ 实现功能 ---------------------------------------------------------------
-
-
-    //初始化Manager
-    public void InitBackPackManager()
-    {
-        foreach (var _slot in slots)
-        {
-            _slot.ResetSlot();
-        }
-        ClearDropBlocks();
-
-        ChangeBlockInHand();
-    }
-
     void ClearDropBlocks()
     {
         Transform dropblockParent = GameObject.Find("Environment/DropBlocks").transform;
@@ -456,53 +446,31 @@ public class BackPackManager : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// 创造掉落物(坐标,类型)
-    /// </summary>
-    /// <param name="_pos">必须为Int坐标，不需要Center坐标</param>
-    /// <param name="_InitItem"></param>
-    /// <param name="_needThrow"></param>
-    public GameObject NewDropBlock;
-    public void CreateDropBox(Vector3 _pos, BlockItem _InitItem, bool _needThrow)
+
+    #endregion
+
+
+    #region 切换方块部分
+
+    [Header("改变手中物品")]
+    private byte previous_HandBlock = 255;   //255代表手本身
+    public float ChangeColdTime = 1f;
+
+    //切换方块冷却时间
+    IEnumerator ChangeBlockColdTime()
     {
-        Transform Eyes = managerhub.player.GetEyesPosition();
+        isChanging = true;
 
-        //刷新偏移
-        float x_offset = UnityEngine.Random.Range(2, 8) / 10f;
-        float y_offset = UnityEngine.Random.Range(5, 8) / 10f;
-        float z_offset = UnityEngine.Random.Range(2, 8) / 10f;
+        yield return new WaitForSeconds(ChangeColdTime);
 
-        //创建父类
-        GameObject DropBlock = GameObject.Instantiate(NewDropBlock);
-        DropBlock.transform.SetParent(GameObject.Find("Environment/DropBlocks").transform);
-
-
-        //是否扔出去
-        if (_needThrow)
-        {
-            Vector3 _position = Eyes.position;
-            DropBlock.GetComponent<DropBlock>().OnStartEntity(_position, _InitItem, false);
-
-            Vector3 direct = Eyes.forward; direct.y = 0.5f;
-            DropBlock.GetComponent<MC_Component_Velocity>().AddForce(direct, throwForce);
-        }
-        else
-        {
-            Vector3 _p = new Vector3(_pos.x + x_offset, _pos.y + y_offset, _pos.z + z_offset);
-            DropBlock.GetComponent<DropBlock>().OnStartEntity(_p, _InitItem, true);
-        }
-
-
+        isChanging = false;
     }
-
-
-
 
     //切换物品
     bool ToolAlive = false;
     public void ChangeBlockInHand()
     {
-        
+
         GameObject Hand_Hold = managerhub.player.hand_Hold;
         GameObject Hand = managerhub.player.hand;
         GameObject HandBlock = managerhub.player.handBlock;
@@ -610,7 +578,7 @@ public class BackPackManager : MonoBehaviour
                         HanTool.transform.localPosition = new Vector3(1f, -0.2f, 0.696f);
                         HanTool.transform.localEulerAngles = new Vector3(0f, -116.5f, 2.2f);
                     }
-                    
+
 
 
 
@@ -654,18 +622,64 @@ public class BackPackManager : MonoBehaviour
         }
     }
 
-    //---------------------------------------------------------------------------------------------------------------------
+
+    #endregion
 
 
+    #region 工具
+
+    //用于替代isFull
+    //外界调用
+    //返回当前物品栏是否可以再装物品
+    public bool CheckSlotsFull(byte _targetType)
+    {
+        if (managerhub.world.game_mode == GameMode.Creative)
+        {
+            bool hasEmptySlot = false;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                byte targetType = _targetType;
+
+                //草块变泥土
+                if (_targetType == VoxelData.Grass)
+                {
+                    targetType = VoxelData.Soil;
+                }
 
 
+                //检测到相同的材质
+                if (slots[i].blockId == targetType)
+                {
+                    //可以合并
+                    return false;
+                }
 
+                //检测空的slot
+                if (slots[i].number == 0)
+                {
+                    hasEmptySlot = true;
+                }
+            }
 
+            //如果没有相同材质，但是由空的slot
+            if (hasEmptySlot)
+            {
+                //没满
+                return false;
+            }
+            else
+            {
+                //满了
+                return true;
+            }
+        }
 
+        else
+        {
+            return false;
+        }
 
-
-
-    //------------------------------------------------ 工具 ---------------------------------------------------------------
+    }
 
     //这个函数用来判断当前下标有没有方块
     public bool istheindexHaveBlock(int index)
@@ -689,17 +703,9 @@ public class BackPackManager : MonoBehaviour
     }
 
 
-    //切换方块冷却时间
-    IEnumerator ChangeBlockColdTime()
-    {
-        isChanging = true;
 
-        yield return new WaitForSeconds(ChangeColdTime);
+    #endregion
 
-        isChanging = false;
-    }
-
-    //---------------------------------------------------------------------------------------------------------------------
 }
 
 
@@ -747,5 +753,7 @@ public class Slot
         number = 0;
         TMP_number.text = "";
     }
+
+
 }
 

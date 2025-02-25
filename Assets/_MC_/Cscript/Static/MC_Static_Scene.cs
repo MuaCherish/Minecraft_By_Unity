@@ -32,7 +32,7 @@ public static class SceneData
     public static GameObject GetClonesParent()
     {
         // 在场景中查找名为 "ManagerHub" 的 GameObject
-        GameObject _Object = GameObject.Find("Environment/Clones");
+        GameObject _Object = GameObject.Find("Environment/Temps/Clones");
 
         if (_Object != null)
         {
@@ -52,7 +52,7 @@ public static class SceneData
     public static GameObject GetParticleParent()
     {
         // 在场景中查找名为 "ManagerHub" 的 GameObject
-        GameObject _obj = GameObject.Find("Environment/Particles");
+        GameObject _obj = GameObject.Find("Environment/Temps/Particles");
 
         if (_obj != null)
         {
@@ -61,6 +61,63 @@ public static class SceneData
         else
         {
             Debug.LogError("Cant Find Particles");
+            return null;
+        }
+    }
+
+    //获取场景中的掉落物存放点
+    public static GameObject GetDropBlockParent()
+    {
+        // 在场景中查找名为 "ManagerHub" 的 GameObject
+        GameObject _obj = GameObject.Find("Environment/Temps/DropBlocks");
+
+        if (_obj != null)
+        {
+            return _obj;
+        }
+        else
+        {
+            Debug.LogError("Cant Find DropBlocks");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// 获取场景中的实体存放点
+    /// </summary>
+    /// <returns></returns>
+    public static GameObject GetEntityParent()
+    {
+        // 在场景中查找名为 "ManagerHub" 的 GameObject
+        GameObject _obj = GameObject.Find("Environment/Temps/Entity");
+
+        if (_obj != null)
+        {
+            return _obj;
+        }
+        else
+        {
+            Debug.LogError("Cant Find Entity");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// 获取场景中的Chunk存放点
+    /// </summary>
+    /// <returns></returns>
+    public static GameObject GetChunkParent()
+    {
+        // 在场景中查找名为 "ManagerHub" 的 GameObject
+        GameObject _obj = GameObject.Find("Environment/Temps/Chunks");
+
+        if (_obj != null)
+        {
+            return _obj;
+        }
+        else
+        {
+            Debug.LogError("Cant Find Chunks");
             return null;
         }
     }

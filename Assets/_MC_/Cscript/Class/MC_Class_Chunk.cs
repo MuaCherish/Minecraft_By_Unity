@@ -553,3 +553,14 @@ public class CollosionRange
 
 #endregion
 
+public enum DrawMode
+{
+
+    Block, Bush, Torch, Air, Water, SnowPower, HalfBrick, Door, Tool, Null,
+
+}
+
+public enum FaceCheck_Enum
+{
+    isSolid, appointType, appointDrawmode
+}

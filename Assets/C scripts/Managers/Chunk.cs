@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
-using static MC_Static_World;
+using static MC_Static_Chunk;
 using static MC_Static_Math;
 
 public class Chunk : MonoBehaviour
@@ -101,7 +101,7 @@ public class Chunk : MonoBehaviour
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = world.material;
-        chunkObject.transform.SetParent(world.Chunks.transform);
+        chunkObject.transform.SetParent(world.ChunkParent.transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
@@ -182,7 +182,7 @@ public class Chunk : MonoBehaviour
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = world.material;
-        chunkObject.transform.SetParent(world.Chunks.transform);
+        chunkObject.transform.SetParent(world.ChunkParent.transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
@@ -2749,7 +2749,7 @@ public class Chunk : MonoBehaviour
 
         //更新朝向
         if (world.blocktypes[targetBlocktype].IsOriented)
-            UpdateBlockOriented(new Vector3(x, y, z), world.player.RealBacking);
+            UpdateBlockOriented(new Vector3(x, y, z), managerhub.player.RealBacking);
 
         //保存数据
         world.UpdateEditNumber(pos, targetBlocktype);
@@ -5220,10 +5220,36 @@ public class Chunk : MonoBehaviour
     }
 
 
-    //----------------------------------------------------------------------------------
+
+
+
+    /// <summary>
+    /// 获取可用于实体出生点的坐标
+    /// 返回的可用出生点是可以容纳两个高度的
+    /// </summary>
+    public void GetSpawnPos(Vector3 _vec, out List<Vector3> _Spawns)
+    {
+        //数据处理，防止输入绝对坐标
+        _vec = GetRelaPos(_vec);
+        int _X = (int)_vec.x;
+        int _Z = (int)_vec.z;
+        _Spawns = new List<Vector3>();
+
+        //确定X和Z
+        //从Y = 0遍历到头
+        for (int _Y = 0; _Y < TerrainData.ChunkHeight - 2f; _Y ++)
+        {
+
+            if (GetBlock(_X, _Y, _Z).voxelType != VoxelData.Air &&
+                GetBlock(_X, _Y + 1, _Z).voxelType == VoxelData.Air &&
+                GetBlock(_X, _Y + 2, _Z).voxelType == VoxelData.Air)
+            {
+                _Spawns.Add(new Vector3(_X, _Y, _Z));
+            }
+
+        }
+
+    }
+
 
 }
-
-
-
-

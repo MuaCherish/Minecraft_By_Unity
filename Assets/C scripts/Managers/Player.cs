@@ -26,12 +26,12 @@ public class Player : MonoBehaviour
     [ReadOnly] public bool isHitEntity = false; //打到实体了
     [ReadOnly] public bool isSpectatorMode; 
     [ReadOnly] public bool isDead; 
-    [ReadOnly] public bool ShowEntityHitbox; 
+    [ReadOnly] public bool ShowEntityHitbox;
 
 
     [Foldout("Transforms", true)]
     [Header("Transforms")]
-    public ManagerHub managerhub;
+    ManagerHub managerhub;
     public CommandManager commandManager;
     public World world;
     public MusicManager musicmanager;
@@ -232,7 +232,10 @@ public class Player : MonoBehaviour
 
     //--------------------------------- 周期函数 --------------------------------------
 
-
+    private void Awake()
+    {
+        managerhub = SceneData.GetManagerhub();
+    }
 
 
     void Start()

@@ -22,16 +22,6 @@ public class TextureTo3D : MonoBehaviour
     List<Vector2> uvs = new List<Vector2>();
     int Totalsequence = 0;
 
-
-    //public Sprite cloud;
-
-    //private void Start()
-    //{
-    //    ProcessSprite(cloud, this.transform, 1, false);
-    //}
-
-
-
     //创造3d挤压物体
     public void ProcessSprite(Sprite _sprite, Transform _partent, float _scale, bool _HandLayer)
     {

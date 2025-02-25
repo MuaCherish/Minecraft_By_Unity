@@ -7,12 +7,12 @@ using UnityEngine.UI;
 using System.IO;
 using System.Diagnostics;
 using Homebrew;
-using static MC_Static_Game;
+using static MC_Static_Unity;
 using static MC_Static_Name;
 
 public class CanvasManager : MonoBehaviour
 {
-    public ManagerHub managerhub;
+    ManagerHub managerhub;
     [Header("UIMAnager")]
     public List<CanvasId> UIManager = new List<CanvasId>();
 
@@ -60,6 +60,12 @@ public class CanvasManager : MonoBehaviour
 
 
     #region ÖÜÆÚº¯Êý
+
+
+    private void Awake()
+    {
+        managerhub = SceneData.GetManagerhub();
+    }
 
     private void Start()
     {

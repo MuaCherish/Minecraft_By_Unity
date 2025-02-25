@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class MC_Static_Game
+public static class MC_Static_Unity
 {
 
     #region ¹â±ê

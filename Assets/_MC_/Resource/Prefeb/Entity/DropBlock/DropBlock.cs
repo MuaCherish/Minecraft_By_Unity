@@ -139,7 +139,7 @@ public class DropBlock: MonoBehaviour, IEntityBrain
         FindFaces();
 
         // 假设 Faces 的顺序为 front-back-left-right-up-down
-        Texture2D atlasTexture = managerhub.world.BlocksatlasTexture;
+        Texture2D atlasTexture = managerhub.world.atlasTexture;
         Rect frontRect = managerhub.world.blocktypes[myItem._blocktype].front_sprite.rect; // 获取前面纹理的矩形区域
         Rect upRect = managerhub.world.blocktypes[myItem._blocktype].top_sprit.rect; // 获取上面纹理的矩形区域
         Rect bottomRect = managerhub.world.blocktypes[myItem._blocktype].buttom_sprit.rect; // 获取下面纹理的矩形区域

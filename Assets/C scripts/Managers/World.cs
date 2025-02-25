@@ -5,134 +5,242 @@ using System.IO;
 using System.Threading;
 using UnityEngine;
 using System;
-using Homebrew;
-using MCEntity;
-using static MC_Static_Game;
+using static MC_Static_Unity;
 using static MC_Static_Math;
-using static MC_Static_World;
-
-
-//全局游戏状态
-public enum Game_State
-{
-
-    Start, Loading, Playing, Pause, Ending,
-
-}
-
-public enum GameMode
-{
-
-    Creative, Survival,
-
-}
-
-public enum DrawMode
-{
-
-    Block,Bush,Torch,Air,Water,SnowPower,HalfBrick,Door,Tool,Null,
-
-}
-
-public enum Facing2d
-{
-    None, front,back, left, right,
-}
-
-public enum FaceCheck_Enum
-{
-    isSolid, appointType, appointDrawmode
-}
+using static MC_Static_Chunk;
+using Homebrew;
 
 
 public class World : MonoBehaviour
 {
 
-    [HideInInspector] public bool 是否生成Chunk侧面 = false;
+    #region 状态
 
-    [Header("引用")]
-    public ManagerHub managerhub;
-    public CanvasManager canvasManager;
-    public Player player;
+    [Foldout("状态", true)]
+    [Header("游戏状态")][ReadOnly] public Game_State game_state = Game_State.Start;
+    [Header("游戏模式")][ReadOnly] public GameMode game_mode = GameMode.Survival;
 
-    [Header("世界存档")]
-    [HideInInspector] public bool isFinishSaving = false;
-    [HideInInspector] public String savingPATH = ""; //存档根目录
-    [HideInInspector] public WorldSetting worldSetting;
-    [HideInInspector] public List<SavingData> TheSaving = new List<SavingData>(); //读取的存档
-    [HideInInspector] public List<EditStruct> EditNumber = new List<EditStruct>(); //玩家数据
 
-    [Header("游戏状态")]
-    [ReadOnly]public Game_State game_state = Game_State.Start;
-    [ReadOnly] public GameMode game_mode = GameMode.Survival;
-    [HideInInspector] public bool isLoadSaving = false;
+    #endregion
 
+
+    #region 周期函数
+
+    ManagerHub managerhub;
+    Player player;
+
+    private void Awake()
+    {
+        managerhub = SceneData.GetManagerhub();
+        player = managerhub.player;
+        ChunkParent = SceneData.GetChunkParent();
+    }
+
+    private void Start()
+    {
+        
+    }
+
+    bool hasExec_Start = true;
+    bool hasExec_Loading = true;
+    bool hasExec_Playing = true;
+    bool hasExec_Pause = true;
+    private void Update()
+    {
+        switch (game_state)
+        {
+            case Game_State.Start:
+                Handle_GameState_Start();
+                if (!hasExec_Loading)
+                    hasExec_Loading = true;
+                if (!hasExec_Playing)
+                    hasExec_Playing = true;
+                if (!hasExec_Pause)
+                    hasExec_Pause = true;
+                break;
+
+            case Game_State.Loading:
+                Handle_GameState_Loading();
+                if (!hasExec_Start)
+                    hasExec_Start = true;
+                if (!hasExec_Playing)
+                    hasExec_Playing = true;
+                if (!hasExec_Pause)
+                    hasExec_Pause = true;
+                break;
+
+            case Game_State.Playing:
+                Handle_GameState_Playing();
+                if (!hasExec_Start)
+                    hasExec_Start = true;
+                if (!hasExec_Loading)
+                    hasExec_Loading = true;
+                if (!hasExec_Pause)
+                    hasExec_Pause = true;
+                break;
+
+            case Game_State.Pause:
+                Handle_GameState_Pause();
+                if (!hasExec_Start)
+                    hasExec_Start = true;
+                if (!hasExec_Loading)
+                    hasExec_Loading = true;
+                if (!hasExec_Playing)
+                    hasExec_Playing = true;
+                break;
+        }
+
+    }
+
+    void Handle_GameState_Start()
+    {
+        if(hasExec_Start)
+        {
+            InitWorldManager();
+            hasExec_Start = false;
+        }
+    }
+
+    void Handle_GameState_Loading()
+    {
+        if (hasExec_Loading)
+        {
+            hasExec_Loading = false;
+        }
+    }
+
+    void Handle_GameState_Playing()
+    {
+        if(hasExec_Playing)
+        {
+            Load_InitSpawnPos();
+            hasExec_Playing = false;
+        }
+    }
+
+    void Handle_GameState_Pause()
+    {
+        if (hasExec_Pause)
+        {
+            hasExec_Pause = false;
+        }
+    }
+
+    #endregion
+
+
+    #region 游戏在线数据
+
+    [Foldout("Block/Item", true)]
     [Header("Material-方块类型 + 工具类型")]
     public Material material;
     public Material material_Water;
-    public BlockType[] blocktypes;
+    [Header("Block/Item信息")] public BlockType[] blocktypes;
+    [Header("BlockTexture(用于掉落物)")] public Texture2D atlasTexture;
 
+    [Foldout("Chunk", true)]
     [Header("World-渲染设置")]
     [Tooltip("4就是边长为4*16的正方形")] public int renderSize = 5;        //渲染区块半径,即renderSize*16f
     [Tooltip("2就是接近2*16的时候开始刷新区块")] public float StartToRender = 1f;
     public float DestroySize = 7f;
 
-    [Header("Cave-洞穴系统")]
-    public float noise3d_scale = 0.085f;
-    public float cave_width = 0.45f;
-
+    [Foldout("Noise", true)]
     [Header("群系特征概率和数据(值越大范围越小)")]
     public float 氧气浓度OxygenDensity;
     public float 三维密度Density3d;
     public float 干燥程度Aridity;
     public float 空气湿度MoistureLevel;
     public BiomeNoiseSystem[] biomenoisesystems;
+    [Header("地质分层与概率系统(n%)(矿物为万分之n)")] public TerrainLayerProbabilitySystem terrainLayerProbabilitySystem;
+
+    [Foldout("Player", true)]
+    [Header("玩家出生点")] public Vector3 Start_Position = new Vector3(1600f, 127f, 1600f);
 
 
-    [Header("地质分层与概率系统(n%)(矿物为万分之n)")]
-    public TerrainLayerProbabilitySystem terrainLayerProbabilitySystem;
+    #endregion
 
 
-    //玩家
-    [Header("Player-玩家脚底坐标")]
-    public Transform PlayerFoot;
-    public Vector3 Start_Position = new Vector3(1600f, 127f, 1600f);
+    #region (待优化)Loading顺序处理
+
+    [Header("New玩家出生点")] public Vector3 PlayerSpawnPos;
+
+    IEnumerator Handle_Loading()
+    {
+        Load_XZ();
+        yield return StartCoroutine(Load_InitStartChunks());
+        Load_InitSpawnPos();
+
+    }
+
+    //1. 先确定XZ
+    void Load_XZ()
+    {
+        float _X = UnityEngine.Random.Range(800, 3200);
+        float _Y = TerrainData.ChunkHeight - 0.5f;
+        float _Z = UnityEngine.Random.Range(800, 3200);
+        PlayerSpawnPos = new Vector3(_X, _Y, _Z);
+    }
+
+    //2. 加载区块
+    IEnumerator Load_InitStartChunks()
+    {
+        yield return null;
+    }
+
+    //3. 确定出生点
+    void Load_InitSpawnPos()
+    {
+
+        //初始化Y方向
+        MC_RayCastStruct _RayCast = MC_Static_Raycast.RayCast(managerhub, MC_RayCast_FindType.OnlyFindBlock, PlayerSpawnPos, Vector3.down, TerrainData.ChunkHeight, -1, 1f);
+        PlayerSpawnPos.y = _RayCast.hitPoint_Previous.y;
+
+        print(PlayerSpawnPos);
+
+        //结算数据
+        //world.Start_Position = transform.position;
+        //managerhub.player.transform.position = new Vector3(UnityEngine.Random.Range(800, 3200), transform.position.y, UnityEngine.Random.Range(800, 3200));
+    }
+
+    //Playing
+
+    //初始化玩家坐标
+    public void _Player_InitPlayerLocation()
+    {
+        if (managerhub.world.isLoadSaving)
+        {
+            managerhub.world.Start_Position = managerhub.world.worldSetting.playerposition;
+        }
 
 
-    //全部Chunk位置
-    public Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
-    private readonly object Allchunks_Lock = new object();
+        if (managerhub.world.isLoadSaving && managerhub.world.worldSetting.playerposition.y > 0)
+        {
+            managerhub.world.Start_Position = managerhub.world.worldSetting.playerposition;
+            transform.rotation = managerhub.world.worldSetting.playerrotation;
+        }
+        else
+        {
+
+            managerhub.world.Start_Position = new Vector3(GetRealChunkLocation(managerhub.world.Start_Position).x, TerrainData.ChunkHeight - 2, GetRealChunkLocation(managerhub.world.Start_Position).z);
+            managerhub.world.Start_Position = managerhub.world.AddressingBlock(managerhub.world.Start_Position, 3);
+
+        }
+
+        transform.position = world.Start_Position;
+
+    }
 
 
-    //等待添加队列
-    //private List<chunkWithsequence> WatingToCreateChunks = new List<chunkWithsequence>();
-    private List<Vector3> WatingToCreate_Chunks = new List<Vector3>();
+    #endregion
 
 
-    //等待删除队列
-    private List<Vector3> WatingToRemove_Chunks = new List<Vector3>();
-    private Chunk obj;
-
-    //纹理集
-    public Texture2D BlocksatlasTexture;
-
-
-    #region 周期函数
-
-    //Chunks父级
-    [HideInInspector] public GameObject Chunks;
-
+    #region 待优化
 
     //一次性代码
     bool hasExec = true;
     bool hasExec_SetSeed = true;
 
-    private void Start()
-    {
-
-        InitWorldManager();
-
-    }
+    
 
     public void InitWorldManager()
     {
@@ -157,8 +265,7 @@ public class World : MonoBehaviour
 
 
         //初始化
-
-
+        Start_Position = new Vector3(1600f, 127f, 1600f);
 
         game_state = Game_State.Start;
         TheSaving = new List<SavingData>();
@@ -167,7 +274,7 @@ public class World : MonoBehaviour
         renderSize = 10;
         StartToRender = 1f;
         DestroySize = 7f;
-        Start_Position = new Vector3(1600f, 127f, 1600f);
+        
         Allchunks = new Dictionary<Vector3, Chunk>();
         WatingToCreate_Chunks = new List<Vector3>();
         WatingToRemove_Chunks = new List<Vector3>();
@@ -189,16 +296,8 @@ public class World : MonoBehaviour
         WaitToRender_temp = new ConcurrentQueue<Chunk>();
         WaitToFlashChunkQueue = new ConcurrentQueue<Chunk>();
 
-        //Self
-        if (Chunks == null)
-        {
-            Chunks = new GameObject();
-            Chunks.name = "Chunks";
-            Chunks.transform.SetParent(GameObject.Find("Environment").transform);
-        }
-
         // 销毁 Chunks 大纲目录下的所有子物体
-        foreach (Transform child in Chunks.transform)
+        foreach (Transform child in ChunkParent.transform)
         {
             Destroy(child.gameObject);
         }
@@ -209,12 +308,22 @@ public class World : MonoBehaviour
         UnityEngine.Random.InitState(worldSetting.seed);
         //-------------------------------------
 
-        canvasManager.PointSaving = "";
+        managerhub.canvasManager.PointSaving = "";
 
         //初始化计数时间
         InitStartTime = 0f;
         InitEndTime = 0f;
-}
+
+        if (managerhub.低区块模式)
+        {
+            renderSize = 2;
+        }
+        if (managerhub.无黑夜模式)
+        {
+            if (managerhub.timeManager.gameObject.activeSelf)
+                managerhub.timeManager.gameObject.SetActive(false);
+        }
+    }
 
     private void FixedUpdate()
     {
@@ -259,7 +368,7 @@ public class World : MonoBehaviour
 
             if (hasExec)
             {
-                
+
                 LockMouse(true);
                 hasExec = false;
             }
@@ -267,11 +376,11 @@ public class World : MonoBehaviour
 
             //玩家移动刷新
             //如果大于16f
-            if (Get2DLengthforVector3(PlayerFoot.transform.position - Center_Now) > (StartToRender * 16f) && Get2DLengthforVector3(PlayerFoot.transform.position - Center_Now) <= ((StartToRender + 1) * 16f))
+            if (Get2DLengthforVector3(player.foot.transform.position - Center_Now) > (StartToRender * 16f) && Get2DLengthforVector3(player.foot.transform.position - Center_Now) <= ((StartToRender + 1) * 16f))
             {
 
                 //更新Center
-                Center_direction = NormalizeToAxis(PlayerFoot.transform.position - Center_Now);
+                Center_direction = NormalizeToAxis(player.foot.transform.position - Center_Now);
                 Center_Now += Center_direction * TerrainData.ChunkWidth;
 
                 //添加Chunk
@@ -280,7 +389,7 @@ public class World : MonoBehaviour
 
             }
             //玩家移动过远距离
-            else if (Get2DLengthforVector3(PlayerFoot.transform.position - Center_Now) > ((StartToRender + 1) * 16f))
+            else if (Get2DLengthforVector3(player.foot.transform.position - Center_Now) > ((StartToRender + 1) * 16f))
             {
 
 
@@ -313,708 +422,88 @@ public class World : MonoBehaviour
 
     }
 
-    private void Update()
-    {
-        if (managerhub.低区块模式 && managerhub.hasExec_低区块模式)
-        {
-            renderSize = 2;
-
-            managerhub.hasExec_低区块模式 = false;
-        }
-
-        if (managerhub.无黑夜模式 && managerhub.hasExec_无黑夜模式)
-        {
-
-            managerhub.timeManager.gameObject.SetActive(false);
-
-            managerhub.hasExec_无黑夜模式 = false;
-        }
-
-        if (game_state == Game_State.Playing)
-        {
-            //_ReferUpdate_CheckShowEntityHitbox();
-        }
-    }
-
     #endregion
 
-    //Noise
-    #region [NoiseGenerator]
-
-    //简单噪声
-    public float GetSimpleNoise(int _x, int _z, Vector3 _myposition)
-    {
-        float smoothNoise = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((_x + _myposition.x) * 0.01f, (_z + _myposition.z) * 0.01f));
-        return smoothNoise;
-    }
-
-    //简单偏移噪声，用来给树等分布用
-    //_offset类似为Vector3(111f,222f)
-    //_Scale噪声缩放:0.01为正常缩放,0.1为水下沙泥分布
-    public float GetSimpleNoiseWithOffset(int _x, int _z, Vector3 _myposition, Vector2 _Offset, float _Scale)
-    {
-        float smoothNoise = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((_x + _myposition.x + _Offset.x) * _Scale, (_z + _myposition.z + _Offset.y) * _Scale));
-        return smoothNoise;
-    }
-
-    //获得所在群系类型
-    public byte GetBiomeType(int _x, int _z, Vector3 _myposition)
-    {
-
-        float _A = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(0f, 0f, 0f));
-        float _B = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(123f, 0f, 456f));
-        float _C = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f));
-        float _D = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f));
-
-        ////沙漠
-        //if (_C >= 干燥程度Aridity)
-        //{
-
-        //    return 2;
-
-        //}
-
-        //else
-        //{
-
-        //    //高原
-        //    if (_B >= 三维密度Density3d)
-        //    {
-        //        return 1;
-        //    }
-
-        //    //草原
-        //    else if (_A >= 氧气浓度OxygenDensity)
-        //    {
-
-        //        if (_D >= 空气湿度MoistureLevel)
-        //        {
-        //            return 3;
-        //        }
-        //        else
-        //        {
-        //            return 0;
-        //        }
-
-
-
-        //    }
-        //    else
-        //    {
-        //        //返回密林
-        //        return 4;
-        //    }
-
-        //}
-
-        //高原
-        if (_B >= 三维密度Density3d)
-        {
-            return 1;
-        }
-
-        else
-        {
-
-            //沙漠
-            if (_C >= 干燥程度Aridity)
-            {
-
-                return 2;
-
-            }
-
-            //草原
-            else if (_A >= 氧气浓度OxygenDensity)
-            {
-
-                if (_D >= 空气湿度MoistureLevel)
-                {
-                    return 3;
-                }
-                else
-                {
-                    return 0;
-                }
-
-
-
-            }
-            else
-            {
-                //返回密林
-                return 4;
-            }
-
-        }
-
-
-    }
-
-    //根据给定参数和群系种类
-    //变成给定的群系噪声
-    public float GetTotalNoiseHigh_Biome(int _x, int _z, Vector3 _myposition, int _WorldType)
-    {
-        if (_x < 0 || _x > TerrainData.ChunkWidth || _z < 0 || _z > TerrainData.ChunkWidth)
-        {
-            print($"GetTotalNoiseHigh_Biome出界,{_x},{_z}");
-            return 128f;
-        }
-
-        if (_WorldType == TerrainData.Biome_SuperPlain)
-        {
-            return 0f;
-        }
-
-
-        //默认
-        if (_WorldType == TerrainData.Biome_Default)
-        {
-            //Noise
-            float noise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.x);
-            float noise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.y);
-            float noise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.z);
-            float noise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[0].Noise_Rank_123.x + noise_2 * biomenoisesystems[0].Noise_Rank_123.y + noise_3 * biomenoisesystems[0].Noise_Rank_123.z);
-            float noise_High = Mathf.Lerp(biomenoisesystems[0].HighDomain.x, biomenoisesystems[0].HighDomain.y, noise);
-
-            //数据定义
-            int BiomeType = -1;
-            float BiomeIntensity = 0f;
-            float _A = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(0f, 0f, 0f));
-            float _B = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(123f, 0f, 456f));
-            float _C = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f));
-            float _D = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f));
-
-            //获得当前群系
-            //获得群系混合强度
-            //高原
-            if (_B >= 三维密度Density3d)
-            {
-                BiomeType = TerrainData.Biome_Plateau;
-                BiomeIntensity = Mathf.InverseLerp(三维密度Density3d, 1f, _B);
-            }
-            else
-            {
-
-                if (_C >= 干燥程度Aridity)
-                {
-                    BiomeType = TerrainData.Biome_Dessert;
-                    BiomeIntensity = Mathf.InverseLerp(干燥程度Aridity, 1f, _C);
-                }
-                //草原
-                else if (_A >= 氧气浓度OxygenDensity)
-                {
-                    if (_D >= 空气湿度MoistureLevel)
-                    {
-                        BiomeType = TerrainData.Biome_Marsh;
-                        BiomeIntensity = Mathf.InverseLerp(空气湿度MoistureLevel, 1f, _D);
-                    }
-                    else
-                    {
-                        BiomeType = TerrainData.Biome_Plain;
-                        BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
-                    }
-                }
-                else
-                {
-                    BiomeType = TerrainData.Biome_Plain;
-                    BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
-                }
-
-            }
-
-            //BiomeType = 1;
-
-            //混合群系
-            float Mixnoise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.x);
-            float Mixnoise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.y);
-            float Mixnoise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.z);
-            float Mixnoise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[BiomeType].Noise_Rank_123.x + noise_2 * biomenoisesystems[BiomeType].Noise_Rank_123.y + noise_3 * biomenoisesystems[BiomeType].Noise_Rank_123.z);
-            float Mixnoise_High = Mathf.Lerp(biomenoisesystems[BiomeType].HighDomain.x, biomenoisesystems[BiomeType].HighDomain.y, Mixnoise);
-
-            float 增量噪声 = Mathf.Lerp(noise_High, Mixnoise_High, BiomeIntensity);
-
-            return 增量噪声;
-            //return noise_High + 增量噪声 * 增量噪声放大倍数; 
-        }
-
-        else
-        {
-            //Noise
-            float noise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[_WorldType].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[_WorldType].Noise_Scale_123.x);
-            float noise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[_WorldType].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[_WorldType].Noise_Scale_123.y);
-            float noise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[_WorldType].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[_WorldType].Noise_Scale_123.z);
-            float noise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[_WorldType].Noise_Rank_123.x + noise_2 * biomenoisesystems[_WorldType].Noise_Rank_123.y + noise_3 * biomenoisesystems[_WorldType].Noise_Rank_123.z);
-            float noise_High = Mathf.Lerp(biomenoisesystems[_WorldType].HighDomain.x, biomenoisesystems[_WorldType].HighDomain.y, noise);
-            return noise_High;
-        }
-
-
-    }
-
-
-    #endregion
-
-    //Save
-    #region [SaveGenerator]存档管理
-
-
-    //删除存档
-    public void DeleteSave(string savepath)
-    {
-        if (Directory.Exists(savepath))
-        {
-            try
-            {
-                // 删除所有文件
-                foreach (string file in Directory.GetFiles(savepath))
-                {
-                    File.Delete(file);
-                    //Debug.Log($"Deleted file: {file}");
-                }
-
-                // 递归删除所有子目录
-                foreach (string directory in Directory.GetDirectories(savepath))
-                {
-                    DeleteSave(directory);
-                }
-
-                // 删除空目录
-                Directory.Delete(savepath);
-                //Debug.Log("完成删除");
-            }
-            catch (Exception ex)
-            {
-                // 处理异常，如日志记录
-                Debug.LogError($"删除目录 {savepath} 时出错: {ex.Message}");
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"指定路径 {savepath} 不存在.");
-        }
-    }
-
-    //获取TheSaving的索引
-    public int GetIndexOfChunkLocation(Vector3 location)
-    {
-        // 遍历 TheSaving 列表
-        for (int i = 0; i < TheSaving.Count; i++)
-        {
-            var savingData = TheSaving[i];
-            // 使用 SavingData 的 ContainsChunkLocation 方法检查 ChunkLocation
-            if (savingData.ContainsChunkLocation(location))
-            {
-                return i; // 返回匹配项的索引
-            }
-        }
-
-        return -1; // 如果没有找到匹配项，则返回 -1
-    }
-
-
-    //返回TheSaving是否包含ChunkLocation
-    public bool ContainsChunkLocation(Vector3 location)
-    {
-        // 遍历 TheSaving 列表
-        foreach (var savingData in TheSaving)
-        {
-            // 使用 SavingData 的 ContainsChunkLocation 方法检查 ChunkLocation
-            if (savingData.ContainsChunkLocation(location))
-            {
-                return true; // 找到匹配的 ChunkLocation
-            }
-        }
-
-        return false; // 没有找到匹配的 ChunkLocation
-    }
-
-
-    // 推送玩家更新的具体方块
-    public List<EditStruct> WaitToAdd_EditList = new List<EditStruct>();
-    public Coroutine updateEditNumberCoroutine;
-
-    /// <summary>
-    /// 注意返回绝对坐标
-    /// </summary>
-    /// <param name="RealPos"></param>
-    /// <param name="targetBlocktype"></param>
-    public void UpdateEditNumber(Vector3 RealPos, byte targetBlocktype)
-    {
-        // 将修改细节推送至World里
-        // 转换RealPos为整型Vector3以便用作字典的key
-        Vector3 intPos = new Vector3((int)RealPos.x, (int)RealPos.y, (int)RealPos.z);
-
-        // 查找是否已经存在相同的editPos
-        EditStruct existingEdit = EditNumber.Find(edit => edit.editPos == intPos);
-
-        if (existingEdit != null)
-        {
-            // 如果存在，更新targetType
-            existingEdit.targetType = targetBlocktype;
-        }
-        else
-        {
-            // 如果不存在，添加新的EditStruct
-            //print($"Edit更新: {intPos} --- {targetBlocktype}");
-            if (intPos.y >= 0)
-            {
-                EditNumber.Add(new EditStruct(intPos, targetBlocktype));
-            }
-
-        }
-    }
-
-    public void UpdateEditNumber(List<EditStruct> _EditList)
-    {
-        // 添加新的编辑列表到等待处理的队列尾部
-        WaitToAdd_EditList.AddRange(_EditList);
-        // 如果协程未运行，则启动协程
-        if (updateEditNumberCoroutine == null)
-        {
-            updateEditNumberCoroutine = StartCoroutine(_updateEditNumberCoroutine());
-        }
-    }
-
-    IEnumerator _updateEditNumberCoroutine()
-    {
-        // 每次处理的数量，避免卡顿
-        int batchSize = 10;
-
-        while (WaitToAdd_EditList.Count > 0)
-        {
-            // 每次取出最多 batchSize 个 EditStruct 从头部进行处理
-            int count = Mathf.Min(batchSize, WaitToAdd_EditList.Count);
-
-            for (int i = 0; i < count; i++)
-            {
-                // 取出列表中的第一个元素
-                EditStruct edit = WaitToAdd_EditList[0];
-
-                //基岩跳过
-                if (edit.targetType != VoxelData.BedRock)
-                {
-                    // 将编辑项添加到 EditNumber 中
-                    UpdateEditNumber(edit.editPos, edit.targetType);
-                }
-                else
-                {
-                    print("处理到基岩");
-                }
-
-                // 从头部移除已处理的项
-                WaitToAdd_EditList.RemoveAt(0);
-            }
-
-            // 暂停一帧，避免一次性处理太多项导致卡顿
-            yield return null;
-        }
-
-        // 处理完成后，将协程变量设为 null
-        //print("null");
-        updateEditNumberCoroutine = null;
-    }
-
-    // 将EditNumber归类
-    public void ClassifyWorldData()
-    {
-        foreach (var edittemp in EditNumber)
-        {
-            // 获取当前修改所在的区块位置
-            Vector3 _ChunkLocation = GetRelaChunkLocation(edittemp.editPos);
-
-            // 标记是否在 savingDatas 中找到相应的 ChunkLocation
-            bool found = false;
-
-            // 查找是否有相同的 ChunkLocation
-            foreach (var savingtemp in TheSaving)
-            {
-                if (savingtemp.ChunkLocation == _ChunkLocation)
-                {
-                    // 如果找到了相应的 ChunkLocation，则添加相对位置和方块类型到 EditDataInChunk
-                    savingtemp.EditDataInChunk[GetRelaPos(edittemp.editPos)] = edittemp.targetType;
-                    found = true;
-                    break;  // 找到后直接跳出循环
-                }
-            }
-
-            // 如果没有找到对应的 ChunkLocation，则新建一个 SavingData 并添加到 savingDatas
-            if (!found)
-            {
-                // 创建新的 EditDataInChunk 字典，并添加当前的相对位置和方块类型
-                Dictionary<Vector3, byte> newEditDataInChunk = new Dictionary<Vector3, byte>();
-                newEditDataInChunk[GetRelaPos(edittemp.editPos)] = edittemp.targetType;
-
-                // 创建新的 SavingData 并添加到 savingDatas
-                SavingData newSavingData = new SavingData(_ChunkLocation, newEditDataInChunk);
-                TheSaving.Add(newSavingData);
-            }
-        }
-
-        SAVINGDATA(savingPATH);
-    }
-
-    //存档
-    public void SAVINGDATA(string savePath)
-    {
-        // 更新存档结构体
-        worldSetting.playerposition = player.transform.position;
-        worldSetting.playerrotation = player.transform.rotation;
-        worldSetting.gameMode = game_mode;
-        string previouDate = worldSetting.date;
-        worldSetting.date = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-
-        // 创建一个名为 "Saves" 的文件夹
-        string savesFolderPath = Path.Combine(savePath, "Saves");
-        if (!Directory.Exists(savesFolderPath))
-        {
-            Directory.CreateDirectory(savesFolderPath);
-        }
-
-        // 在 "Saves" 文件夹下创建一个以存档创建日期命名的文件夹
-        string folderPath = Path.Combine(savesFolderPath, worldSetting.date);
-        if (!Directory.Exists(folderPath))
-        {
-            Directory.CreateDirectory(folderPath);
-        }
-
-        // 删除Saves文件夹中名字为previouDate的文件夹，如果能找到的话
-        string oldFolderPath = Path.Combine(savesFolderPath, previouDate);
-        if (Directory.Exists(oldFolderPath))
-        {
-            // 删除旧文件夹及其所有内容
-            Directory.Delete(oldFolderPath, true);
-        }
-
-        // 将所有的 SavingData 的字典转换为列表
-        foreach (var data in TheSaving)
-        {
-            data.EditDataInChunkList = new List<EditStruct>();
-            foreach (var kvp in data.EditDataInChunk)
-            {
-                data.EditDataInChunkList.Add(new EditStruct(kvp.Key, kvp.Value));
-            }
-        }
-
-        // 将 worldSetting 和 savingDatas 转换为 JSON 字符串
-        string worldSettingJson = JsonUtility.ToJson(worldSetting, true);
-        string savingDatasJson = JsonUtility.ToJson(new Wrapper<SavingData>(TheSaving), true);
-
-        // 将 JSON 字符串保存到指定路径的文件夹中
-        File.WriteAllText(Path.Combine(folderPath, "WorldSetting.json"), worldSettingJson);
-        File.WriteAllText(Path.Combine(folderPath, "SavingDatas.json"), savingDatasJson);
-
-
-
-        Debug.Log("数据已保存到: " + folderPath);
-        isFinishSaving = true;
-    }
-
-    //读取全部存档
-    public void LoadAllSaves(string savingPATH)
-    {
-        // 构造 Saves 目录的路径
-        string savesFolderPath = Path.Combine(savingPATH, "Saves");
-
-        // 检查 Saves 目录是否存在，如果不存在则创建它
-        if (!Directory.Exists(savesFolderPath))
-        {
-            try
-            {
-                Directory.CreateDirectory(savesFolderPath);
-                //Debug.Log($"Saves 文件夹已创建: {savesFolderPath}");
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"创建 Saves 文件夹时出错: {ex.Message}");
-                return; // 创建文件夹失败时退出函数
-            }
-        }
-
-        // 获取存档目录下的所有文件夹路径
-        string[] saveDirectories;
-        try
-        {
-            saveDirectories = Directory.GetDirectories(savesFolderPath);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"获取存档目录时出错: {ex.Message}");
-            return; // 处理异常并退出函数
-        }
-
-        // 遍历每个存档文件夹
-        foreach (string saveDirectory in saveDirectories)
-        {
-            // 输出当前存档文件夹名称
-            string folderName = Path.GetFileName(saveDirectory);
-            //Debug.Log($"Loading save from folder: {folderName}");
-
-            // 调用 LoadData 函数读取当前存档
-            try
-            {
-                WorldSetting _worldsetting = LoadWorldSetting(saveDirectory);
-                canvasManager.NewWorldGenerate(
-                    _worldsetting.name,
-                    _worldsetting.date,
-                    _worldsetting.gameMode,
-                    _worldsetting.worldtype,
-                    _worldsetting.seed
-                );
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"加载存档 {folderName} 时出错: {ex.Message}");
-            }
-        }
-
-        //Debug.Log($"Total saves loaded: {saveDirectories.Length}");
-    }
-
-    //分析存档名字
-    public WorldSetting LoadWorldSetting(string savePath)
-    {
-        // 构建 WorldSetting.json 文件的完整路径
-        string worldSettingPath = Path.Combine(savePath, "WorldSetting.json");
-
-        // 检查 WorldSetting.json 文件是否存在
-        if (File.Exists(worldSettingPath))
-        {
-            // 读取 WorldSetting.json 文件的内容
-            string worldSettingJson = File.ReadAllText(worldSettingPath);
-
-            // 将 JSON 字符串反序列化为 WorldSetting 对象
-            return JsonUtility.FromJson<WorldSetting>(worldSettingJson);
-        }
-        else
-        {
-            // 如果文件不存在，输出错误信息并返回 null
-            Debug.LogError("找不到 WorldSetting.json 文件");
-            return null;
-        }
-    }
-
-    //加载存档
-    public void LoadSavingData(string savePath)
-    {
-        isLoadSaving = true;
-
-        // 构建 SavingDatas.json 文件的完整路径
-        string savingDatasPath = Path.Combine(savePath, "SavingDatas.json");
-
-        // 检查 SavingDatas.json 文件是否存在
-        if (File.Exists(savingDatasPath))
-        {
-            // 读取 SavingDatas.json 文件的内容
-            string savingDatasJson = File.ReadAllText(savingDatasPath);
-
-            // 将 JSON 字符串反序列化为 Wrapper<SavingData> 对象
-            Wrapper<SavingData> wrapper = JsonUtility.FromJson<Wrapper<SavingData>>(savingDatasJson);
-
-            // 检查 wrapper 是否为 null
-            if (wrapper != null && wrapper.Items != null)
-            {
-                // 将反序列化的 Items 列表赋值给 TheSaving
-                TheSaving = wrapper.Items;
-
-                // 遍历 TheSaving 列表，恢复每个 SavingData 对象中的字典
-                foreach (var data in TheSaving)
-                {
-                    data.RestoreDictionary();
-
-                    // Debug打印
-                    //Debug.Log($"Chunk Location: {data.ChunkLocation}");
-                    //foreach (var pair in data.EditDataInChunk)
-                    //{
-                    //    Debug.Log($"Position: {pair.Key}, Type: {pair.Value}");
-                    //}
-                }
-
-                worldSetting = LoadWorldSetting(savePath);
-
-
-                //更新一些参数
-                game_mode = worldSetting.gameMode;
-
-
-
-            }
-            else
-            {
-                // 如果 wrapper 或 wrapper.Items 为 null，输出警告信息
-                Debug.LogWarning("Wrapper<SavingData> 或 Items 列表为 null");
-            }
-        }
-        else
-        {
-            // 如果文件不存在，输出错误信息
-            Debug.LogError("找不到 SavingDatas.json 文件");
-        }
-    }
-
-
-    #endregion
-
+   
     //ChunkGenerator
-    #region [ChunkGenerator]指定方向寻址
+    #region [ChunkGenerator]初始化地图
 
-    //指定方向寻址
-    public Vector3 AddressingBlock(Vector3 _start, int _direct)
+    IEnumerator Init_Map_Thread(bool _isInitPlayerLocation)
     {
-        Vector3 _address = _start;
-        //print($"start: {_address}");
+        //确定Chunk中心点
+        GetChunkCenterNow();
 
-        for (int i = 0; i < TerrainData.ChunkHeight; i++)
-        {
-            byte _byte = GetBlockType(_address);
-            if (_byte != VoxelData.Air)
-            {
-                //print($"坐标：{_address} , 碰到{_byte}");
-                //添加一个方块踮脚
-                if (_byte == VoxelData.Water)
-                {
-                    EditBlock(_address, VoxelData.Grass);
-                }
-
-                //Offset
-                return _address + new Vector3(0.5f, 2f, 0.5f);
+        //初始化区块并添加进度条
+        float temp = 0f;
+        for (int x = -renderSize + (int)(Center_Now.x / TerrainData.ChunkWidth); x < renderSize + (int)(Center_Now.x / TerrainData.ChunkWidth); x++){
+            for (int z = -renderSize + (int)(Center_Now.z / TerrainData.ChunkWidth); z < renderSize + (int)(Center_Now.z / TerrainData.ChunkWidth); z++){
+                CreateBaseChunk(new Vector3(x, 0, z));
+                temp++;
+                float max = renderSize * renderSize * 4;
+                managerhub.canvasManager.Initprogress = Mathf.Lerp(0f, 0.9f, temp / max);
+                yield return new WaitForSeconds(InitCorountineDelay);
             }
 
-            _address += VoxelData.faceChecks[_direct];
         }
 
-        print("寻址失败");
-        return _start;
+        //重新初始化玩家位置，防止穿模
+        if (_isInitPlayerLocation)
+        {
+            managerhub.player.InitPlayerLocation();
+        }
 
+
+        //游戏开始
+        yield return new WaitForSeconds(0.5f);
+        managerhub.canvasManager.Initprogress = 1f;
+
+        //开启面优化协程
+        StartCoroutine(Chunk_Optimization());
+        StartCoroutine(FlashChunkCoroutine());
+
+        Init_MapCoroutine = null;
     }
 
-    //给定一个初始坐标和初始方向，朝着这个方向遍历ChunkHeight，返回一个非空气坐标
-    public Vector3 LoopAndFindABestLocation(Vector3 _start, Vector3 _direct)
+    //确定Chunk中心点
+    void GetChunkCenterNow()
     {
-        _direct.x = _direct.x > 0 ? 1 : 0;
-        _direct.y = _direct.y > 0 ? 1 : 0;
-        _direct.z = _direct.z > 0 ? 1 : 0;
 
-        Vector3 _next = _start;
-
-        //Loop
-        for (int i = 0; i < TerrainData.ChunkHeight; i++)
+        if (isLoadSaving)
         {
-            // Check，如果当前位置的方块类型不是空气，返回该坐标
-            if (GetBlockType(_next) != VoxelData.Air)
-            {
-                return _next;
-            }
-
-            // 累积移动位置
-            _next += _direct; // 使用归一化的方向向量逐步移动
+            Center_Now = new Vector3(GetRealChunkLocation(worldSetting.playerposition).x, 0, GetRealChunkLocation(worldSetting.playerposition).z);
+            return;
         }
 
-        return _start;
+
+        if (hasExec_RandomPlayerLocation)
+        {
+            managerhub.player.RandomPlayerLocaiton();
+            hasExec_RandomPlayerLocation = false;
+        }
+        //print(PlayerFoot.transform.position);
+        Center_Now = new Vector3(GetRealChunkLocation(player.foot.transform.position).x, 0, GetRealChunkLocation(player.foot.transform.position).z);
+
     }
 
     #endregion
+
+
     #region [ChunkGenerator]动态加载地图
+
+    public GameObject ChunkParent;
+    [HideInInspector] public bool 是否生成Chunk侧面 = false;
+    [Header("Cave-洞穴系统")]
+    public float noise3d_scale = 0.085f;
+    public float cave_width = 0.45f;
+
+    //全部Chunk位置
+    public Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
+    private readonly object Allchunks_Lock = new object();
+
+    //等待添加队列
+    private List<Vector3> WatingToCreate_Chunks = new List<Vector3>();
+    private List<Vector3> WatingToRemove_Chunks = new List<Vector3>();
+    private Chunk obj;
 
     //协程
     [Header("Corountine-协程延迟时间")]
@@ -1044,90 +533,7 @@ public class World : MonoBehaviour
     //初始化地图
     public Coroutine Init_MapCoroutine;
     bool hasExec_RandomPlayerLocation = true;
-    IEnumerator Init_Map_Thread(bool _isInitPlayerLocation)
-    {
-
-
-        //确定玩家圈养中心点
-        if (isLoadSaving)
-        {
-
-            Center_Now = new Vector3(GetRealChunkLocation(worldSetting.playerposition).x, 0, GetRealChunkLocation(worldSetting.playerposition).z);
-
-        }
-        else
-        {
-            if (hasExec_RandomPlayerLocation)
-            {
-                player.RandomPlayerLocaiton();
-                hasExec_RandomPlayerLocation = false;
-            }
-            //print(PlayerFoot.transform.position);
-            Center_Now = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, 0, GetRealChunkLocation(PlayerFoot.transform.position).z);
-
-        }
-
-
-
-
-        //写一个协程，清除或者隐藏过远的区块
-
-
-        //print($"Center:{Center_Now}");
-        //print($"Foot:{PlayerFoot.transform.position}, ChunkFoot:{GetRelaChunkLocation(PlayerFoot.transform.position)}");
-        //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        //sphere.transform.position = Center_Now;
-        //sphere.transform.localScale = new Vector3(2f, 2f, 2f);
-        float temp = 0f;
-
-        for (int x = -renderSize + (int)(Center_Now.x / TerrainData.ChunkWidth); x < renderSize + (int)(Center_Now.x / TerrainData.ChunkWidth); x++)
-        {
-
-            for (int z = -renderSize + (int)(Center_Now.z / TerrainData.ChunkWidth); z < renderSize + (int)(Center_Now.z / TerrainData.ChunkWidth); z++)
-            {
-
-                //Create
-                CreateBaseChunk(new Vector3(x, 0, z));
-
-                //剩余进度计算
-                float max = renderSize * renderSize * 4;
-                temp++;
-                canvasManager.Initprogress = Mathf.Lerp(0f, 0.9f, temp / max);
-
-                yield return new WaitForSeconds(InitCorountineDelay);
-            }
-
-        }
-
-        //yield return new WaitForSeconds(0.5f);
-
-        //重新初始化玩家位置，防止穿模
-        if (_isInitPlayerLocation)
-        {
-            player.InitPlayerLocation();
-        }
-        
-
-        //游戏开始
-        yield return new WaitForSeconds(0.5f);
-        canvasManager.Initprogress = 1f;
-
-        //开启面优化协程
-        StartCoroutine(Chunk_Optimization());
-
-        StartCoroutine(FlashChunkCoroutine());
-
-        //开启持续渲染水体流动线程
-        //myThread_Water = new Thread(new ThreadStart(Thread_AwaysUpdate_Water));
-        //myThread_Water.Start();
-
-        //开启渲染Mesh线程
-        //myThread_Render = new Thread(new ThreadStart(Thread_RenderMesh));
-        //myThread_Render.Start();
-
-        Init_MapCoroutine = null;
-    }
-
+    
 
     Coroutine Init_Map_Thread_NoInit_Coroutine;
 
@@ -1146,7 +552,7 @@ public class World : MonoBehaviour
     IEnumerator Init_Map_Thread_NoInit()
     {
 
-        Center_Now = new Vector3(GetRealChunkLocation(PlayerFoot.transform.position).x, 0, GetRealChunkLocation(PlayerFoot.transform.position).z);
+        Center_Now = new Vector3(GetRealChunkLocation(player.foot.transform.position).x, 0, GetRealChunkLocation(player.foot.transform.position).z);
 
         for (int x = -renderSize + (int)(Center_Now.x / TerrainData.ChunkWidth); x < renderSize + (int)(Center_Now.x / TerrainData.ChunkWidth); x++)
         {
@@ -1185,7 +591,7 @@ public class World : MonoBehaviour
     {
         foreach (var temp in Allchunks)
         {
-            if (Get2DLengthforVector3(PlayerFoot.transform.position - temp.Value.myposition) > (StartToRender * 16f))
+            if (Get2DLengthforVector3(player.foot.transform.position - temp.Value.myposition) > (StartToRender * 16f))
             {
                 temp.Value.HideChunk();
             }
@@ -1467,7 +873,7 @@ public class World : MonoBehaviour
         //}
 
         //调用Chunk
-        if (ContainsChunkLocation(_ChunkLocation)) 
+        if (ContainsChunkLocation(_ChunkLocation))
         {
             _chunk_temp = new Chunk(_ChunkLocation, managerhub, false, TheSaving[GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
         }
@@ -1786,7 +1192,7 @@ public class World : MonoBehaviour
 
                         hasExec_CaculateInitTime = false;
                     }
-                    
+
                     Mesh_Coroutine = null;
                     break;
 
@@ -1893,7 +1299,7 @@ public class World : MonoBehaviour
     //外界修改方块
     public void EditBlock(Vector3 _pos, byte _target)
     {
-        Allchunks[GetRelaChunkLocation(_pos)].EditData(_pos,_target);
+        Allchunks[GetRelaChunkLocation(_pos)].EditData(_pos, _target);
     }
 
     public void EditBlock(List<EditStruct> _editStructs)
@@ -1939,9 +1345,9 @@ public class World : MonoBehaviour
     {
         if (editBlockCoroutine == null)
         {
-            editBlockCoroutine = StartCoroutine(Coroutine_editBlock(_editStructs,_time));
+            editBlockCoroutine = StartCoroutine(Coroutine_editBlock(_editStructs, _time));
         }
-        
+
 
     }
 
@@ -2004,7 +1410,7 @@ public class World : MonoBehaviour
 
     public Vector3 CollisionOffset(Vector3 _realPos, byte _targetType)
     {
-        Vector3 _input = new Vector3(player.horizontalInput, player.Facing.y, player.verticalInput);
+        Vector3 _input = new Vector3(managerhub.player.horizontalInput, managerhub.player.Facing.y, managerhub.player.verticalInput);
         float _x = _realPos.x; Vector2 _xRange = blocktypes[_targetType].CollosionRange.xRange; float _xOffset = _x - (int)_x;
         float _y = _realPos.y; Vector2 _yRange = blocktypes[_targetType].CollosionRange.yRange; float _yOffset = _y - (int)_y;
         float _z = _realPos.z; Vector2 _zRange = blocktypes[_targetType].CollosionRange.zRange; float _zOffset = _z - (int)_z;
@@ -2072,6 +1478,691 @@ public class World : MonoBehaviour
         //返回固体还是空气
         return blocktypes[Allchunks[GetRelaChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z].voxelType].canBeChoose;
 
+    }
+
+
+    #endregion
+    #region [ChunkGenerator]指定方向寻址
+
+    //指定方向寻址
+    public Vector3 AddressingBlock(Vector3 _start, int _direct)
+    {
+        Vector3 _address = _start;
+        //print($"start: {_address}");
+
+        for (int i = 0; i < TerrainData.ChunkHeight; i++)
+        {
+            byte _byte = GetBlockType(_address);
+            if (_byte != VoxelData.Air)
+            {
+                //print($"坐标：{_address} , 碰到{_byte}");
+                //添加一个方块踮脚
+                if (_byte == VoxelData.Water)
+                {
+                    EditBlock(_address, VoxelData.Grass);
+                }
+
+                //Offset
+                return _address + new Vector3(0.5f, 2f, 0.5f);
+            }
+
+            _address += VoxelData.faceChecks[_direct];
+        }
+
+        print("寻址失败");
+        return _start;
+
+    }
+
+    //给定一个初始坐标和初始方向，朝着这个方向遍历ChunkHeight，返回一个非空气坐标
+    public Vector3 LoopAndFindABestLocation(Vector3 _start, Vector3 _direct)
+    {
+        _direct.x = _direct.x > 0 ? 1 : 0;
+        _direct.y = _direct.y > 0 ? 1 : 0;
+        _direct.z = _direct.z > 0 ? 1 : 0;
+
+        Vector3 _next = _start;
+
+        //Loop
+        for (int i = 0; i < TerrainData.ChunkHeight; i++)
+        {
+            // Check，如果当前位置的方块类型不是空气，返回该坐标
+            if (GetBlockType(_next) != VoxelData.Air)
+            {
+                return _next;
+            }
+
+            // 累积移动位置
+            _next += _direct; // 使用归一化的方向向量逐步移动
+        }
+
+        return _start;
+    }
+
+    #endregion
+
+
+    //Noise
+    #region [NoiseGenerator]
+
+    //简单噪声
+    public float GetSimpleNoise(int _x, int _z, Vector3 _myposition)
+    {
+        float smoothNoise = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((_x + _myposition.x) * 0.01f, (_z + _myposition.z) * 0.01f));
+        return smoothNoise;
+    }
+
+    //简单偏移噪声，用来给树等分布用
+    //_offset类似为Vector3(111f,222f)
+    //_Scale噪声缩放:0.01为正常缩放,0.1为水下沙泥分布
+    public float GetSimpleNoiseWithOffset(int _x, int _z, Vector3 _myposition, Vector2 _Offset, float _Scale)
+    {
+        float smoothNoise = Mathf.Lerp((float)0, (float)1, Mathf.PerlinNoise((_x + _myposition.x + _Offset.x) * _Scale, (_z + _myposition.z + _Offset.y) * _Scale));
+        return smoothNoise;
+    }
+
+    //获得所在群系类型
+    public byte GetBiomeType(int _x, int _z, Vector3 _myposition)
+    {
+
+        float _A = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(0f, 0f, 0f));
+        float _B = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(123f, 0f, 456f));
+        float _C = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f));
+        float _D = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f));
+
+        ////沙漠
+        //if (_C >= 干燥程度Aridity)
+        //{
+
+        //    return 2;
+
+        //}
+
+        //else
+        //{
+
+        //    //高原
+        //    if (_B >= 三维密度Density3d)
+        //    {
+        //        return 1;
+        //    }
+
+        //    //草原
+        //    else if (_A >= 氧气浓度OxygenDensity)
+        //    {
+
+        //        if (_D >= 空气湿度MoistureLevel)
+        //        {
+        //            return 3;
+        //        }
+        //        else
+        //        {
+        //            return 0;
+        //        }
+
+
+
+        //    }
+        //    else
+        //    {
+        //        //返回密林
+        //        return 4;
+        //    }
+
+        //}
+
+        //高原
+        if (_B >= 三维密度Density3d)
+        {
+            return 1;
+        }
+
+        else
+        {
+
+            //沙漠
+            if (_C >= 干燥程度Aridity)
+            {
+
+                return 2;
+
+            }
+
+            //草原
+            else if (_A >= 氧气浓度OxygenDensity)
+            {
+
+                if (_D >= 空气湿度MoistureLevel)
+                {
+                    return 3;
+                }
+                else
+                {
+                    return 0;
+                }
+
+
+
+            }
+            else
+            {
+                //返回密林
+                return 4;
+            }
+
+        }
+
+
+    }
+
+    //根据给定参数和群系种类
+    //变成给定的群系噪声
+    public float GetTotalNoiseHigh_Biome(int _x, int _z, Vector3 _myposition, int _WorldType)
+    {
+        if (_x < 0 || _x > TerrainData.ChunkWidth || _z < 0 || _z > TerrainData.ChunkWidth)
+        {
+            print($"GetTotalNoiseHigh_Biome出界,{_x},{_z}");
+            return 128f;
+        }
+
+        if (_WorldType == TerrainData.Biome_SuperPlain)
+        {
+            return 0f;
+        }
+
+
+        //默认
+        if (_WorldType == TerrainData.Biome_Default)
+        {
+            //Noise
+            float noise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.x);
+            float noise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.y);
+            float noise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[0].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[0].Noise_Scale_123.z);
+            float noise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[0].Noise_Rank_123.x + noise_2 * biomenoisesystems[0].Noise_Rank_123.y + noise_3 * biomenoisesystems[0].Noise_Rank_123.z);
+            float noise_High = Mathf.Lerp(biomenoisesystems[0].HighDomain.x, biomenoisesystems[0].HighDomain.y, noise);
+
+            //数据定义
+            int BiomeType = -1;
+            float BiomeIntensity = 0f;
+            float _A = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(0f, 0f, 0f));
+            float _B = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(123f, 0f, 456f));
+            float _C = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(789f, 0f, 123f));
+            float _D = GetSimpleNoise((int)(_x + _myposition.x), (int)(_z + _myposition.z), new Vector3(456f, 0f, 789f));
+
+            //获得当前群系
+            //获得群系混合强度
+            //高原
+            if (_B >= 三维密度Density3d)
+            {
+                BiomeType = TerrainData.Biome_Plateau;
+                BiomeIntensity = Mathf.InverseLerp(三维密度Density3d, 1f, _B);
+            }
+            else
+            {
+
+                if (_C >= 干燥程度Aridity)
+                {
+                    BiomeType = TerrainData.Biome_Dessert;
+                    BiomeIntensity = Mathf.InverseLerp(干燥程度Aridity, 1f, _C);
+                }
+                //草原
+                else if (_A >= 氧气浓度OxygenDensity)
+                {
+                    if (_D >= 空气湿度MoistureLevel)
+                    {
+                        BiomeType = TerrainData.Biome_Marsh;
+                        BiomeIntensity = Mathf.InverseLerp(空气湿度MoistureLevel, 1f, _D);
+                    }
+                    else
+                    {
+                        BiomeType = TerrainData.Biome_Plain;
+                        BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
+                    }
+                }
+                else
+                {
+                    BiomeType = TerrainData.Biome_Plain;
+                    BiomeIntensity = Mathf.InverseLerp(氧气浓度OxygenDensity, 1f, _A);
+                }
+
+            }
+
+            //BiomeType = 1;
+
+            //混合群系
+            float Mixnoise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.x);
+            float Mixnoise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.y);
+            float Mixnoise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[BiomeType].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[BiomeType].Noise_Scale_123.z);
+            float Mixnoise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[BiomeType].Noise_Rank_123.x + noise_2 * biomenoisesystems[BiomeType].Noise_Rank_123.y + noise_3 * biomenoisesystems[BiomeType].Noise_Rank_123.z);
+            float Mixnoise_High = Mathf.Lerp(biomenoisesystems[BiomeType].HighDomain.x, biomenoisesystems[BiomeType].HighDomain.y, Mixnoise);
+
+            float 增量噪声 = Mathf.Lerp(noise_High, Mixnoise_High, BiomeIntensity);
+
+            return 增量噪声;
+            //return noise_High + 增量噪声 * 增量噪声放大倍数; 
+        }
+
+        else
+        {
+            //Noise
+            float noise_1 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[_WorldType].Noise_Scale_123.x, (float)(_z + _myposition.z) * biomenoisesystems[_WorldType].Noise_Scale_123.x);
+            float noise_2 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[_WorldType].Noise_Scale_123.y, (float)(_z + _myposition.z) * biomenoisesystems[_WorldType].Noise_Scale_123.y);
+            float noise_3 = Mathf.PerlinNoise((float)(_x + _myposition.x) * biomenoisesystems[_WorldType].Noise_Scale_123.z, (float)(_z + _myposition.z) * biomenoisesystems[_WorldType].Noise_Scale_123.z);
+            float noise = Mathf.Lerp(0f, 1f, noise_1 * biomenoisesystems[_WorldType].Noise_Rank_123.x + noise_2 * biomenoisesystems[_WorldType].Noise_Rank_123.y + noise_3 * biomenoisesystems[_WorldType].Noise_Rank_123.z);
+            float noise_High = Mathf.Lerp(biomenoisesystems[_WorldType].HighDomain.x, biomenoisesystems[_WorldType].HighDomain.y, noise);
+            return noise_High;
+        }
+
+
+    }
+
+
+    #endregion
+
+    //Save
+    #region [SaveGenerator]存档管理
+
+    [Foldout("存档系统", true)]
+    [Header("世界存档")]
+    public bool isFinishSaving = false;
+    public String savingPATH = ""; //存档根目录
+    public WorldSetting worldSetting;
+    public List<SavingData> TheSaving = new List<SavingData>(); //读取的存档
+    public List<EditStruct> EditNumber = new List<EditStruct>(); //玩家数据
+    public bool isLoadSaving = false;
+
+
+    //删除存档
+    public void DeleteSave(string savepath)
+    {
+        if (Directory.Exists(savepath))
+        {
+            try
+            {
+                // 删除所有文件
+                foreach (string file in Directory.GetFiles(savepath))
+                {
+                    File.Delete(file);
+                    //Debug.Log($"Deleted file: {file}");
+                }
+
+                // 递归删除所有子目录
+                foreach (string directory in Directory.GetDirectories(savepath))
+                {
+                    DeleteSave(directory);
+                }
+
+                // 删除空目录
+                Directory.Delete(savepath);
+                //Debug.Log("完成删除");
+            }
+            catch (Exception ex)
+            {
+                // 处理异常，如日志记录
+                Debug.LogError($"删除目录 {savepath} 时出错: {ex.Message}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"指定路径 {savepath} 不存在.");
+        }
+    }
+
+    //获取TheSaving的索引
+    public int GetIndexOfChunkLocation(Vector3 location)
+    {
+        // 遍历 TheSaving 列表
+        for (int i = 0; i < TheSaving.Count; i++)
+        {
+            var savingData = TheSaving[i];
+            // 使用 SavingData 的 ContainsChunkLocation 方法检查 ChunkLocation
+            if (savingData.ContainsChunkLocation(location))
+            {
+                return i; // 返回匹配项的索引
+            }
+        }
+
+        return -1; // 如果没有找到匹配项，则返回 -1
+    }
+
+
+    //返回TheSaving是否包含ChunkLocation
+    public bool ContainsChunkLocation(Vector3 location)
+    {
+        // 遍历 TheSaving 列表
+        foreach (var savingData in TheSaving)
+        {
+            // 使用 SavingData 的 ContainsChunkLocation 方法检查 ChunkLocation
+            if (savingData.ContainsChunkLocation(location))
+            {
+                return true; // 找到匹配的 ChunkLocation
+            }
+        }
+
+        return false; // 没有找到匹配的 ChunkLocation
+    }
+
+
+    // 推送玩家更新的具体方块
+    public List<EditStruct> WaitToAdd_EditList = new List<EditStruct>();
+    public Coroutine updateEditNumberCoroutine;
+
+    /// <summary>
+    /// 注意返回绝对坐标
+    /// </summary>
+    /// <param name="RealPos"></param>
+    /// <param name="targetBlocktype"></param>
+    public void UpdateEditNumber(Vector3 RealPos, byte targetBlocktype)
+    {
+        // 将修改细节推送至World里
+        // 转换RealPos为整型Vector3以便用作字典的key
+        Vector3 intPos = new Vector3((int)RealPos.x, (int)RealPos.y, (int)RealPos.z);
+
+        // 查找是否已经存在相同的editPos
+        EditStruct existingEdit = EditNumber.Find(edit => edit.editPos == intPos);
+
+        if (existingEdit != null)
+        {
+            // 如果存在，更新targetType
+            existingEdit.targetType = targetBlocktype;
+        }
+        else
+        {
+            // 如果不存在，添加新的EditStruct
+            //print($"Edit更新: {intPos} --- {targetBlocktype}");
+            if (intPos.y >= 0)
+            {
+                EditNumber.Add(new EditStruct(intPos, targetBlocktype));
+            }
+
+        }
+    }
+
+    public void UpdateEditNumber(List<EditStruct> _EditList)
+    {
+        // 添加新的编辑列表到等待处理的队列尾部
+        WaitToAdd_EditList.AddRange(_EditList);
+        // 如果协程未运行，则启动协程
+        if (updateEditNumberCoroutine == null)
+        {
+            updateEditNumberCoroutine = StartCoroutine(_updateEditNumberCoroutine());
+        }
+    }
+
+    IEnumerator _updateEditNumberCoroutine()
+    {
+        // 每次处理的数量，避免卡顿
+        int batchSize = 10;
+
+        while (WaitToAdd_EditList.Count > 0)
+        {
+            // 每次取出最多 batchSize 个 EditStruct 从头部进行处理
+            int count = Mathf.Min(batchSize, WaitToAdd_EditList.Count);
+
+            for (int i = 0; i < count; i++)
+            {
+                // 取出列表中的第一个元素
+                EditStruct edit = WaitToAdd_EditList[0];
+
+                //基岩跳过
+                if (edit.targetType != VoxelData.BedRock)
+                {
+                    // 将编辑项添加到 EditNumber 中
+                    UpdateEditNumber(edit.editPos, edit.targetType);
+                }
+                else
+                {
+                    print("处理到基岩");
+                }
+
+                // 从头部移除已处理的项
+                WaitToAdd_EditList.RemoveAt(0);
+            }
+
+            // 暂停一帧，避免一次性处理太多项导致卡顿
+            yield return null;
+        }
+
+        // 处理完成后，将协程变量设为 null
+        //print("null");
+        updateEditNumberCoroutine = null;
+    }
+
+    // 将EditNumber归类
+    public void ClassifyWorldData()
+    {
+        foreach (var edittemp in EditNumber)
+        {
+            // 获取当前修改所在的区块位置
+            Vector3 _ChunkLocation = GetRelaChunkLocation(edittemp.editPos);
+
+            // 标记是否在 savingDatas 中找到相应的 ChunkLocation
+            bool found = false;
+
+            // 查找是否有相同的 ChunkLocation
+            foreach (var savingtemp in TheSaving)
+            {
+                if (savingtemp.ChunkLocation == _ChunkLocation)
+                {
+                    // 如果找到了相应的 ChunkLocation，则添加相对位置和方块类型到 EditDataInChunk
+                    savingtemp.EditDataInChunk[GetRelaPos(edittemp.editPos)] = edittemp.targetType;
+                    found = true;
+                    break;  // 找到后直接跳出循环
+                }
+            }
+
+            // 如果没有找到对应的 ChunkLocation，则新建一个 SavingData 并添加到 savingDatas
+            if (!found)
+            {
+                // 创建新的 EditDataInChunk 字典，并添加当前的相对位置和方块类型
+                Dictionary<Vector3, byte> newEditDataInChunk = new Dictionary<Vector3, byte>();
+                newEditDataInChunk[GetRelaPos(edittemp.editPos)] = edittemp.targetType;
+
+                // 创建新的 SavingData 并添加到 savingDatas
+                SavingData newSavingData = new SavingData(_ChunkLocation, newEditDataInChunk);
+                TheSaving.Add(newSavingData);
+            }
+        }
+
+        SAVINGDATA(savingPATH);
+    }
+
+    //存档
+    public void SAVINGDATA(string savePath)
+    {
+        // 更新存档结构体
+        worldSetting.playerposition = managerhub.player.transform.position;
+        worldSetting.playerrotation = managerhub.player.transform.rotation;
+        worldSetting.gameMode = game_mode;
+        string previouDate = worldSetting.date;
+        worldSetting.date = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+
+        // 创建一个名为 "Saves" 的文件夹
+        string savesFolderPath = Path.Combine(savePath, "Saves");
+        if (!Directory.Exists(savesFolderPath))
+        {
+            Directory.CreateDirectory(savesFolderPath);
+        }
+
+        // 在 "Saves" 文件夹下创建一个以存档创建日期命名的文件夹
+        string folderPath = Path.Combine(savesFolderPath, worldSetting.date);
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+
+        // 删除Saves文件夹中名字为previouDate的文件夹，如果能找到的话
+        string oldFolderPath = Path.Combine(savesFolderPath, previouDate);
+        if (Directory.Exists(oldFolderPath))
+        {
+            // 删除旧文件夹及其所有内容
+            Directory.Delete(oldFolderPath, true);
+        }
+
+        // 将所有的 SavingData 的字典转换为列表
+        foreach (var data in TheSaving)
+        {
+            data.EditDataInChunkList = new List<EditStruct>();
+            foreach (var kvp in data.EditDataInChunk)
+            {
+                data.EditDataInChunkList.Add(new EditStruct(kvp.Key, kvp.Value));
+            }
+        }
+
+        // 将 worldSetting 和 savingDatas 转换为 JSON 字符串
+        string worldSettingJson = JsonUtility.ToJson(worldSetting, true);
+        string savingDatasJson = JsonUtility.ToJson(new Wrapper<SavingData>(TheSaving), true);
+
+        // 将 JSON 字符串保存到指定路径的文件夹中
+        File.WriteAllText(Path.Combine(folderPath, "WorldSetting.json"), worldSettingJson);
+        File.WriteAllText(Path.Combine(folderPath, "SavingDatas.json"), savingDatasJson);
+
+
+
+        Debug.Log("数据已保存到: " + folderPath);
+        isFinishSaving = true;
+    }
+
+    //读取全部存档
+    public void LoadAllSaves(string savingPATH)
+    {
+        // 构造 Saves 目录的路径
+        string savesFolderPath = Path.Combine(savingPATH, "Saves");
+
+        // 检查 Saves 目录是否存在，如果不存在则创建它
+        if (!Directory.Exists(savesFolderPath))
+        {
+            try
+            {
+                Directory.CreateDirectory(savesFolderPath);
+                //Debug.Log($"Saves 文件夹已创建: {savesFolderPath}");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"创建 Saves 文件夹时出错: {ex.Message}");
+                return; // 创建文件夹失败时退出函数
+            }
+        }
+
+        // 获取存档目录下的所有文件夹路径
+        string[] saveDirectories;
+        try
+        {
+            saveDirectories = Directory.GetDirectories(savesFolderPath);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"获取存档目录时出错: {ex.Message}");
+            return; // 处理异常并退出函数
+        }
+
+        // 遍历每个存档文件夹
+        foreach (string saveDirectory in saveDirectories)
+        {
+            // 输出当前存档文件夹名称
+            string folderName = Path.GetFileName(saveDirectory);
+            //Debug.Log($"Loading save from folder: {folderName}");
+
+            // 调用 LoadData 函数读取当前存档
+            try
+            {
+                WorldSetting _worldsetting = LoadWorldSetting(saveDirectory);
+                managerhub.canvasManager.NewWorldGenerate(
+                    _worldsetting.name,
+                    _worldsetting.date,
+                    _worldsetting.gameMode,
+                    _worldsetting.worldtype,
+                    _worldsetting.seed
+                );
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"加载存档 {folderName} 时出错: {ex.Message}");
+            }
+        }
+
+        //Debug.Log($"Total saves loaded: {saveDirectories.Length}");
+    }
+
+    //分析存档名字
+    public WorldSetting LoadWorldSetting(string savePath)
+    {
+        // 构建 WorldSetting.json 文件的完整路径
+        string worldSettingPath = Path.Combine(savePath, "WorldSetting.json");
+
+        // 检查 WorldSetting.json 文件是否存在
+        if (File.Exists(worldSettingPath))
+        {
+            // 读取 WorldSetting.json 文件的内容
+            string worldSettingJson = File.ReadAllText(worldSettingPath);
+
+            // 将 JSON 字符串反序列化为 WorldSetting 对象
+            return JsonUtility.FromJson<WorldSetting>(worldSettingJson);
+        }
+        else
+        {
+            // 如果文件不存在，输出错误信息并返回 null
+            Debug.LogError("找不到 WorldSetting.json 文件");
+            return null;
+        }
+    }
+
+    //加载存档
+    public void LoadSavingData(string savePath)
+    {
+        isLoadSaving = true;
+
+        // 构建 SavingDatas.json 文件的完整路径
+        string savingDatasPath = Path.Combine(savePath, "SavingDatas.json");
+
+        // 检查 SavingDatas.json 文件是否存在
+        if (File.Exists(savingDatasPath))
+        {
+            // 读取 SavingDatas.json 文件的内容
+            string savingDatasJson = File.ReadAllText(savingDatasPath);
+
+            // 将 JSON 字符串反序列化为 Wrapper<SavingData> 对象
+            Wrapper<SavingData> wrapper = JsonUtility.FromJson<Wrapper<SavingData>>(savingDatasJson);
+
+            // 检查 wrapper 是否为 null
+            if (wrapper != null && wrapper.Items != null)
+            {
+                // 将反序列化的 Items 列表赋值给 TheSaving
+                TheSaving = wrapper.Items;
+
+                // 遍历 TheSaving 列表，恢复每个 SavingData 对象中的字典
+                foreach (var data in TheSaving)
+                {
+                    data.RestoreDictionary();
+
+                    // Debug打印
+                    //Debug.Log($"Chunk Location: {data.ChunkLocation}");
+                    //foreach (var pair in data.EditDataInChunk)
+                    //{
+                    //    Debug.Log($"Position: {pair.Key}, Type: {pair.Value}");
+                    //}
+                }
+
+                worldSetting = LoadWorldSetting(savePath);
+
+
+                //更新一些参数
+                game_mode = worldSetting.gameMode;
+
+
+
+            }
+            else
+            {
+                // 如果 wrapper 或 wrapper.Items 为 null，输出警告信息
+                Debug.LogWarning("Wrapper<SavingData> 或 Items 列表为 null");
+            }
+        }
+        else
+        {
+            // 如果文件不存在，输出错误信息
+            Debug.LogError("找不到 SavingDatas.json 文件");
+        }
     }
 
 

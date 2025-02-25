@@ -126,7 +126,7 @@ public class DebugManager : MonoBehaviour
 
     void UpdateScreen()
     {
-        Vector3 footlocation = managerhub.world.PlayerFoot.position;
+        Vector3 footlocation = managerhub.player.foot.transform.position;
         
 
         // 根据 FPS 设置颜色

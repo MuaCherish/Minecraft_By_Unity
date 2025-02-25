@@ -33,10 +33,11 @@ public class ManagerHub : MonoBehaviour
 
     [Foldout("Services", true)]
     public MC_Service_Entity Service_Entity;
+    public MC_Service_Chunk Service_Chunk; 
 
     [Foldout("开发者模式", true)]
-    public bool 低区块模式; [HideInInspector] public bool hasExec_低区块模式 = true;
-    public bool 无黑夜模式; [HideInInspector] public bool hasExec_无黑夜模式 = true;
+    public bool 低区块模式; 
+    public bool 无黑夜模式;
     public bool 是否生成Chunk侧面 = false;
 
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static MC_Static_Math;
-using static MC_Static_World;
+using static MC_Static_Chunk;
 public static class MC_Static_Navigation
 {
 

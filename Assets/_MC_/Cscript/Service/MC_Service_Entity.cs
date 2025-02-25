@@ -16,7 +16,7 @@ public class MC_Service_Entity : MonoBehaviour
     {
         managerhub = SceneData.GetManagerhub();
         player = managerhub.player;
-        Entity_Parent = GameObject.Find("Entity");
+        Entity_Parent = SceneData.GetEntityParent();
         world = managerhub.world;
     }
 

@@ -1,6 +1,5 @@
 using Homebrew;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,8 +10,6 @@ public class LifeManager : MonoBehaviour
     /// 1. 奔跑锁定希望能放在player里
     /// 2. 希望该脚本可以挂载在玩家身上
     /// </summary>
-
-
 
     #region 状态
 
