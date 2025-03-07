@@ -50,6 +50,37 @@ public static class EntityData
         }
     }
 
+    // 返回实体预制体下标
+    public static int GetEntityPrefebIndex(string name)
+    {
+        switch (name)
+        {
+            case "Slime_Small":
+                return 0;
+            case "Slime_Medium":
+                return 1;
+            case "Slime_Big":
+                return 2;
+            case "TNT":
+                return 3;
+            case "Pig":
+                return 4;
+            case "Sheep":
+                return 5;
+            case "Zombie":
+                return 6;
+            case "Alex":
+                return 7;
+            case "Steve":
+                return 8;
+            case "Creeper":
+                return 9;
+            default:
+                return -1; // 返回 -1 作为非法输入的标识
+        }
+    }
+
+
 
     //实体寻路的邻接节点
     public static readonly Vector3[] NearNodes = new Vector3[24]

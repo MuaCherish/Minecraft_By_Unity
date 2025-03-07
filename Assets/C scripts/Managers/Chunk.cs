@@ -5244,7 +5244,7 @@ public class Chunk : MonoBehaviour
                 GetBlock(_X, _Y + 1, _Z).voxelType == VoxelData.Air &&
                 GetBlock(_X, _Y + 2, _Z).voxelType == VoxelData.Air)
             {
-                _Spawns.Add(new Vector3(_X, _Y, _Z));
+                _Spawns.Add(new Vector3(_X, _Y, _Z) + new Vector3(0.5f, 2.5f, 0.5f) + myposition);
             }
 
         }

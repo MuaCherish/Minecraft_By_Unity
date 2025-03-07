@@ -2113,10 +2113,11 @@ MonoBehaviour:
   AI_CanSwiming: 0
   Floating_CheckTime: 0.1
   FloatingForce: 5
+  canAttack: 0
   AttackRangeMultiplier: {x: 1.2, y: 1.2}
   AttackDamage: 3
   AttackColdTime: 0.5
-  Debug_DrawRay: 1
+  Debug_DrawRay: 0
   Debug_PauseAI: 1
 --- !u!114 &8104925539569772895
 MonoBehaviour:
@@ -2152,7 +2153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef979643c3b627f43853515e58996566, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Toggle_BlinkBuff: 0
 --- !u!1 &8418111411205985633
 GameObject:
   m_ObjectHideFlags: 0

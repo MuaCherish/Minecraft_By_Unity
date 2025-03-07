@@ -35,9 +35,10 @@ public class ManagerHub : MonoBehaviour
     public MC_Service_Entity Service_Entity;
     public MC_Service_Chunk Service_Chunk; 
 
-    [Foldout("开发者模式", true)]
+    [Foldout("开发者启动项(游戏中途修改无效)", true)]
     public bool 低区块模式; 
     public bool 无黑夜模式;
+    public bool 生物自然生成 = true;
     public bool 是否生成Chunk侧面 = false;
 
 

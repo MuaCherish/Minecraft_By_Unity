@@ -706,7 +706,6 @@ GameObject:
   - component: {fileID: 15544916372309249}
   - component: {fileID: 4639980755837328323}
   - component: {fileID: 6128268072501705658}
-  - component: {fileID: 2989092885312629195}
   - component: {fileID: -5960032713669505838}
   - component: {fileID: 6454335855962026926}
   m_Layer: 0
@@ -920,18 +919,6 @@ MonoBehaviour:
   EntityOxygen: 10
   maxFallDis: 4
   Default_DropGround: 36
---- !u!114 &2989092885312629195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1294902419089504476}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 039b14dff4272714e86606b89ba01570, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-5960032713669505838
 MonoBehaviour:
   m_ObjectHideFlags: 0

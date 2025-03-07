@@ -27437,10 +27437,11 @@ MonoBehaviour:
   crepuscularScript: {fileID: 1727421514}
   sunMoving: {fileID: 22826879}
   chatManager: {fileID: 617939582}
-  Service_Entity: {fileID: 523527990}
+  Service_Entity: {fileID: 1960558905}
   Service_Chunk: {fileID: 262149223}
   "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
   "\u65E0\u9ED1\u591C\u6A21\u5F0F": 1
+  "\u751F\u7269\u81EA\u7136\u751F\u6210": 0
   "\u662F\u5426\u751F\u6210Chunk\u4FA7\u9762": 0
 --- !u!1 &478691640
 GameObject:
@@ -30259,7 +30260,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 523527989}
-  - component: {fileID: 523527990}
   m_Layer: 0
   m_Name: MC_Services
   m_TagString: Untagged
@@ -30283,36 +30283,10 @@ Transform:
   - {fileID: 325552235}
   - {fileID: 22826876}
   - {fileID: 699955242}
-  - {fileID: 1960558904}
   - {fileID: 262149222}
+  - {fileID: 1960558904}
   m_Father: {fileID: 475922108}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &523527990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 523527988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a3ed9291c091ac45901864b4aa27b3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Evaporation_Particle: {fileID: 9114416006497185209, guid: 49b21542e437d7c40a17cd534b10318b, type: 3}
-  Entity_Prefeb:
-  - {fileID: 1294902419089504476, guid: 075a8480f78c6d248815b5e86623fb03, type: 3}
-  - {fileID: 1294902419089504476, guid: 7b12ebcf9d1bf7a45a9f8d0a1d467205, type: 3}
-  - {fileID: 1294902419089504476, guid: 3635a748d57258d488314dd4d53d01d1, type: 3}
-  - {fileID: 3439136083845619960, guid: 077609914471b4b479c628edeeddad05, type: 3}
-  - {fileID: 6327743673650613013, guid: 00834a436a19f87429e55a827a241a3c, type: 3}
-  - {fileID: 8347151624010629815, guid: 89cc3402e467af74fb7caa1d235542fb, type: 3}
-  - {fileID: 7312945126675265723, guid: 948f5aa80e33dee4b9183b7052b7c1cf, type: 3}
-  - {fileID: 6569283705541333388, guid: c7455d4a505e0374eb6cabe06c6edf59, type: 3}
-  - {fileID: 645660588227450139, guid: 880150d64ae2ecf41afea07894388673, type: 3}
-  - {fileID: 411532811017887905, guid: 83104b1403504254f83466563fea9297, type: 3}
-  AllEntity: []
-  maxSize: 20
 --- !u!1 &523992277
 GameObject:
   m_ObjectHideFlags: 0
@@ -45095,6 +45069,7 @@ MonoBehaviour:
     DrawMode: 8
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
+  atlasTexture: {fileID: 2800000, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
   renderSize: 6
   StartToRender: 1
   DestroySize: 7
@@ -45148,23 +45123,8 @@ MonoBehaviour:
     Random_Gold: 20
     Random_Blue_Crystal: 15
     Random_Diamond: 10
-  PlayerFoot: {fileID: 656216633}
   Start_Position: {x: 1600, y: 63, z: 1600}
-  atlasTexture: {fileID: 2800000, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
-  isFinishSaving: 0
-  savingPATH: "C:\\Users\\\u58A8\u9C7C\\Desktop"
-  worldSetting:
-    date: 
-    name: "\u65B0\u7684\u4E16\u754C"
-    seed: 0
-    gameMode: 1
-    worldtype: 0
-    playerposition: {x: 0, y: 0, z: 0}
-    playerrotation: {x: 0, y: 0, z: 0, w: 0}
-  TheSaving: []
-  EditNumber: []
-  isLoadSaving: 0
-  WaitToAdd_EditList: []
+  PlayerSpawnPos: {x: 0, y: 0, z: 0}
   ChunkParent: {fileID: 0}
   "\u662F\u5426\u751F\u6210Chunk\u4FA7\u9762": 0
   noise3d_scale: 0.08
@@ -45180,6 +45140,20 @@ MonoBehaviour:
   RenderLock: 0
   MeshLock: 0
   OneChunkRenderTime: 0
+  isFinishSaving: 0
+  savingPATH: "C:\\Users\\\u58A8\u9C7C\\Desktop"
+  worldSetting:
+    date: 
+    name: "\u65B0\u7684\u4E16\u754C"
+    seed: 0
+    gameMode: 1
+    worldtype: 0
+    playerposition: {x: 0, y: 0, z: 0}
+    playerrotation: {x: 0, y: 0, z: 0, w: 0}
+  TheSaving: []
+  EditNumber: []
+  isLoadSaving: 0
+  WaitToAdd_EditList: []
 --- !u!4 &699955242
 Transform:
   m_ObjectHideFlags: 0
@@ -82845,7 +82819,6 @@ MonoBehaviour:
   isSpectatorMode: 0
   isDead: 0
   ShowEntityHitbox: 0
-  PlayerFoot: {x: 0, y: 0, z: 0}
   commandManager: {fileID: 2031280225}
   world: {fileID: 699955241}
   musicmanager: {fileID: 0}
@@ -110550,6 +110523,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1960558904}
+  - component: {fileID: 1960558905}
   m_Layer: 0
   m_Name: MC_Service_Entity
   m_TagString: Untagged
@@ -110572,6 +110546,48 @@ Transform:
   m_Children: []
   m_Father: {fileID: 523527989}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1960558905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960558903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a3ed9291c091ac45901864b4aa27b3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AddEntityDelayRange: {x: 10, y: 11}
+  spawnRadiusRange: {x: 16, y: 32}
+  maxSpawnHeightDifference: 5
+  Mutex_Entities: 
+  Evaporation_Particle: {fileID: 9114416006497185209, guid: 49b21542e437d7c40a17cd534b10318b, type: 3}
+  Entity_Prefebs:
+  - prefeb: {fileID: 1294902419089504476, guid: 075a8480f78c6d248815b5e86623fb03, type: 3}
+    maxGenNumer: 36
+  - prefeb: {fileID: 1294902419089504476, guid: 7b12ebcf9d1bf7a45a9f8d0a1d467205, type: 3}
+    maxGenNumer: 3
+  - prefeb: {fileID: 1294902419089504476, guid: 3635a748d57258d488314dd4d53d01d1, type: 3}
+    maxGenNumer: 3
+  - prefeb: {fileID: 3439136083845619960, guid: 077609914471b4b479c628edeeddad05, type: 3}
+    maxGenNumer: 3
+  - prefeb: {fileID: 6327743673650613013, guid: 00834a436a19f87429e55a827a241a3c, type: 3}
+    maxGenNumer: 3
+  - prefeb: {fileID: 8347151624010629815, guid: 89cc3402e467af74fb7caa1d235542fb, type: 3}
+    maxGenNumer: 3
+  - prefeb: {fileID: 7312945126675265723, guid: 948f5aa80e33dee4b9183b7052b7c1cf, type: 3}
+    maxGenNumer: 3
+  - prefeb: {fileID: 6569283705541333388, guid: c7455d4a505e0374eb6cabe06c6edf59, type: 3}
+    maxGenNumer: 0
+  - prefeb: {fileID: 645660588227450139, guid: 880150d64ae2ecf41afea07894388673, type: 3}
+    maxGenNumer: 0
+  - prefeb: {fileID: 411532811017887905, guid: 83104b1403504254f83466563fea9297, type: 3}
+    maxGenNumer: 3
+  AllEntity: []
+  maxSize: 40
+  Debug_DrawAddEntityRange: 1
+  Debug_PredictEntityPos: 1
 --- !u!1 &1961649307
 GameObject:
   m_ObjectHideFlags: 0

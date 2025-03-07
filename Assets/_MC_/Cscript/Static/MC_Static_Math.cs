@@ -75,6 +75,16 @@ public static class MC_Static_Math
     }
 
     /// <summary>
+    /// 将相对坐标改为绝对坐标
+    /// </summary>
+    /// <returns></returns>
+    public static Vector3 GetRealPos(Vector3 _vec, Vector3 _ChunkRealLocation)
+    {
+        return _ChunkRealLocation + _vec;
+    }
+
+
+    /// <summary>
     /// 返回Int类型的Vector3
     /// </summary>
     /// <param name="_pos"></param>

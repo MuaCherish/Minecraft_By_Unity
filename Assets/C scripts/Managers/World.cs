@@ -9,6 +9,7 @@ using static MC_Static_Unity;
 using static MC_Static_Math;
 using static MC_Static_Chunk;
 using Homebrew;
+using static UnityEditor.PlayerSettings;
 
 
 public class World : MonoBehaviour
@@ -113,7 +114,7 @@ public class World : MonoBehaviour
     {
         if(hasExec_Playing)
         {
-            Load_InitSpawnPos();
+            //Load_InitSpawnPos();
             hasExec_Playing = false;
         }
     }
@@ -887,7 +888,7 @@ public class World : MonoBehaviour
         //chunktemp.InitChunk(new Vector3(0, 0, 0), this);
 
         //添加到字典
-        Allchunks.Add(pos, _chunk_temp);
+        Allchunks.Add(_ChunkLocation, _chunk_temp);
 
     }
 
@@ -1224,6 +1225,20 @@ public class World : MonoBehaviour
 
     }
 
+    //New-获取区块对象
+    public bool TryGetChunkObject(Vector3 pos, out Chunk chunktemp)
+    {
+        
+        if (Allchunks.TryGetValue(GetRelaChunkLocation(pos), out Chunk _chunktemp))
+        {
+            chunktemp = _chunktemp;
+            return true;
+        }
+
+        chunktemp = null;
+        return false;
+    }
+
     #endregion
     #region [ChunkGenerator]获取方块
 
@@ -1540,7 +1555,22 @@ public class World : MonoBehaviour
     }
 
     #endregion
+    #region [ChunkGenerator]返回可用出生点
 
+    public void GetSpawnPos(Vector3 _pos, out List<Vector3> _Spawns)
+    {
+        _Spawns = new List<Vector3>();
+        Vector3 _ChunkLocation = GetRelaChunkLocation(_pos);
+
+        //提前返回-没有区块
+        if (!Allchunks.TryGetValue(_ChunkLocation, out Chunk _chunktemp))
+            return;
+
+        _chunktemp.GetSpawnPos(GetRelaPos(_pos), out List<Vector3> __Spawns);
+        _Spawns = new List<Vector3>(__Spawns);
+    }
+
+    #endregion
 
     //Noise
     #region [NoiseGenerator]
@@ -1758,6 +1788,7 @@ public class World : MonoBehaviour
 
 
     #endregion
+
 
     //Save
     #region [SaveGenerator]存档管理

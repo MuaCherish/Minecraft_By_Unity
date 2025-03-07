@@ -18,22 +18,176 @@ public class MC_Service_Entity : MonoBehaviour
         player = managerhub.player;
         Entity_Parent = SceneData.GetEntityParent();
         world = managerhub.world;
+
+        isNaturalSpawnEnabled = managerhub.生物自然生成;
+
+        _ReferAwake_InitService();
     }
+
+
 
     private void Update()
     {
         switch (world.game_state)
         {
+            case Game_State.Loading:
+                Handle_GameState_Loading();
+                break;
             case Game_State.Playing:
                 Handle_GameState_Playing();
                 break;
         }
     }
 
+    void Handle_GameState_Loading()
+    {
+        
+    }
+
+
     void Handle_GameState_Playing()
     {
+        if (isNaturalSpawnEnabled && _Coroutine_Service_DynamicAddEntity == null)
+            _Coroutine_Service_DynamicAddEntity = StartCoroutine(Service_DynamicAddEntity());
+
         _ReferUpdate_CheckShowEntityHitbox();
     }
+
+
+    #endregion
+
+
+    #region 常驻服务_动态生成实体
+
+    [Foldout("常驻服务_动态生成实体", true)]
+    [Header("自然生成")] private bool isNaturalSpawnEnabled;
+    [Header("实体生成延迟范围")] public Vector2 AddEntityDelayRange = new Vector2(60f, 120f);
+    [Header("实体生成半径范围")] public Vector2 spawnRadiusRange = new Vector2(10f, 16f); //实体生成半径范围(甜甜圈)
+    [Header("实体生成diffY合适距离")] public float maxSpawnHeightDifference;  //实体Y - 玩家Y < 实体生成diffY合适距离
+    [Header("自然生成实体信号量")] public List<int> Mutex_Entities;
+
+    void _ReferAwake_InitService()
+    {
+        foreach (var item in Entity_Prefebs)
+            Mutex_Entities.Add(item.maxGenNumer);
+    }
+
+    Coroutine _Coroutine_Service_DynamicAddEntity;
+    IEnumerator Service_DynamicAddEntity()
+    {
+        while (true)
+        {
+            //提前退出-如果是Start则退出
+            if (world.game_state == Game_State.Start)
+            {
+                _Coroutine_Service_DynamicAddEntity = null;
+                break;
+            }
+
+            //如果所有类型生物已经满了
+            if (isFullofAllEntities())
+            {
+                yield return new WaitForSeconds(1f);
+                continue;
+            }
+
+            //先确定位置 
+            int NextEntityIndex = DynamicAddEntity_FindEntityPrefebIndex();
+            Vector3 NextEntityPos = DynamicAddEntity_FindPos();
+
+            //延迟若干秒
+            yield return new WaitForSeconds(Random.Range(AddEntityDelayRange.x, AddEntityDelayRange.y));
+
+            //AddEntity
+            //print($"投放实体, index:{NextEntityIndex}, pos:{NextEntityPos}");
+            AddEntity(NextEntityIndex, NextEntityPos, out var entity);
+        }
+    }
+
+
+    //寻找合适的坐标 
+    Vector3 RandomSpawnPos;
+    Vector3 DynamicAddEntity_FindPos()
+    {
+        // 获取玩家位置
+        Vector3 playerPos = managerhub.player.transform.position;
+
+        // 生成一个在甜甜圈范围内的随机点
+        float angle = Random.Range(0f, Mathf.PI * 2); // 随机角度
+        float radius = Mathf.Sqrt(Random.Range(spawnRadiusRange.x * spawnRadiusRange.x, spawnRadiusRange.y * spawnRadiusRange.y)); // 确保均匀分布
+        RandomSpawnPos = new Vector3(playerPos.x + Mathf.Cos(angle) * radius, playerPos.y, playerPos.z + Mathf.Sin(angle) * radius);
+
+        // 调用World的获取可用出生点函数
+        world.GetSpawnPos(RandomSpawnPos, out List<Vector3> _Result);
+
+        // ForeachList: 判断坐标是否可生成 [不在玩家视锥体内] [距离玩家的Y在合适范围]
+        foreach (var _pos in _Result)
+        {
+            if (CheckCanAddEntity(_pos))
+                return _pos;
+        }
+
+        return Vector3.zero;
+    }
+
+    //每种类型生物已满
+    bool isFullofAllEntities()
+    {
+        foreach (var item in Mutex_Entities)
+        {
+            if (item != 0)
+                return false;
+        }
+
+        return true;
+    } 
+
+    // 寻找合适的index去投放
+    int DynamicAddEntity_FindEntityPrefebIndex()
+    {
+        // 先收集所有可用的索引
+        List<int> availableIndices = new List<int>();
+        for (int i = 0; i < Mutex_Entities.Count; i++)
+        {
+            if (Mutex_Entities[i] > 0)
+                availableIndices.Add(i);
+        }
+
+        // 如果没有可用实体，返回 -1 作为错误标识
+        if (availableIndices.Count == 0)
+        {
+            print("生物生成异常");
+            return -1;
+        }
+
+        // 随机选择一个可用的索引
+        int _randomIndex = availableIndices[Random.Range(0, availableIndices.Count)];
+
+        // 递减计数
+        Mutex_Entities[_randomIndex]--;
+        return _randomIndex;
+    }
+
+
+    //检查是否可以生成实体
+    bool CheckCanAddEntity(Vector3 _pos)
+    {
+        Vector3 _playerPos = managerhub.player.transform.position;
+        Camera _camera = managerhub.player.eyes;
+        bool _Pass = true;
+
+        // 距离玩家Y值超出合适范围
+        if (Mathf.Abs(_pos.y - _playerPos.y) > maxSpawnHeightDifference)
+            _Pass = false;
+
+        // 不在玩家视锥体内
+        Vector3 viewportPoint = _camera.WorldToViewportPoint(_pos);
+        if (viewportPoint.z > 0 && viewportPoint.x > 0 && viewportPoint.x < 1 && viewportPoint.y > 0 && viewportPoint.y < 1)
+            _Pass = false;
+
+        return _Pass;
+    }
+
 
 
     #endregion
@@ -43,7 +197,7 @@ public class MC_Service_Entity : MonoBehaviour
 
     [Foldout("实体管理", true)]
     [Header("蒸汽粒子")] public GameObject Evaporation_Particle;
-    [Header("实体预制体")] public GameObject[] Entity_Prefeb;
+    [Header("实体预制体")] public EntityPrefebStruct[] Entity_Prefebs;
     [Header("活着的所有实体")] public List<EntityInfo> AllEntity = new List<EntityInfo>();
     [Header("最大实体数量")][SerializeField] private int maxSize = 100; // 默认值为100，可在Inspector中调整
     private int Unique_Id = 0; // 用于生成新的唯一ID
@@ -87,7 +241,7 @@ public class MC_Service_Entity : MonoBehaviour
     /// <param name="_index">需要添加的预制体的下标</param>
     /// <param name="_Startpos">实体的起始位置</param>
     /// <returns>是否添加成功</returns>
-    public bool AddEntity(int _index, Vector3 _Startpos, out EntityInfo _Result)
+    public bool AddEntity(int _PrefebIndex, Vector3 _Startpos, out EntityInfo _Result)
     {
         // 提起返回-检查实体数量是否达到最大值
         if (AllEntity.Count >= maxSize)
@@ -98,20 +252,35 @@ public class MC_Service_Entity : MonoBehaviour
         }
 
         // 提起返回-检查下标是否有效
-        if (_index < 0 || _index >= Entity_Prefeb.Length)
+        if (_PrefebIndex < 0 || _PrefebIndex >= Entity_Prefebs.Length)
         {
             Debug.LogError("索引超出范围，请提供有效的预制体索引！");
             _Result = null;
             return false;
         }
 
+        //提前返回-当前坐标没有区块或者
+        if (!world.TryGetChunkObject(_Startpos, out Chunk chunktemp))
+        {
+            _Result = null;
+            return false;
+        }
+
+        //提前返回-区块被隐藏
+        if (chunktemp != null && chunktemp.isShow == false)
+        {
+            _Result = null;
+            return false;
+        }
+
+
         // 实例化预制体
-        GameObject newEntity = Instantiate(Entity_Prefeb[_index]);
+        GameObject newEntity = Instantiate(Entity_Prefebs[_PrefebIndex].prefeb);
 
         // 提起返回-如果没有注册组件
         if (newEntity.GetComponent<MC_Component_Registration>() == null)
         {
-            print($"{_index}实体未添加注册组件，无法添加到游戏中");
+            print($"{_PrefebIndex}实体未添加注册组件，无法添加到游戏中");
             _Result = null;
             Destroy(newEntity);
             return false;
@@ -122,7 +291,7 @@ public class MC_Service_Entity : MonoBehaviour
         int entityId = Unique_Id++;
 
         //生成名字
-        string entityName = EntityData.GetEntityName(_index);
+        string entityName = EntityData.GetEntityName(_PrefebIndex);
 
         if (entityName == "Unknown Entity")
             print("该实体没有名字！！");
@@ -166,8 +335,11 @@ public class MC_Service_Entity : MonoBehaviour
 
         if (entityToRemove != null)
         {
-            AllEntity.Remove(entityToRemove);
             //Debug.Log($"实体 {_EntityID._name} 已移除成功！");
+            Mutex_Entities[EntityData.GetEntityPrefebIndex(entityToRemove._name)] ++;
+
+            //End
+            AllEntity.Remove(entityToRemove);
             return true;
         }
 
@@ -305,4 +477,110 @@ public class MC_Service_Entity : MonoBehaviour
 
     #endregion
 
+
+    #region Debug
+
+    [Foldout("Debug", true)]
+    [Header("绘制可生成实体的范围")] public bool Debug_DrawAddEntityRange;
+    [Header("实体生成位置预测")] public bool Debug_PredictEntityPos;
+
+    private void OnDrawGizmos()
+    {
+        if (Debug_DrawAddEntityRange && player != null)
+        {
+            Vector3 playerPos = player.transform.position;
+            Camera cam = player.eyes; // 获取玩家相机
+
+            if (cam != null)
+            {
+                DrawWireCircle(playerPos, spawnRadiusRange.x, cam);
+                DrawWireCircle(playerPos, spawnRadiusRange.y, cam);
+                DrawFOVLines(playerPos, cam, spawnRadiusRange.y); // 画出FOV扇形
+            }
+        }
+
+        if (Debug_PredictEntityPos)
+        {
+            Vector3 StartPos = RandomSpawnPos; StartPos.y = 128f;
+            Vector3 EndPos = RandomSpawnPos; EndPos.y = 0f;
+            Debug.DrawLine(StartPos, EndPos, Color.red);
+        }
+
+    }
+
+    // 在XOZ平面上绘制一个圆，根据视野范围更改颜色
+    private void DrawWireCircle(Vector3 center, float radius, Camera cam, int segments = 32)
+    {
+        float angleStep = 360f / segments;
+        Vector3 prevPoint = center + new Vector3(radius, 0, 0); // 初始点
+
+        for (int i = 1; i <= segments; i++)
+        {
+            float angle = i * angleStep * Mathf.Deg2Rad;
+            Vector3 newPoint = center + new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius);
+
+            // 计算中点，并检测是否在视野范围内
+            Vector3 midPoint = (prevPoint + newPoint) * 0.5f;
+            bool inView = IsPointInCameraView(cam, center, midPoint);
+
+            // 设置颜色
+            Gizmos.color = inView ? Color.red : Color.green;
+            Gizmos.DrawLine(prevPoint, newPoint);
+
+            prevPoint = newPoint;
+        }
+    }
+
+    // 判断一个点是否在玩家的FOV范围内
+    private bool IsPointInCameraView(Camera cam, Vector3 playerPos, Vector3 point)
+    {
+        Vector3 toPoint = (point - playerPos).normalized; // 玩家到点的方向
+        Vector3 forward = cam.transform.forward.normalized; // 玩家视角方向
+
+        float angleToPoint = Vector3.Angle(forward, toPoint); // 计算夹角
+        float halfFOV = cam.fieldOfView / 2f; // 视野角的一半
+
+        return angleToPoint < halfFOV;
+    }
+
+    // 画出FOV扇形（只在XOZ平面）
+    private void DrawFOVLines(Vector3 playerPos, Camera cam, float maxRadius)
+    {
+        Vector3 forward = cam.transform.forward;
+        forward.y = 0; // 只保留XOZ平面方向
+        forward.Normalize();
+
+        // 计算 FOV 左右边界方向（绕Y轴旋转）
+        Quaternion leftRotation = Quaternion.AngleAxis(-cam.fieldOfView / 2f, Vector3.up);
+        Quaternion rightRotation = Quaternion.AngleAxis(cam.fieldOfView / 2f, Vector3.up);
+
+        Vector3 leftDir = leftRotation * forward;
+        Vector3 rightDir = rightRotation * forward;
+
+        // 限制方向在XOZ平面并归一化
+        leftDir.y = 0;
+        rightDir.y = 0;
+        leftDir = leftDir.normalized;
+        rightDir = rightDir.normalized;
+
+        // 计算视野边界点
+        Vector3 leftPoint = playerPos + leftDir * maxRadius;
+        Vector3 rightPoint = playerPos + rightDir * maxRadius;
+
+        // 画两条线（只在XOZ平面）
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(playerPos, leftPoint);
+        Gizmos.DrawLine(playerPos, rightPoint);
+    }
+
+
+    #endregion
+
+}
+
+[System.Serializable]
+public class EntityPrefebStruct
+{
+    public GameObject prefeb;
+    public int maxGenNumer;
 }

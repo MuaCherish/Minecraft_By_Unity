@@ -238,7 +238,7 @@ MonoBehaviour:
   AttackRangeMultiplier: {x: 1.2, y: 1.2}
   AttackDamage: 3
   AttackColdTime: 0.5
-  Debug_DrawRay: 1
+  Debug_DrawRay: 0
   Debug_PauseAI: 0
 --- !u!114 &5144480131695311544
 MonoBehaviour:
