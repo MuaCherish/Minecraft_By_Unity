@@ -27439,9 +27439,9 @@ MonoBehaviour:
   chatManager: {fileID: 617939582}
   Service_Entity: {fileID: 1960558905}
   Service_Chunk: {fileID: 262149223}
-  "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
-  "\u65E0\u9ED1\u591C\u6A21\u5F0F": 1
-  "\u751F\u7269\u81EA\u7136\u751F\u6210": 0
+  "\u4F4E\u533A\u5757\u6A21\u5F0F": 0
+  "\u65E0\u9ED1\u591C\u6A21\u5F0F": 0
+  "\u751F\u7269\u81EA\u7136\u751F\u6210": 1
   "\u662F\u5426\u751F\u6210Chunk\u4FA7\u9762": 0
 --- !u!1 &478691640
 GameObject:
@@ -110558,32 +110558,73 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a3ed9291c091ac45901864b4aa27b3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AddEntityDelayRange: {x: 10, y: 11}
+  isNaturalSpawnEnabled: 0
+  AddEntityDelayRange: {x: 60, y: 120}
   spawnRadiusRange: {x: 16, y: 32}
-  maxSpawnHeightDifference: 5
-  Mutex_Entities: 
+  maxSpawnHeightDifference: 20
+  MutexEntity_MaxGenNumber: 
   Evaporation_Particle: {fileID: 9114416006497185209, guid: 49b21542e437d7c40a17cd534b10318b, type: 3}
   Entity_Prefebs:
-  - prefeb: {fileID: 1294902419089504476, guid: 075a8480f78c6d248815b5e86623fb03, type: 3}
-    maxGenNumer: 36
-  - prefeb: {fileID: 1294902419089504476, guid: 7b12ebcf9d1bf7a45a9f8d0a1d467205, type: 3}
-    maxGenNumer: 3
-  - prefeb: {fileID: 1294902419089504476, guid: 3635a748d57258d488314dd4d53d01d1, type: 3}
-    maxGenNumer: 3
-  - prefeb: {fileID: 3439136083845619960, guid: 077609914471b4b479c628edeeddad05, type: 3}
-    maxGenNumer: 3
-  - prefeb: {fileID: 6327743673650613013, guid: 00834a436a19f87429e55a827a241a3c, type: 3}
-    maxGenNumer: 3
-  - prefeb: {fileID: 8347151624010629815, guid: 89cc3402e467af74fb7caa1d235542fb, type: 3}
-    maxGenNumer: 3
-  - prefeb: {fileID: 7312945126675265723, guid: 948f5aa80e33dee4b9183b7052b7c1cf, type: 3}
-    maxGenNumer: 3
-  - prefeb: {fileID: 6569283705541333388, guid: c7455d4a505e0374eb6cabe06c6edf59, type: 3}
+  - name: Slime_Small
+    prefeb: {fileID: 1294902419089504476, guid: 075a8480f78c6d248815b5e86623fb03, type: 3}
+    maxGenNumer: 5
+    OnlyGenerateInNight: 0
+    GenerateProbability: 0.000415
+    MoreGenProbability: 0.3
+  - name: Slime_Medium
+    prefeb: {fileID: 1294902419089504476, guid: 7b12ebcf9d1bf7a45a9f8d0a1d467205, type: 3}
+    maxGenNumer: 5
+    OnlyGenerateInNight: 0
+    GenerateProbability: 0.000815
+    MoreGenProbability: 0.5
+  - name: Slime_Big
+    prefeb: {fileID: 1294902419089504476, guid: 3635a748d57258d488314dd4d53d01d1, type: 3}
+    maxGenNumer: 5
+    OnlyGenerateInNight: 0
+    GenerateProbability: 0.000615
+    MoreGenProbability: 0.3
+  - name: TNT
+    prefeb: {fileID: 3439136083845619960, guid: 077609914471b4b479c628edeeddad05, type: 3}
     maxGenNumer: 0
-  - prefeb: {fileID: 645660588227450139, guid: 880150d64ae2ecf41afea07894388673, type: 3}
-    maxGenNumer: 0
-  - prefeb: {fileID: 411532811017887905, guid: 83104b1403504254f83466563fea9297, type: 3}
+    OnlyGenerateInNight: 0
+    GenerateProbability: 0
+    MoreGenProbability: 0
+  - name: Pig
+    prefeb: {fileID: 6327743673650613013, guid: 00834a436a19f87429e55a827a241a3c, type: 3}
     maxGenNumer: 3
+    OnlyGenerateInNight: 0
+    GenerateProbability: 0.000815
+    MoreGenProbability: 0
+  - name: Sheep
+    prefeb: {fileID: 8347151624010629815, guid: 89cc3402e467af74fb7caa1d235542fb, type: 3}
+    maxGenNumer: 3
+    OnlyGenerateInNight: 0
+    GenerateProbability: 0.000815
+    MoreGenProbability: 0
+  - name: Zombie
+    prefeb: {fileID: 7312945126675265723, guid: 948f5aa80e33dee4b9183b7052b7c1cf, type: 3}
+    maxGenNumer: 3
+    OnlyGenerateInNight: 1
+    GenerateProbability: 0.000615
+    MoreGenProbability: 0.8
+  - name: Alex
+    prefeb: {fileID: 6569283705541333388, guid: c7455d4a505e0374eb6cabe06c6edf59, type: 3}
+    maxGenNumer: 0
+    OnlyGenerateInNight: 0
+    GenerateProbability: 0
+    MoreGenProbability: 0
+  - name: Steve
+    prefeb: {fileID: 645660588227450139, guid: 880150d64ae2ecf41afea07894388673, type: 3}
+    maxGenNumer: 0
+    OnlyGenerateInNight: 0
+    GenerateProbability: 0
+    MoreGenProbability: 0
+  - name: Creeper
+    prefeb: {fileID: 411532811017887905, guid: 83104b1403504254f83466563fea9297, type: 3}
+    maxGenNumer: 3
+    OnlyGenerateInNight: 0
+    GenerateProbability: 0.000815
+    MoreGenProbability: 0.2
   AllEntity: []
   maxSize: 40
   Debug_DrawAddEntityRange: 1

@@ -254,7 +254,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
                 if (_dis >= 0f && _dis <= TNT_explore_Radius)
                 {
                     _forceValue = Mathf.Lerp(400f, 160f, _dis / TNT_explore_Radius);
-                    updateBlood = (int)Mathf.Lerp(23, 10, _dis / TNT_explore_Radius);
+                    updateBlood = (int)Mathf.Lerp(32, 10, _dis / TNT_explore_Radius);
                 }
                 // 如果距离在4到6米之间，力值固定为50
                 else if (_dis > TNT_explore_Radius && _dis <= TNT_explore_Radius + 2f)

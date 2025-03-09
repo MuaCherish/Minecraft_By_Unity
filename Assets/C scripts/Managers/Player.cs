@@ -2947,7 +2947,7 @@ public class Player : MonoBehaviour
         //GameObject tnt = GameObject.Instantiate(Entity_TNT);
         //tnt.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
 
-        managerhub.Service_Entity.AddEntity(EntityData.TNT, _point, out EntityInfo _result);
+        managerhub.Service_Entity.AddEntity(EntityData.TNT, _point, out EntityInfo _result, true);
         _result._obj.GetComponent<Entity_TNT>().OnStartEntity(GetCenterPoint(_point), _acybytnt);
     }
 

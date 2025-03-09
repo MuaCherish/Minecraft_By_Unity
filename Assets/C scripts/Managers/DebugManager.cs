@@ -248,48 +248,48 @@ public class DebugManager : MonoBehaviour
 
     #region DEBUG-Camera渲染面数
 
-    [Header("渲染面数设置")]
-    private string chunksPath = "Environment/Chunks"; // 需要查找的目录路径
-
     // 渲染面数
     private string CameraOnPreRender(Camera camera)
     {
+        if (camera == null)
+        {
+            Debug.LogError("CameraOnPreRender: 传入的 camera 为空！");
+            return "N/A"; // 防止崩溃，返回默认值
+        }
+
         int triangleCount = 0;
 
         // 查找指定路径下的所有子物体
-        Transform[] chunks = GameObject.Find(chunksPath).GetComponentsInChildren<Transform>();
+        GameObject chunksParent = SceneData.GetChunkParent();
+        if (chunksParent == null)
+        {
+            Debug.LogError($"CameraOnPreRender: 找不到路径 {chunksParent} 下的 GameObject！");
+            return "N/A";
+        }
 
+        Transform[] chunks = chunksParent.GetComponentsInChildren<Transform>();
         foreach (Transform chunk in chunks)
         {
-            MeshRenderer meshRenderer = chunk.GetComponent<MeshRenderer>();
-            if (meshRenderer != null && meshRenderer.isVisible) // 确保物体有Renderer且可见
-            {
-                // 获取MeshRenderer的包围盒
-                Bounds bounds = meshRenderer.bounds;
+            if (chunk == null) continue; // 防止空引用
 
-                // 使用包围盒检测是否在视野内
+            MeshRenderer meshRenderer = chunk.GetComponent<MeshRenderer>();
+            if (meshRenderer != null && meshRenderer.isVisible)
+            {
+                Bounds bounds = meshRenderer.bounds;
                 if (IsInView(camera, bounds))
                 {
-                    // 获取MeshFilter并累加三角形数
                     MeshFilter meshFilter = chunk.GetComponent<MeshFilter>();
                     if (meshFilter != null && meshFilter.sharedMesh != null)
                     {
-                        triangleCount += meshFilter.sharedMesh.triangles.Length / 3; // 每个三角形由3个顶点组成
+                        triangleCount += meshFilter.sharedMesh.triangles.Length / 3;
                     }
                 }
             }
         }
 
-        // 根据三角形数返回不同格式的字符串
-        if (triangleCount < 10000)
-        {
-            return triangleCount.ToString(); // 返回实际数值
-        }
-        else
-        {
-            return $"{(triangleCount / 10000f):0.#}w"; // 返回以 'w' 为单位的格式
-        }
+        return triangleCount < 10000 ? triangleCount.ToString() : $"{(triangleCount / 10000f):0.#}w";
     }
+
 
     // 辅助函数：检测包围盒是否在摄像机视野内
     private bool IsInView(Camera camera, Bounds bounds)

@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using System;
-using Homebrew;
 
 public class MC_Component_Buff : MonoBehaviour 
 {

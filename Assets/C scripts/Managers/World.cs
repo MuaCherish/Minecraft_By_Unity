@@ -9,7 +9,6 @@ using static MC_Static_Unity;
 using static MC_Static_Math;
 using static MC_Static_Chunk;
 using Homebrew;
-using static UnityEditor.PlayerSettings;
 
 
 public class World : MonoBehaviour

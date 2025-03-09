@@ -321,7 +321,7 @@ public class CommandManager : MonoBehaviour
                         Vector3 _pos = _PlayerPos + _Forward * 2f;
 
                         //Add
-                        if (Service_Entity.AddEntity(entityId, _pos, out var _result))
+                        if (Service_Entity.AddEntity(entityId, _pos, out var _result, true))
                         {
                             return "<系统消息> " + $"已添加实体 ID: {entityId}";
                         }

@@ -9,6 +9,20 @@ public static class MC_Static_Math
 
     #region Vector3
 
+    /// <summary>
+    /// 返回距离中心点甜甜圈范围内的随机点
+    /// </summary>
+    /// <param name="center"></param>
+    /// <param name="radiusRange"></param>
+    /// <returns></returns>
+    public static Vector3 GetRandomPointInDonut(Vector3 center, Vector2 radiusRange)
+    {
+        float angle = Random.Range(0f, Mathf.PI * 2); // 随机角度
+        float radius = Mathf.Sqrt(Random.Range(radiusRange.x * radiusRange.x, radiusRange.y * radiusRange.y)); // 确保均匀分布
+        return new Vector3(center.x + Mathf.Cos(angle) * radius, center.y, center.z + Mathf.Sin(angle) * radius);
+    }
+
+
 
     /// <summary>
     /// 获取所在区块坐标虚拟坐标
@@ -161,24 +175,33 @@ public static class MC_Static_Math
     #region Probability
 
     /// <summary>
-    /// 返回概率值
+    /// 给定在多少秒内触发一次的概率
+    /// 返回update检测的概率，用于每一帧检测的函数
     /// </summary>
-    /// <param name="_Probability"></param>
+    /// <param name="duration"></param>
+    /// <param name="targetProbability"></param>
+    /// <param name="frameRate"></param>
     /// <returns></returns>
+    public static float CalculateFrameProbability(float duration, float targetProbability, float frameRate = 60f)
+    {
+        int totalFrames = Mathf.RoundToInt(duration * frameRate); // 计算总帧数
+        return 1 - Mathf.Pow(1 - targetProbability, 1f / totalFrames); // 计算每帧触发概率
+    }
+
+
+    /// <summary>
+    /// 根据给定概率返回 true 或 false
+    /// </summary>
+    /// <param name="_Probability">概率值（0~1），例如 0.1 表示 10% 概率</param>
+    /// <returns>是否触发</returns>
     public static bool GetProbability(float _Probability)
     {
-        // 确保输入值在 0 到 100 之间
-        _Probability = Mathf.Clamp(_Probability, 0, 100);
+        // 确保概率值在 0 到 1 之间
+        _Probability = Mathf.Clamp(_Probability, 0f, 1f);
 
-        // 生成一个 0 到 100 之间的随机数
-        float randomValue = UnityEngine.Random.Range(0f, 100f);
-
-        // 如果随机数小于等于输入值，则返回 true
-        //Debug.Log(randomValue);
-        bool a = randomValue < _Probability;
-
-        return a;
+        return Random.value < _Probability;
     }
+
 
     #endregion
 

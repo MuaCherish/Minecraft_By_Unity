@@ -1,6 +1,5 @@
 using Homebrew;
 using MCEntity;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,9 +11,11 @@ public class MC_Service_Entity : MonoBehaviour
     ManagerHub managerhub;
     Player player;
     World world;
+    TimeManager timeManager;
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
+        timeManager = managerhub.timeManager;
         player = managerhub.player;
         Entity_Parent = SceneData.GetEntityParent();
         world = managerhub.world;
@@ -39,6 +40,28 @@ public class MC_Service_Entity : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        switch (world.game_state)
+        {
+            case Game_State.Playing:
+                FixedHandle_GameState_Playing();
+                break;
+        }
+    }
+
+    void FixedHandle_GameState_Playing()
+    {
+        timeSinceLastExecution += Time.fixedDeltaTime;
+
+        if (timeSinceLastExecution >= interval)
+        {
+            _ReferFixedUpdate_Service_DynamicAddEntity(); // 执行你的方法
+            timeSinceLastExecution -= interval; // 确保时间从零开始计时，防止溢出
+        }
+    }
+
+
     void Handle_GameState_Loading()
     {
         
@@ -47,9 +70,6 @@ public class MC_Service_Entity : MonoBehaviour
 
     void Handle_GameState_Playing()
     {
-        if (isNaturalSpawnEnabled && _Coroutine_Service_DynamicAddEntity == null)
-            _Coroutine_Service_DynamicAddEntity = StartCoroutine(Service_DynamicAddEntity());
-
         _ReferUpdate_CheckShowEntityHitbox();
     }
 
@@ -59,49 +79,96 @@ public class MC_Service_Entity : MonoBehaviour
 
     #region 常驻服务_动态生成实体
 
-    [Foldout("常驻服务_动态生成实体", true)]
-    [Header("自然生成")] private bool isNaturalSpawnEnabled;
+    [Foldout("常驻服务_动态生成实体(20tick)", true)]
+    [Header("自然生成")] public bool isNaturalSpawnEnabled;
     [Header("实体生成延迟范围")] public Vector2 AddEntityDelayRange = new Vector2(60f, 120f);
     [Header("实体生成半径范围")] public Vector2 spawnRadiusRange = new Vector2(10f, 16f); //实体生成半径范围(甜甜圈)
     [Header("实体生成diffY合适距离")] public float maxSpawnHeightDifference;  //实体Y - 玩家Y < 实体生成diffY合适距离
-    [Header("自然生成实体信号量")] public List<int> Mutex_Entities;
+    [Header("每种类型生物可生成的最大数量")] public List<int> MutexEntity_MaxGenNumber = new List<int>();
+    private float timeSinceLastExecution = 0f;
+    private const float interval = 1f / 20f; // 每秒执行20次，即每次间隔0.05秒
 
     void _ReferAwake_InitService()
     {
+        //print($"{MC_Static_Math.CalculateFrameProbability(30, 0.4f, 20)}");
+
+        MutexEntity_MaxGenNumber.Clear();
         foreach (var item in Entity_Prefebs)
-            Mutex_Entities.Add(item.maxGenNumer);
+        {
+            MutexEntity_MaxGenNumber.Add(item.maxGenNumer);
+        }
+
     }
 
-    Coroutine _Coroutine_Service_DynamicAddEntity;
-    IEnumerator Service_DynamicAddEntity()
+    
+
+
+    void _ReferFixedUpdate_Service_DynamicAddEntity()
     {
-        while (true)
+        //提前返回-如果没有开启自然生成
+        if (!isNaturalSpawnEnabled)
+            return;
+
+        //提前返回-如果是Start则退出
+        if (world.game_state == Game_State.Start)
+            return;
+
+        //提前返回-如果超出最大实体数量
+        if (isFullOfAllEntity())
+            return;
+
+        //检查生成
+        for (int EntityIndex = 0; EntityIndex < Entity_Prefebs.Length; EntityIndex++)
         {
-            //提前退出-如果是Start则退出
-            if (world.game_state == Game_State.Start)
-            {
-                _Coroutine_Service_DynamicAddEntity = null;
-                break;
-            }
-
-            //如果所有类型生物已经满了
-            if (isFullofAllEntities())
-            {
-                yield return new WaitForSeconds(1f);
+            //提前跳过-概率判定
+            if (!MC_Static_Math.GetProbability(Entity_Prefebs[EntityIndex].GenerateProbability))
                 continue;
-            }
 
-            //先确定位置 
-            int NextEntityIndex = DynamicAddEntity_FindEntityPrefebIndex();
-            Vector3 NextEntityPos = DynamicAddEntity_FindPos();
+            //提前跳过-该生物投放数量已满
+            if (isFullOfMutexEntity(EntityIndex))
+                continue;
 
-            //延迟若干秒
-            yield return new WaitForSeconds(Random.Range(AddEntityDelayRange.x, AddEntityDelayRange.y));
+            //提前跳过-夜间生物不在白天生成
+            if (Entity_Prefebs[EntityIndex].OnlyGenerateInNight && !timeManager.IsNight())
+                continue;
 
             //AddEntity
-            //print($"投放实体, index:{NextEntityIndex}, pos:{NextEntityPos}");
-            AddEntity(NextEntityIndex, NextEntityPos, out var entity);
+            Handle_DynamicAddEntity(EntityIndex);
         }
+
+
+
+    }
+
+    void Handle_DynamicAddEntity(int _EntityIndex)
+    {
+        Vector3 NextEntityPos = DynamicAddEntity_FindPos();
+
+        //如果可以多生成几只
+        if (MC_Static_Math.GetProbability(Entity_Prefebs[_EntityIndex].MoreGenProbability))
+        {
+            int MoreNum = Random.Range(1, 4);
+
+            for (int i = 0; i < MoreNum; i++)
+            {
+                Vector3 SurroundPos = MC_Static_Math.GetRandomPointInDonut(NextEntityPos, new Vector2(3f, 10f));
+                AddEntity(_EntityIndex, SurroundPos, out var _entity);
+            }
+
+        }
+
+        AddEntity(_EntityIndex, NextEntityPos, out var entity);
+        //print($"投放实体, index:{EntityIndex}, pos:{NextEntityPos}");
+    }
+
+
+    //实体最大生成数量是否满了
+    bool isFullOfMutexEntity(int _EntityIndex)
+    {
+        if (MutexEntity_MaxGenNumber[_EntityIndex] <= 0)
+            return true;
+
+        return false;
     }
 
 
@@ -113,9 +180,7 @@ public class MC_Service_Entity : MonoBehaviour
         Vector3 playerPos = managerhub.player.transform.position;
 
         // 生成一个在甜甜圈范围内的随机点
-        float angle = Random.Range(0f, Mathf.PI * 2); // 随机角度
-        float radius = Mathf.Sqrt(Random.Range(spawnRadiusRange.x * spawnRadiusRange.x, spawnRadiusRange.y * spawnRadiusRange.y)); // 确保均匀分布
-        RandomSpawnPos = new Vector3(playerPos.x + Mathf.Cos(angle) * radius, playerPos.y, playerPos.z + Mathf.Sin(angle) * radius);
+        RandomSpawnPos = MC_Static_Math.GetRandomPointInDonut(playerPos, spawnRadiusRange);
 
         // 调用World的获取可用出生点函数
         world.GetSpawnPos(RandomSpawnPos, out List<Vector3> _Result);
@@ -129,45 +194,6 @@ public class MC_Service_Entity : MonoBehaviour
 
         return Vector3.zero;
     }
-
-    //每种类型生物已满
-    bool isFullofAllEntities()
-    {
-        foreach (var item in Mutex_Entities)
-        {
-            if (item != 0)
-                return false;
-        }
-
-        return true;
-    } 
-
-    // 寻找合适的index去投放
-    int DynamicAddEntity_FindEntityPrefebIndex()
-    {
-        // 先收集所有可用的索引
-        List<int> availableIndices = new List<int>();
-        for (int i = 0; i < Mutex_Entities.Count; i++)
-        {
-            if (Mutex_Entities[i] > 0)
-                availableIndices.Add(i);
-        }
-
-        // 如果没有可用实体，返回 -1 作为错误标识
-        if (availableIndices.Count == 0)
-        {
-            print("生物生成异常");
-            return -1;
-        }
-
-        // 随机选择一个可用的索引
-        int _randomIndex = availableIndices[Random.Range(0, availableIndices.Count)];
-
-        // 递减计数
-        Mutex_Entities[_randomIndex]--;
-        return _randomIndex;
-    }
-
 
     //检查是否可以生成实体
     bool CheckCanAddEntity(Vector3 _pos)
@@ -188,8 +214,6 @@ public class MC_Service_Entity : MonoBehaviour
         return _Pass;
     }
 
-
-
     #endregion
 
 
@@ -197,11 +221,23 @@ public class MC_Service_Entity : MonoBehaviour
 
     [Foldout("实体管理", true)]
     [Header("蒸汽粒子")] public GameObject Evaporation_Particle;
-    [Header("实体预制体")] public EntityPrefebStruct[] Entity_Prefebs;
+    [Header("实体预制体")] public EntitySpawnConfig[] Entity_Prefebs;
     [Header("活着的所有实体")] public List<EntityInfo> AllEntity = new List<EntityInfo>();
-    [Header("最大实体数量")][SerializeField] private int maxSize = 100; // 默认值为100，可在Inspector中调整
+    [Header("最大实体数量")][SerializeField] public int maxSize = 100; // 默认值为100，可在Inspector中调整
     private int Unique_Id = 0; // 用于生成新的唯一ID
     GameObject Entity_Parent;
+
+    /// <summary>
+    /// AllEntity是否已满
+    /// </summary>
+    /// <returns></returns>
+    public bool isFullOfAllEntity()
+    {
+        if (GetEntityCount() >= maxSize)
+            return true;
+        else
+            return false;
+    }
 
     /// <summary>
     /// 根据id寻找实体
@@ -241,7 +277,7 @@ public class MC_Service_Entity : MonoBehaviour
     /// <param name="_index">需要添加的预制体的下标</param>
     /// <param name="_Startpos">实体的起始位置</param>
     /// <returns>是否添加成功</returns>
-    public bool AddEntity(int _PrefebIndex, Vector3 _Startpos, out EntityInfo _Result)
+    public bool AddEntity(int _PrefebIndex, Vector3 _Startpos, out EntityInfo _Result, bool ignoreMaxMutex = false)
     {
         // 提起返回-检查实体数量是否达到最大值
         if (AllEntity.Count >= maxSize)
@@ -273,6 +309,12 @@ public class MC_Service_Entity : MonoBehaviour
             return false;
         }
 
+        //提前返回-如果不是指令模式且无更多可生成实体数量
+        if(!ignoreMaxMutex && isFullOfMutexEntity(_PrefebIndex))
+        {
+            _Result = null;
+            return false;
+        }
 
         // 实例化预制体
         GameObject newEntity = Instantiate(Entity_Prefebs[_PrefebIndex].prefeb);
@@ -309,6 +351,10 @@ public class MC_Service_Entity : MonoBehaviour
         _Result = _entityInfo;
         AllEntity.Add(_Result);
 
+        //指令型的调用不会触发信号量变化
+        if (!ignoreMaxMutex)
+            MutexEntity_MaxGenNumber[EntityData.GetEntityPrefebIndex(entityName)]--;
+
         //Debug.Log($"实体 {newEntity.name} 已添加成功，ID为{entityId}！");
 
         return true;
@@ -336,8 +382,7 @@ public class MC_Service_Entity : MonoBehaviour
         if (entityToRemove != null)
         {
             //Debug.Log($"实体 {_EntityID._name} 已移除成功！");
-            Mutex_Entities[EntityData.GetEntityPrefebIndex(entityToRemove._name)] ++;
-
+            MutexEntity_MaxGenNumber[EntityData.GetEntityPrefebIndex(entityToRemove._name)] ++;
             //End
             AllEntity.Remove(entityToRemove);
             return true;
@@ -579,8 +624,12 @@ public class MC_Service_Entity : MonoBehaviour
 }
 
 [System.Serializable]
-public class EntityPrefebStruct
+public class EntitySpawnConfig
 {
-    public GameObject prefeb;
-    public int maxGenNumer;
+    public string name;
+    [Header("预制体")] public GameObject prefeb; //预制体
+    [Header("存活最大个数")] public int maxGenNumer; //存活最大个数
+    [Header("只能夜晚生成")] public bool OnlyGenerateInNight; //只能夜晚生成
+    [Header("刷新概率")] public float GenerateProbability; //生成1次的概率
+    [Header("一次生成2,3个的概率")] public float MoreGenProbability; //一次生成2,3个的概率
 }
