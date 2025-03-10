@@ -55,7 +55,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _: 0.6
-    - _1: 0.2
+    - _1: 1
     - _2: 8
     - _BUILTIN_QueueControl: 0
     - _BUILTIN_QueueOffset: 0

@@ -1220,6 +1220,7 @@ public class World : MonoBehaviour
     {
 
         Allchunks.TryGetValue(GetRelaChunkLocation(pos), out Chunk chunktemp);
+
         return chunktemp;
 
     }

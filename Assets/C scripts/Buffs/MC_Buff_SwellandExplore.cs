@@ -72,14 +72,15 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
 
         // 玩家炸飞
         Vector3 _Direction = managerhub.player.cam.transform.position - _center;  //炸飞方向
+        float BloodValue = _Direction.magnitude / 6f;
         float _value = _Direction.magnitude / 3;  //距离中心点程度[0,1]
         _Direction.y = Mathf.Lerp(0, 1, _value);
         float Distance = Mathf.Lerp(3, 0, _value);
         managerhub.player.ForceMoving(_Direction, Distance, 0.1f);
 
         //玩家扣血
-        if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
-            managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
+        if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 6)
+            managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(52, 5, BloodValue), true, true);
 
         //Music
         managerhub.NewmusicManager.PlayOneShot(MusicData.explore);
@@ -119,7 +120,7 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
                 if (_dis >= 0f && _dis <= TNT_explore_Radius)
                 {
                     _forceValue = Mathf.Lerp(400f, 160f, _dis / TNT_explore_Radius);
-                    updateBlood = (int)Mathf.Lerp(23, 10, _dis / TNT_explore_Radius);
+                    updateBlood = (int)Mathf.Lerp(32, 10, _dis / TNT_explore_Radius);
                 }
                 // 如果距离在4到6米之间，力值固定为50
                 else if (_dis > TNT_explore_Radius && _dis <= TNT_explore_Radius + 2f)

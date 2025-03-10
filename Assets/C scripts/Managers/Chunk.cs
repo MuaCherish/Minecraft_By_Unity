@@ -4,6 +4,7 @@ using System.Threading;
 using static MC_Static_Chunk;
 using static MC_Static_Math;
 
+
 public class Chunk : MonoBehaviour
 {
 
@@ -1272,7 +1273,7 @@ public class Chunk : MonoBehaviour
             if (_y + i >= TerrainData.ChunkHeight - 1)
             {
 
-                Debug.Log($"random_y:{_y},i={i}");
+                //Debug.Log($"random_y:{_y},i={i}");
 
             }
 
@@ -1298,7 +1299,7 @@ public class Chunk : MonoBehaviour
             if (_y + i >= TerrainData.ChunkHeight - 1)
             {
 
-                Debug.Log($"random_y:{_y},i={i}");
+                //Debug.Log($"random_y:{_y},i={i}");
 
             }
 
@@ -1637,7 +1638,7 @@ public class Chunk : MonoBehaviour
                     if (random_y + i >= TerrainData.ChunkHeight - 1)
                     {
 
-                        Debug.Log($"random_y:{random_y},i={i}");
+                        //Debug.Log($"random_y:{random_y},i={i}");
 
                     }
 
@@ -1716,7 +1717,7 @@ public class Chunk : MonoBehaviour
                         if (random_y + i >= TerrainData.ChunkHeight - 1)
                         {
 
-                            Debug.Log($"random_y:{random_y},i={i}");
+                            //Debug.Log($"random_y:{random_y},i={i}");
 
                         }
 
@@ -1763,7 +1764,7 @@ public class Chunk : MonoBehaviour
                         if (random_y + i >= TerrainData.ChunkHeight - 1)
                         {
 
-                            Debug.Log($"random_y:{random_y},i={i}");
+                            //Debug.Log($"random_y:{random_y},i={i}");
 
                         }
 

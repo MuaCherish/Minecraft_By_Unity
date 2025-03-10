@@ -1,5 +1,7 @@
 using MCEntity;
 using System.Collections;
+using System.Linq.Expressions;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 
 public class Entity_Creeper : MonoBehaviour
@@ -60,6 +62,7 @@ public class Entity_Creeper : MonoBehaviour
         if (!startFuse && Component_AI.isSeePlayer && distanceToPlayer < DistanceToFuse)
         {
             startFuse = true;
+            Component_AI.Debug_PauseAI = true;
             Buff_Component.AddBuff(BuffData.Blink, 3f); // 触发 Blink Buff
 
             // 确保 Coroutine 只会启动一次
@@ -71,7 +74,7 @@ public class Entity_Creeper : MonoBehaviour
         if (startFuse && distanceToPlayer >= DistanceToStopFuse)
         {
             startFuse = false;
-
+            Component_AI.Debug_PauseAI = false;
             if (_Coroutine_FuseToExplore != null)
             {
                 StopCoroutine(_Coroutine_FuseToExplore);

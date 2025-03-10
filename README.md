@@ -14,21 +14,6 @@ A long-term project from beginner
 
 ## ⚙️ Future Update Plans:
 - Update V[3.12] Target: ECS System
-  * Complete the component system
-  * Ability to refresh the world for various entities
-- Update V[3.13] Target: Project Optimization
-  * Optimize project structure
-  * Add entity effects to furniture
-  * Improve data storage models
-  * Optimize the save system
-  * Add village generation
+- Update V[3.13] Target: Noise Optimization
 - Update V[3.14] Target: Chunk and Multi-threading
-  * More mature noise generation
-  * Solve Chunk data safety issues
-  * Better chunk loading methods
-  * Implement lighting system
-  * Implement dynamic water flow effects
 - Update V[3.15] Target: The Far Future
-  * Players will have various abilities
-  * The game will have a clear goal, slowly diverging from Minecraft
-  * Add some boss battles

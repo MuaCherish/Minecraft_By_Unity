@@ -386,8 +386,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startFuse: 0
   DistanceToFuse: 3
-  DistanceToStopFuse: 5
-  FuseTime: 2
+  DistanceToStopFuse: 7
+  FuseTime: 1.5
 --- !u!95 &5474454921661426889
 Animator:
   serializedVersion: 5
@@ -543,7 +543,7 @@ MonoBehaviour:
   AutoJump_CheckMaxDistance: 1
   AutoJump_ColdTime: 0.5
   canWatchPlayer: 0
-  visionDistance: 15
+  visionDistance: 16
   ChaseVisionrotateTime: 0.2
   WatchvisionDistance: 3
   WatchPLayerrotateTime: 0.4

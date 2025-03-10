@@ -985,7 +985,6 @@ namespace MCEntity
             if (Component_Animator != null && Component_Animator.CanWalk)
                 Component_Animator.SetSpeed(_Speed);
 
-
             while (true)
             {
                 //提前退出-到达目的地
