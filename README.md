@@ -8,10 +8,6 @@ A long-term project from beginner
 <img src="https://github.com/MuaCherish/Minecraft_By_Unity/blob/master/Pictures/4.png" width="1000px"> <img src="https://github.com/jrohitofficial/jrohitofficial/blob/master/line-neon.gif" width="100%">
 
 
-## ⚙️ Attention:
-  * If there is a font display issue during runtime, please place the font package in the Font folder inside the Assets directory in the Release.
-
-
 ## ⚙️ Future Update Plans:
 - V[3.6.0] ------------- Update Plan ------------- Save System
 - V[3.7.0] ------------- Update Plan ------------- More Particle Effects
@@ -27,3 +23,6 @@ A long-term project from beginner
 - V[3.17.0] ------------ Update Plan ------------- Portals & Special Dimensions
 - V[3.18.0] ------------ Update Plan ------------- Boss Battle System
 - V[4.0.0] ------------- Update Plan ------------- Better UI & Loading Style
+
+## ⚙️ Attention:
+  * If there is a font display issue during runtime, please place the font package in the Font folder inside the Assets directory in the Release.
