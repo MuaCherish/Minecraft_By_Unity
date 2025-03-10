@@ -13,7 +13,7 @@ public class CommandManager : MonoBehaviour
     #region ÖÜÆÚº¯Êý
 
     private ManagerHub managerhub;
-    public MC_Service_Entity Service_Entity;
+    MC_Service_Entity Service_Entity;
     //private World world;
 
     private void Awake()

@@ -89,7 +89,36 @@ public static class MC_Static_Navigation
         return true;
     }
 
+    /// <summary>
+    /// 是否可以走通
+    /// </summary>
+    /// <returns></returns>
+    public static bool PathCanNavigate(Vector3 _posA, Vector3 _posB)
+    {
+        //提前返回-如果AB坐标悬空
+        if (isSuspend(_posA) || isSuspend(_posB))
+            return false;
 
+        Algo_Astar(_posA, _posB, world.renderSize, out List<Vector3> _result);
+        return _result.Count > 0;
+    }
+
+    /// <summary>
+    /// 是否浮空
+    /// </summary>
+    /// <param name="_pos"></param>
+    /// <returns></returns>
+    public static bool isSuspend(Vector3 _pos)
+    {
+        if (world.GetBlockType(_pos + Vector3.down) == VoxelData.Air &&
+            world.GetBlockType(_pos + Vector3.down * 2) == VoxelData.Air
+            )
+            return true;
+        else
+        {
+            return false;
+        }
+    }
 
 
 

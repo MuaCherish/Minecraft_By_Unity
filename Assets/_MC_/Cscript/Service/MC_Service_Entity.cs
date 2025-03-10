@@ -83,7 +83,6 @@ public class MC_Service_Entity : MonoBehaviour
     [Header("自然生成")] public bool isNaturalSpawnEnabled;
     [Header("实体生成延迟范围")] public Vector2 AddEntityDelayRange = new Vector2(60f, 120f);
     [Header("实体生成半径范围")] public Vector2 spawnRadiusRange = new Vector2(10f, 16f); //实体生成半径范围(甜甜圈)
-    [Header("实体生成diffY合适距离")] public float maxSpawnHeightDifference;  //实体Y - 玩家Y < 实体生成diffY合适距离
     [Header("每种类型生物可生成的最大数量")] public List<int> MutexEntity_MaxGenNumber = new List<int>();
     private float timeSinceLastExecution = 0f;
     private const float interval = 1f / 20f; // 每秒执行20次，即每次间隔0.05秒
@@ -198,13 +197,16 @@ public class MC_Service_Entity : MonoBehaviour
     //检查是否可以生成实体
     bool CheckCanAddEntity(Vector3 _pos)
     {
-        Vector3 _playerPos = managerhub.player.transform.position;
+        Vector3 _playerPos = managerhub.player.foot.position + new Vector3(0f, 0.5f, 0f);
         Camera _camera = managerhub.player.eyes;
         bool _Pass = true;
 
-        // 距离玩家Y值超出合适范围
-        if (Mathf.Abs(_pos.y - _playerPos.y) > maxSpawnHeightDifference)
+        //不能走通
+        if(!MC_Static_Navigation.PathCanNavigate(_pos, _playerPos))
+        {
+            print("路径不能走通");
             _Pass = false;
+        }
 
         // 不在玩家视锥体内
         Vector3 viewportPoint = _camera.WorldToViewportPoint(_pos);
