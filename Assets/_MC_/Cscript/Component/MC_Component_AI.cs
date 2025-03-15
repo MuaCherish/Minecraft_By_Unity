@@ -14,7 +14,6 @@ namespace MCEntity
     public class MC_Component_AI : MonoBehaviour
     {
 
-
         #region 状态
 
         [Foldout("状态机", true)]
@@ -30,7 +29,7 @@ namespace MCEntity
         [Header("是否会逃跑")] public bool EntityCanFlee = true;
 
         #endregion
-
+       
 
         #region 周期函数
 
