@@ -26,6 +26,8 @@ namespace NoiseMapTest
             _ReferUpdate_Handle_Destroy();
             _ReferUpdate_Handle_Scale();
             _ReferUpdate_ChunkReLoad();
+            _ReferUpdate_OnValidate();
+            _ReferUpdate_OnGUIDebug();
         }
 
         #endregion
@@ -99,7 +101,19 @@ namespace NoiseMapTest
         [Header("持久性")][Range(0, 1)] public float persistance;
         [Header("间隙度")] public float lacunarity;
         [Header("种子")] public int seed;
-        [Header("噪声偏移量")] public Vector2 offset;
+        [Header("Mode")] public GenNoise.NormalizeMode normalizeMode;
+        [Header("噪声偏移量")] public Vector2 offset; private Vector2 offsetLastValue;
+
+        void _ReferUpdate_OnValidate()
+        {
+            if (
+                offset != offsetLastValue
+                )
+            {
+                offsetLastValue = offset;
+                ApplySetting = true;
+            }
+        }
 
         #endregion
 
@@ -160,6 +174,55 @@ namespace NoiseMapTest
             WaitToDestroy.Add(_obj);
         }
 
+
+        #endregion
+
+
+        #region OnGUI
+
+        private Rect windowRect = new Rect(50, 50, 250, 150); // 窗口初始位置和大小
+        private float sliderValue1 = 5f;
+        private float sliderValue2 = 5f;
+        private bool showDebug = true;
+
+        void _ReferUpdate_OnGUIDebug()
+        {
+            // 按 F1 显示/隐藏调试窗口
+            if (Input.GetKeyDown(KeyCode.F1))
+            {
+                showDebug = !showDebug;
+            }
+        }
+
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+
+        private void OnGUI()
+        {
+            if (!showDebug) return;
+
+            // 绘制窗口，并使其可拖动
+            windowRect = GUI.Window(0, windowRect, DrawDebugWindow, "调试窗口");
+        }
+
+        private void DrawDebugWindow(int windowID)
+        {
+            GUILayout.BeginVertical(); // 垂直排列 Item
+
+            // Item 1
+            GUILayout.Label($"Item 1: {sliderValue1:F1}");
+            sliderValue1 = GUILayout.HorizontalSlider(sliderValue1, 0, 10);
+
+            // Item 2
+            GUILayout.Label($"Item 2: {sliderValue2:F1}");
+            sliderValue2 = GUILayout.HorizontalSlider(sliderValue2, 0, 10);
+
+            GUILayout.EndVertical();
+
+            // 允许拖动窗口
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
+        }
+#endif
 
         #endregion
 

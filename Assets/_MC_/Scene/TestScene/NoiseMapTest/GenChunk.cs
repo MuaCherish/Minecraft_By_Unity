@@ -142,7 +142,7 @@ namespace NoiseMapTest
             GetCameraBounds(out var Xrange, out var Yrange);
 
             //遍历所有点
-            for (float _x = Xrange.x; _x <= Xrange.y; _x ++)
+            for (float _x = Xrange.x; _x <= Xrange.y; _x++)
             {
                 for (float _y = Yrange.x; _y <= Yrange.y; _y++)
                 {
@@ -185,13 +185,17 @@ namespace NoiseMapTest
 
         #region Gen and Del
 
+        private static float ChunkWidth = 1f;  //区块宽度
+        private static int VoxelWidth = 16;    //像素宽度
+
         private static void GenerateChunk(Vector3 _pos)
         {
             // 创建一个新的 GameObject
             GameObject chunkObj = new GameObject($"Chunk_{_pos}");
             chunkObj.transform.SetParent(Chunkparent.transform, false);
-            chunkObj.transform.position = _pos + new Vector3(0.5f, 0.5f, 0f);
+            chunkObj.transform.position = _pos * ChunkWidth + new Vector3(ChunkWidth / 2f, ChunkWidth / 2f, 0f);
             chunkObj.transform.rotation = Quaternion.Euler(-90, 0, 0); // 旋转使其朝向 Z- 方向
+            chunkObj.transform.localScale = new Vector3(ChunkWidth, ChunkWidth, ChunkWidth);
 
             // 添加 MeshFilter 组件（存放 Mesh 数据）
             MeshFilter meshFilter = chunkObj.AddComponent<MeshFilter>();
@@ -202,11 +206,11 @@ namespace NoiseMapTest
             meshRenderer.material = new Material(Shader.Find("Unlit/Texture")); // 使用 Unlit 纹理着色器
 
             // 生成纹理并赋值给材质
-            Texture2D texture = GenTexture.GetBlackWhiteTexture();
-            //float[,] noiseMap = GenNoise.GenerateNoiseMap(new Vector2(_pos.x, _pos.y),16, 16, gameManager.seed, gameManager.noiseScale, gameManager.octaves, gameManager.persistance, gameManager.lacunarity, gameManager.offset);
-            //Texture2D texture = GenTexture.GetPerlinNoiseTexture(noiseMap);
+            //Texture2D texture = GenTexture.GetBlackWhiteTexture();
+            float[,] noiseMap = GenNoise.GenerateNoiseMap(VoxelWidth, VoxelWidth, gameManager.seed, gameManager.noiseScale, gameManager.octaves, gameManager.persistance, gameManager.lacunarity, new Vector2(_pos.x, _pos.y) * VoxelWidth + gameManager.offset, gameManager.normalizeMode);
+            Texture2D texture = GenTexture.GetPerlinNoiseTexture(noiseMap);
             meshRenderer.material.mainTexture = texture;
-
+             
             // 存入字典
             AllChunks[_pos] = chunkObj;
         }
