@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 107dc6454ca6de04e817bb17ffabefc1, type: 3}
+  m_Name: Diamond
+  m_EditorClassIdentifier: 
+  itemName: Diamond
+  BlockClassfy: 1
+  icon: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  DestroyTime: 5
+  isSolid: 1
+  isTransparent: 0
+  canBeChoose: 1
+  candropBlock: 1
+  IsOriented: 0
+  isinteractable: 0
+  is2d: 0
+  CanBeCover: 0
+  NotSuspended: 0
+  isDIYCollision: 0
+  CollosionRange:
+    xRange: {x: 0, y: 1}
+    yRange: {x: 0, y: 1}
+    zRange: {x: 0, y: 1}
+  front_sprite: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  sprite: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  top_sprit: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  buttom_sprit: {fileID: -2047224400, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  walk_clips:
+  - {fileID: 0}
+  - {fileID: 0}
+  broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+  broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+  backFaceTexture: 113
+  frontFaceTexture: 113
+  topFaceTexture: 113
+  bottomFaceTexture: 113
+  leftFaceTexture: 113
+  rightFaceTexture: 113
+  DrawMode: 0
+  GenerateTwoFaceWithAir: 0
+  OtherFaceCheck: []

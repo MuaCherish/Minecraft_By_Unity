@@ -126,6 +126,71 @@ namespace NoiseMapTest
             return noiseMap;
         }
 
+
+        /// <summary>
+        /// 生成 Voronoi 图，保证 Chunk 之间连续
+        /// </summary>
+        /// <param name="chunkCoord">当前 Chunk 坐标</param>
+        /// <param name="mapWidth">地图宽度</param>
+        /// <param name="mapHeight">地图高度</param>
+        /// <param name="seed">随机种子</param>
+        /// <param name="pointCount">Voronoi 细胞的种子点数量</param>
+        /// <param name="offset">偏移量，用于保持 Chunk 之间衔接自然</param>
+        /// <returns>返回生成的 Voronoi 贴图数据</returns>
+        public static float[,] GenerateVoronoiMap(Vector2Int chunkCoord, int mapWidth, int mapHeight, int seed, int pointCount, Vector2 offset)
+        {
+            // 设定随机种子
+            System.Random prng = new System.Random(seed);
+
+            // 计算当前 Chunk 在全局坐标系中的偏移
+            Vector2 globalOffset = new Vector2(chunkCoord.x * mapWidth, chunkCoord.y * mapHeight) + offset;
+
+            // 生成 Voronoi 细胞的种子点（基于全局坐标）
+            Vector2[] points = new Vector2[pointCount];
+            for (int i = 0; i < pointCount; i++)
+            {
+                float pointX = prng.Next(-100000, 100000);
+                float pointY = prng.Next(-100000, 100000);
+                points[i] = new Vector2(pointX, pointY);
+            }
+
+            // 创建 Voronoi 图数据
+            float[,] voronoiMap = new float[mapWidth, mapHeight];
+
+            // 遍历每个像素，计算最近的种子点
+            for (int y = 0; y < mapHeight; y++)
+            {
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    // 计算当前像素的全局坐标
+                    Vector2 samplePos = new Vector2(x, y) + globalOffset;
+
+                    int closestPointIndex = 0;
+                    float minDistance = float.MaxValue;
+
+                    // 找到离当前像素最近的 Voronoi 细胞种子
+                    for (int i = 0; i < pointCount; i++)
+                    {
+                        float dist = Vector2.SqrMagnitude(samplePos - points[i]); // 计算欧几里得距离平方
+                        if (dist < minDistance)
+                        {
+                            minDistance = dist;
+                            closestPointIndex = i;
+                        }
+                    }
+
+                    // 归一化处理
+                    voronoiMap[x, y] = closestPointIndex / (float)pointCount;
+                }
+            }
+
+            return voronoiMap;
+        }
+
+
+
+
+
     }
 
 }

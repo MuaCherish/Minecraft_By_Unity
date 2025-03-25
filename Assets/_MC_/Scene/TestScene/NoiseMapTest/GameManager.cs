@@ -26,7 +26,7 @@ namespace NoiseMapTest
             _ReferUpdate_Handle_Destroy();
             _ReferUpdate_Handle_Scale();
             _ReferUpdate_ChunkReLoad();
-            _ReferUpdate_OnValidate();
+            _ReferUpdate_OnValidate(); _ReferUpdate_VoronoiOnValidate();
             _ReferUpdate_OnGUIDebug();
         }
 
@@ -38,8 +38,8 @@ namespace NoiseMapTest
         [Foldout("Drag and Scale", true)]
         [Header("拖拽灵敏度")] public float moveSpeed = 0.1f;
         [Header("滚动灵敏度")] public float ScrollSensitivity = 2f;
-        [Header("缩放范围")] public Vector2 ScaleRange = new Vector2(5f, 10f);
-        private float currentScale = 5f;
+        [Header("初始缩放值")] public float currentScale = 1f;
+        [Header("缩放范围")] public Vector2 ScaleRange = new Vector2(0.5f, 10f);
         private bool isDragging = false;
         private Camera mainCamera;
 
@@ -93,7 +93,7 @@ namespace NoiseMapTest
         #endregion
 
 
-        #region Noise
+        #region PerlinNoise
 
         [Foldout("Noise", true)]
         [Header("噪声放大系数")] public float noiseScale;
@@ -116,6 +116,28 @@ namespace NoiseMapTest
         }
 
         #endregion
+
+
+        #region VoronoiNoise
+
+        [Foldout("VoronoiNoise", true)]
+        [Header("种子")] public int VoronoiSeed;
+        [Header("细胞的种子点数量")] public int VoronoiPointCount;
+        [Header("噪声偏移量")] public Vector2 Voronoioffset; private Vector2 VoronoioffsetLastValue;
+
+        void _ReferUpdate_VoronoiOnValidate()
+        {
+            if (
+                Voronoioffset != VoronoioffsetLastValue
+                )
+            {
+                VoronoioffsetLastValue = Voronoioffset;
+                ApplySetting = true;
+            }
+        }
+
+        #endregion
+
 
 
         #region Reload
@@ -183,7 +205,7 @@ namespace NoiseMapTest
         private Rect windowRect = new Rect(50, 50, 250, 150); // 窗口初始位置和大小
         private float sliderValue1 = 5f;
         private float sliderValue2 = 5f;
-        private bool showDebug = true;
+        private bool showDebug = false;
 
         void _ReferUpdate_OnGUIDebug()
         {

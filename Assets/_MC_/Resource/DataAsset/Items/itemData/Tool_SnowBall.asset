@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c292b067008fa98438d2d56a82ca7672, type: 3}
+  m_Name: Tool_SnowBall
+  m_EditorClassIdentifier: 
+  itemName: Tool_SnowBall
+  BlockClassfy: 3
+  icon: {fileID: -1088150674, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  isTool: 1
+  canBreakBlockWithMouse1: 1
+  isNeedRotation: 0

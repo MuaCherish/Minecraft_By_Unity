@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 107dc6454ca6de04e817bb17ffabefc1, type: 3}
+  m_Name: Sapling
+  m_EditorClassIdentifier: 
+  itemName: Sapling
+  BlockClassfy: 1
+  icon: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  DestroyTime: 0.2
+  isSolid: 0
+  isTransparent: 1
+  canBeChoose: 1
+  candropBlock: 0
+  IsOriented: 0
+  isinteractable: 1
+  is2d: 1
+  CanBeCover: 0
+  NotSuspended: 0
+  isDIYCollision: 0
+  CollosionRange:
+    xRange: {x: 0, y: 1}
+    yRange: {x: 0, y: 1}
+    zRange: {x: 0, y: 1}
+  front_sprite: {fileID: 0}
+  sprite: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  top_sprit: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  buttom_sprit: {fileID: -592819523, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  walk_clips:
+  - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+  - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+  broking_clip: {fileID: 8300000, guid: 4c3182abc0569f049bce15dc1ae743db, type: 3}
+  broken_clip: {fileID: 8300000, guid: c03e6e8f95fba19469db6540e7e52587, type: 3}
+  backFaceTexture: 8
+  frontFaceTexture: 8
+  topFaceTexture: 8
+  bottomFaceTexture: 8
+  leftFaceTexture: 8
+  rightFaceTexture: 8
+  DrawMode: 1
+  GenerateTwoFaceWithAir: 0
+  OtherFaceCheck: []

@@ -328,6 +328,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 0.1
   ScrollSensitivity: 2
+  currentScale: 1
   ScaleRange: {x: 0.5, y: 10}
   noiseScale: 40
   octaves: 6
@@ -336,6 +337,9 @@ MonoBehaviour:
   seed: 0
   normalizeMode: 1
   offset: {x: 0, y: 0}
+  VoronoiSeed: 0
+  VoronoiPointCount: 16
+  Voronoioffset: {x: 0, y: 0}
   ApplySetting: 0
 --- !u!1 &1263351854
 GameObject:

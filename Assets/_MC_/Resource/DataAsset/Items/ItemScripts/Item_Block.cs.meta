@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 107dc6454ca6de04e817bb17ffabefc1
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - icon: {fileID: 21300000, guid: 60b3caffdfcb5c34c951618c6e988871, type: 3}
+  - front_sprite: {fileID: 21300000, guid: 60b3caffdfcb5c34c951618c6e988871, type: 3}
+  - top_sprite: {fileID: 21300000, guid: 60b3caffdfcb5c34c951618c6e988871, type: 3}
+  - bottom_sprite: {fileID: 21300000, guid: 60b3caffdfcb5c34c951618c6e988871, type: 3}
+  - broking_clip: {fileID: 8300000, guid: 5f4ba53a4cb5c2540ae570c2b4692390, type: 3}
+  - broken_clip: {fileID: 8300000, guid: a49fe9d53dda67245be2ed2406e8e0e7, type: 3}
+  - walk_clip_1: {fileID: 8300000, guid: e963f3daaa4495345b08255f3d6d3eed, type: 3}
+  - walk_clip_2: {fileID: 8300000, guid: 0902d3ef50b317f42a877d8372019f63, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

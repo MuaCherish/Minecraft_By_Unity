@@ -207,8 +207,11 @@ namespace NoiseMapTest
 
             // 生成纹理并赋值给材质
             //Texture2D texture = GenTexture.GetBlackWhiteTexture();
-            float[,] noiseMap = GenNoise.GenerateNoiseMap(VoxelWidth, VoxelWidth, gameManager.seed, gameManager.noiseScale, gameManager.octaves, gameManager.persistance, gameManager.lacunarity, new Vector2(_pos.x, _pos.y) * VoxelWidth + gameManager.offset, gameManager.normalizeMode);
-            Texture2D texture = GenTexture.GetPerlinNoiseTexture(noiseMap);
+            //float[,] noiseMap = GenNoise.GenerateNoiseMap(VoxelWidth, VoxelWidth, gameManager.seed, gameManager.noiseScale, gameManager.octaves, gameManager.persistance, gameManager.lacunarity, new Vector2(_pos.x, _pos.y) * VoxelWidth + gameManager.offset, gameManager.normalizeMode);
+            //float[,] noiseMap = GenNoise.GenerateVoronoiMap(new Vector2Int((int)_pos.x, (int)_pos.y), VoxelWidth, VoxelWidth, gameManager.VoronoiSeed, gameManager.VoronoiPointCount, gameManager.Voronoioffset);
+            //Texture2D texture = GenTexture.GetPerlinNoiseTexture(noiseMap);
+            int[] VoronoiInts = new int[1] { 2 };
+            Texture2D texture = GenVoronoi.RenderVoronoiGraph(VoxelWidth, VoxelWidth, gameManager.VoronoiSeed, VoronoiInts);
             meshRenderer.material.mainTexture = texture;
              
             // 存入字典

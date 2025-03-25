@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 107dc6454ca6de04e817bb17ffabefc1, type: 3}
+  m_Name: Door_Down
+  m_EditorClassIdentifier: 
+  itemName: Door_Down
+  BlockClassfy: 2
+  icon: {fileID: -714097491, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  DestroyTime: 1
+  isSolid: 1
+  isTransparent: 1
+  canBeChoose: 1
+  candropBlock: 1
+  IsOriented: 1
+  isinteractable: 1
+  is2d: 1
+  CanBeCover: 0
+  NotSuspended: 0
+  isDIYCollision: 1
+  CollosionRange:
+    xRange: {x: 0, y: 1}
+    yRange: {x: 0, y: 1}
+    zRange: {x: 0.81, y: 1}
+  front_sprite: {fileID: -714097491, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  sprite: {fileID: -714097491, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  top_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  buttom_sprit: {fileID: -557243364, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
+  walk_clips:
+  - {fileID: 8300000, guid: 26dfe165b61580e4c8c888d179a6b7c7, type: 3}
+  - {fileID: 8300000, guid: 424831c53cf4ec24e96dcc7ba8dc64ff, type: 3}
+  broking_clip: {fileID: 8300000, guid: 8d4384d477f548048b18861b3536c688, type: 3}
+  broken_clip: {fileID: 8300000, guid: d00ba75fb5998a8448c8c7f8243dfbf6, type: 3}
+  backFaceTexture: 100
+  frontFaceTexture: 100
+  topFaceTexture: 16
+  bottomFaceTexture: 16
+  leftFaceTexture: 16
+  rightFaceTexture: 16
+  DrawMode: 7
+  GenerateTwoFaceWithAir: 0
+  OtherFaceCheck:
+  - FaceDirect: 0
+    checktype: 0
+    appointType: 0
+    appointDrawmode: 0
+    isCreateFace: 1
+  - FaceDirect: 0
+    checktype: 2
+    appointType: 0
+    appointDrawmode: 7
+    isCreateFace: 1
+  - FaceDirect: 1
+    checktype: 2
+    appointType: 0
+    appointDrawmode: 7
+    isCreateFace: 1

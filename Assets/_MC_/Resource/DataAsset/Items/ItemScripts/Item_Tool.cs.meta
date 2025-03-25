@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c292b067008fa98438d2d56a82ca7672
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - icon: {fileID: 21300000, guid: 60b3caffdfcb5c34c951618c6e988871, type: 3}
+  - Mouse0_clip: {instanceID: 0}
+  - Mouse2_clip: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
