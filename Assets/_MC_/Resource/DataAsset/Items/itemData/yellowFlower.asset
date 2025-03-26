@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 107dc6454ca6de04e817bb17ffabefc1, type: 3}
+  m_Script: {fileID: 11500000, guid: e8af1cb1cb7ce414080b1f90ac7ef600, type: 3}
   m_Name: yellowFlower
   m_EditorClassIdentifier: 
   itemName: yellowFlower
@@ -22,7 +22,6 @@ MonoBehaviour:
   candropBlock: 0
   IsOriented: 0
   isinteractable: 0
-  is2d: 1
   CanBeCover: 1
   NotSuspended: 1
   isDIYCollision: 1
@@ -30,6 +29,7 @@ MonoBehaviour:
     xRange: {x: 0.3, y: 0.7}
     yRange: {x: 0, y: 0.8}
     zRange: {x: 0.3, y: 0.7}
+  is2d: 1
   front_sprite: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
   sprite: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
   top_sprit: {fileID: -64636126, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -48,3 +48,6 @@ MonoBehaviour:
   DrawMode: 1
   GenerateTwoFaceWithAir: 0
   OtherFaceCheck: []
+  isTool: 0
+  canBreakBlockWithMouse1: 1
+  CustomRotation: {x: 0, y: 0, z: 0}

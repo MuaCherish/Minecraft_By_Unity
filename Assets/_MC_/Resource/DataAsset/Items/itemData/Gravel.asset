@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 107dc6454ca6de04e817bb17ffabefc1, type: 3}
+  m_Script: {fileID: 11500000, guid: e8af1cb1cb7ce414080b1f90ac7ef600, type: 3}
   m_Name: Gravel
   m_EditorClassIdentifier: 
   itemName: Gravel
@@ -22,7 +22,6 @@ MonoBehaviour:
   candropBlock: 1
   IsOriented: 0
   isinteractable: 0
-  is2d: 0
   CanBeCover: 0
   NotSuspended: 0
   isDIYCollision: 0
@@ -30,6 +29,7 @@ MonoBehaviour:
     xRange: {x: 0, y: 1}
     yRange: {x: 0, y: 1}
     zRange: {x: 0, y: 1}
+  is2d: 0
   front_sprite: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
   sprite: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
   top_sprit: {fileID: -1793245148, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
@@ -48,3 +48,6 @@ MonoBehaviour:
   DrawMode: 0
   GenerateTwoFaceWithAir: 0
   OtherFaceCheck: []
+  isTool: 0
+  canBreakBlockWithMouse1: 1
+  CustomRotation: {x: 0, y: 0, z: 0}

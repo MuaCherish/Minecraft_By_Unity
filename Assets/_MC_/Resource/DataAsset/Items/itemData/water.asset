@@ -9,12 +9,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c292b067008fa98438d2d56a82ca7672, type: 3}
+  m_Script: {fileID: 11500000, guid: e8af1cb1cb7ce414080b1f90ac7ef600, type: 3}
   m_Name: water
   m_EditorClassIdentifier: 
   itemName: water
   BlockClassfy: 3
   icon: {fileID: -154138583, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
-  isTool: 1
+  DestroyTime: 0
+  isSolid: 0
+  isTransparent: 0
+  canBeChoose: 0
+  candropBlock: 0
+  IsOriented: 0
+  isinteractable: 0
+  CanBeCover: 1
+  NotSuspended: 0
+  isDIYCollision: 0
+  CollosionRange:
+    xRange: {x: 0, y: 1}
+    yRange: {x: 0, y: 1}
+    zRange: {x: 0, y: 1}
+  is2d: 1
+  front_sprite: {fileID: -154138583, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  sprite: {fileID: -154138583, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  top_sprit: {fileID: -154138583, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  buttom_sprit: {fileID: -154138583, guid: fe60d5e3a95dcf24c8558f129842b003, type: 3}
+  walk_clips:
+  - {fileID: 0}
+  - {fileID: 0}
+  broking_clip: {fileID: 0}
+  broken_clip: {fileID: 0}
+  backFaceTexture: 255
+  frontFaceTexture: 255
+  topFaceTexture: 255
+  bottomFaceTexture: 255
+  leftFaceTexture: 255
+  rightFaceTexture: 255
+  DrawMode: 4
+  GenerateTwoFaceWithAir: 1
+  OtherFaceCheck: []
+  isTool: 0
   canBreakBlockWithMouse1: 1
-  isNeedRotation: 0
+  CustomRotation: {x: 0, y: 0, z: 0}
