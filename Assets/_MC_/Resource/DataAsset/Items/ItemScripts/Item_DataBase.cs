@@ -11,6 +11,24 @@ public class Item_Database : ScriptableObject
     public List<Item_Base> items = new List<Item_Base>();
 
     /// <summary>
+    /// 获取Item元素
+    /// </summary>
+    /// <returns></returns>
+    public Item_Base GetItem(byte _blockType)
+    {
+        return items[_blockType];
+    }
+
+    /// <summary>
+    /// 获取容量
+    /// </summary>
+    /// <returns></returns>
+    public int GetItemCount()
+    {
+        return items.Count;
+    }
+
+    /// <summary>
     /// 是否是工具
     /// </summary>
     /// <returns></returns>
