@@ -135,7 +135,8 @@ public class World : MonoBehaviour
     [Header("Material-方块类型 + 工具类型")]
     public Material material;
     public Material material_Water;
-    [Header("Block/Item信息")] public BlockType[] blocktypes;
+    [Header("Block/Item信息")] public BlockType[] blocktypes; 
+    public BlockType[] BackUp_blocktypes;
     [Header("BlockTexture(用于掉落物)")] public Texture2D atlasTexture;
 
     [Foldout("Chunk", true)]

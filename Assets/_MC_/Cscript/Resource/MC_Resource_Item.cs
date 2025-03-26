@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 单例类用来存储 ItemDataBase
 /// </summary>
-public static class MC_Resource_ItemData
+public static class MC_Resource_Item
 {
     private static Item_Database itemDatabase;
     private static readonly string DataBasePath = "ItemDataBase\\_Item_DataBase"; // 资源路径 (Resources 文件夹内)
