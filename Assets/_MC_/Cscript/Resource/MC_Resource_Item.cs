@@ -8,7 +8,7 @@ using UnityEngine;
 public static class MC_Resource_Item
 {
     private static Item_Database itemDatabase;
-    private static readonly string DataBasePath = "ItemDataBase\\_Item_DataBase"; // 资源路径 (Resources 文件夹内)
+    private static readonly string DataBasePath = "Item\\_Item_DataBase"; // 资源路径 (Resources 文件夹内)
 
     /// <summary>
     /// 获取 ItemDataBase 实例
