@@ -89,12 +89,12 @@ public class Chunk : MonoBehaviour
         //World
         world = _managerhub.world;
         managerhub = _managerhub;
-        caveWidth = world.cave_width;
+        caveWidth = world._biomeProperties.cave_width;
         //debug_CanLookCave = !world.debug_CanLookCave;
         BaseChunk = _BaseChunk;
-        noise3d_scale = world.noise3d_scale;
-        Normal_treecount = world.terrainLayerProbabilitySystem.Normal_treecount;
-        Forest_treecount = world.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
+        noise3d_scale = world._biomeProperties.noise3d_scale;
+        Normal_treecount = world._biomeProperties.terrainLayerProbabilitySystem.Normal_treecount;
+        Forest_treecount = world._biomeProperties.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
         //isSuperPlainMode = _isSuperPlainMode;
 
         //Self
@@ -102,7 +102,7 @@ public class Chunk : MonoBehaviour
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = world.material;
-        chunkObject.transform.SetParent(world.ChunkParent.transform);
+        chunkObject.transform.SetParent(SceneData.GetChunkParent().transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
@@ -168,12 +168,12 @@ public class Chunk : MonoBehaviour
         //World
         world = _managerhub.world;
         managerhub = _managerhub;
-        caveWidth = world.cave_width;
+        caveWidth = world._biomeProperties.cave_width;
         //debug_CanLookCave = !world.debug_CanLookCave;
         BaseChunk = _BaseChunk;
-        noise3d_scale = world.noise3d_scale;
-        Normal_treecount = world.terrainLayerProbabilitySystem.Normal_treecount;
-        Forest_treecount = world.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
+        noise3d_scale = world._biomeProperties.noise3d_scale;
+        Normal_treecount = world._biomeProperties.terrainLayerProbabilitySystem.Normal_treecount;
+        Forest_treecount = world._biomeProperties.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
         //isSuperPlainMode = _isSuperPlainMode;
         isSaving = true;
         EditList = _editList;
@@ -183,7 +183,7 @@ public class Chunk : MonoBehaviour
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = world.material;
-        chunkObject.transform.SetParent(world.ChunkParent.transform);
+        chunkObject.transform.SetParent(SceneData.GetChunkParent().transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
@@ -371,7 +371,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype, world._biomeProperties);
 
 
                     //矿洞噪声
@@ -411,7 +411,7 @@ public class Chunk : MonoBehaviour
                         }
                     }
                     //空气部分
-                    else if (y > noiseHigh && y > world.terrainLayerProbabilitySystem.sea_level)
+                    else if (y > noiseHigh && y > world._biomeProperties.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         //地上一层
@@ -423,42 +423,42 @@ public class Chunk : MonoBehaviour
                             {
 
                                 //灌木丛
-                                if (GetProbability(world.terrainLayerProbabilitySystem.Random_Bush))
+                                if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_Bush))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.Bush);
 
                                 }
                                 //BlueFlower
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_BlueFlower))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_BlueFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.BlueFlower);
 
                                 }
                                 //WhiteFlower_1
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower1))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower1))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_1);
 
                                 }
                                 //WhiteFlower_2
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower2))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower2))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_2);
 
                                 }
                                 //YellowFlower
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_YellowFlower))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_YellowFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.YellowFlower);
 
                                 }
                                 //草地雪碎片
-                                else if (y > world.terrainLayerProbabilitySystem.Snow_Level - 10)
+                                else if (y > world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10)
                                 {
                                     UpdateBlock(x, y, z, VoxelData.SnowPower);
                                 }
@@ -478,7 +478,7 @@ public class Chunk : MonoBehaviour
 
 
                             //沙子层
-                            else if (terrainFace == VoxelData.Sand && GetProbability(world.terrainLayerProbabilitySystem.Random_Bamboo))
+                            else if (terrainFace == VoxelData.Sand && GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_Bamboo))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Air) ;
@@ -502,7 +502,7 @@ public class Chunk : MonoBehaviour
                     }
 
                     //判断水面
-                    else if (y > noiseHigh && y - 1 < world.terrainLayerProbabilitySystem.sea_level)
+                    else if (y > noiseHigh && y - 1 < world._biomeProperties.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         UpdateBlock(x, y, z, VoxelData.Water) ;
@@ -518,7 +518,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //沙漠气候
-                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition,world._biomeProperties) == TerrainData.Biome_Dessert)
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
@@ -529,13 +529,13 @@ public class Chunk : MonoBehaviour
                             else
                             {
                                 //100雪地
-                                if (y > world.terrainLayerProbabilitySystem.Snow_Level)
+                                if (y > world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level)
                                 {
                                     UpdateBlock(x, y, z, VoxelData.Snow) ;
                                 }
 
                                 //90~100概率生成雪地
-                                else if ((y > (world.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(70))
+                                else if ((y > (world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(70))
                                 {
                                     UpdateBlock(x, y, z, VoxelData.Snow) ;
                                 }
@@ -543,11 +543,11 @@ public class Chunk : MonoBehaviour
 
 
                                 //高于海平面
-                                else if (y > world.terrainLayerProbabilitySystem.sea_level)
+                                else if (y > world._biomeProperties.terrainLayerProbabilitySystem.sea_level)
                                 {
 
                                     //是否是菌丝体
-                                    if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Marsh)
+                                    if (MC_Static_Noise.GetBiomeType(x, z, myposition,world._biomeProperties) == TerrainData.Biome_Marsh)
                                     {
                                         UpdateBlock(x, y, z, VoxelData.Mycelium) ;
                                     }
@@ -560,7 +560,7 @@ public class Chunk : MonoBehaviour
                                 else
                                 {
 
-                                    if (world.GetSimpleNoiseWithOffset(x, z, myposition, new Vector2(111f, 222f), 0.1f) > 0.5f)
+                                    if (MC_Static_Noise.GetSimpleNoiseWithOffset(x, z, myposition, new Vector2(111f, 222f), 0.1f) > 0.5f)
                                     {
 
                                         UpdateBlock(x, y, z, VoxelData.Sand) ;
@@ -582,7 +582,7 @@ public class Chunk : MonoBehaviour
                         else if (y > noiseHigh - 7)
                         {
                             //沙漠判断
-                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, world._biomeProperties) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -596,7 +596,7 @@ public class Chunk : MonoBehaviour
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
                         {
                             //沙漠判断
-                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, world._biomeProperties) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -625,7 +625,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //煤炭
-                            if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Coal))
+                            if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Stone) ;
@@ -634,7 +634,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //铁
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Iron))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Iron) ;
@@ -642,7 +642,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //金
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Gold))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Gold) ;
@@ -650,7 +650,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //青金石
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Blue_Crystal) ;
@@ -658,7 +658,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //钻石
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Diamond))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Diamond) ;
@@ -763,7 +763,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype, world._biomeProperties);
                     //矿洞噪声
                     float noise3d = GetCaveNoise(x, y, z);
 
@@ -796,14 +796,14 @@ public class Chunk : MonoBehaviour
                         }
                     }
                     //空气部分
-                    else if (y > noiseHigh && y > world.terrainLayerProbabilitySystem.sea_level)
+                    else if (y > noiseHigh && y > world._biomeProperties.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         //地上一层
                         if (y - 1 < noiseHigh)
                         {
 
-                            if (terrainFace == VoxelData.Sand && GetProbability(world.terrainLayerProbabilitySystem.Random_Bamboo))
+                            if (terrainFace == VoxelData.Sand && GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_Bamboo))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Air) ;
@@ -845,7 +845,7 @@ public class Chunk : MonoBehaviour
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
                         {
                             //沙漠判断
-                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, world._biomeProperties) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -869,7 +869,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //煤炭
-                            if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Coal))
+                            if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Stone) ;
@@ -878,7 +878,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //铁
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Iron))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Iron) ;
@@ -886,7 +886,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //金
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Gold))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Gold) ;
@@ -894,7 +894,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //青金石
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Blue_Crystal) ;
@@ -902,7 +902,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //钻石
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Diamond))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Diamond) ;
@@ -965,7 +965,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype, world._biomeProperties);
 
 
                     //矿洞噪声
@@ -1001,7 +1001,7 @@ public class Chunk : MonoBehaviour
                         }
                     }
                     //空气部分
-                    else if (y > noiseHigh && y > world.terrainLayerProbabilitySystem.sea_level)
+                    else if (y > noiseHigh && y > world._biomeProperties.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         //地上一层
@@ -1013,42 +1013,42 @@ public class Chunk : MonoBehaviour
                             {
 
                                 //灌木丛
-                                if (GetProbability(world.terrainLayerProbabilitySystem.Random_Bush))
+                                if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_Bush))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.Bush) ;
 
                                 }
                                 //BlueFlower
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_BlueFlower))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_BlueFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.BlueFlower) ;
 
                                 }
                                 //WhiteFlower_1
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower1))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower1))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_1) ;
 
                                 }
                                 //WhiteFlower_2
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower2))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower2))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_2) ;
 
                                 }
                                 //YellowFlower
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_YellowFlower))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_YellowFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.YellowFlower);
 
                                 }
                                 //草地雪碎片
-                                else if (y > world.terrainLayerProbabilitySystem.Snow_Level - 10)
+                                else if (y > world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10)
                                 {
                                     UpdateBlock(x, y, z, VoxelData.SnowPower);
                                 }
@@ -1068,7 +1068,7 @@ public class Chunk : MonoBehaviour
 
 
                             //沙子层
-                            else if (terrainFace == VoxelData.Sand && GetProbability(world.terrainLayerProbabilitySystem.Random_Bamboo))
+                            else if (terrainFace == VoxelData.Sand && GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_Bamboo))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Air) ;
@@ -1092,7 +1092,7 @@ public class Chunk : MonoBehaviour
                     }
 
                     //判断水面
-                    else if (y > noiseHigh && y - 1 < world.terrainLayerProbabilitySystem.sea_level)
+                    else if (y > noiseHigh && y - 1 < world._biomeProperties.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         UpdateBlock(x, y, z, VoxelData.Water) ;
@@ -1143,7 +1143,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //煤炭
-                            if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Coal))
+                            if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Stone) ;
@@ -1152,7 +1152,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //铁
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Iron))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Iron) ;
@@ -1160,7 +1160,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //金
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Gold))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Gold) ;
@@ -1168,7 +1168,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //青金石
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Blue_Crystal) ;
@@ -1176,7 +1176,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //钻石
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Diamond))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Diamond) ;
@@ -1211,7 +1211,7 @@ public class Chunk : MonoBehaviour
             int random_x = rand.Next(2, TerrainData.ChunkWidth - 2);
             int random_z = rand.Next(2, TerrainData.ChunkWidth - 2);
             int random_y = TerrainData.ChunkHeight;
-            int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+            int random_Tree_High = rand.Next(world._biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, world._biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
             //如果可以生成树桩
             //向上延伸树干
@@ -1290,7 +1290,7 @@ public class Chunk : MonoBehaviour
 
     public void GenerateTree(int _x, int _y, int _z)
     {
-        int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+        int random_Tree_High = rand.Next(world._biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, world._biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
 
         for (int i = 0; i <= random_Tree_High; i++)
@@ -1336,7 +1336,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = world.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype, world._biomeProperties);
 
 
                     //矿洞噪声
@@ -1389,42 +1389,42 @@ public class Chunk : MonoBehaviour
                             {
 
                                 //灌木丛
-                                if (GetProbability(world.terrainLayerProbabilitySystem.Random_Bush))
+                                if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_Bush))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.Bush) ;
 
                                 }
                                 //BlueFlower
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_BlueFlower))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_BlueFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.BlueFlower) ;
 
                                 }
                                 //WhiteFlower_1
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower1))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower1))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_1) ;
 
                                 }
                                 //WhiteFlower_2
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_WhiteFlower2))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower2))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_2) ;
 
                                 }
                                 //YellowFlower
-                                else if (GetProbability(world.terrainLayerProbabilitySystem.Random_YellowFlower))
+                                else if (GetProbability(world._biomeProperties.terrainLayerProbabilitySystem.Random_YellowFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.YellowFlower) ;
 
                                 }
                                 //草地雪碎片
-                                else if (y > world.terrainLayerProbabilitySystem.Snow_Level - 10)
+                                else if (y > world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10)
                                 {
                                     UpdateBlock(x, y, z, VoxelData.SnowPower) ;
                                 }
@@ -1475,13 +1475,13 @@ public class Chunk : MonoBehaviour
                         {
 
                             //100雪地
-                            if (y > world.terrainLayerProbabilitySystem.Snow_Level)
+                            if (y > world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Snow) ;
                             }
 
                             //90~100概率生成雪地
-                            else if ((y > (world.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(70))
+                            else if ((y > (world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(70))
                             {
                                 UpdateBlock(x, y, z, VoxelData.Snow) ;
                             }
@@ -1498,7 +1498,7 @@ public class Chunk : MonoBehaviour
                             else
                             {
 
-                                if (world.GetSimpleNoiseWithOffset(x, z, myposition, new Vector2(111f, 222f), 0.1f) > 0.5f)
+                                if (MC_Static_Noise.GetSimpleNoiseWithOffset(x, z, myposition, new Vector2(111f, 222f), 0.1f) > 0.5f)
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.Sand) ;
@@ -1519,7 +1519,7 @@ public class Chunk : MonoBehaviour
                         else if (y > noiseHigh - 7)
                         {
                             //沙漠判断
-                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, world._biomeProperties) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -1533,7 +1533,7 @@ public class Chunk : MonoBehaviour
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
                         {
                             //沙漠判断
-                            if (world.GetBiomeType(x, z, myposition) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, world._biomeProperties) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -1562,7 +1562,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //煤炭
-                            if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Coal))
+                            if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Stone) ;
@@ -1571,7 +1571,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //铁
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Iron))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Iron) ;
@@ -1579,7 +1579,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //金
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Gold))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Gold) ;
@@ -1587,7 +1587,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //青金石
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Blue_Crystal) ;
@@ -1595,7 +1595,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //钻石
-                            else if (GetProbabilityTenThousandth(world.terrainLayerProbabilitySystem.Random_Diamond))
+                            else if (GetProbabilityTenThousandth(world._biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Diamond) ;
@@ -1694,7 +1694,7 @@ public class Chunk : MonoBehaviour
     void CreateTree(int _x, int _z)
     {
         //密林群系
-        if (world.GetBiomeType(_x, _z, myposition) == TerrainData.Biome_Forest)
+        if (MC_Static_Noise.GetBiomeType(_x, _z, myposition, world._biomeProperties) == TerrainData.Biome_Forest)
         {
             //[确定XZ]xoz上随便选择5个点
             while (Forest_treecount-- != 0)
@@ -1703,7 +1703,7 @@ public class Chunk : MonoBehaviour
                 int random_x = rand.Next(2, TerrainData.ChunkWidth - 2);
                 int random_z = rand.Next(2, TerrainData.ChunkWidth - 2);
                 int random_y = TerrainData.ChunkHeight;
-                int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+                int random_Tree_High = rand.Next(world._biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, world._biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
                 //如果可以生成树桩
                 //向上延伸树干
@@ -1750,7 +1750,7 @@ public class Chunk : MonoBehaviour
                 int random_x = rand.Next(2, TerrainData.ChunkWidth - 2);
                 int random_z = rand.Next(2, TerrainData.ChunkWidth - 2);
                 int random_y = TerrainData.ChunkHeight;
-                int random_Tree_High = rand.Next(world.terrainLayerProbabilitySystem.TreeHigh_min, world.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+                int random_Tree_High = rand.Next(world._biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, world._biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
                 //如果可以生成树桩
                 //向上延伸树干
@@ -1839,7 +1839,7 @@ public class Chunk : MonoBehaviour
             CreateLeaves(_x, _y + 1, _z);
 
             //生成雪的判定
-            if (((_y + 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < TerrainData.ChunkHeight))
+            if (((_y + 1) >= world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < TerrainData.ChunkHeight))
             {
                 UpdateBlock(_x, _y + 2, _z, VoxelData.SnowPower) ;
             }
@@ -1857,7 +1857,7 @@ public class Chunk : MonoBehaviour
             CreateLeaves(_x, _y + 1, _z - 1);
 
             //生成雪的判定
-            if (((_y + 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < TerrainData.ChunkHeight))
+            if (((_y + 1) >= world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < TerrainData.ChunkHeight))
             {
                 UpdateBlock(_x, _y + 2, _z + 1, VoxelData.SnowPower);
                 UpdateBlock(_x - 1, _y + 2, _z, VoxelData.SnowPower);
@@ -1875,7 +1875,7 @@ public class Chunk : MonoBehaviour
         CreateLeaves(_x, _y, _z + 1);
 
         //生成雪的判定
-        if (((_y) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 1) < TerrainData.ChunkHeight) && GetBlock(_x - 1, _y + 1, _z).voxelType != VoxelData.Leaves)
+        if (((_y) >= world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 1) < TerrainData.ChunkHeight) && GetBlock(_x - 1, _y + 1, _z).voxelType != VoxelData.Leaves)
         {
 
             UpdateBlock(_x - 1, _y + 1, _z, VoxelData.SnowPower);
@@ -1912,7 +1912,7 @@ public class Chunk : MonoBehaviour
         CreateLeaves(_x + 1, _y - 1, _z - 2);
 
         //Snow
-        if ((_y - 1) >= world.terrainLayerProbabilitySystem.Snow_Level - 10f)
+        if ((_y - 1) >= world._biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f)
         {
             UpdateBlock(_x, _y, _z + 2, VoxelData.SnowPower);
             UpdateBlock(_x - 1, _y, _z + 2, VoxelData.SnowPower);

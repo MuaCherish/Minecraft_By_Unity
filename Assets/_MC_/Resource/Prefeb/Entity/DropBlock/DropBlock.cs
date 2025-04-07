@@ -405,7 +405,7 @@ public class DropBlock: MonoBehaviour, IEntityBrain
         bool foundAir = false;
         foreach (var (direction, force) in directions)
         {
-            if (managerhub.world.GetBlockType(Component_Physics.GetPoint_Direct_1m(direction)) == VoxelData.Air)
+            if (managerhub.Service_Chunk.GetBlockType(Component_Physics.GetPoint_Direct_1m(direction)) == VoxelData.Air)
             {
                 Component_Physics.CloseCollisionForAWhile(CloseCollisionTime_Surrond);
                 _Force = force;

@@ -74,7 +74,7 @@ public class Rain : MonoBehaviour
             Vector3 particleVelocity = particles[i].velocity;
 
             // 碰撞检测：如果粒子即将碰撞地面
-            if (world.CollisionCheckForVoxel(new Vector3(particlePosition.x, particlePosition.y + Y_Offset, particlePosition.z)))
+            if (managerhub.Service_Chunk.CollisionCheckForVoxel(new Vector3(particlePosition.x, particlePosition.y + Y_Offset, particlePosition.z)))
             {
                 // Y轴速度瞬间归零，表示粒子“落地”
                 particleVelocity.y = 0f;

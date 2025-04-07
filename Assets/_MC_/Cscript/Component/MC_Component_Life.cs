@@ -145,14 +145,14 @@ namespace MCEntity
                 return;
 
             //提前返回-返回255
-            if (world.GetBlockType(Component_Physics.EyesPoint) == 255)
+            if (managerhub.Service_Chunk.GetBlockType(Component_Physics.EyesPoint) == 255)
                 return;
 
             // 默认颜色
             Color targetColor = save_Color;  
 
             // 如果被挤压
-            if (world.blocktypes[world.GetBlockType(Component_Physics.EyesPoint)].isSolid)
+            if (world.blocktypes[managerhub.Service_Chunk.GetBlockType(Component_Physics.EyesPoint)].isSolid)
                 targetColor = Color_UnderBlock;
             // 如果在水里
             else if (Component_Physics.IsInTheWater(Component_Physics.HeadPoint))
@@ -338,7 +338,7 @@ namespace MCEntity
 
         void _ReferUpdate_CheckOxy()
         {
-            if (world.GetBlockType(Component_Physics.EyesPoint) == VoxelData.Water && Coroutine_CheckOxy == null)
+            if (managerhub.Service_Chunk.GetBlockType(Component_Physics.EyesPoint) == VoxelData.Water && Coroutine_CheckOxy == null)
             {
                 isEntity_Dive = true;
                 Coroutine_CheckOxy = StartCoroutine(_CheckOxy());
@@ -352,7 +352,7 @@ namespace MCEntity
             while (true)
             {
                 //提前返回-浮出水面
-                if (world.GetBlockType(Component_Physics.EyesPoint) != VoxelData.Water)
+                if (managerhub.Service_Chunk.GetBlockType(Component_Physics.EyesPoint) != VoxelData.Water)
                 {
                     EntityOxygen = 10;
                     Coroutine_CheckOxy = null;

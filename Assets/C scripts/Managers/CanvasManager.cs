@@ -1008,7 +1008,7 @@ public class CanvasManager : MonoBehaviour
         while (true)
         {
             // 等待世界保存完成以及 updateEditNumberCoroutine 协程执行完毕
-            if (world.isFinishSaving && managerhub.world.updateEditNumberCoroutine == null)
+            if (world.isFinishSaving && managerhub.world.isFinishUpdateEditNumber == true)
             {
                 // 切换回菜单界面
                 SwitchToUI(CanvasData.ui菜单);
@@ -1159,7 +1159,7 @@ public class CanvasManager : MonoBehaviour
 
 
         //SwimmingScreen
-        if (world.GetBlockType(Camera.transform.position + new Vector3(0f, 0.2f, 0f)) == VoxelData.Water)
+        if (managerhub.Service_Chunk.GetBlockType(Camera.transform.position + new Vector3(0f, 0.2f, 0f)) == VoxelData.Water)
         {
             //入水
             if (hasExec_InWater == false)
@@ -1233,7 +1233,7 @@ public class CanvasManager : MonoBehaviour
 
 
         //SwimmingScreen
-        if (world.GetBlockType(Camera.transform.position) == VoxelData.Water)
+        if (managerhub.Service_Chunk.GetBlockType(Camera.transform.position) == VoxelData.Water)
         {
             //入水
             Swimming_Screen.SetActive(true);
@@ -1839,9 +1839,9 @@ public class CanvasManager : MonoBehaviour
         player.InitPlayerLocation();
         player.transform.rotation = Quaternion.identity;
 
-        world.Update_CenterChunks(false);
+        managerhub.Service_Chunk.Update_CenterChunks(false);
 
-        world.HideFarChunks();
+        managerhub.Service_Chunk.HideFarChunks();
 
         //if (managerhub.timeManager.gameObject.activeSelf)
         //{

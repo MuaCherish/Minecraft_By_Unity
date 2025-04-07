@@ -189,10 +189,10 @@ namespace MCEntity
             {
                 if (isCollisionLocked) return false;
 
-                if (managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, -Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, -Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, Delta, Delta)))
+                if (managerhub.Service_Chunk.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, -Delta, Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, -Delta, Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, Delta, Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, Delta, Delta)))
                 {
 
                     //进行一次微调
@@ -233,10 +233,10 @@ namespace MCEntity
             {
                 if (isCollisionLocked) return false;
 
-                if (managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, -Delta, -Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, -Delta, -Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, Delta, -Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, Delta, -Delta)))
+                if (managerhub.Service_Chunk.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, -Delta, -Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, -Delta, -Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, Delta, -Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, Delta, -Delta)))
                 {
 
                     //进行一次微调
@@ -277,10 +277,10 @@ namespace MCEntity
             {
                 if (isCollisionLocked) return false;
 
-                if (managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(-Delta, -Delta, -Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(-Delta, Delta, -Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(-Delta, -Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(-Delta, Delta, Delta)))
+                if (managerhub.Service_Chunk.CollisionCheckForVoxel(前_左上 + new Vector3(-Delta, -Delta, -Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_左下 + new Vector3(-Delta, Delta, -Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_左上 + new Vector3(-Delta, -Delta, Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_左下 + new Vector3(-Delta, Delta, Delta)))
                 {
 
                     //进行一次微调
@@ -321,10 +321,10 @@ namespace MCEntity
             {
                 if (isCollisionLocked) return false;
 
-                if (managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(Delta, -Delta, -Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(Delta, Delta, -Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(Delta, -Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(Delta, Delta, Delta)))
+                if (managerhub.Service_Chunk.CollisionCheckForVoxel(前_右上 + new Vector3(Delta, -Delta, -Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_右下 + new Vector3(Delta, Delta, -Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右上 + new Vector3(Delta, -Delta, Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右下 + new Vector3(Delta, Delta, Delta)))
                 {
 
                     
@@ -369,10 +369,10 @@ namespace MCEntity
             {
                 if (isCollisionLocked) return false;
 
-                if (managerhub.world.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, Delta, -Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, Delta, -Delta)))
+                if (managerhub.Service_Chunk.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, Delta, Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, Delta, -Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, Delta, Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, Delta, -Delta)))
                 {
 
                     //进行一次微调
@@ -414,10 +414,10 @@ namespace MCEntity
                 if (isCollisionLocked) return false;
 
                 // 进行碰撞检测
-                if (managerhub.world.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, -Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, -Delta, -Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, -Delta, Delta)) ||
-                    managerhub.world.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, -Delta, -Delta)))
+                if (managerhub.Service_Chunk.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, -Delta, Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, -Delta, -Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, -Delta, Delta)) ||
+                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, -Delta, -Delta)))
                 {
 
                     //进行一次微调
@@ -563,7 +563,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_x, _y, _00.z + Delta);
 
                             //获取方块类型
-                            byte _targetType = managerhub.world.GetBlockType(_pos);
+                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -600,7 +600,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_x, _y, _00.z - Delta);
 
                             //获取方块类型
-                            byte _targetType = managerhub.world.GetBlockType(_pos);
+                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -638,7 +638,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_00.x - Delta, _y, _z);
 
                             //获取方块类型
-                            byte _targetType = managerhub.world.GetBlockType(_pos);
+                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -674,7 +674,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_00.x + Delta, _y, _z);
 
                             //获取方块类型
-                            byte _targetType = managerhub.world.GetBlockType(_pos);
+                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -710,7 +710,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_x, _00.y + Delta, _z);
 
                             //获取方块类型
-                            byte _targetType = managerhub.world.GetBlockType(_pos);
+                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -747,7 +747,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_x, _00.y - Delta, _z);
 
                             //获取方块类型
-                            byte _targetType = managerhub.world.GetBlockType(_pos);
+                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -1188,7 +1188,7 @@ namespace MCEntity
         {
             get
             {
-                return managerhub.world.GetBlockType(FootPoint);
+                return managerhub.Service_Chunk.GetBlockType(FootPoint);
             }
         }
 
@@ -1295,7 +1295,7 @@ namespace MCEntity
         /// </summary>
         public bool IsInTheWater(Vector3 _pos)
         {
-            if (managerhub.world.GetBlockType(_pos) == VoxelData.Water)
+            if (managerhub.Service_Chunk.GetBlockType(_pos) == VoxelData.Water)
             {
                 return true;
             }

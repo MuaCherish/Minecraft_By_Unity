@@ -198,7 +198,7 @@ public class MC_Component_Registration : MonoBehaviour
         }
 
         // ½ÅÏÂÇø¿é±»Òþ²Ø
-        if (managerhub.world.GetChunkObject(Component_Physics.FootPoint).isShow == false)
+        if (managerhub.Service_Chunk.GetChunkObject(Component_Physics.FootPoint).isShow == false)
         {
             LogOffEntity();
         }

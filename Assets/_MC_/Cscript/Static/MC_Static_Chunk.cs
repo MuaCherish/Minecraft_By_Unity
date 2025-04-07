@@ -21,6 +21,25 @@ public class MC_Static_Chunk
     }
 
     /// <summary>
+    /// managerhub 
+    /// </summary>
+    public static ManagerHub managerhub
+    {
+        get
+        {
+            if (_managerhub == null)
+            {
+                _managerhub = SceneData.GetManagerhub(); // 在第一次访问时创建
+            }
+            return _managerhub;
+        }
+    }
+
+    private static ManagerHub _managerhub;  // 静态变量存储 World 实例
+
+
+
+    /// <summary>
     /// World
     /// </summary>
     public static World world
@@ -45,7 +64,7 @@ public class MC_Static_Chunk
     /// <returns></returns>
     public static bool CheckSolid(Vector3 _pos)
     {
-        byte _BlockType = world.GetBlockType(_pos);
+        byte _BlockType = managerhub.Service_Chunk.GetBlockType(_pos);
 
         if (_BlockType == 255 || world.blocktypes[_BlockType].isSolid)
         {

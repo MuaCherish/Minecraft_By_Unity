@@ -182,7 +182,7 @@ public class MC_Service_Entity : MonoBehaviour
         RandomSpawnPos = MC_Static_Math.GetRandomPointInDonut(playerPos, spawnRadiusRange);
 
         // 调用World的获取可用出生点函数
-        world.GetSpawnPos(RandomSpawnPos, out List<Vector3> _Result);
+        managerhub.Service_Chunk.GetSpawnPos(RandomSpawnPos, out List<Vector3> _Result);
 
         // ForeachList: 判断坐标是否可生成 [不在玩家视锥体内] [距离玩家的Y在合适范围]
         foreach (var _pos in _Result)
@@ -204,7 +204,7 @@ public class MC_Service_Entity : MonoBehaviour
         //不能走通
         if(!MC_Static_Navigation.PathCanNavigate(_pos, _playerPos))
         {
-            print("路径不能走通");
+            //print("路径不能走通");
             _Pass = false;
         }
 
@@ -298,7 +298,7 @@ public class MC_Service_Entity : MonoBehaviour
         }
 
         //提前返回-当前坐标没有区块或者
-        if (!world.TryGetChunkObject(_Startpos, out Chunk chunktemp))
+        if (!managerhub.Service_Chunk.TryGetChunkObject(_Startpos, out Chunk chunktemp))
         {
             _Result = null;
             return false;

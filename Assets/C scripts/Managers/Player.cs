@@ -475,7 +475,7 @@ public class Player : MonoBehaviour
         Vector3 RelaPosition = GetRelaPos(cam.position);
         Vector3 _ChunkLocation = GetRelaChunkLocation(cam.position);
         //print($"RelaPosition: {RelaPosition} , ChunkLocation = {_ChunkLocation}");
-        float NoiseY = managerhub.world.GetTotalNoiseHigh_Biome((int)RelaPosition.x, (int)RelaPosition.z, new Vector3((int)_ChunkLocation.x * 16f, 0f, (int)_ChunkLocation.z * 16f), managerhub.world.worldSetting.worldtype);
+        float NoiseY = MC_Static_Noise.GetTotalNoiseHigh_Biome((int)RelaPosition.x, (int)RelaPosition.z, new Vector3((int)_ChunkLocation.x * 16f, 0f, (int)_ChunkLocation.z * 16f), managerhub.world.worldSetting.worldtype, managerhub.world._biomeProperties);
 
         //print($"PlayerY：{playerY} , NoiseY：{NoiseY} , 差: {NoiseY - playerY}");
 
@@ -895,7 +895,7 @@ public class Player : MonoBehaviour
 
 
         // 如果在水中按下跳跃键 && leg低于水面，触发跳跃请求 
-        if (isSwiming && Input.GetKey(KeyCode.Space) && (leg.position.y - 0.1f < world.terrainLayerProbabilitySystem.sea_level))
+        if (isSwiming && Input.GetKey(KeyCode.Space) && (leg.position.y - 0.1f < world._biomeProperties.terrainLayerProbabilitySystem.sea_level))
         {
 
             jumpRequest = true;
@@ -991,7 +991,7 @@ public class Player : MonoBehaviour
             MC_RayCastStruct _rayCast = MC_Static_Raycast.RayCast(managerhub,MC_RayCast_FindType.AllFind,cam.position, cam.forward, reach, -1, checkIncrement);
             test_Normal = _rayCast.hitNormal;
 
-            if (_rayCast.isHit == 1 && hasExec_isChangedBlock && world.blocktypes[world.GetBlockType(_rayCast.hitPoint)].canBeChoose)
+            if (_rayCast.isHit == 1 && hasExec_isChangedBlock && world.blocktypes[managerhub.Service_Chunk.GetBlockType(_rayCast.hitPoint)].canBeChoose)
             {
                 OldPointLocation = new Vector3(Mathf.FloorToInt(_rayCast.hitPoint.x), Mathf.FloorToInt(_rayCast.hitPoint.y), Mathf.FloorToInt(_rayCast.hitPoint.z));
                 hasExec_isChangedBlock = false;
@@ -1047,7 +1047,7 @@ public class Player : MonoBehaviour
             {
                 //Vector3 RayCast = RayCast_last();
                 //Vector3 _raycastNow = RayCast_now();
-                byte _targettype = world.GetBlockType(_rayCast.hitPoint);
+                byte _targettype = managerhub.Service_Chunk.GetBlockType(_rayCast.hitPoint);
                 byte _selecttype = managerhub.backpackManager.slots[selectindex].blockId;
 
                 //右键可互动方块
@@ -1143,12 +1143,12 @@ public class Player : MonoBehaviour
                             //Edit
                             if (managerhub.world.blocktypes[point_Block_type].CanBeCover)
                             {
-                                world.GetChunkObject(_rayCast.hitPoint).EditData(_rayCast.hitPoint, backpackmanager.slots[selectindex].blockId);
+                                managerhub.Service_Chunk.GetChunkObject(_rayCast.hitPoint).EditData(_rayCast.hitPoint, backpackmanager.slots[selectindex].blockId);
 
                             }
                             else
                             {
-                                world.GetChunkObject(_rayCast.hitPoint_Previous).EditData(_rayCast.hitPoint_Previous, backpackmanager.slots[selectindex].blockId);
+                                managerhub.Service_Chunk.GetChunkObject(_rayCast.hitPoint_Previous).EditData(_rayCast.hitPoint_Previous, backpackmanager.slots[selectindex].blockId);
 
                             }
 
@@ -1204,7 +1204,7 @@ public class Player : MonoBehaviour
                             if (_targettype == VoxelData.TNT)
                             {
                                 //消除方块
-                                var chunkObject = world.GetChunkObject(_rayCast.hitPoint);
+                                var chunkObject = managerhub.Service_Chunk.GetChunkObject(_rayCast.hitPoint);
                                 chunkObject.EditData(_rayCast.hitPoint, VoxelData.Air);
 
                                 CreateTNT(_rayCast.hitPoint, false);
@@ -1300,7 +1300,7 @@ public class Player : MonoBehaviour
         //    print("point_Block_type == 255");
         //    yield break;
         //}
-        byte theBlockwhichBeBrokenType = managerhub.world.GetBlockType(_HitSrtuct.hitPoint);
+        byte theBlockwhichBeBrokenType = managerhub.Service_Chunk.GetBlockType(_HitSrtuct.hitPoint);
 
         if (theBlockwhichBeBrokenType == 255)
         {
@@ -1416,7 +1416,7 @@ public class Player : MonoBehaviour
 
 
         //World
-        var chunkObject = world.GetChunkObject(_HitSrtuct.hitPoint);
+        var chunkObject = managerhub.Service_Chunk.GetChunkObject(_HitSrtuct.hitPoint);
         chunkObject.EditData(_HitSrtuct.hitPoint, VoxelData.Air);
 
     }
@@ -1624,7 +1624,7 @@ public class Player : MonoBehaviour
             int posY = Mathf.FloorToInt(_rayCast.hitPoint.y);
             int posZ = Mathf.FloorToInt(_rayCast.hitPoint.z);
             Vector3 NowHighLightBlockPos = new Vector3(posX, posY, posZ);
-            point_Block_type = world.GetBlockType(_rayCast.hitPoint);
+            point_Block_type = managerhub.Service_Chunk.GetBlockType(_rayCast.hitPoint);
 
 
             //如果不一样则重新放置
@@ -1798,7 +1798,7 @@ public class Player : MonoBehaviour
         // 位置调整，防止穿模
         if (isGrounded && hasExec_AdjustPlayerToGround)
         {
-            if (!world.blocktypes[world.GetBlockType(foot.position)].isDIYCollision)
+            if (!world.blocktypes[managerhub.Service_Chunk.GetBlockType(foot.position)].isDIYCollision)
             {
                 Vector3 myposition = transform.position;
                 Vector3 Vec = GetRelaPos(foot.position); // 获取脚部应有的Y坐标
@@ -1945,7 +1945,7 @@ public class Player : MonoBehaviour
 
             managerhub.world.Start_Position = new Vector3(GetRealChunkLocation(managerhub.world.Start_Position).x, TerrainData.ChunkHeight - 2, GetRealChunkLocation(managerhub.world.Start_Position).z);
             //print($"start: {managerhub.world.Start_Position}");
-            managerhub.world.Start_Position = managerhub.world.AddressingBlock(managerhub.world.Start_Position, 3);
+            managerhub.world.Start_Position = managerhub.Service_Chunk.AddressingBlock(managerhub.world.Start_Position, 3);
 
         }
         //print($"end: {managerhub.world.Start_Position}");
@@ -2080,10 +2080,10 @@ public class Player : MonoBehaviour
     {
 
         if (
-            world.CollisionCheckForVoxel(down_左上) ||
-            world.CollisionCheckForVoxel(down_右上) ||
-            world.CollisionCheckForVoxel(down_左下) ||
-            world.CollisionCheckForVoxel(down_右下)
+            managerhub.Service_Chunk.CollisionCheckForVoxel(down_左上) ||
+            managerhub.Service_Chunk.CollisionCheckForVoxel(down_右上) ||
+            managerhub.Service_Chunk.CollisionCheckForVoxel(down_左下) ||
+            managerhub.Service_Chunk.CollisionCheckForVoxel(down_右下)
 
             )
         {
@@ -2110,10 +2110,10 @@ public class Player : MonoBehaviour
     {
 
         if (
-            world.CollisionCheckForVoxel(up_左上) ||
-            world.CollisionCheckForVoxel(up_右上) ||
-            world.CollisionCheckForVoxel(up_左下) ||
-            world.CollisionCheckForVoxel(up_右下)
+            managerhub.Service_Chunk.CollisionCheckForVoxel(up_左上) ||
+            managerhub.Service_Chunk.CollisionCheckForVoxel(up_右上) ||
+            managerhub.Service_Chunk.CollisionCheckForVoxel(up_左下) ||
+            managerhub.Service_Chunk.CollisionCheckForVoxel(up_右下)
            )
         {
 
@@ -2301,11 +2301,11 @@ public class Player : MonoBehaviour
         get
         {
             //如果world返回true，则碰撞
-            if (world.CollisionCheckForVoxel(front_左上) || 
-                world.CollisionCheckForVoxel(front_右上) || 
-                world.CollisionCheckForVoxel(front_左下) || 
-                world.CollisionCheckForVoxel(front_右下) ||
-                world.CollisionCheckForVoxel(front_Center))
+            if (managerhub.Service_Chunk.CollisionCheckForVoxel(front_左上) || 
+                managerhub.Service_Chunk.CollisionCheckForVoxel(front_右上) || 
+                managerhub.Service_Chunk.CollisionCheckForVoxel(front_左下) || 
+                managerhub.Service_Chunk.CollisionCheckForVoxel(front_右下) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(front_Center))
             {
                 return true;
             }
@@ -2314,11 +2314,11 @@ public class Player : MonoBehaviour
             else if (isSquating)
             {
                 //(左下固体 && 左下延伸不是固体) || (右下固体 && 右下延伸不是固体)
-                if ((world.CollisionCheckForVoxel(down_左下) && !world.CollisionCheckForVoxel(new Vector3(down_左下.x, down_左下.y, down_左下.z + extend_delta))) || (world.CollisionCheckForVoxel(down_右下) && !world.CollisionCheckForVoxel(new Vector3(down_右下.x, down_右下.y, down_右下.z + extend_delta))))
+                if ((managerhub.Service_Chunk.CollisionCheckForVoxel(down_左下) && !managerhub.Service_Chunk.CollisionCheckForVoxel(new Vector3(down_左下.x, down_左下.y, down_左下.z + extend_delta))) || (managerhub.Service_Chunk.CollisionCheckForVoxel(down_右下) && !managerhub.Service_Chunk.CollisionCheckForVoxel(new Vector3(down_右下.x, down_右下.y, down_右下.z + extend_delta))))
                 {
 
                     return true;
-
+                     
                 }
                 else
                     return false;
@@ -2360,11 +2360,11 @@ public class Player : MonoBehaviour
             //}
 
             if (
-                world.CollisionCheckForVoxel(back_左上) ||
-                world.CollisionCheckForVoxel(back_右上) ||
-                world.CollisionCheckForVoxel(back_左下) ||
-                world.CollisionCheckForVoxel(back_右下) ||
-                world.CollisionCheckForVoxel(back_Center)
+                managerhub.Service_Chunk.CollisionCheckForVoxel(back_左上) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(back_右上) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(back_左下) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(back_右下) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(back_Center)
                 )
                 return true;
 
@@ -2372,7 +2372,7 @@ public class Player : MonoBehaviour
             {
 
                 //(右上固体 && 右上延伸不是固体) || (右下固体 && 右下延伸不是固体)
-                if ((world.CollisionCheckForVoxel(down_左上) && !world.CollisionCheckForVoxel(new Vector3(down_左上.x, down_左上.y, down_左上.z - extend_delta))) || (world.CollisionCheckForVoxel(down_右上) && !world.CollisionCheckForVoxel(new Vector3(down_右上.x, down_右上.y, down_右上.z - extend_delta))))
+                if ((managerhub.Service_Chunk.CollisionCheckForVoxel(down_左上) && !managerhub.Service_Chunk.CollisionCheckForVoxel(new Vector3(down_左上.x, down_左上.y, down_左上.z - extend_delta))) || (managerhub.Service_Chunk.CollisionCheckForVoxel(down_右上) && !managerhub.Service_Chunk.CollisionCheckForVoxel(new Vector3(down_右上.x, down_右上.y, down_右上.z - extend_delta))))
                 {
 
                     return true;
@@ -2427,11 +2427,11 @@ public class Player : MonoBehaviour
 
 
             if (
-                world.CollisionCheckForVoxel(left_左上) ||
-                world.CollisionCheckForVoxel(left_右上) ||
-                world.CollisionCheckForVoxel(left_左下) ||
-                world.CollisionCheckForVoxel(left_右下) ||
-                world.CollisionCheckForVoxel(left_Center)
+                managerhub.Service_Chunk.CollisionCheckForVoxel(left_左上) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(left_右上) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(left_左下) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(left_右下) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(left_Center)
                 )
                 return true;
 
@@ -2439,7 +2439,7 @@ public class Player : MonoBehaviour
             {
 
                 //(右上固体 && 右上延伸不是固体) || (右下固体 && 右下延伸不是固体)
-                if ((world.CollisionCheckForVoxel(down_右上) && !world.CollisionCheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))) || (world.CollisionCheckForVoxel(down_右下) && !world.CollisionCheckForVoxel(new Vector3(down_右下.x - extend_delta, down_右下.y, down_右下.z))))
+                if ((managerhub.Service_Chunk.CollisionCheckForVoxel(down_右上) && !managerhub.Service_Chunk.CollisionCheckForVoxel(new Vector3(down_右上.x - extend_delta, down_右上.y, down_右上.z))) || (managerhub.Service_Chunk.CollisionCheckForVoxel(down_右下) && !managerhub.Service_Chunk.CollisionCheckForVoxel(new Vector3(down_右下.x - extend_delta, down_右下.y, down_右下.z))))
                 {
 
                     return true;
@@ -2467,11 +2467,11 @@ public class Player : MonoBehaviour
         {
 
             if (
-                world.CollisionCheckForVoxel(right_左上) ||
-                world.CollisionCheckForVoxel(right_右上) ||
-                world.CollisionCheckForVoxel(right_左下) ||
-                world.CollisionCheckForVoxel(right_右下) ||
-                world.CollisionCheckForVoxel(right_Center)
+                managerhub.Service_Chunk.CollisionCheckForVoxel(right_左上) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(right_右上) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(right_左下) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(right_右下) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(right_Center)
                 )
                 return true;
 
@@ -2479,7 +2479,7 @@ public class Player : MonoBehaviour
             {
 
                 //(左上固体 && 左上延伸不是固体) || (左下固体 && 左下延伸不是固体)
-                if ((world.CollisionCheckForVoxel(down_左上) && !world.CollisionCheckForVoxel(new Vector3(down_左上.x + extend_delta, down_左上.y, down_左上.z))) || (world.CollisionCheckForVoxel(down_左下) && !world.CollisionCheckForVoxel(new Vector3(down_左下.x + extend_delta, down_左下.y, down_左下.z))))
+                if ((managerhub.Service_Chunk.CollisionCheckForVoxel(down_左上) && !managerhub.Service_Chunk.CollisionCheckForVoxel(new Vector3(down_左上.x + extend_delta, down_左上.y, down_左上.z))) || (managerhub.Service_Chunk.CollisionCheckForVoxel(down_左下) && !managerhub.Service_Chunk.CollisionCheckForVoxel(new Vector3(down_左下.x + extend_delta, down_左下.y, down_左下.z))))
                 {
 
                     return true;
@@ -2501,14 +2501,14 @@ public class Player : MonoBehaviour
         get
         {
             //如果world返回true，则碰撞
-            if (world.CollisionCheckForVoxel(front_左下) ||
-                world.CollisionCheckForVoxel(front_右下) ||
-                world.CollisionCheckForVoxel(back_左下)  ||
-                world.CollisionCheckForVoxel(back_右下)  ||
-                world.CollisionCheckForVoxel(left_右下)  ||
-                world.CollisionCheckForVoxel(left_右下)  ||
-                world.CollisionCheckForVoxel(right_右下) ||
-                world.CollisionCheckForVoxel(right_右下)
+            if (managerhub.Service_Chunk.CollisionCheckForVoxel(front_左下) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(front_右下) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(back_左下)  ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(back_右下)  ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(left_右下)  ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(left_右下)  ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(right_右下) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(right_右下)
                 )
             {
                 return true;
@@ -2525,10 +2525,10 @@ public class Player : MonoBehaviour
         get
         {
             //如果world返回true，则碰撞
-            if (world.CollisionCheckForVoxel(front_Center) ||
-                world.CollisionCheckForVoxel(back_Center) ||
-                world.CollisionCheckForVoxel(left_Center) ||
-                world.CollisionCheckForVoxel(right_Center)
+            if (managerhub.Service_Chunk.CollisionCheckForVoxel(front_Center) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(back_Center) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(left_Center) ||
+                managerhub.Service_Chunk.CollisionCheckForVoxel(right_Center)
                 )
             {
                 return true;
@@ -2544,7 +2544,7 @@ public class Player : MonoBehaviour
     void Update_FootBlockType()
     {
 
-        foot_BlockType_temp = world.GetBlockType(foot.position);
+        foot_BlockType_temp = managerhub.Service_Chunk.GetBlockType(foot.position);
 
         //如果发生变动
         if (foot_BlockType_temp != foot_BlockType)
@@ -2957,7 +2957,7 @@ public class Player : MonoBehaviour
 
         //是否游泳
         //当前方块 || y+1方块是不是水
-        if (world.GetBlockType(foot.transform.position) == VoxelData.Water || world.GetBlockType(new Vector3(foot.transform.position.x, foot.transform.position.y + 1f, foot.transform.position.z)) == VoxelData.Water)
+        if (managerhub.Service_Chunk.GetBlockType(foot.transform.position) == VoxelData.Water || managerhub.Service_Chunk.GetBlockType(new Vector3(foot.transform.position.x, foot.transform.position.y + 1f, foot.transform.position.z)) == VoxelData.Water)
         {
 
             isSwiming = true;

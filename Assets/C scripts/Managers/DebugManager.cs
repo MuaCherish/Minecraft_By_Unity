@@ -177,7 +177,7 @@ public class DebugManager : MonoBehaviour
         TextScreens[0].text += $"[FootPosition]\n";
         TextScreens[0].text += $"foot绝对坐标: {(new Vector3(footlocation.x, footlocation.y, footlocation.z))} \n";
         TextScreens[0].text += $"foot相对坐标: {GetRelaPos(footlocation)} \n";
-        TextScreens[0].text += $"foot坐标类型: {managerhub.world.GetBlockType(footlocation)} \n";
+        TextScreens[0].text += $"foot坐标类型: {managerhub.Service_Chunk.GetBlockType(footlocation)} \n";
         TextScreens[0].text += $"\n";
 
         TextScreens[0].text += $"[System]\n";
@@ -311,7 +311,7 @@ public class DebugManager : MonoBehaviour
 
     string CaculateChunkRenderTime()
     {
-        float time = Mathf.Round(managerhub.world.OneChunkRenderTime * 1000f * 100f) / 100f;
+        float time = Mathf.Round(managerhub.Service_Chunk.OneChunkRenderTime * 1000f * 100f) / 100f;
 
         if (time == 0)
         {

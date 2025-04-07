@@ -25,7 +25,7 @@ public class CaculateTime : MonoBehaviour
         for (int i = 0; i < iterations; i++)
         {
             // 你可以使用任意的 x 和 z 值进行测试
-            float result = managerhub.world.GetTotalNoiseHigh_Biome(i, i, myPosition, worldType);
+            float result = MC_Static_Noise.GetTotalNoiseHigh_Biome(i, i, myPosition, worldType,managerhub.world._biomeProperties);
         }
 
         stopwatch.Stop();

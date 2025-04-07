@@ -1,3 +1,4 @@
+using Homebrew;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,6 +6,22 @@ using UnityEngine;
 
 
 #region Terrain
+
+[System.Serializable]
+public class BiomeProperties
+{
+    [Header("群系特征概率和数据(值越大范围越小)")]
+    public float 氧气浓度OxygenDensity;
+    public float 三维密度Density3d;
+    public float 干燥程度Aridity;
+    public float 空气湿度MoistureLevel;
+    [Header("颜色分层")] public BiomeNoiseSystem[] biomenoisesystems;
+    [Header("地质分层与概率系统(n%)(矿物为万分之n)")] public TerrainLayerProbabilitySystem terrainLayerProbabilitySystem;
+
+    [Foldout("Cave")]
+    public float noise3d_scale = 0.085f;
+    public float cave_width = 0.45f;
+}
 
 public static class TerrainData
 {

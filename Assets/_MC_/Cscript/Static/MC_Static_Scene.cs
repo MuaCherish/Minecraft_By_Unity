@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public static class SceneData
@@ -118,6 +119,27 @@ public static class SceneData
         else
         {
             Debug.LogError("Cant Find Chunks");
+            return null;
+        }
+    }
+
+
+    /// <summary>
+    /// 获取ServiceChunk
+    /// </summary>
+    /// <returns></returns>
+    public static MC_Service_Chunk GetService_Chunk()
+    {
+        // 在场景中查找名为 "ManagerHub" 的 GameObject
+        GameObject _obj = GameObject.Find("Managerhub/MC_Services/MC_Service_Chunk");
+
+        if (_obj != null)
+        {
+            return _obj.GetComponent<MC_Service_Chunk>();
+        }
+        else
+        {
+            Debug.LogError("SceneData Cant Find");
             return null;
         }
     }

@@ -41,7 +41,7 @@ public static class MC_Static_Navigation
     /// <returns></returns>
     public static bool CheckNodeLimit(Vector3 _nextPos, Vector3 _nextDirect)
     {
-        byte _thisBlockType = world.GetBlockType(_nextPos);
+        byte _thisBlockType = managerhub.Service_Chunk.GetBlockType(_nextPos);
         Vector3 _LastPos = _nextPos - _nextDirect;
 
         //提前返回-如果没有方块数据
@@ -110,8 +110,8 @@ public static class MC_Static_Navigation
     /// <returns></returns>
     public static bool isSuspend(Vector3 _pos)
     {
-        if (world.GetBlockType(_pos + Vector3.down) == VoxelData.Air &&
-            world.GetBlockType(_pos + Vector3.down * 2) == VoxelData.Air
+        if (managerhub.Service_Chunk.GetBlockType(_pos + Vector3.down) == VoxelData.Air &&
+            managerhub.Service_Chunk.GetBlockType(_pos + Vector3.down * 2) == VoxelData.Air
             )
             return true;
         else
@@ -141,8 +141,8 @@ public static class MC_Static_Navigation
         _TargetPos = Vector3.zero;
 
         //提前返回-起始点被堵住 || 起始点悬空
-        byte _StartPosBlockType = world.GetBlockType(_thisPos);
-        byte _StartDownPosBlockType = world.GetBlockType(_thisPos + Vector3.down);
+        byte _StartPosBlockType = managerhub.Service_Chunk.GetBlockType(_thisPos);
+        byte _StartDownPosBlockType = managerhub.Service_Chunk.GetBlockType(_thisPos + Vector3.down);
         if (_StartPosBlockType == 255 || world.blocktypes[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
             return;
 
@@ -182,8 +182,8 @@ public static class MC_Static_Navigation
         _Nodes = new List<Vector3> { _thisPos };
 
         //提前返回-起始点被堵住 || 起始点悬空
-        byte _StartPosBlockType = world.GetBlockType(_thisPos);
-        byte _StartDownPosBlockType = world.GetBlockType(_thisPos + Vector3.down);
+        byte _StartPosBlockType = managerhub.Service_Chunk.GetBlockType(_thisPos);
+        byte _StartDownPosBlockType = managerhub.Service_Chunk.GetBlockType(_thisPos + Vector3.down);
         if (_StartPosBlockType == 255 || world.blocktypes[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
             return;
 
@@ -317,7 +317,7 @@ public static class MC_Static_Navigation
             //退出条件-如果超出最大步数，则返回距离终点最近的值
             if (stepCount >= maxStep)
             {
-                Debug.Log("Exceeded max step count, returning the closest path.");
+                //Debug.Log("Exceeded max step count, returning the closest path.");
                 // Find the node in OpenList with the smallest F or closest to the target
                 float _MinH = _startH;
                 AstarNode closestNode = StartNode;

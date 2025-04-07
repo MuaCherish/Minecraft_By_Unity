@@ -244,7 +244,7 @@ public class MusicManager : MonoBehaviour
     //当脚下方块切换的时候触发
     void UpdateFootBlockType()
     {
-        footBlocktype = world.GetBlockType(foot.position);
+        footBlocktype = managerhub.Service_Chunk.GetBlockType(foot.position);
 
         if (footBlocktype != previous_foot_blocktype)
         {
@@ -255,12 +255,12 @@ public class MusicManager : MonoBehaviour
     //播放潜水音效
     void playsound_diving()
     {
-        if (world.GetBlockType(eyes.position) == VoxelData.Water && !Audio_player_diving.isPlaying)
+        if (managerhub.Service_Chunk.GetBlockType(eyes.position) == VoxelData.Water && !Audio_player_diving.isPlaying)
         {
             Audio_player_diving.Play();
         }
 
-        if (world.GetBlockType(eyes.position) != VoxelData.Water)
+        if (managerhub.Service_Chunk.GetBlockType(eyes.position) != VoxelData.Water)
         {
             Audio_player_diving.Stop();
         }
@@ -270,7 +270,7 @@ public class MusicManager : MonoBehaviour
     //将给定type分类为Air和water
     byte classifytype()
     {
-        byte a = world.GetBlockType(leg.position);
+        byte a = managerhub.Service_Chunk.GetBlockType(leg.position);
 
         if (a == VoxelData.Water)
         {
