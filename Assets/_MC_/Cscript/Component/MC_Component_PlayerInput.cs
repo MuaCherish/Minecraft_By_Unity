@@ -28,7 +28,7 @@ public class MC_Component_PlayerInput : MonoBehaviour
 
     private void Update()
     {
-        if (Service_world.game_state == Game_State.Playing)
+        if (MC_Runtime_DynamicData.instance.GetGameState() == Game_State.Playing)
         {
             GetInput();
             CaculateInput();
@@ -37,7 +37,7 @@ public class MC_Component_PlayerInput : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Service_world.game_state == Game_State.Playing)
+        if (MC_Runtime_DynamicData.instance.GetGameState() == Game_State.Playing)
         {
             ApplyInput();
         }

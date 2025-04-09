@@ -26,14 +26,14 @@ public class MC_Component_Music : MonoBehaviour
     ManagerHub managerhub;
     MC_Component_Velocity Component_Velocity;
     MC_Component_Physics Component_Physics;
-    NewMusicManager musicManager;
+    MC_Service_Music Service_Music;
 
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
         Component_Velocity = GetComponent<MC_Component_Velocity>();
         Component_Physics = GetComponent<MC_Component_Physics>();
-        musicManager = managerhub.NewmusicManager;
+        Service_Music = managerhub.Service_Music;
     }
 
     private void Start()
@@ -46,7 +46,7 @@ public class MC_Component_Music : MonoBehaviour
     public AudioClip _clip;    // 要播放的音频剪辑
     private void Update()
     {
-        if (managerhub.Service_World.game_state == Game_State.Playing)
+        if (MC_Runtime_DynamicData.instance.GetGameState() == Game_State.Playing)
         {
             _ReferUpdate_FootStep();
             _ReferUpdate_Water();
@@ -125,7 +125,7 @@ public class MC_Component_Music : MonoBehaviour
     /// </summary>
     public void PlaySound(int _index)
     {
-        AudioClip _clip = managerhub.NewmusicManager.audioclips[_index];
+        AudioClip _clip = managerhub.Service_Music.audioclips[_index];
         MainAudioSource.PlayOneShot(_clip);
     }
 
@@ -226,7 +226,7 @@ public class MC_Component_Music : MonoBehaviour
         if (isCurrentlyInWater != isInTheWater)
         {
             // 播放音效
-            MainAudioSource.PlayOneShot(musicManager.audioclips[MusicData.fall_water]);
+            MainAudioSource.PlayOneShot(Service_Music.audioclips[MusicData.fall_water]);
 
             // 更新状态
             isInTheWater = isCurrentlyInWater;

@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 675ef3762e2d65244ae351e031393fff, type: 3}
+  m_Name: BiomeData
+  m_EditorClassIdentifier: 
+  biomeProperties:
+    "\u6C27\u6C14\u6D53\u5EA6OxygenDensity": 0.4
+    "\u4E09\u7EF4\u5BC6\u5EA6Density3d": 0.45
+    "\u5E72\u71E5\u7A0B\u5EA6Aridity": 0.6
+    "\u7A7A\u6C14\u6E7F\u5EA6MoistureLevel": 0.6
+    biomenoisesystems:
+    - BiomeName: "\u8349\u539F"
+      BiomeColor: {r: 0.20392159, g: 0.77647066, b: 0.16470589, a: 0}
+      HighDomain: {x: 20, y: 100}
+      Noise_Scale_123: {x: 0.001, y: 0.015, z: 0}
+      Noise_Rank_123: {x: 0.7, y: 0.3, z: 0}
+    - BiomeName: "\u9AD8\u539F"
+      BiomeColor: {r: 1, g: 1, b: 1, a: 0}
+      HighDomain: {x: 20, y: 160}
+      Noise_Scale_123: {x: 0.1, y: 0.01, z: 0.008}
+      Noise_Rank_123: {x: 0.1, y: 0.7, z: 0.2}
+    - BiomeName: "\u6C99\u6F20"
+      BiomeColor: {r: 1, g: 0.93725497, b: 0, a: 0}
+      HighDomain: {x: 60, y: 100}
+      Noise_Scale_123: {x: 0.03, y: 0.01, z: 0.008}
+      Noise_Rank_123: {x: 1, y: 0, z: 0}
+    - BiomeName: "\u6CBC\u6CFD"
+      BiomeColor: {r: 0.10588236, g: 0.20000002, b: 0.078431375, a: 0}
+      HighDomain: {x: 40, y: 82}
+      Noise_Scale_123: {x: 0.002, y: 0.04, z: 0.001}
+      Noise_Rank_123: {x: 0.5, y: 0.4, z: 0.1}
+    - BiomeName: "\u5BC6\u6797"
+      BiomeColor: {r: 1, g: 0.03761355, b: 0, a: 0}
+      HighDomain: {x: 40, y: 82}
+      Noise_Scale_123: {x: 0.002, y: 0.04, z: 0.001}
+      Noise_Rank_123: {x: 0.5, y: 0.4, z: 0.1}
+    terrainLayerProbabilitySystem:
+      isRandomSeed: 1
+      Seed: 0
+      sea_level: 60
+      Snow_Level: 100
+      Normal_treecount: 3
+      "\u5BC6\u6797\u6811\u6728\u91C7\u6837\u6B21\u6570Forest_treecount": 10
+      TreeHigh_min: 5
+      TreeHigh_max: 7
+      Random_Bush: 30
+      Random_Bamboo: 15
+      Random_BlueFlower: 1
+      Random_WhiteFlower1: 1
+      Random_WhiteFlower2: 1
+      Random_YellowFlower: 1
+      Random_Coal: 50
+      Random_Iron: 30
+      Random_Gold: 20
+      Random_Blue_Crystal: 15
+      Random_Diamond: 10
+    noise3d_scale: 0.085
+    cave_width: 0.45

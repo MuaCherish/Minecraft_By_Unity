@@ -60,7 +60,7 @@ namespace MCEntity
 
         private void Update()
         {
-            if (Service_World.game_state == Game_State.Playing)
+            if (MC_Runtime_DynamicData.instance.GetGameState() == Game_State.Playing)
             {
                 _ReferUpdate_CheckOxy();
                 _ReferUpdate_FallingCheck();
@@ -251,7 +251,7 @@ namespace MCEntity
             //受伤音效
             if(Component_Music != null)
                 Component_Music.PlaySound(Component_Music.BehurtClip);
-            //managerhub.NewmusicManager.Create3DSound(transform.position, Component_Music.BehurtClip);
+            //managerhub.Service_Music.Create3DSound(transform.position, Component_Music.BehurtClip);
 
             //材质变红
             if (EntityMat != null)
@@ -416,7 +416,7 @@ namespace MCEntity
                     realMaxY = Component_Physics.FootPoint.y;
 
                     //播放落地音效
-                    managerhub.NewmusicManager.Create3DSound(transform.position, Default_DropGround);
+                    managerhub.Service_Music.Create3DSound(transform.position, Default_DropGround);
                 }
             }
 

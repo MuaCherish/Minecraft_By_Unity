@@ -56,7 +56,7 @@ namespace MCEntity
 
         private void Update()
         {
-            switch (Service_World.game_state)
+            switch (MC_Runtime_DynamicData.instance.GetGameState())
             {
                 case Game_State.Playing:
                     Handle_GameState_Playing();
@@ -106,7 +106,7 @@ namespace MCEntity
             if (isAggressive)
             {
                 //提前返回-如果不是生存模式
-                if (Service_World.game_mode != GameMode.Survival)
+                if (MC_Runtime_DynamicData.instance.GetGameMode() != GameMode.Survival)
                     return;
 
                 //提前返回-如果玩家死亡则返回Idle状态
@@ -879,7 +879,7 @@ namespace MCEntity
         void _AutoWatchToPlayer()
         {
             //提前返回-如果是生存模式且具备攻击性则跳过
-            if (Service_World.game_mode == GameMode.Survival && isAggressive)
+            if (MC_Runtime_DynamicData.instance.GetGameMode() == GameMode.Survival && isAggressive)
                 return;
 
             //提前返回-如果不是Idle-Wait阶段
@@ -1060,7 +1060,7 @@ namespace MCEntity
                 return;
 
             // 提前返回-如果不是生存模式
-            if (Service_World.game_mode != GameMode.Survival)
+            if (MC_Runtime_DynamicData.instance.GetGameMode() != GameMode.Survival)
                 return;
 
             // 提前返回-不是追逐状态
@@ -1125,7 +1125,7 @@ namespace MCEntity
         void OnDrawGizmos()
         {
             //不绘制
-            if (Service_World == null || Service_World.game_state != Game_State.Playing)
+            if (Service_World == null || MC_Runtime_DynamicData.instance.GetGameState() != Game_State.Playing)
                 return;
 
             //提前返回-如果没有开debug

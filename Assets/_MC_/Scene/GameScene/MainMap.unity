@@ -2157,7 +2157,6 @@ GameObject:
   - component: {fileID: 22826876}
   - component: {fileID: 22826879}
   - component: {fileID: 22826880}
-  - component: {fileID: 22826881}
   - component: {fileID: 22826878}
   m_Layer: 0
   m_Name: MC_Service_Time
@@ -2178,7 +2177,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1642309560}
   m_Father: {fileID: 523527989}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &22826878
@@ -2286,27 +2286,6 @@ MonoBehaviour:
   WindDirect: {x: 0, y: 0, z: 0}
   CloudHeight: 200
   windSpeed: 1
---- !u!114 &22826881
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 22826875}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: deb12e25b6f579f4b9d11fce6565fd83, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weather: 0
-  isTransitioningToRain: 0
-  isRaining: 0
-  RainObject: {fileID: 3403196892570452793}
-  weatherCheckInterval: 120
-  weather_Cloudy_robability: 0.1
-  transitionDuration: 60
-  Range_rainDuration: {x: 120, y: 300}
-  checkHeadTime: 0.2
 --- !u!1 &23726926
 GameObject:
   m_ObjectHideFlags: 0
@@ -15994,10 +15973,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd72478c66a0e384a8a69fe175af11dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  game_state: 0
-  game_mode: 1
-  material: {fileID: 2100000, guid: 0166845b05160434c84a366355d3cfc6, type: 2}
-  material_Water: {fileID: 2100000, guid: e401bc414787ebc4eaf3eb598c2a55cf, type: 2}
+  renderSize: 6
+  StartToRender: 1
+  DestroySize: 7
   blocktypes:
   - blockName: BedRock
     BlockClassfy: 1
@@ -21278,74 +21256,20 @@ MonoBehaviour:
     DrawMode: 8
     GenerateTwoFaceWithAir: 0
     OtherFaceCheck: []
-  atlasTexture: {fileID: 2800000, guid: bc63bd9a97e59f54986b0bbbf90f233d, type: 3}
-  Center_Now: {x: 0, y: 0, z: 0}
-  Center_direction: {x: 0, y: 0, z: 0}
-  renderSize: 6
-  StartToRender: 1
-  DestroySize: 7
-  _biomeProperties:
-    "\u6C27\u6C14\u6D53\u5EA6OxygenDensity": 0.4
-    "\u4E09\u7EF4\u5BC6\u5EA6Density3d": 0.45
-    "\u5E72\u71E5\u7A0B\u5EA6Aridity": 0.6
-    "\u7A7A\u6C14\u6E7F\u5EA6MoistureLevel": 0.6
-    biomenoisesystems:
-    - BiomeName: "\u8349\u539F"
-      BiomeColor: {r: 0.20392159, g: 0.77647066, b: 0.16470589, a: 0}
-      HighDomain: {x: 20, y: 100}
-      Noise_Scale_123: {x: 0.001, y: 0.015, z: 0}
-      Noise_Rank_123: {x: 0.7, y: 0.3, z: 0}
-    - BiomeName: "\u9AD8\u539F"
-      BiomeColor: {r: 1, g: 1, b: 1, a: 0}
-      HighDomain: {x: 20, y: 160}
-      Noise_Scale_123: {x: 0.1, y: 0.01, z: 0.008}
-      Noise_Rank_123: {x: 0.1, y: 0.7, z: 0.2}
-    - BiomeName: "\u6C99\u6F20"
-      BiomeColor: {r: 1, g: 0.93725497, b: 0, a: 0}
-      HighDomain: {x: 60, y: 100}
-      Noise_Scale_123: {x: 0.03, y: 0.01, z: 0.008}
-      Noise_Rank_123: {x: 1, y: 0, z: 0}
-    - BiomeName: "\u6CBC\u6CFD"
-      BiomeColor: {r: 0.10588236, g: 0.20000002, b: 0.078431375, a: 0}
-      HighDomain: {x: 40, y: 82}
-      Noise_Scale_123: {x: 0.002, y: 0.04, z: 0.001}
-      Noise_Rank_123: {x: 0.5, y: 0.4, z: 0.1}
-    - BiomeName: "\u5BC6\u6797"
-      BiomeColor: {r: 1, g: 0.03761355, b: 0, a: 0}
-      HighDomain: {x: 40, y: 82}
-      Noise_Scale_123: {x: 0.002, y: 0.04, z: 0.001}
-      Noise_Rank_123: {x: 0.5, y: 0.4, z: 0.1}
-    terrainLayerProbabilitySystem:
-      isRandomSeed: 1
-      Seed: 0
-      sea_level: 60
-      Snow_Level: 100
-      Normal_treecount: 3
-      "\u5BC6\u6797\u6811\u6728\u91C7\u6837\u6B21\u6570Forest_treecount": 10
-      TreeHigh_min: 5
-      TreeHigh_max: 7
-      Random_Bush: 30
-      Random_Bamboo: 15
-      Random_BlueFlower: 1
-      Random_WhiteFlower1: 1
-      Random_WhiteFlower2: 1
-      Random_YellowFlower: 1
-      Random_Coal: 50
-      Random_Iron: 30
-      Random_Gold: 20
-      Random_Blue_Crystal: 15
-      Random_Diamond: 10
-    noise3d_scale: 0.085
-    cave_width: 0.45
+  ItemData: {fileID: 11400000, guid: 1f5207ccd65e06c48ad4c9b90d3d5bdd, type: 2}
+  BiomeData: {fileID: 11400000, guid: 18f38832903fdcc44bdae31a64be91f1, type: 2}
+  TerrainMatData: {fileID: 11400000, guid: 2913f6ee5e104324291dc05dfd13957a, type: 2}
+  isGenChunkSurrendFace: 0
   hasExec_RandomPlayerLocation: 1
   Start_Position: {x: 1600, y: 127, z: 1600}
-  isGenChunkSurrendFace: 0
   obj: {fileID: 0}
+  Center_Now: {x: 0, y: 0, z: 0}
+  Center_direction: {x: 0, y: 0, z: 0}
+  WatingToCreate_Chunks: []
+  WatingToRemove_Chunks: []
   MeshLock: 0
   RenderLock: 0
   Delay_RenderMesh: 1000
-  WatingToCreate_Chunks: []
-  WatingToRemove_Chunks: []
   OneChunkRenderTime: 0
 --- !u!1 &262246421
 GameObject:
@@ -25148,7 +25072,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 775452361}
   m_Father: {fileID: 523527989}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &325552238
@@ -32812,24 +32737,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b09df19ae3a074b478e88e79743ae01d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Service_Entity: {fileID: 1960558905}
+  Service_World: {fileID: 262149223}
+  Service_Saving: {fileID: 699955241}
+  Service_Time: {fileID: 22826878}
+  Service_Weather: {fileID: 1642309561}
+  Service_Music: {fileID: 325552238}
   backpackManager: {fileID: 2136429365}
   canvasManager: {fileID: 1026571032}
   commandManager: {fileID: 2031280225}
   debugManager: {fileID: 438324209}
   lifeManager: {fileID: 1066840322}
-  NewmusicManager: {fileID: 325552238}
-  OldMusicManager: {fileID: 775452362}
-  timeManager: {fileID: 22826878}
   player: {fileID: 1504082080}
-  weather: {fileID: 22826881}
+  OldMusicManager: {fileID: 775452362}
   textureTo3D: {fileID: 843154433}
   cloudManager: {fileID: 22826880}
   crepuscularScript: {fileID: 1727421514}
   sunMoving: {fileID: 22826879}
   chatManager: {fileID: 617939582}
-  Service_Entity: {fileID: 1960558905}
-  Service_World: {fileID: 262149223}
-  Service_Saving: {fileID: 699955241}
   "\u4F4E\u533A\u5757\u6A21\u5F0F": 1
   "\u65E0\u9ED1\u591C\u6A21\u5F0F": 0
   "\u751F\u7269\u81EA\u7136\u751F\u6210": 1
@@ -51615,11 +51540,11 @@ Transform:
   m_GameObject: {fileID: 775452360}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1600, y: 127, z: 808.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1504082081}
+  m_Father: {fileID: 325552235}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &775452362
 MonoBehaviour:
@@ -63195,7 +63120,6 @@ MonoBehaviour:
     childs: []
   partSystem: {fileID: 1727421512}
   Camera: {fileID: 1727421507}
-  musicmanager: {fileID: 0}
   player: {fileID: 1504082080}
   selectblockname: {fileID: 1136584653}
   BackPackManager: {fileID: 2136429365}
@@ -85873,7 +85797,6 @@ MonoBehaviour:
   isDead: 0
   ShowEntityHitbox: 0
   commandManager: {fileID: 2031280225}
-  musicmanager: {fileID: 0}
   backpackmanager: {fileID: 2136429365}
   lifemanager: {fileID: 1066840322}
   particle_explosion: {fileID: 2895232346133327969, guid: 83c43639f81e51441ba9eb22ff444316, type: 3}
@@ -85985,7 +85908,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 775452361}
   - {fileID: 1727421507}
   - {fileID: 1039204586}
   - {fileID: 473442144}
@@ -93272,6 +93194,59 @@ RectTransform:
   m_AnchoredPosition: {x: 0.4, y: 1.8}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1642309559
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1642309560}
+  - component: {fileID: 1642309561}
+  m_Layer: 0
+  m_Name: MC_Service_Weather
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1642309560
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642309559}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 22826876}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1642309561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642309559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: deb12e25b6f579f4b9d11fce6565fd83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weather: 0
+  isTransitioningToRain: 0
+  isRaining: 0
+  RainObject: {fileID: 3403196892570452793}
+  weatherCheckInterval: 120
+  weather_Cloudy_robability: 0.1
+  transitionDuration: 60
+  Range_rainDuration: {x: 120, y: 300}
+  checkHeadTime: 0.2
 --- !u!1 &1642697301
 GameObject:
   m_ObjectHideFlags: 0

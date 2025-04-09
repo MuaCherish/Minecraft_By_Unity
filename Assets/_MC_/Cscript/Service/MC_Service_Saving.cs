@@ -194,7 +194,7 @@ public class MC_Service_Saving : MonoBehaviour
         // 更新存档结构体
         worldSetting.playerposition = managerhub.player.transform.position;
         worldSetting.playerrotation = managerhub.player.transform.rotation;
-        worldSetting.gameMode = managerhub.Service_World.game_mode;
+        worldSetting.gameMode = MC_Runtime_DynamicData.instance.GetGameMode();
         string previouDate = worldSetting.date;
         worldSetting.date = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
@@ -368,7 +368,7 @@ public class MC_Service_Saving : MonoBehaviour
 
 
                 //更新一些参数
-                managerhub.Service_World.game_mode = worldSetting.gameMode;
+                MC_Runtime_DynamicData.instance.SetGameMode(worldSetting.gameMode);
 
 
 

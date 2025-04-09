@@ -7,6 +7,13 @@ using UnityEngine;
 
 #region Terrain
 
+
+[CreateAssetMenu(fileName = "NewBiomeData", menuName = "Biome/Create New Biome Data")]
+public class BiomeDataSO : ScriptableObject
+{
+    public BiomeProperties biomeProperties;
+}
+
 [System.Serializable]
 public class BiomeProperties
 {
@@ -15,12 +22,12 @@ public class BiomeProperties
     public float 三维密度Density3d;
     public float 干燥程度Aridity;
     public float 空气湿度MoistureLevel;
+
     [Header("颜色分层")] public BiomeNoiseSystem[] biomenoisesystems;
     [Header("地质分层与概率系统(n%)(矿物为万分之n)")] public TerrainLayerProbabilitySystem terrainLayerProbabilitySystem;
 
-    [Foldout("Cave")]
-    public float noise3d_scale = 0.085f;
-    public float cave_width = 0.45f;
+    [Header("Cave - 3d放大系数")] public float noise3d_scale = 0.085f;
+    [Header("Cave - 洞穴宽度")] public float cave_width = 0.45f;
 }
 
 public static class TerrainData

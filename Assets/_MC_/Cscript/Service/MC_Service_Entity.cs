@@ -11,11 +11,11 @@ public class MC_Service_Entity : MonoBehaviour
     ManagerHub managerhub;
     Player player;
     MC_Service_World Service_World;
-    TimeManager timeManager;
+    MC_Service_Time Service_Time;
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
-        timeManager = managerhub.timeManager;
+        Service_Time = managerhub.Service_Time;
         player = managerhub.player;
         Entity_Parent = SceneData.GetEntityParent();
         Service_World = managerhub.Service_World;
@@ -29,7 +29,7 @@ public class MC_Service_Entity : MonoBehaviour
 
     private void Update()
     {
-        switch (Service_World.game_state)
+        switch (MC_Runtime_DynamicData.instance.GetGameState())
         {
             case Game_State.Loading:
                 Handle_GameState_Loading();
@@ -42,7 +42,7 @@ public class MC_Service_Entity : MonoBehaviour
 
     private void FixedUpdate()
     {
-        switch (Service_World.game_state)
+        switch (MC_Runtime_DynamicData.instance.GetGameState())
         {
             case Game_State.Playing:
                 FixedHandle_GameState_Playing();
@@ -109,7 +109,7 @@ public class MC_Service_Entity : MonoBehaviour
             return;
 
         //提前返回-如果是Start则退出
-        if (Service_World.game_state == Game_State.Start)
+        if (MC_Runtime_DynamicData.instance.GetGameState() == Game_State.Start)
             return;
 
         //提前返回-如果超出最大实体数量
@@ -128,7 +128,7 @@ public class MC_Service_Entity : MonoBehaviour
                 continue;
 
             //提前跳过-夜间生物不在白天生成
-            if (Entity_Prefebs[EntityIndex].OnlyGenerateInNight && !timeManager.IsNight())
+            if (Entity_Prefebs[EntityIndex].OnlyGenerateInNight && !Service_Time.IsNight())
                 continue;
 
             //AddEntity

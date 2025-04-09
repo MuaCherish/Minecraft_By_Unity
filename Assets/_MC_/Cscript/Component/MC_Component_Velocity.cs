@@ -70,7 +70,7 @@ namespace MCEntity
         //public float horizon;
         private void FixedUpdate()
         {
-            if (Component_Physics.managerhub.Service_World.game_state == Game_State.Playing)
+            if (MC_Runtime_DynamicData.instance.GetGameState() == Game_State.Playing)
             {
                 _ReferFixedUpdate_Caculate();
 

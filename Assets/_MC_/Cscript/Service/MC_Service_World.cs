@@ -9,6 +9,9 @@ using System.IO;
 using UnityEditorInternal;
 using Homebrew;
 
+/// <summary>
+/// 主要处理区块的加载和卸载
+/// </summary>
 public class MC_Service_World : MonoBehaviour
 {
 
@@ -35,7 +38,7 @@ public class MC_Service_World : MonoBehaviour
         Handle_AlwaysUpdate();
 
 
-        switch (game_state)
+        switch (MC_Runtime_DynamicData.instance.GetGameState())
         {
             case Game_State.Start:
                 Handle_GameState_Start();
@@ -136,15 +139,11 @@ public class MC_Service_World : MonoBehaviour
     {
 
         //结束游戏
-        game_state = Game_State.Ending;
+        MC_Runtime_DynamicData.instance.SetGameState(Game_State.Ending);
 
         //等待Render线程
         if (myThread_Render != null && myThread_Render.IsAlive)
-        {
-
             myThread_Render.Join(); // 等待线程安全地终止
-
-        }
 
     }
 
@@ -154,46 +153,37 @@ public class MC_Service_World : MonoBehaviour
 
     #region 变量
 
-    //移植
-    [Foldout("状态", true)]
-    [Header("游戏状态")][ReadOnly] public Game_State game_state = Game_State.Start;
-    [Header("游戏模式")][ReadOnly] public GameMode game_mode = GameMode.Survival;
-
-    //这个可以变为Resources来读取
-    [Foldout("材质", true)]
-    [Header("地形材质")] public Material material;
-    [Header("水面材质")] public Material material_Water;
-    [Header("Items")] public BlockType[] blocktypes;
-    [Header("Items备份")] public BlockType[] BackUp_blocktypes;
-    [Header("BlockTexture(用于掉落物)")] public Texture2D atlasTexture;
-
-    //可以封装为游戏设置
-    //添加设置结构体用来保存各个综合设置
-    [Foldout("区块渲染", true)]
-    [Header("区块渲染中心点")] public Vector3 Center_Now;
-    [Header("区块渲染方向")] public Vector3 Center_direction; //这个代表了方向
+    [Foldout("渲染设置", true)]
     [Header("Chunk渲染半径(总区块=r^2*4)")] public int renderSize = 5;
     [Header("开始更新的最小区块跨度")] public float StartToRender = 1f;
     [Header("开始销毁的最大半径")] public float DestroySize = 7f;
 
-    //放在游戏设置里
-    [Foldout("群系特征概率和地形噪声数据", true)]
-    public BiomeProperties _biomeProperties;
+    [Foldout("旧的", true)]
+    [Header("Items")] public BlockType[] blocktypes;
+    [Header("Items备份")] public BlockType[] BackUp_blocktypes;
 
-    //重做逻辑
-    [Foldout("玩家", true)]
-    public bool hasExec_RandomPlayerLocation = true;
-    [Header("玩家出生点")] public Vector3 Start_Position = new Vector3(1600f, 127f, 1600f);
+    [Foldout("静态数据", true)]
+    [Header("Items数据")] public Item_Database ItemData;
+    [Header("群系特征概率和地形噪声数据")] public BiomeDataSO BiomeData;
+    [Header("地形材质数据")] public TerrainVisualAssets TerrainMatData;
 
-    //移植
     [Foldout("Debug", true)]
     [Header("是否生成Chunk侧面")] public bool isGenChunkSurrendFace = false;
 
-    //协程改为Updaet函数
-    //弄清楚线程锁这些东西
-    //将Queue简化为不超过两个
-    [Foldout("数据结构", true)]
-    public Chunk obj;//?
+    [Foldout("编辑器不需要看", true)]
+    [Header("Player- 是否随机玩家坐标")] public bool hasExec_RandomPlayerLocation = true;
+    [Header("Player- 玩家出生点")] public Vector3 Start_Position = new Vector3(1600f, 127f, 1600f);
+    [Header("Chunk- ?不知道是个什么东西")] public Chunk obj;//?
+    [Header("Chunk - 所有区块")] public Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
+    [Header("Chunk - 区块渲染中心点")] public Vector3 Center_Now;
+    [Header("Chunk - 区块渲染方向")] public Vector3 Center_direction; //这个代表了方向
+    [Header("Struct - 生成队列")] public List<Vector3> WatingToCreate_Chunks = new List<Vector3>();
+    [Header("Struct - 移除队列")] public List<Vector3> WatingToRemove_Chunks = new List<Vector3>();
+    [Header("Struct - 等待刷新队列")] public ConcurrentQueue<Chunk> WaitToFlashChunkQueue = new ConcurrentQueue<Chunk>();
+    [Header("Struct - 渲染队列0")] public ConcurrentQueue<Chunk> WaitToRender = new ConcurrentQueue<Chunk>();
+    [Header("Struct - 渲染队列1")] public ConcurrentQueue<Chunk> WaitToCreateMesh = new ConcurrentQueue<Chunk>();
+    [Header("Struct - 渲染队列2")] public ConcurrentQueue<Chunk> WaitToRender_temp = new ConcurrentQueue<Chunk>();
+    [Header("Struct - 渲染队列3")] public ConcurrentQueue<Chunk> WaitToRender_New = new ConcurrentQueue<Chunk>();
 
     //变量
     public bool MeshLock = false;
@@ -201,29 +191,20 @@ public class MC_Service_World : MonoBehaviour
     public int Delay_RenderMesh = 1000;
 
     //协程
-    public Coroutine Render_Coroutine;
-    public Coroutine Mesh_Coroutine;
-    public Coroutine Init_Map_Thread_NoInit_Coroutine;
-    public Coroutine Init_MapCoroutine;
-    public Coroutine CreateCoroutine;
-    public Coroutine RemoveCoroutine;
+    Coroutine Render_Coroutine;
+    Coroutine Mesh_Coroutine;
+    Coroutine Init_Map_Thread_NoInit_Coroutine;
+    Coroutine Init_MapCoroutine;
+    Coroutine CreateCoroutine;
+    Coroutine RemoveCoroutine;
 
-
-    [Foldout("Debug", true)]
+    //计时
     float InitStartTime; //区块开始渲染时间
     float InitEndTime; //区块结束渲染时间
 
     //应该没问题
-    public Dictionary<Vector3, Chunk> Allchunks = new Dictionary<Vector3, Chunk>();
-    public readonly object Allchunks_Lock = new object();
-    public Thread myThread_Render;
-    public List<Vector3> WatingToCreate_Chunks = new List<Vector3>();
-    public List<Vector3> WatingToRemove_Chunks = new List<Vector3>();
-    public ConcurrentQueue<Chunk> WaitToCreateMesh = new ConcurrentQueue<Chunk>();
-    public ConcurrentQueue<Chunk> WaitToRender = new ConcurrentQueue<Chunk>();
-    public ConcurrentQueue<Chunk> WaitToRender_temp = new ConcurrentQueue<Chunk>();
-    public ConcurrentQueue<Chunk> WaitToRender_New = new ConcurrentQueue<Chunk>();
-    public ConcurrentQueue<Chunk> WaitToFlashChunkQueue = new ConcurrentQueue<Chunk>();
+    readonly object Allchunks_Lock = new object();
+    Thread myThread_Render;
 
     #endregion
 
@@ -235,7 +216,7 @@ public class MC_Service_World : MonoBehaviour
     public void InitWorldManager()
     {
         hasExec_RandomPlayerLocation = true;
-        game_mode = GameMode.Survival;
+        MC_Runtime_DynamicData.instance.SetGameMode(GameMode.Survival);
 
         Service_Saving.isLoadSaving = false;
         isGenChunkSurrendFace = managerhub.是否生成Chunk侧面;
@@ -256,7 +237,7 @@ public class MC_Service_World : MonoBehaviour
         //初始化
         Start_Position = new Vector3(1600f, 127f, 1600f);
 
-        game_state = Game_State.Start;
+        MC_Runtime_DynamicData.instance.SetGameState(Game_State.Start);
         Service_Saving.TheSaving = new List<SavingData>();
         Service_Saving.EditNumber = new List<EditStruct>();
         //savingDatas = new List<SavingData>();
@@ -291,8 +272,8 @@ public class MC_Service_World : MonoBehaviour
         }
 
         //-------顺序不能变化------------------
-        _biomeProperties.terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 100000000);
-        Service_Saving.worldSetting = new WorldSetting(_biomeProperties.terrainLayerProbabilitySystem.Seed);
+        BiomeData.biomeProperties.terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 100000000);
+        Service_Saving.worldSetting = new WorldSetting(BiomeData.biomeProperties.terrainLayerProbabilitySystem.Seed);
         UnityEngine.Random.InitState(Service_Saving.worldSetting.seed);
         //-------------------------------------
 
@@ -308,8 +289,8 @@ public class MC_Service_World : MonoBehaviour
         }
         if (managerhub.无黑夜模式)
         {
-            if (managerhub.timeManager.gameObject.activeSelf)
-                managerhub.timeManager.gameObject.SetActive(false);
+            if (managerhub.Service_Time.gameObject.activeSelf)
+                managerhub.Service_Time.gameObject.SetActive(false);
         }
     }
 

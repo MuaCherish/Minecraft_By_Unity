@@ -32,7 +32,7 @@ public class MC_Component_Registration : MonoBehaviour
 
     private void Update()
     {
-        switch (Service_World.game_state)
+        switch (MC_Runtime_DynamicData.instance.GetGameState())
         {
             case Game_State.Playing:
                 Handle_GameState_Playing();
@@ -138,7 +138,7 @@ public class MC_Component_Registration : MonoBehaviour
             MC_Component_Music Music_Component = GetComponent<MC_Component_Music>();
             if (Music_Component != null)
             {
-                managerhub.NewmusicManager.Create3DSound(transform.position, Music_Component.DeathClip);
+                managerhub.Service_Music.Create3DSound(transform.position, Music_Component.DeathClip);
             }
             
 

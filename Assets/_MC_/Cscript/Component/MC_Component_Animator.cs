@@ -33,7 +33,7 @@ public class MC_Component_Animator : MonoBehaviour
 
     void Update()
     {
-        switch (Service_World.game_state)
+        switch (MC_Runtime_DynamicData.instance.GetGameState())
         {
             case Game_State.Playing:
                 Handle_GameState_Playing();

@@ -60,7 +60,7 @@ namespace MCEntity
 
         private void Update()
         {
-            if (Service_World.game_state == Game_State.Playing)
+            if (MC_Runtime_DynamicData.instance.GetGameState() == Game_State.Playing)
             {
                 _ReferUpdate_State();
                 _ReferUpdate_HitBox();
