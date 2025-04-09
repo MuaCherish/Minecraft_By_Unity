@@ -42,19 +42,19 @@ public class MC_Static_Chunk
     /// <summary>
     /// World
     /// </summary>
-    public static World world
+    public static MC_Service_World Service_world
     {
         get
         {
-            if (_world == null)
+            if (_Service_world == null)
             {
-                _world = SceneData.GetManagerhub().world; // 在第一次访问时创建
+                _Service_world = SceneData.GetManagerhub().Service_World; // 在第一次访问时创建
             }
-            return _world;
+            return _Service_world;
         }
     }
 
-    private static World _world;  // 静态变量存储 World 实例
+    private static MC_Service_World _Service_world;  // 静态变量存储 World 实例
 
 
     /// <summary>
@@ -64,9 +64,9 @@ public class MC_Static_Chunk
     /// <returns></returns>
     public static bool CheckSolid(Vector3 _pos)
     {
-        byte _BlockType = managerhub.Service_Chunk.GetBlockType(_pos);
+        byte _BlockType = managerhub.Service_World.GetBlockType(_pos);
 
-        if (_BlockType == 255 || world.blocktypes[_BlockType].isSolid)
+        if (_BlockType == 255 || Service_world.blocktypes[_BlockType].isSolid)
         {
             return true;
         }

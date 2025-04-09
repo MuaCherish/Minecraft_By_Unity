@@ -12,13 +12,13 @@ public class MC_Component_PlayerInput : MonoBehaviour
 
     MC_Component_Velocity Component_Velocity;
     MC_Component_Physics Component_Physics;
-    World world;
+    MC_Service_World Service_world; 
 
     private void Awake()
     {
         Component_Velocity = GetComponent<MC_Component_Velocity>();
         Component_Physics = GetComponent<MC_Component_Physics>();
-        world = Component_Physics.managerhub.world;
+        Service_world = Component_Physics.managerhub.Service_World;
     }
 
     private void Start()
@@ -28,7 +28,7 @@ public class MC_Component_PlayerInput : MonoBehaviour
 
     private void Update()
     {
-        if (world.game_state == Game_State.Playing)
+        if (Service_world.game_state == Game_State.Playing)
         {
             GetInput();
             CaculateInput();
@@ -37,7 +37,7 @@ public class MC_Component_PlayerInput : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (world.game_state == Game_State.Playing)
+        if (Service_world.game_state == Game_State.Playing)
         {
             ApplyInput();
         }

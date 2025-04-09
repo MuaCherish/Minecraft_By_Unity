@@ -125,17 +125,17 @@ public static class SceneData
 
 
     /// <summary>
-    /// 获取ServiceChunk
+    /// 获取ServiceWorld
     /// </summary>
     /// <returns></returns>
-    public static MC_Service_Chunk GetService_Chunk()
+    public static MC_Service_World GetService_World()
     {
         // 在场景中查找名为 "ManagerHub" 的 GameObject
-        GameObject _obj = GameObject.Find("Managerhub/MC_Services/MC_Service_Chunk");
+        GameObject _obj = GameObject.Find("Managerhub/MC_Services/MC_Service_World");
 
         if (_obj != null)
         {
-            return _obj.GetComponent<MC_Service_Chunk>();
+            return _obj.GetComponent<MC_Service_World>();
         }
         else
         {

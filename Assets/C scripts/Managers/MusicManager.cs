@@ -9,9 +9,9 @@ public class MusicManager : MonoBehaviour
     #region 周期函数
 
     ManagerHub managerhub;
-    World world;
+    MC_Service_World Service_World;
     Player player;
-
+     
 
     //片段
     [Header("音乐片段")]
@@ -40,7 +40,7 @@ public class MusicManager : MonoBehaviour
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
-        world = managerhub.world;
+        Service_World = managerhub.Service_World;
         player = managerhub.player;
     }
 
@@ -53,7 +53,7 @@ public class MusicManager : MonoBehaviour
  
     private void Update()
     {
-        if (world.game_state == Game_State.Playing)
+        if (Service_World.game_state == Game_State.Playing)
         {
             //脚步音效
             PlaySound_Foot();
@@ -69,7 +69,7 @@ public class MusicManager : MonoBehaviour
 
         Fade_FallInto_Water();
 
-        if (world.game_state == Game_State.Playing)
+        if (Service_World.game_state == Game_State.Playing)
         {
             UpdateFootBlockType();
         }
@@ -166,7 +166,7 @@ public class MusicManager : MonoBehaviour
     {
         if (managerhub.backpackManager.istheindexHaveBlock(player.selectindex))
         {
-            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[managerhub.backpackManager.slots[player.selectindex].blockId].broken_clip);
+            managerhub.NewmusicManager.PlayOneShot(Service_World.blocktypes[managerhub.backpackManager.slots[player.selectindex].blockId].broken_clip);
 
         }
 
@@ -182,7 +182,7 @@ public class MusicManager : MonoBehaviour
     void FUN_PlaceandBroke()
     {
         //place and broke
-        if (world.game_state == Game_State.Playing)
+        if (Service_World.game_state == Game_State.Playing)
         {
 
             //只有没有破坏的情况下才执行
@@ -199,13 +199,13 @@ public class MusicManager : MonoBehaviour
                     {
                         isbroking = true;
 
-                        if (world.blocktypes[player.point_Block_type].broking_clip != null)
+                        if (Service_World.blocktypes[player.point_Block_type].broking_clip != null)
                         {
-                            Audio_player_broke.clip = world.blocktypes[player.point_Block_type].broking_clip;
+                            Audio_player_broke.clip = Service_World.blocktypes[player.point_Block_type].broking_clip;
                         }
                         else
                         {
-                            Audio_player_broke.clip = world.blocktypes[VoxelData.Stone].broking_clip;
+                            Audio_player_broke.clip = Service_World.blocktypes[VoxelData.Stone].broking_clip;
                         }
 
 
@@ -244,7 +244,7 @@ public class MusicManager : MonoBehaviour
     //当脚下方块切换的时候触发
     void UpdateFootBlockType()
     {
-        footBlocktype = managerhub.Service_Chunk.GetBlockType(foot.position);
+        footBlocktype = managerhub.Service_World.GetBlockType(foot.position);
 
         if (footBlocktype != previous_foot_blocktype)
         {
@@ -255,12 +255,12 @@ public class MusicManager : MonoBehaviour
     //播放潜水音效
     void playsound_diving()
     {
-        if (managerhub.Service_Chunk.GetBlockType(eyes.position) == VoxelData.Water && !Audio_player_diving.isPlaying)
+        if (managerhub.Service_World.GetBlockType(eyes.position) == VoxelData.Water && !Audio_player_diving.isPlaying)
         {
             Audio_player_diving.Play();
         }
 
-        if (managerhub.Service_Chunk.GetBlockType(eyes.position) != VoxelData.Water)
+        if (managerhub.Service_World.GetBlockType(eyes.position) != VoxelData.Water)
         {
             Audio_player_diving.Stop();
         }
@@ -270,7 +270,7 @@ public class MusicManager : MonoBehaviour
     //将给定type分类为Air和water
     byte classifytype()
     {
-        byte a = managerhub.Service_Chunk.GetBlockType(leg.position);
+        byte a = managerhub.Service_World.GetBlockType(leg.position);
 
         if (a == VoxelData.Water)
         {
@@ -284,7 +284,7 @@ public class MusicManager : MonoBehaviour
 
     void FUN_Moving()
     {
-        if (world.game_state == Game_State.Playing)
+        if (Service_World.game_state == Game_State.Playing)
         {
             //游泳音效
             PlaySound_Swiming();
@@ -420,16 +420,16 @@ public class MusicManager : MonoBehaviour
                 if (footBlocktype != VoxelData.Air)
                 {
                     //如果有专属音效
-                    if (footBlocktype != 255 && world.blocktypes[footBlocktype].walk_clips[item] != null)
+                    if (footBlocktype != 255 && Service_World.blocktypes[footBlocktype].walk_clips[item] != null)
                     {
                         if (item == 0)
                         {
-                            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
+                            managerhub.NewmusicManager.PlayOneShot(Service_World.blocktypes[footBlocktype].walk_clips[item]);
                             item = 1;
                         }
                         else
                         {
-                            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[footBlocktype].walk_clips[item]);
+                            managerhub.NewmusicManager.PlayOneShot(Service_World.blocktypes[footBlocktype].walk_clips[item]);
                             item = 0;
                         }
                     }
@@ -438,12 +438,12 @@ public class MusicManager : MonoBehaviour
                     {
                         if (item == 0)
                         {
-                            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
+                            managerhub.NewmusicManager.PlayOneShot(Service_World.blocktypes[VoxelData.Stone].walk_clips[item]);
                             item = 1;
                         }
                         else
                         {
-                            managerhub.NewmusicManager.PlayOneShot(world.blocktypes[VoxelData.Stone].walk_clips[item]);
+                            managerhub.NewmusicManager.PlayOneShot(Service_World.blocktypes[VoxelData.Stone].walk_clips[item]);
                             item = 0;
                         }
                     }

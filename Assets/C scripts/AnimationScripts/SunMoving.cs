@@ -20,12 +20,13 @@ public class SunMoving : MonoBehaviour
     #region ÖÜÆÚº¯Êý
 
     ManagerHub managerhub;
+    MC_Service_World Service_World;
 
 
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
-
+        Service_World = managerhub.Service_World;
         directionalLightMain = DirectionalLightMain.GetComponent<Light>();
         directionalLight = DirectionalLight.GetComponent<Light>();
     }
@@ -34,7 +35,7 @@ public class SunMoving : MonoBehaviour
     private void Update()
     {
 
-        switch (managerhub.world.game_state)
+        switch (Service_World.game_state)
         {
             case Game_State.Playing:
                 Handle_GameState_Playing();

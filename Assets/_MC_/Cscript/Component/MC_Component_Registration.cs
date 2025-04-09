@@ -21,18 +21,18 @@ public class MC_Component_Registration : MonoBehaviour
 
     MC_Component_Physics Component_Physics;
     ManagerHub managerhub;
-    World world;
+    MC_Service_World Service_World;
 
     private void Awake()
     {
         Component_Physics = GetComponent<MC_Component_Physics>();
         managerhub = Component_Physics.managerhub;
-        world = managerhub.world;
+        Service_World = managerhub.Service_World;
     }
 
     private void Update()
     {
-        switch (world.game_state)
+        switch (Service_World.game_state)
         {
             case Game_State.Playing:
                 Handle_GameState_Playing();
@@ -198,7 +198,7 @@ public class MC_Component_Registration : MonoBehaviour
         }
 
         // ½ÅÏÂÇø¿é±»Òþ²Ø
-        if (managerhub.Service_Chunk.GetChunkObject(Component_Physics.FootPoint).isShow == false)
+        if (managerhub.Service_World.GetChunkObject(Component_Physics.FootPoint).isShow == false)
         {
             LogOffEntity();
         }

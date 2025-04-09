@@ -5,7 +5,7 @@ public class HandShake : MonoBehaviour
 {
     public BackPackManager BackPackManager;
     private Animation animationComponent;
-    public World world;
+    MC_Service_World Service_world;
     public Player player;
     public CanvasManager canvasmanager;
 
@@ -20,7 +20,8 @@ public class HandShake : MonoBehaviour
     ManagerHub managerhub;
     private void Awake()
     {
-        managerhub = SceneData.GetManagerhub(); 
+        managerhub = SceneData.GetManagerhub();
+        Service_world = managerhub.Service_World;
     }
 
 
@@ -35,7 +36,7 @@ public class HandShake : MonoBehaviour
     bool hasExec_isMoving = true;
     void FixedUpdate()
     {
-        if (world.game_state == Game_State.Playing)
+        if (Service_world.game_state == Game_State.Playing)
         {
             if (canvasmanager.isPausing)
             {

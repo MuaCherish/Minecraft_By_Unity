@@ -19,7 +19,6 @@ public class ManagerHub : MonoBehaviour
     public NewMusicManager NewmusicManager;
     public MusicManager OldMusicManager;
     public TimeManager timeManager;
-    public World world;
     public Player player;
 
     [Foldout("Others", true)]
@@ -33,7 +32,8 @@ public class ManagerHub : MonoBehaviour
 
     [Foldout("Services", true)]
     public MC_Service_Entity Service_Entity;
-    public MC_Service_Chunk Service_Chunk; 
+    public MC_Service_World Service_World;
+    public MC_Service_Saving Service_Saving;
 
     [Foldout("开发者启动项(游戏中途修改无效)", true)]
     public bool 低区块模式; 

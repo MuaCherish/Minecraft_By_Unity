@@ -13,6 +13,7 @@ namespace Cloud
 
 
         private ManagerHub managerhub;
+        MC_Service_World Service_World;
         //private bool isCloudInitialized = false; // 标记云的位置是否已初始化
 
         private void Start()
@@ -20,6 +21,7 @@ namespace Cloud
 
 
             managerhub = SceneData.GetManagerhub();
+            Service_World = managerhub.Service_World;
 
             // 在XOZ平面上随机生成一个单位向量作为初始方向
             WindDirect = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
@@ -30,7 +32,7 @@ namespace Cloud
         private void Update()
         {
 
-            switch (managerhub.world.game_state)
+            switch (Service_World.game_state)
             {
                 case Game_State.Start:
                     hasExec_Playing = true;

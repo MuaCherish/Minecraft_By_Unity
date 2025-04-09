@@ -26,18 +26,18 @@ public class Weather : MonoBehaviour
     #region ÖÜÆÚº¯Êý
 
     ManagerHub managerhub;
-    World world;
+    MC_Service_World Service_world;
     Player player;
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
         player = managerhub.player;
-        world = managerhub.world;
+        Service_world = managerhub.Service_World;
     }
 
     private void Update()
     {
-        switch (managerhub.world.game_state)
+        switch (managerhub.Service_World.game_state)
         {
             case Game_State.Playing:
                 CheckWeatherTransition();

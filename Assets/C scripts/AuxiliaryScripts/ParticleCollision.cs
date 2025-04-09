@@ -3,7 +3,8 @@ using UnityEngine;
 public class ParticleCollision : MonoBehaviour
 {
     private ParticleSystem _particleSystem;
-    public ManagerHub managerhub;
+    ManagerHub managerhub;
+    MC_Service_World Service_World;
     public Vector3 gravity = new Vector3(0, -9.81f, 0); // 自定义重力
     private int MaxRandomCutCount = 20;
     public float Y_Offset = 0.2f;
@@ -16,6 +17,7 @@ public class ParticleCollision : MonoBehaviour
         // 获取粒子系统组件
         _particleSystem = GetComponent<ParticleSystem>();
         managerhub = SceneData.GetManagerhub();
+        Service_World = managerhub.Service_World;
     }
 
     public void Particle_Play(byte _targetType)
@@ -26,7 +28,7 @@ public class ParticleCollision : MonoBehaviour
         }
 
         // 生成10张随机裁剪后的Sprite
-        Sprite originalSprite = managerhub.world.blocktypes[_targetType].icon;
+        Sprite originalSprite = Service_World.blocktypes[_targetType].icon;
 
         for (int i = 0; i < MaxRandomCutCount; i++)
         {
@@ -77,7 +79,7 @@ public class ParticleCollision : MonoBehaviour
             Vector3 particleVelocity = particles[i].velocity;
 
             // 碰撞检测：如果粒子即将碰撞地面（通过Y_Offset检测）
-            if (managerhub.Service_Chunk.CollisionCheckForVoxel(new Vector3(particlePosition.x, particlePosition.y + Y_Offset, particlePosition.z)))
+            if (managerhub.Service_World.CollisionCheckForVoxel(new Vector3(particlePosition.x, particlePosition.y + Y_Offset, particlePosition.z)))
             {
                 // Y轴速度瞬间归零，表示粒子“落地”
                 particleVelocity.y = 0f;

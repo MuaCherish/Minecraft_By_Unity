@@ -10,14 +10,14 @@ public class Entity_Creeper : MonoBehaviour
     #region 周期函数
 
     ManagerHub managerhub;
-    World world;
+    MC_Service_World Service_world;
     Player player;
     MC_Component_AI Component_AI;
     MC_Component_Buff Buff_Component;
 
     private void Awake()
     {
-        world = SceneData.GetManagerhub().world;
+        Service_world = SceneData.GetManagerhub().Service_World;
         Component_AI = GetComponent<MC_Component_AI>();
         managerhub = SceneData.GetManagerhub();
         player = managerhub.player;
@@ -26,7 +26,7 @@ public class Entity_Creeper : MonoBehaviour
 
     private void Update()
     {
-        if (world.game_state == Game_State.Playing)
+        if (Service_world.game_state == Game_State.Playing)
         {
             Handle_GameState_Playing();
         }
@@ -53,7 +53,7 @@ public class Entity_Creeper : MonoBehaviour
     void _ReferUpdate_Handle_StartFuse()
     {
         //提前返回-只在生存模式触发引信
-        if (world.game_mode != GameMode.Survival)
+        if (Service_world.game_mode != GameMode.Survival)
             return;
 
         float distanceToPlayer = (transform.position - player.transform.position).magnitude;

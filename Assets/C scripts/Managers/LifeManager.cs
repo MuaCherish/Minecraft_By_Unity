@@ -23,11 +23,14 @@ public class LifeManager : MonoBehaviour
     #region 周期函数
 
     private ManagerHub managerhub;
+    MC_Service_World Service_World;
+
     bool hasExec_FixedUpdate = true;
 
     private void Start()
     {
         managerhub = SceneData.GetManagerhub();
+        Service_World = managerhub.Service_World;
     }
 
     public void InitLifeManager()
@@ -46,7 +49,7 @@ public class LifeManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (managerhub.world.game_state == Game_State.Playing)
+        if (Service_World.game_state == Game_State.Playing)
         {
             //if (Input.GetKeyDown(KeyCode.R))
             //{
@@ -77,7 +80,7 @@ public class LifeManager : MonoBehaviour
 
         while (true)
         {
-            if (managerhub.world.game_state == Game_State.Playing)
+            if (Service_World.game_state == Game_State.Playing)
             {
                 //自动恢复血条
                 if (blood < maxblood && food >= 14)
@@ -444,7 +447,7 @@ public class LifeManager : MonoBehaviour
         while (true)
         {
 
-            if (managerhub.world.game_state != Game_State.Playing && managerhub.world.game_state != Game_State.Pause)
+            if (Service_World.game_state != Game_State.Playing && Service_World.game_state != Game_State.Pause)
             {
                 break;
             }

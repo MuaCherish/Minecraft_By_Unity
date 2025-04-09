@@ -37,7 +37,7 @@ public class ChatManager : MonoBehaviour
 
     void Update()
     {
-        switch (managerhub.world.game_state)
+        switch (managerhub.Service_World.game_state)
         {
             case Game_State.Playing:
                 SwitchChatScreen();

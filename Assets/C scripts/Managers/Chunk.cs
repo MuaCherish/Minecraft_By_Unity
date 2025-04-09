@@ -22,7 +22,7 @@ public class Chunk : MonoBehaviour
     //public bool isSuperPlainMode; 
 
     //Transform
-    World world;
+    MC_Service_World world;
     ManagerHub managerhub;
     public GameObject chunkObject;
     public MeshFilter meshFilter;
@@ -87,7 +87,7 @@ public class Chunk : MonoBehaviour
 
 
         //World
-        world = _managerhub.world;
+        world = _managerhub.Service_World;
         managerhub = _managerhub;
         caveWidth = world._biomeProperties.cave_width;
         //debug_CanLookCave = !world.debug_CanLookCave;
@@ -106,7 +106,7 @@ public class Chunk : MonoBehaviour
         chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
-        rand = new System.Random(world.worldSetting.seed);
+        rand = new System.Random(managerhub.Service_Saving.worldSetting.seed);
         //print(world.worldSetting.seed);
 
         //初始化Voxel数组
@@ -114,7 +114,7 @@ public class Chunk : MonoBehaviour
 
 
         //获取群系类型
-        worldType = world.worldSetting.worldtype;
+        worldType = managerhub.Service_Saving.worldSetting.worldtype;
         //print(worldType);
 
         switch (worldType)
@@ -166,7 +166,7 @@ public class Chunk : MonoBehaviour
 
 
         //World
-        world = _managerhub.world;
+        world = _managerhub.Service_World;
         managerhub = _managerhub;
         caveWidth = world._biomeProperties.cave_width;
         //debug_CanLookCave = !world.debug_CanLookCave;
@@ -187,14 +187,14 @@ public class Chunk : MonoBehaviour
         chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
-        rand = new System.Random(world.worldSetting.seed);
+        rand = new System.Random(managerhub.Service_Saving.worldSetting.seed);
 
         //初始化Voxel数组
         InitVoxelStruct();
 
 
         //获取群系类型
-        worldType = world.worldSetting.worldtype;
+        worldType = managerhub.Service_Saving.worldSetting.worldtype;
         //print(worldType);
 
         switch (worldType)
@@ -371,7 +371,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype, world._biomeProperties);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, world._biomeProperties);
 
 
                     //矿洞噪声
@@ -763,7 +763,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype, world._biomeProperties);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, world._biomeProperties);
                     //矿洞噪声
                     float noise3d = GetCaveNoise(x, y, z);
 
@@ -965,7 +965,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype, world._biomeProperties);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, world._biomeProperties);
 
 
                     //矿洞噪声
@@ -1336,7 +1336,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, world.worldSetting.worldtype, world._biomeProperties);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, world._biomeProperties);
 
 
                     //矿洞噪声
@@ -2753,7 +2753,7 @@ public class Chunk : MonoBehaviour
             UpdateBlockOriented(new Vector3(x, y, z), managerhub.player.RealBacking);
 
         //保存数据
-        world.UpdateEditNumber(pos, targetBlocktype);
+        managerhub.Service_Saving.UpdateEditNumber(pos, targetBlocktype);
 
 
         EditForSomeBlocks(new Vector3(x, y, z), targetBlocktype);
@@ -2805,7 +2805,7 @@ public class Chunk : MonoBehaviour
     bool NeedReturn(byte _this, byte _target, Vector3 _vec)
     {
         //把门顶掉的问题
-        if (!managerhub.world.blocktypes[_this].CanBeCover && _target != VoxelData.Air)
+        if (!world.blocktypes[_this].CanBeCover && _target != VoxelData.Air)
             return true;
 
         //出界判断
@@ -2941,7 +2941,7 @@ public class Chunk : MonoBehaviour
         }
 
         // 更新区块网格
-        world.UpdateEditNumber(_EditList);
+        managerhub.Service_Saving.UpdateEditNumber(_EditList);
         UpdateChunkMesh_WithSurround(true, false);
 
     }
@@ -3090,7 +3090,7 @@ public class Chunk : MonoBehaviour
                         //    return true;
                         //}
 
-                        return !world.是否生成Chunk侧面;
+                        return !world.isGenChunkSurrendFace;
 
                     }
 
@@ -3145,7 +3145,7 @@ public class Chunk : MonoBehaviour
                         //    return true;
                         //}
 
-                        return !world.是否生成Chunk侧面;
+                        return !world.isGenChunkSurrendFace;
 
                     }
 
@@ -3197,7 +3197,7 @@ public class Chunk : MonoBehaviour
                         //        return true;
                         //    }
 
-                        return !world.是否生成Chunk侧面;
+                        return !world.isGenChunkSurrendFace;
 
                     }
 
@@ -3249,7 +3249,7 @@ public class Chunk : MonoBehaviour
                         //    return true;
                         //}
 
-                        return !world.是否生成Chunk侧面;
+                        return !world.isGenChunkSurrendFace;
 
                     }
 

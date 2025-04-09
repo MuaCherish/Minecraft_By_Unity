@@ -16,13 +16,13 @@ public class MC_Component_Animator : MonoBehaviour
     MC_Component_Physics Component_Physics;
     MC_Component_Velocity Component_Velocity;
     Animator animator;
-    World world;
+    MC_Service_World Service_World;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         Component_Physics = GetComponent<MC_Component_Physics>();
-        world = Component_Physics.managerhub.world;
+        Service_World = Component_Physics.managerhub.Service_World;
         Component_Velocity = GetComponent<MC_Component_Velocity>();
     }
 
@@ -33,7 +33,7 @@ public class MC_Component_Animator : MonoBehaviour
 
     void Update()
     {
-        switch (world.game_state)
+        switch (Service_World.game_state)
         {
             case Game_State.Playing:
                 Handle_GameState_Playing();

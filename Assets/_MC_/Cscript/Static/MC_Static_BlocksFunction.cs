@@ -43,7 +43,7 @@ public static class MC_Static_BlocksFunction
 
                     // 检查该坐标是否在球形半径范围内
                     // 且不能是水
-                    if (Vector3.Distance(_originPos, currentPos) <= TNT_explore_Radius && managerhub.Service_Chunk.GetBlockType(currentPos) != VoxelData.Water)
+                    if (Vector3.Distance(_originPos, currentPos) <= TNT_explore_Radius && managerhub.Service_World.GetBlockType(currentPos) != VoxelData.Water)
                     {
                         // 如果该坐标属于爆炸边缘位置
                         if (Vector3.Distance(_originPos, currentPos) >= (TNT_explore_Radius - 0.5f))
@@ -65,7 +65,7 @@ public static class MC_Static_BlocksFunction
         }
 
         // 调用 EditBlock 函数，将坐标设置为 Air
-        managerhub.Service_Chunk.EditBlock(_editNumber);
+        managerhub.Service_World.EditBlock(_editNumber);
         //Debug.Log($"Boom:{_editNumber.Count}");
     }
 
@@ -98,7 +98,7 @@ public static class MC_Static_BlocksFunction
             Vector3 currentPos = queue.Dequeue();
 
             // 检查当前方块是否为空气
-            if (!managerhub.world.blocktypes[managerhub.Service_Chunk.GetBlockType(currentPos)].isSolid)
+            if (!managerhub.Service_World.blocktypes[managerhub.Service_World.GetBlockType(currentPos)].isSolid)
             {
                 _editNumber.Add(new EditStruct(currentPos, VoxelData.Wool_White)); // 你可以用适当的烟雾体素替换 VoxelData.Smoke
 
@@ -109,7 +109,7 @@ public static class MC_Static_BlocksFunction
                     // 如果相邻方块未访问过并且在半径范围内
                     if (!visited.Contains(neighborPos) && Vector3.Distance(_originPos, neighborPos) <= Smoke_Radius)
                     {
-                        if (!managerhub.world.blocktypes[managerhub.Service_Chunk.GetBlockType(neighborPos)].isSolid)
+                        if (!managerhub.Service_World.blocktypes[managerhub.Service_World.GetBlockType(neighborPos)].isSolid)
                         {
                             hasExpandableNeighbor = true; // 有可扩展的邻居
                             visited.Add(neighborPos);
@@ -128,7 +128,7 @@ public static class MC_Static_BlocksFunction
 
         // 调用 EditBlock 函数，将空气方块替换为烟雾方块
         //Debug.Log($"{_editNumber.Count}");
-        managerhub.Service_Chunk.EditBlock(_editNumber, 0.3f);
+        managerhub.Service_World.EditBlock(_editNumber, 0.3f);
     }
 
 
@@ -164,7 +164,7 @@ public static class MC_Static_BlocksFunction
                     if (Vector3.Distance(_originPos, currentPos) <= TNT_explore_Radius)
                     {
                         // 检查该位置的方块类型是否为 TNT
-                        if (managerhub.Service_Chunk.GetBlockType(currentPos) == VoxelData.TNT)
+                        if (managerhub.Service_World.GetBlockType(currentPos) == VoxelData.TNT)
                         {
                             positions.Add(currentPos);
                         }

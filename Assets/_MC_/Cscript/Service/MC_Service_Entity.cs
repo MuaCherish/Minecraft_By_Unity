@@ -10,7 +10,7 @@ public class MC_Service_Entity : MonoBehaviour
 
     ManagerHub managerhub;
     Player player;
-    World world;
+    MC_Service_World Service_World;
     TimeManager timeManager;
     private void Awake()
     {
@@ -18,7 +18,7 @@ public class MC_Service_Entity : MonoBehaviour
         timeManager = managerhub.timeManager;
         player = managerhub.player;
         Entity_Parent = SceneData.GetEntityParent();
-        world = managerhub.world;
+        Service_World = managerhub.Service_World;
 
         isNaturalSpawnEnabled = managerhub.生物自然生成;
 
@@ -29,7 +29,7 @@ public class MC_Service_Entity : MonoBehaviour
 
     private void Update()
     {
-        switch (world.game_state)
+        switch (Service_World.game_state)
         {
             case Game_State.Loading:
                 Handle_GameState_Loading();
@@ -42,7 +42,7 @@ public class MC_Service_Entity : MonoBehaviour
 
     private void FixedUpdate()
     {
-        switch (world.game_state)
+        switch (Service_World.game_state)
         {
             case Game_State.Playing:
                 FixedHandle_GameState_Playing();
@@ -109,7 +109,7 @@ public class MC_Service_Entity : MonoBehaviour
             return;
 
         //提前返回-如果是Start则退出
-        if (world.game_state == Game_State.Start)
+        if (Service_World.game_state == Game_State.Start)
             return;
 
         //提前返回-如果超出最大实体数量
@@ -182,7 +182,7 @@ public class MC_Service_Entity : MonoBehaviour
         RandomSpawnPos = MC_Static_Math.GetRandomPointInDonut(playerPos, spawnRadiusRange);
 
         // 调用World的获取可用出生点函数
-        managerhub.Service_Chunk.GetSpawnPos(RandomSpawnPos, out List<Vector3> _Result);
+        managerhub.Service_World.GetSpawnPos(RandomSpawnPos, out List<Vector3> _Result);
 
         // ForeachList: 判断坐标是否可生成 [不在玩家视锥体内] [距离玩家的Y在合适范围]
         foreach (var _pos in _Result)
@@ -298,7 +298,7 @@ public class MC_Service_Entity : MonoBehaviour
         }
 
         //提前返回-当前坐标没有区块或者
-        if (!managerhub.Service_Chunk.TryGetChunkObject(_Startpos, out Chunk chunktemp))
+        if (!managerhub.Service_World.TryGetChunkObject(_Startpos, out Chunk chunktemp))
         {
             _Result = null;
             return false;

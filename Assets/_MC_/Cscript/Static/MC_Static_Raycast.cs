@@ -73,14 +73,14 @@ public static class MC_Static_Raycast
             }
 
             // 方块命中检测
-            if (_FindType != MC_RayCast_FindType.OnlyFindEntity && _managerhub.Service_Chunk.RayCheckForVoxel(pos))
+            if (_FindType != MC_RayCast_FindType.OnlyFindEntity && _managerhub.Service_World.RayCheckForVoxel(pos))
             {
                 // 记录命中点
                 hitPoint = pos;
                 isHit = 1; // 记录命中
 
                 // 获取命中的方块类型
-                blockType = _managerhub.Service_Chunk.GetBlockType(pos);
+                blockType = _managerhub.Service_World.GetBlockType(pos);
 
                 // 计算命中的法线方向，基于命中点的相对位置判断法线单位向量
                 Vector3 blockCenter = new Vector3(Mathf.Floor(hitPoint.x) + 0.5f, Mathf.Floor(hitPoint.y) + 0.5f, Mathf.Floor(hitPoint.z) + 0.5f);

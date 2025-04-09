@@ -28,7 +28,7 @@ namespace MCEntity
         #region 生命周期
 
         MC_Component_Velocity Component_Velocity;
-        World world;
+        MC_Service_World Service_World;
 
         private ManagerHub _managerhub;
         public ManagerHub managerhub
@@ -47,7 +47,7 @@ namespace MCEntity
         private void Awake()
         {
             Component_Velocity = GetComponent<MC_Component_Velocity>();
-            world = managerhub.world;
+            Service_World = managerhub.Service_World;
 
             _ReferAwake_AutoGetModel();
         }
@@ -60,7 +60,7 @@ namespace MCEntity
 
         private void Update()
         {
-            if (managerhub.world.game_state == Game_State.Playing)
+            if (Service_World.game_state == Game_State.Playing)
             {
                 _ReferUpdate_State();
                 _ReferUpdate_HitBox();
@@ -189,10 +189,10 @@ namespace MCEntity
             {
                 if (isCollisionLocked) return false;
 
-                if (managerhub.Service_Chunk.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, -Delta, Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, -Delta, Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, Delta, Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, Delta, Delta)))
+                if (managerhub.Service_World.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, -Delta, Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, -Delta, Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, Delta, Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, Delta, Delta)))
                 {
 
                     //进行一次微调
@@ -233,10 +233,10 @@ namespace MCEntity
             {
                 if (isCollisionLocked) return false;
 
-                if (managerhub.Service_Chunk.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, -Delta, -Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, -Delta, -Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, Delta, -Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, Delta, -Delta)))
+                if (managerhub.Service_World.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, -Delta, -Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, -Delta, -Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, Delta, -Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, Delta, -Delta)))
                 {
 
                     //进行一次微调
@@ -277,10 +277,10 @@ namespace MCEntity
             {
                 if (isCollisionLocked) return false;
 
-                if (managerhub.Service_Chunk.CollisionCheckForVoxel(前_左上 + new Vector3(-Delta, -Delta, -Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_左下 + new Vector3(-Delta, Delta, -Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_左上 + new Vector3(-Delta, -Delta, Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_左下 + new Vector3(-Delta, Delta, Delta)))
+                if (managerhub.Service_World.CollisionCheckForVoxel(前_左上 + new Vector3(-Delta, -Delta, -Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(前_左下 + new Vector3(-Delta, Delta, -Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(后_左上 + new Vector3(-Delta, -Delta, Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(后_左下 + new Vector3(-Delta, Delta, Delta)))
                 {
 
                     //进行一次微调
@@ -321,10 +321,10 @@ namespace MCEntity
             {
                 if (isCollisionLocked) return false;
 
-                if (managerhub.Service_Chunk.CollisionCheckForVoxel(前_右上 + new Vector3(Delta, -Delta, -Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_右下 + new Vector3(Delta, Delta, -Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右上 + new Vector3(Delta, -Delta, Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右下 + new Vector3(Delta, Delta, Delta)))
+                if (managerhub.Service_World.CollisionCheckForVoxel(前_右上 + new Vector3(Delta, -Delta, -Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(前_右下 + new Vector3(Delta, Delta, -Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(后_右上 + new Vector3(Delta, -Delta, Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(后_右下 + new Vector3(Delta, Delta, Delta)))
                 {
 
                     
@@ -369,10 +369,10 @@ namespace MCEntity
             {
                 if (isCollisionLocked) return false;
 
-                if (managerhub.Service_Chunk.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, Delta, Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, Delta, -Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, Delta, Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, Delta, -Delta)))
+                if (managerhub.Service_World.CollisionCheckForVoxel(后_左上 + new Vector3(Delta, Delta, Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(前_左上 + new Vector3(Delta, Delta, -Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(后_右上 + new Vector3(-Delta, Delta, Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(前_右上 + new Vector3(-Delta, Delta, -Delta)))
                 {
 
                     //进行一次微调
@@ -414,10 +414,10 @@ namespace MCEntity
                 if (isCollisionLocked) return false;
 
                 // 进行碰撞检测
-                if (managerhub.Service_Chunk.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, -Delta, Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, -Delta, -Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, -Delta, Delta)) ||
-                    managerhub.Service_Chunk.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, -Delta, -Delta)))
+                if (managerhub.Service_World.CollisionCheckForVoxel(后_左下 + new Vector3(Delta, -Delta, Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(前_左下 + new Vector3(Delta, -Delta, -Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(后_右下 + new Vector3(-Delta, -Delta, Delta)) ||
+                    managerhub.Service_World.CollisionCheckForVoxel(前_右下 + new Vector3(-Delta, -Delta, -Delta)))
                 {
 
                     //进行一次微调
@@ -563,7 +563,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_x, _y, _00.z + Delta);
 
                             //获取方块类型
-                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
+                            byte _targetType = managerhub.Service_World.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -572,7 +572,7 @@ namespace MCEntity
                             }
 
                             //获取目标最大高度
-                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.zRange.x;
+                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.zRange.x;
 
                             //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -600,7 +600,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_x, _y, _00.z - Delta);
 
                             //获取方块类型
-                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
+                            byte _targetType = Service_World.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -609,7 +609,7 @@ namespace MCEntity
                             }
 
                             //获取目标最大高度
-                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.zRange.y;
+                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.zRange.y;
 
                             //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -638,7 +638,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_00.x - Delta, _y, _z);
 
                             //获取方块类型
-                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
+                            byte _targetType = Service_World.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -647,7 +647,7 @@ namespace MCEntity
                             }
 
                             //获取目标最大高度
-                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.xRange.y;
+                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.xRange.y;
 
                             //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -674,7 +674,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_00.x + Delta, _y, _z);
 
                             //获取方块类型
-                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
+                            byte _targetType = Service_World.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -683,7 +683,7 @@ namespace MCEntity
                             }
 
                             //获取目标最大高度
-                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.xRange.x;
+                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.xRange.x;
 
                             //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -710,7 +710,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_x, _00.y + Delta, _z);
 
                             //获取方块类型
-                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
+                            byte _targetType = Service_World.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -719,7 +719,7 @@ namespace MCEntity
                             }
 
                             //获取目标最低高度
-                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.yRange.x;
+                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.yRange.x;
 
                             print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -747,7 +747,7 @@ namespace MCEntity
                             Vector3 _pos = new Vector3(_x, _00.y - Delta, _z);
 
                             //获取方块类型
-                            byte _targetType = managerhub.Service_Chunk.GetBlockType(_pos);
+                            byte _targetType = Service_World.GetBlockType(_pos);
 
                             //提前返回-空气不需要计算
                             if (_targetType == VoxelData.Air)
@@ -756,7 +756,7 @@ namespace MCEntity
                             }
 
                             //获取目标最大高度
-                            float _blockY = managerhub.world.blocktypes[_targetType].CollosionRange.yRange.y;
+                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.yRange.y;
 
                             //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -1188,7 +1188,7 @@ namespace MCEntity
         {
             get
             {
-                return managerhub.Service_Chunk.GetBlockType(FootPoint);
+                return managerhub.Service_World.GetBlockType(FootPoint);
             }
         }
 
@@ -1295,7 +1295,7 @@ namespace MCEntity
         /// </summary>
         public bool IsInTheWater(Vector3 _pos)
         {
-            if (managerhub.Service_Chunk.GetBlockType(_pos) == VoxelData.Water)
+            if (managerhub.Service_World.GetBlockType(_pos) == VoxelData.Water)
             {
                 return true;
             }

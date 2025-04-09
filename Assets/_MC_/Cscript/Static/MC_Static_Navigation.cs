@@ -12,18 +12,18 @@ public static class MC_Static_Navigation
     /// <summary>
     /// World
     /// </summary>
-    public static World world
+    public static MC_Service_World Service_World
     {
         get
         {
-            if (_world == null)
+            if (_Service_World == null)
             {
-                _world = SceneData.GetManagerhub().world; // 在第一次访问时创建
+                _Service_World = SceneData.GetManagerhub().Service_World; // 在第一次访问时创建
             }
-            return _world;
+            return _Service_World;
         }
     }
-    private static World _world;  // 静态变量存储 World 实例
+    private static MC_Service_World _Service_World;  // 静态变量存储 World 实例
 
 
     #endregion
@@ -41,7 +41,7 @@ public static class MC_Static_Navigation
     /// <returns></returns>
     public static bool CheckNodeLimit(Vector3 _nextPos, Vector3 _nextDirect)
     {
-        byte _thisBlockType = managerhub.Service_Chunk.GetBlockType(_nextPos);
+        byte _thisBlockType = managerhub.Service_World.GetBlockType(_nextPos);
         Vector3 _LastPos = _nextPos - _nextDirect;
 
         //提前返回-如果没有方块数据
@@ -99,7 +99,7 @@ public static class MC_Static_Navigation
         if (isSuspend(_posA) || isSuspend(_posB))
             return false;
 
-        Algo_Astar(_posA, _posB, world.renderSize, out List<Vector3> _result);
+        Algo_Astar(_posA, _posB, Service_World.renderSize, out List<Vector3> _result);
         return _result.Count > 0;
     }
 
@@ -110,8 +110,8 @@ public static class MC_Static_Navigation
     /// <returns></returns>
     public static bool isSuspend(Vector3 _pos)
     {
-        if (managerhub.Service_Chunk.GetBlockType(_pos + Vector3.down) == VoxelData.Air &&
-            managerhub.Service_Chunk.GetBlockType(_pos + Vector3.down * 2) == VoxelData.Air
+        if (managerhub.Service_World.GetBlockType(_pos + Vector3.down) == VoxelData.Air &&
+            managerhub.Service_World.GetBlockType(_pos + Vector3.down * 2) == VoxelData.Air
             )
             return true;
         else
@@ -141,9 +141,9 @@ public static class MC_Static_Navigation
         _TargetPos = Vector3.zero;
 
         //提前返回-起始点被堵住 || 起始点悬空
-        byte _StartPosBlockType = managerhub.Service_Chunk.GetBlockType(_thisPos);
-        byte _StartDownPosBlockType = managerhub.Service_Chunk.GetBlockType(_thisPos + Vector3.down);
-        if (_StartPosBlockType == 255 || world.blocktypes[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
+        byte _StartPosBlockType = managerhub.Service_World.GetBlockType(_thisPos);
+        byte _StartDownPosBlockType = managerhub.Service_World.GetBlockType(_thisPos + Vector3.down);
+        if (_StartPosBlockType == 255 || Service_World.blocktypes[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
             return;
 
         // 迭代 N 步
@@ -182,9 +182,9 @@ public static class MC_Static_Navigation
         _Nodes = new List<Vector3> { _thisPos };
 
         //提前返回-起始点被堵住 || 起始点悬空
-        byte _StartPosBlockType = managerhub.Service_Chunk.GetBlockType(_thisPos);
-        byte _StartDownPosBlockType = managerhub.Service_Chunk.GetBlockType(_thisPos + Vector3.down);
-        if (_StartPosBlockType == 255 || world.blocktypes[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
+        byte _StartPosBlockType = managerhub.Service_World.GetBlockType(_thisPos);
+        byte _StartDownPosBlockType = managerhub.Service_World.GetBlockType(_thisPos + Vector3.down);
+        if (_StartPosBlockType == 255 || Service_World.blocktypes[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
             return;
 
         // 迭代 N 步

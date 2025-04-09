@@ -38,7 +38,7 @@ namespace MCEntity
         MC_Component_Registration Component_Registration;
         MC_Component_Life Component_life;
         MC_Component_Animator Component_Animator;
-        World world;
+        MC_Service_World Service_World;
         Player player;
         ManagerHub managerhub;
 
@@ -49,14 +49,14 @@ namespace MCEntity
             Component_Registration = GetComponent<MC_Component_Registration>();
             Component_life = GetComponent<MC_Component_Life>();
             managerhub = SceneData.GetManagerhub();
-            world = managerhub.world;
+            Service_World = managerhub.Service_World;
             player = managerhub.player;
             Component_Animator = GetComponent<MC_Component_Animator>();
         }
 
         private void Update()
         {
-            switch (world.game_state)
+            switch (Service_World.game_state)
             {
                 case Game_State.Playing:
                     Handle_GameState_Playing();
@@ -106,7 +106,7 @@ namespace MCEntity
             if (isAggressive)
             {
                 //提前返回-如果不是生存模式
-                if (world.game_mode != GameMode.Survival)
+                if (Service_World.game_mode != GameMode.Survival)
                     return;
 
                 //提前返回-如果玩家死亡则返回Idle状态
@@ -879,7 +879,7 @@ namespace MCEntity
         void _AutoWatchToPlayer()
         {
             //提前返回-如果是生存模式且具备攻击性则跳过
-            if (world.game_mode == GameMode.Survival && isAggressive)
+            if (Service_World.game_mode == GameMode.Survival && isAggressive)
                 return;
 
             //提前返回-如果不是Idle-Wait阶段
@@ -1060,7 +1060,7 @@ namespace MCEntity
                 return;
 
             // 提前返回-如果不是生存模式
-            if (world.game_mode != GameMode.Survival)
+            if (Service_World.game_mode != GameMode.Survival)
                 return;
 
             // 提前返回-不是追逐状态
@@ -1125,7 +1125,7 @@ namespace MCEntity
         void OnDrawGizmos()
         {
             //不绘制
-            if (world == null || world.game_state != Game_State.Playing)
+            if (Service_World == null || Service_World.game_state != Game_State.Playing)
                 return;
 
             //提前返回-如果没有开debug

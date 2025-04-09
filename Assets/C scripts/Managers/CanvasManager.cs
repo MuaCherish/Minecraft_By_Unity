@@ -19,7 +19,7 @@ public class CanvasManager : MonoBehaviour
     [Header("Transforms")]
     //场景对象
     public ParticleSystem partSystem;
-    public World world;
+    MC_Service_World Service_World;
     public Transform Camera;
     public MusicManager musicmanager;
     public Player player;
@@ -65,6 +65,7 @@ public class CanvasManager : MonoBehaviour
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
+        Service_World = managerhub.Service_World;
     }
 
     private void Start()
@@ -152,7 +153,7 @@ public class CanvasManager : MonoBehaviour
         Handle_ShowFlashLightPrompt();
 
 
-        switch (world.game_state)
+        switch (Service_World.game_state)
         {
             case Game_State.Loading:
                 Handle_GameState_Loading();
@@ -182,12 +183,12 @@ public class CanvasManager : MonoBehaviour
     void Handle_GameState_Playing()
     {
         //Survival
-        if (world.game_mode == GameMode.Survival)
+        if (Service_World.game_mode == GameMode.Survival)
         {
             GameMode_Survival();
         }
         //Creative
-        else if (world.game_mode == GameMode.Creative)
+        else if (Service_World.game_mode == GameMode.Creative)
         {
             GameMode_Creative();
         }
@@ -204,7 +205,7 @@ public class CanvasManager : MonoBehaviour
             isPausing = false;
             isOpenBackpack = false;
             SwitchUI_Player(-1);
-            managerhub.world.game_state = Game_State.Playing;
+            managerhub.Service_World.game_state = Game_State.Playing;
 
             //print("E 关闭背包");
             CheckSwapBlockAndDropOut();
@@ -252,7 +253,7 @@ public class CanvasManager : MonoBehaviour
         //如果进度条满了
         if (Initprogress == 1)
         {
-            world.game_state = Game_State.Playing;
+            Service_World.game_state = Game_State.Playing;
 
             SwitchToUI(CanvasData.ui玩家);
 
@@ -395,7 +396,7 @@ public class CanvasManager : MonoBehaviour
                 GameObject.Destroy(child.gameObject);
             }
 
-            world.LoadAllSaves(world.savingPATH);
+            managerhub.Service_Saving.LoadAllSaves(managerhub.Service_Saving.savingPATH);
         }
 
 
@@ -463,7 +464,7 @@ public class CanvasManager : MonoBehaviour
             {
 
                 //游戏状态切换
-                world.game_state = Game_State.Loading;
+                Service_World.game_state = Game_State.Loading;
 
                 //主摄像机切换
                 //PlayerObject.SetActive(true);
@@ -484,7 +485,7 @@ public class CanvasManager : MonoBehaviour
             LockMouse(true);
 
 
-            if (world.game_mode == GameMode.Survival)
+            if (Service_World.game_mode == GameMode.Survival)
             {
                 UIManager[_TargetID].childs[0]._object.SetActive(true);
             }
@@ -546,7 +547,7 @@ public class CanvasManager : MonoBehaviour
         }
 
         // 构造完整路径
-        string fullPath = Path.Combine(world.savingPATH, "Saves", PointSaving);
+        string fullPath = Path.Combine(managerhub.Service_Saving.savingPATH, "Saves", PointSaving);
 
         // 确保要删除的路径存在
         if (Directory.Exists(fullPath))
@@ -554,7 +555,7 @@ public class CanvasManager : MonoBehaviour
             //Debug.Log("存档存在");
 
             // 删除存档
-            world.DeleteSave(fullPath);
+            managerhub.Service_Saving.DeleteSave(fullPath);
 
             // 刷新界面
             foreach (Transform child in NewWorld_Transform)
@@ -564,7 +565,7 @@ public class CanvasManager : MonoBehaviour
             }
 
             // 重新加载存档
-            world.LoadAllSaves(world.savingPATH);
+            managerhub.Service_Saving.LoadAllSaves(managerhub.Service_Saving.savingPATH);
         }
         else
         {
@@ -587,8 +588,8 @@ public class CanvasManager : MonoBehaviour
         if (isClickSaving)
         {
             //加载存档
-            //print(world.savingPATH + "\\Saves\\" + world.PointSaving);
-            world.LoadSavingData(world.savingPATH + "\\Saves\\" + PointSaving);
+            //print(Service_World.savingPATH + "\\Saves\\" + Service_World.PointSaving);
+            managerhub.Service_Saving.LoadSavingData(managerhub.Service_Saving.savingPATH + "\\Saves\\" + PointSaving);
             //print(world.TheSaving.Count);
 
             SwitchToUI(CanvasData.ui加载世界);
@@ -604,7 +605,7 @@ public class CanvasManager : MonoBehaviour
         {
             //保存名字
             case 0:
-                world.worldSetting.name = UIManager[CanvasData.ui初始化_新建世界].childs[0]._object.GetComponent<TMP_InputField>().text;
+                managerhub.Service_Saving.worldSetting.name = UIManager[CanvasData.ui初始化_新建世界].childs[0]._object.GetComponent<TMP_InputField>().text;
                 break;
 
             //保存种子
@@ -634,7 +635,7 @@ public class CanvasManager : MonoBehaviour
                             }
 
 
-                            world.worldSetting.seed = _number;
+                            managerhub.Service_Saving.worldSetting.seed = _number;
 
                         }
                         else
@@ -680,7 +681,7 @@ public class CanvasManager : MonoBehaviour
                     UIManager[CanvasData.ui初始化_新建世界].childs[6]._object.GetComponent<TextMeshProUGUI>().text = $"渲染距离：{mappedValue} 区块";
 
                     //改变world
-                    world.renderSize = mappedValue;
+                    Service_World.renderSize = mappedValue;
 
                     previous_mappedValue = mappedValue;
                 }
@@ -689,16 +690,16 @@ public class CanvasManager : MonoBehaviour
 
             //保存游戏模式
             case 3:
-                if (world.game_mode == GameMode.Survival)
+                if (Service_World.game_mode == GameMode.Survival)
                 {
                     //改为创造模式
-                    world.game_mode = GameMode.Creative;
+                    Service_World.game_mode = GameMode.Creative;
                     UIManager[CanvasData.ui初始化_新建世界].childs[2]._object.GetComponent<TextMeshProUGUI>().text = "游戏模式：创造";
                 }
                 else
                 {
                     //改为生成模式
-                    world.game_mode = GameMode.Survival;
+                    Service_World.game_mode = GameMode.Survival;
                     UIManager[CanvasData.ui初始化_新建世界].childs[2]._object.GetComponent<TextMeshProUGUI>().text = "游戏模式：生存";
                 }
                 
@@ -713,31 +714,31 @@ public class CanvasManager : MonoBehaviour
                 switch (currentWorldType)
                 {
                     case 0:
-                        world.worldSetting.worldtype = TerrainData.Biome_Plain;
+                        managerhub.Service_Saving.worldSetting.worldtype = TerrainData.Biome_Plain;
                         UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：草原群系";
                         break;
                     case 1:
-                        world.worldSetting.worldtype = TerrainData.Biome_Plateau;
+                        managerhub.Service_Saving.worldSetting.worldtype = TerrainData.Biome_Plateau;
                         UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：高原群系";
                         break;
                     case 2:
-                        world.worldSetting.worldtype = TerrainData.Biome_Dessert;
+                        managerhub.Service_Saving.worldSetting.worldtype = TerrainData.Biome_Dessert;
                         UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：沙漠群系";
                         break;
                     case 3:
-                        world.worldSetting.worldtype = TerrainData.Biome_Marsh;
+                        managerhub.Service_Saving.worldSetting.worldtype = TerrainData.Biome_Marsh;
                         UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：沼泽群系";
                         break;
                     case 4:
-                        world.worldSetting.worldtype = TerrainData.Biome_Forest;
+                        managerhub.Service_Saving.worldSetting.worldtype = TerrainData.Biome_Forest;
                         UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：密林群系";
                         break;
                     case 5:
-                        world.worldSetting.worldtype = TerrainData.Biome_Default;
+                        managerhub.Service_Saving.worldSetting.worldtype = TerrainData.Biome_Default;
                         UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：默认";
                         break;
                     case 6:
-                        world.worldSetting.worldtype = TerrainData.Biome_SuperPlain;
+                        managerhub.Service_Saving.worldSetting.worldtype = TerrainData.Biome_SuperPlain;
                         UIManager[CanvasData.ui初始化_新建世界].childs[3]._object.GetComponent<TextMeshProUGUI>().text = "世界类型：超平坦";
                         break;
                     default:
@@ -781,7 +782,7 @@ public class CanvasManager : MonoBehaviour
                     UIManager[CanvasData.ui选项细节].childs[22]._object.GetComponent<TextMeshProUGUI>().text = $"渲染距离：{mappedValue} 区块";
 
                     //改变world
-                    world.renderSize = mappedValue;
+                    Service_World.renderSize = mappedValue;
 
                     previous_mappedValue = mappedValue;
                 }
@@ -802,7 +803,7 @@ public class CanvasManager : MonoBehaviour
                     UIManager[CanvasData.ui选项细节].childs[23]._object.GetComponent<TextMeshProUGUI>().text = $"开始渲染的距离：{starttoreder_mappedValue} 区块";
 
                     //改变world
-                    world.StartToRender = starttoreder_mappedValue;
+                    Service_World.StartToRender = starttoreder_mappedValue;
 
                     previous_starttoreder_mappedValue = starttoreder_mappedValue;
                 }
@@ -901,7 +902,7 @@ public class CanvasManager : MonoBehaviour
                 UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_其他界面]._object.SetActive(true);
                 UIManager[CanvasData.ui玩家].childs[_index]._object.SetActive(true);
                 UIManager[CanvasData.ui玩家].childs[CanvasData.uiplayer_准心]._object.SetActive(false);
-                managerhub.world.game_state = Game_State.Pause;
+                Service_World.game_state = Game_State.Pause;
             }
         }
         //关闭UI
@@ -933,7 +934,7 @@ public class CanvasManager : MonoBehaviour
     //打开存档目录
     public void OpenPersistentDataDirectory()
     {
-        string savesFolderPath = Path.Combine(managerhub.world.savingPATH, "Saves");
+        string savesFolderPath = Path.Combine(managerhub.Service_Saving.savingPATH, "Saves");
 
         // 将路径中的所有正斜杠替换为反斜杠
         string formattedPath = savesFolderPath.Replace("/", "\\");
@@ -952,7 +953,7 @@ public class CanvasManager : MonoBehaviour
         //music
         managerhub.NewmusicManager.PlayOneShot(MusicData.click);
 
-        world.ClassifyWorldData();
+        managerhub.Service_Saving.ClassifyWorldData();
 
         StartCoroutine(waittoQuit());
     }
@@ -961,7 +962,7 @@ public class CanvasManager : MonoBehaviour
     {
         while (true)
         {
-            if (world.isFinishSaving)
+            if (managerhub.Service_Saving.isFinishSaving)
             {
                 Application.Quit();
             }
@@ -997,7 +998,7 @@ public class CanvasManager : MonoBehaviour
     public Coroutine waittoFinishSaveAndBackToMenuCoroutine;
     IEnumerator waittoFinishSaveAndBackToMenu()
     {
-        world.ClassifyWorldData();
+        managerhub.Service_Saving.ClassifyWorldData();
 
         // 切换到 "正在保存中" 的 UI
         SwitchToUI(CanvasData.ui正在保存中);
@@ -1008,7 +1009,7 @@ public class CanvasManager : MonoBehaviour
         while (true)
         {
             // 等待世界保存完成以及 updateEditNumberCoroutine 协程执行完毕
-            if (world.isFinishSaving && managerhub.world.isFinishUpdateEditNumber == true)
+            if (managerhub.Service_Saving.isFinishSaving && managerhub.Service_Saving.isFinishUpdateEditNumber == true)
             {
                 // 切换回菜单界面
                 SwitchToUI(CanvasData.ui菜单);
@@ -1031,7 +1032,7 @@ public class CanvasManager : MonoBehaviour
     {
         InitCanvasManager();
         //musicmanager.InitMusicManager();
-        world.InitWorldManager();
+        managerhub.Service_World.InitWorldManager();
         player.InitPlayerManager();
         BackPackManager.InitBackPackManager();
         LifeManager.InitLifeManager();
@@ -1059,7 +1060,7 @@ public class CanvasManager : MonoBehaviour
 
         while (true)
         {
-            if (managerhub.world.game_state == Game_State.Start)
+            if (Service_World.game_state == Game_State.Start)
             {
                 // 控制缩放
                 float scaleX = 1.0f + Mathf.PingPong(offset * speed, magnitude) * 0.5f; // 控制x轴的缩放
@@ -1159,7 +1160,7 @@ public class CanvasManager : MonoBehaviour
 
 
         //SwimmingScreen
-        if (managerhub.Service_Chunk.GetBlockType(Camera.transform.position + new Vector3(0f, 0.2f, 0f)) == VoxelData.Water)
+        if (managerhub.Service_World.GetBlockType(Camera.transform.position + new Vector3(0f, 0.2f, 0f)) == VoxelData.Water)
         {
             //入水
             if (hasExec_InWater == false)
@@ -1233,7 +1234,7 @@ public class CanvasManager : MonoBehaviour
 
 
         //SwimmingScreen
-        if (managerhub.Service_Chunk.GetBlockType(Camera.transform.position) == VoxelData.Water)
+        if (managerhub.Service_World.GetBlockType(Camera.transform.position) == VoxelData.Water)
         {
             //入水
             Swimming_Screen.SetActive(true);
@@ -1288,7 +1289,7 @@ public class CanvasManager : MonoBehaviour
         //不分类
         if (_classfy == BlockClassfy.全部方块)
         {
-            for (byte index = 0; index < managerhub.world.blocktypes.Length; index++)
+            for (byte index = 0; index < Service_World.blocktypes.Length; index++)
             {
                 CreateBlockItem(new BlockItem(index, 0));
             }
@@ -1297,9 +1298,9 @@ public class CanvasManager : MonoBehaviour
         //分类
         else
         {
-            for (byte index = 0; index < managerhub.world.blocktypes.Length; index++)
+            for (byte index = 0; index < Service_World.blocktypes.Length; index++)
             {
-                if (managerhub.world.blocktypes[index].BlockClassfy == _classfy)
+                if (Service_World.blocktypes[index].BlockClassfy == _classfy)
                 {
                     CreateBlockItem(new BlockItem(index, 0));
                 }
@@ -1338,21 +1339,21 @@ public class CanvasManager : MonoBehaviour
 
 
         //是否显示3d图形
-        if (!managerhub.world.blocktypes[_item._blocktype].is2d)
+        if (!Service_World.blocktypes[_item._blocktype].is2d)
         {
             icon2D.SetActive(false);
             icon3D.SetActive(true);
 
-            instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].top_sprit;
-            instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].sprite;
-            instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].sprite;
+            instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].top_sprit;
+            instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].sprite;
+            instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].sprite;
         }
         else
         {
             icon2D.SetActive(true);
             icon3D.SetActive(false);
 
-            instance.transform.Find("Icon").GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].icon;
+            instance.transform.Find("Icon").GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].icon;
         }
     }
 
@@ -1404,7 +1405,7 @@ public class CanvasManager : MonoBehaviour
         }
         else
         {
-            创造背包text_ShowName.GetComponent<TextMeshProUGUI>().text = $"{managerhub.world.blocktypes[_type].blockName} - {_type}";
+            创造背包text_ShowName.GetComponent<TextMeshProUGUI>().text = $"{Service_World.blocktypes[_type].blockName} - {_type}";
         }
 
     }
@@ -1445,7 +1446,7 @@ public class CanvasManager : MonoBehaviour
         GameObject instance = Instantiate(SwapBlockPrefeb);
        
 
-        if (managerhub.world.game_mode == GameMode.Survival)
+        if (Service_World.game_mode == GameMode.Survival)
         {
             instance.transform.SetParent(生存模式背包Parent, false);
             instance.transform.localScale = new Vector3(0.34f, 0.34f, 0.34f);
@@ -1487,21 +1488,21 @@ public class CanvasManager : MonoBehaviour
 
 
         //是否显示3d图形
-        if (!managerhub.world.blocktypes[_item._blocktype].is2d)
+        if (!Service_World.blocktypes[_item._blocktype].is2d)
         {
             icon2D.SetActive(false);
             icon3D.SetActive(true);
 
-            instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].top_sprit;
-            instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].sprite;
-            instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].sprite;
+            instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].top_sprit;
+            instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].sprite;
+            instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].sprite;
         }
         else
         {
             icon2D.SetActive(true);
             icon3D.SetActive(false);
 
-            instance.transform.Find("Icon").GetComponent<Image>().sprite = managerhub.world.blocktypes[_item._blocktype].icon;
+            instance.transform.Find("Icon").GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].icon;
         }
 
     }
@@ -1658,7 +1659,7 @@ public class CanvasManager : MonoBehaviour
             {
                 isPausing = true;
                 SwitchToUI(CanvasData.ui游戏中暂停);
-                world.game_state = Game_State.Pause;
+                Service_World.game_state = Game_State.Pause;
 
                 // 解锁鼠标以便在暂停时使用
                 LockMouse(false);
@@ -1689,7 +1690,7 @@ public class CanvasManager : MonoBehaviour
 
                 // 重新锁定鼠标
                 LockMouse(true);
-                world.game_state = Game_State.Playing;
+                Service_World.game_state = Game_State.Playing;
             }
         }
     }
@@ -1703,7 +1704,7 @@ public class CanvasManager : MonoBehaviour
         LockMouse(true);
 
         SwitchToUI(CanvasData.ui玩家);
-        world.game_state = Game_State.Playing;
+        Service_World.game_state = Game_State.Playing;
     }
 
 
@@ -1829,7 +1830,7 @@ public class CanvasManager : MonoBehaviour
 
         managerhub.player.isDead = false;
 
-        world.game_state = Game_State.Playing;
+        Service_World.game_state = Game_State.Playing;
 
         LifeManager.blood = 20;
         LifeManager.oxygen = 10;
@@ -1839,9 +1840,9 @@ public class CanvasManager : MonoBehaviour
         player.InitPlayerLocation();
         player.transform.rotation = Quaternion.identity;
 
-        managerhub.Service_Chunk.Update_CenterChunks(false);
+        managerhub.Service_World.Update_CenterChunks(false);
 
-        managerhub.Service_Chunk.HideFarChunks();
+        managerhub.Service_World.HideFarChunks();
 
         //if (managerhub.timeManager.gameObject.activeSelf)
         //{
@@ -1907,7 +1908,7 @@ public class CanvasManager : MonoBehaviour
         if (_blocktype == 255)
         {
             //显示这个方块的名字2s
-            selectblockname.text = world.blocktypes[BackPackManager.slots[player.selectindex].blockId].blockName;
+            selectblockname.text = Service_World.blocktypes[BackPackManager.slots[player.selectindex].blockId].blockName;
 
             yield return new WaitForSeconds(2f);
 
@@ -1918,7 +1919,7 @@ public class CanvasManager : MonoBehaviour
         else
         {
             //显示这个方块的名字2s
-            selectblockname.text = world.blocktypes[_blocktype].blockName;
+            selectblockname.text = Service_World.blocktypes[_blocktype].blockName;
 
             yield return new WaitForSeconds(2f);
 

@@ -9,16 +9,20 @@ public class BackGroundMoving : MonoBehaviour
     private Vector3 startPosition;  // 记录初始位置
     private bool movingRight = true; // 方向标志，true表示向右移动
     private ManagerHub managerhub;
+    MC_Service_World Service_World;
+
+
     void Start()
     {
         managerhub = SceneData.GetManagerhub();
+        Service_World = managerhub.Service_World;
         // 记录物体的初始位置
         startPosition = transform.position;
     }
 
     void Update()
     {
-        if (managerhub.world.game_state == Game_State.Start)
+        if (Service_World.game_state == Game_State.Start)
         {
             // 计算当前位置到初始位置的距离
             float currentDistance = Vector3.Distance(transform.position, startPosition);

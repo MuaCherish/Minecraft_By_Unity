@@ -59,7 +59,7 @@ public class BackPackManager : MonoBehaviour
     public Transform 生存模式背包物品栏;
     void AddBlockToBackPackSlots(BlockItem _targetItem)
     {
-        if (managerhub.world.game_mode == GameMode.Survival)
+        if (managerhub.Service_World.game_mode == GameMode.Survival)
         {
             foreach (Transform item in 生存模式背包物品栏)
             {
@@ -92,19 +92,19 @@ public class BackPackManager : MonoBehaviour
                 slots[i].ishave = true;
 
                 //Icon
-                if (managerhub.world.blocktypes[_type].is2d == false) //3d
+                if (managerhub.Service_World.blocktypes[_type].is2d == false) //3d
                 {
                     slots[i].Icon3Dobject.SetActive(true);
-                    slots[i].TopFace.sprite = managerhub.world.blocktypes[_type].top_sprit;
-                    slots[i].LeftFace.sprite = managerhub.world.blocktypes[_type].sprite;
-                    slots[i].RightFace.sprite = managerhub.world.blocktypes[_type].sprite;
+                    slots[i].TopFace.sprite = managerhub.Service_World.blocktypes[_type].top_sprit;
+                    slots[i].LeftFace.sprite = managerhub.Service_World.blocktypes[_type].sprite;
+                    slots[i].RightFace.sprite = managerhub.Service_World.blocktypes[_type].sprite;
 
                     slots[i].icon.color = new Color(1f, 1f, 1f, 0f);
                 }
                 else
                 {
                     slots[i].Icon3Dobject.SetActive(false);
-                    slots[i].icon.sprite = managerhub.world.blocktypes[_type].icon;
+                    slots[i].icon.sprite = managerhub.Service_World.blocktypes[_type].icon;
                     slots[i].icon.color = new Color(1f, 1f, 1f, 1f);
                 }
 
@@ -143,7 +143,7 @@ public class BackPackManager : MonoBehaviour
     {
 
         Transform 背包物品栏;
-        if (managerhub.world.game_mode == GameMode.Survival)
+        if (managerhub.Service_World.game_mode == GameMode.Survival)
         {
             背包物品栏 = 生存背包物品栏;
         }
@@ -517,7 +517,7 @@ public class BackPackManager : MonoBehaviour
             else
             {
                 //如果是方块
-                if (!managerhub.world.blocktypes[now_HandBlock].is2d)
+                if (!managerhub.Service_World.blocktypes[now_HandBlock].is2d)
                 {
                     //销毁挤压物品
                     if (ToolAlive)
@@ -546,11 +546,11 @@ public class BackPackManager : MonoBehaviour
                         //顶面
                         if (index >= 4)
                         {
-                            child.gameObject.GetComponent<SpriteRenderer>().sprite = managerhub.world.blocktypes[slots[managerhub.player.selectindex].blockId].top_sprit;
+                            child.gameObject.GetComponent<SpriteRenderer>().sprite = managerhub.Service_World.blocktypes[slots[managerhub.player.selectindex].blockId].top_sprit;
                         }
                         else
                         {
-                            child.gameObject.GetComponent<SpriteRenderer>().sprite = managerhub.world.blocktypes[slots[managerhub.player.selectindex].blockId].sprite;
+                            child.gameObject.GetComponent<SpriteRenderer>().sprite = managerhub.Service_World.blocktypes[slots[managerhub.player.selectindex].blockId].sprite;
                         }
 
                         index++;
@@ -568,7 +568,7 @@ public class BackPackManager : MonoBehaviour
                     ToolAlive = true;
 
                     //拿宝剑和水桶的旋转是不一样的
-                    if (managerhub.world.blocktypes[now_HandBlock].isNeedRotation)
+                    if (managerhub.Service_World.blocktypes[now_HandBlock].isNeedRotation)
                     {
                         HanTool.transform.localPosition = new Vector3(0.542f, -0.098f, 0.774f);
                         HanTool.transform.localEulerAngles = new Vector3(0f, -93.837f, 68.013f);
@@ -603,9 +603,9 @@ public class BackPackManager : MonoBehaviour
                         Destroy(item.gameObject);
                     }
 
-                    //print(managerhub.world.blocktypes[now_HandBlock].blockName);
-                    //print($"index: {now_HandBlock} , sprite:{managerhub.world.blocktypes[now_HandBlock].sprite}");
-                    managerhub.textureTo3D.ProcessSprite(managerhub.world.blocktypes[now_HandBlock].sprite, HanTool.transform, 4, true);
+                    //print(managerhub.Service_World.blocktypes[now_HandBlock].blockName);
+                    //print($"index: {now_HandBlock} , sprite:{managerhub.Service_World.blocktypes[now_HandBlock].sprite}");
+                    managerhub.textureTo3D.ProcessSprite(managerhub.Service_World.blocktypes[now_HandBlock].sprite, HanTool.transform, 4, true);
 
 
                     //拿出Hand_Hold
@@ -628,12 +628,13 @@ public class BackPackManager : MonoBehaviour
 
     #region 工具
 
+
     //用于替代isFull
     //外界调用
     //返回当前物品栏是否可以再装物品
     public bool CheckSlotsFull(byte _targetType)
     {
-        if (managerhub.world.game_mode == GameMode.Creative)
+        if (managerhub.Service_World.game_mode == GameMode.Creative)
         {
             bool hasEmptySlot = false;
             for (int i = 0; i < slots.Length; i++)

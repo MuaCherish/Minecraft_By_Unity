@@ -9,8 +9,8 @@ public class ButtomColor : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 {
     public Sprite Default_Sprite;
     public Sprite Select_Sprite;
-    public World world;
-    public ManagerHub managerhub;
+    MC_Service_World Service_World;
+    ManagerHub managerhub;
 
     private Image image;
 
@@ -21,6 +21,7 @@ public class ButtomColor : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
+        Service_World = managerhub.Service_World;
     }
 
     void Start()
@@ -42,17 +43,6 @@ public class ButtomColor : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         // 设置初始纹理
         image.sprite = Default_Sprite;
-
-        // 查找场景中的 World 脚本实例
-        if (world == null)
-        {
-            world = FindObjectOfType<World>();
-            if (world == null) 
-            {
-                Debug.LogError("World script not found in the scene.");
-            }
-        }
-
 
         myPathName = transform.Find("TMP_Time").GetComponent<TextMeshProUGUI>().text;
     }
@@ -88,7 +78,7 @@ public class ButtomColor : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
 
         // 你可以在这里添加任何你想要在按钮点击时执行的代码
-        if (world != null)
+        if (Service_World != null)
         {
             // 假设 World 类有一个 HandleButtonClick 方法
             managerhub.canvasManager.SelectSaving(myPathName);

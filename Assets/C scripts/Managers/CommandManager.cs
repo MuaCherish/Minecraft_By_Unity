@@ -128,7 +128,7 @@ public class CommandManager : MonoBehaviour
                         //Debug.Log("提取并转换的类型和数量: " + type + ", " + number);
 
                         // 判断 type 是否在 blocktypes 范围内
-                        if (type < managerhub.world.blocktypes.Length)
+                        if (type < managerhub.Service_World.blocktypes.Length)
                         {
                             // 更新背包内容，例如插入 type 数量为 number 的物品
                             managerhub.backpackManager.update_slots(0, type, number);

@@ -30,7 +30,7 @@ public class NewMusicManager : MonoBehaviour
     private void Update()
     {
 
-        switch (managerhub.world.game_state)
+        switch (managerhub.Service_World.game_state)
         {
             case Game_State.Start:
                 Handle_GameState_Start();

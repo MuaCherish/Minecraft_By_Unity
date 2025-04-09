@@ -213,7 +213,7 @@ public class Entity_TNT : MonoBehaviour, IEntityBrain
         managerhub.player.ForceMoving(_Direction, Distance, 0.1f);
 
         //Íæ¼Ò¿ÛÑª
-        if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
+        if (managerhub.Service_World.game_mode == GameMode.Survival && _Direction.magnitude <= 4)
             managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(30, 10, _value), true, true);
 
         //Music

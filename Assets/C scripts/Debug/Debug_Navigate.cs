@@ -12,16 +12,17 @@ public class Debug_Navigate : MonoBehaviour
     #region 周期函数
     
     ManagerHub managerhub;
-    World world;
+    MC_Service_World Service_world;
+
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
-        world = managerhub.world;
+        Service_world = managerhub.Service_World;
     }
 
     private void Update()
     {
-        if (managerhub.world.game_state == Game_State.Playing)
+        if (Service_world.game_state == Game_State.Playing)
         {
             _ReferUpdate_Astar();
             _ReferUpdate_RandomWalk();
@@ -81,9 +82,9 @@ public class Debug_Navigate : MonoBehaviour
         _Nodes = new List<Vector3>{ _thisPos };
 
         //提前返回-起始点被堵住 || 起始点悬空
-        byte _StartPosBlockType = managerhub.Service_Chunk.GetBlockType(_thisPos);
-        byte _StartDownPosBlockType = managerhub.Service_Chunk.GetBlockType(_thisPos + Vector3.down);
-        if (_StartPosBlockType == 255 || world.blocktypes[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
+        byte _StartPosBlockType = managerhub.Service_World.GetBlockType(_thisPos);
+        byte _StartDownPosBlockType = managerhub.Service_World.GetBlockType(_thisPos + Vector3.down);
+        if (_StartPosBlockType == 255 || Service_World.blocktypes[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
             return;
 
         // 迭代 N 步
@@ -587,7 +588,7 @@ public class Debug_Navigate : MonoBehaviour
     /// <returns></returns>
     bool CheckNodeLimit(Vector3 _nextPos, Vector3 _nextDirect)
     {
-        byte _thisBlockType = managerhub.Service_Chunk.GetBlockType(_nextPos);
+        byte _thisBlockType = managerhub.Service_World.GetBlockType(_nextPos);
         Vector3 _LastPos = _nextPos - _nextDirect;
 
         //提前返回-如果没有方块数据
@@ -677,9 +678,9 @@ public class Debug_Navigate : MonoBehaviour
     /// <returns></returns>
     bool CheckSolid(Vector3 _pos)
     {
-        byte _BlockType = managerhub.Service_Chunk.GetBlockType(_pos);
+        byte _BlockType = managerhub.Service_World.GetBlockType(_pos);
 
-        if (_BlockType == 255 || world.blocktypes[_BlockType].isSolid)
+        if (_BlockType == 255 || Service_World.blocktypes[_BlockType].isSolid)
         {
             return true;
         }

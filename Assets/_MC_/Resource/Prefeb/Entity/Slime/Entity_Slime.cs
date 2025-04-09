@@ -20,19 +20,19 @@ public class Entity_Slime : EntityBase
 
     MC_Component_Physics Component_Physics;
     MC_Component_Velocity Component_Velocity;
-    World world;
+    MC_Service_World Service_World;
     ManagerHub managerhub;
     private void Awake()
     {
         Component_Physics = GetComponent<MC_Component_Physics>();
         Component_Velocity = GetComponent<MC_Component_Velocity>();
-        world = Component_Physics.managerhub.world;
+        Service_World = Component_Physics.managerhub.Service_World;
         managerhub = SceneData.GetManagerhub();
     }
 
     private void Update()
     {
-        switch (world.game_state)
+        switch (Service_World.game_state)
         {
             case Game_State.Playing:
                 Handle_GameState_Playing();

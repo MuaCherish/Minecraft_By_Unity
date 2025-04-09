@@ -79,7 +79,7 @@ public class MC_Buff_SwellandExplore : MC_Buff_Base
         managerhub.player.ForceMoving(_Direction, Distance, 0.1f);
 
         //Íæ¼Ò¿ÛÑª
-        if (managerhub.world.game_mode == GameMode.Survival && _Direction.magnitude <= 6)
+        if (managerhub.Service_World.game_mode == GameMode.Survival && _Direction.magnitude <= 6)
             managerhub.lifeManager.UpdatePlayerBlood((int)Mathf.Lerp(52, 5, BloodValue), true, true);
 
         //Music

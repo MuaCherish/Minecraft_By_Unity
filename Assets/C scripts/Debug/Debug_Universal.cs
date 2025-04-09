@@ -6,7 +6,7 @@ using Homebrew;
 
 public class Debug_Universal : MonoBehaviour
 {
-    public World world;
+    public MC_Service_World Service_World;
     public MC_Service_Entity Service_Entity;
     public GameObject TargetObj;
     public float Radius;
