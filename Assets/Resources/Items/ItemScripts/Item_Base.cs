@@ -48,15 +48,14 @@ public class Item_Base : ScriptableObject
     public int leftFaceTexture;
     public int rightFaceTexture;
     [Header("绘制模式")] public DrawMode DrawMode;
+    [Header("无论如何都会渲染面")] public bool AlwaysGenerateFace; 
     [Header("接近空气的面会生成双面")] public bool GenerateTwoFaceWithAir;    //如果朝向空气，则双面绘制
     [Header("额外面生成判断(后前上下左右)")] public List<FaceCheckMode> OtherFaceCheck;
 
-
-    [Foldout("ToolState", true)]
+    [Foldout("Tool专属", true)]
     [Header("是否是工具")] public bool isTool;         //区分功能性
-    [Header("持有该Tool可破坏方块 (比如剑是不能破坏的)")] public bool canBreakBlockWithMouse1 = true;  //左键可破坏方块 
-
-    [Foldout("CustomRotation", true)]
+    [Header("持有该Tool可破坏方块 (比如剑是不能破坏的)")] public bool BreakLock;  //手持时无法破坏方块 
+    [Header("是否有旋转")] public bool isNeedRotation;
     [Header("自定义旋转")] public Vector3 CustomRotation;  //做一定的旋转
 
 

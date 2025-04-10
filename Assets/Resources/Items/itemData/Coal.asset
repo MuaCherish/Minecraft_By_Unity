@@ -46,8 +46,10 @@ MonoBehaviour:
   leftFaceTexture: 3
   rightFaceTexture: 3
   DrawMode: 0
+  AlwaysGenerateFace: 1
   GenerateTwoFaceWithAir: 0
   OtherFaceCheck: []
   isTool: 0
-  canBreakBlockWithMouse1: 1
+  BreakLock: 0
+  isNeedRotation: 0
   CustomRotation: {x: 0, y: 0, z: 0}

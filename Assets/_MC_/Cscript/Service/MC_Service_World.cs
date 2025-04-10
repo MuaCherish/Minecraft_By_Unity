@@ -6,7 +6,6 @@ using UnityEngine;
 using System.Collections;
 using static MC_Static_Math;
 using System.IO;
-using UnityEditorInternal;
 using Homebrew;
 
 /// <summary>
@@ -28,7 +27,6 @@ public class MC_Service_World : MonoBehaviour
         player = managerhub.player;
     }
 
-
     bool hasExec_Start = true;
     bool hasExec_Loading = true;
     bool hasExec_Playing = true;
@@ -36,7 +34,6 @@ public class MC_Service_World : MonoBehaviour
     private void Update()
     {
         Handle_AlwaysUpdate();
-
 
         switch (MC_Runtime_DynamicData.instance.GetGameState())
         {
@@ -83,12 +80,17 @@ public class MC_Service_World : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// 任何状态更新
+    /// </summary>
     void Handle_AlwaysUpdate()
     {
         ThreadUpdateController();
     }
 
-
+    /// <summary>
+    /// Start状态更新
+    /// </summary>
     void Handle_GameState_Start()
     {
         if (hasExec_Start)
@@ -101,6 +103,9 @@ public class MC_Service_World : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Loading状态更新
+    /// </summary>
     void Handle_GameState_Loading()
     {
         if (hasExec_Loading)
@@ -115,6 +120,9 @@ public class MC_Service_World : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Playing状态更新
+    /// </summary>
     void Handle_GameState_Playing()
     {
         if (hasExec_Playing)
@@ -127,6 +135,9 @@ public class MC_Service_World : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Pause状态更新
+    /// </summary>
     void Handle_GameState_Pause()
     {
         if (hasExec_Pause)
@@ -157,15 +168,6 @@ public class MC_Service_World : MonoBehaviour
     [Header("Chunk渲染半径(总区块=r^2*4)")] public int renderSize = 5;
     [Header("开始更新的最小区块跨度")] public float StartToRender = 1f;
     [Header("开始销毁的最大半径")] public float DestroySize = 7f;
-
-    [Foldout("旧的", true)]
-    [Header("Items")] public BlockType[] blocktypes;
-    [Header("Items备份")] public BlockType[] BackUp_blocktypes;
-
-    [Foldout("静态数据", true)]
-    [Header("Items数据")] public Item_Database ItemData;
-    [Header("群系特征概率和地形噪声数据")] public BiomeDataSO BiomeData;
-    [Header("地形材质数据")] public TerrainVisualAssets TerrainMatData;
 
     [Foldout("Debug", true)]
     [Header("是否生成Chunk侧面")] public bool isGenChunkSurrendFace = false;
@@ -208,7 +210,7 @@ public class MC_Service_World : MonoBehaviour
 
     #endregion
 
-    #region 游戏运行逻辑处理
+    #region 初始化地图
 
     /// <summary>
     /// Init
@@ -272,8 +274,8 @@ public class MC_Service_World : MonoBehaviour
         }
 
         //-------顺序不能变化------------------
-        BiomeData.biomeProperties.terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 100000000);
-        Service_Saving.worldSetting = new WorldSetting(BiomeData.biomeProperties.terrainLayerProbabilitySystem.Seed);
+        MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 100000000);
+        Service_Saving.worldSetting = new WorldSetting(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Seed);
         UnityEngine.Random.InitState(Service_Saving.worldSetting.seed);
         //-------------------------------------
 
@@ -294,44 +296,6 @@ public class MC_Service_World : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 更新区块
-    /// </summary>
-    void ChunkUpdateController()
-    {
-        //玩家移动刷新
-        //如果大于16f
-        if (Get2DLengthforVector3(player.foot.transform.position - Center_Now) > (StartToRender * 16f) && Get2DLengthforVector3(player.foot.transform.position - Center_Now) <= ((StartToRender + 1) * 16f))
-        {
-
-            //更新Center
-            Center_direction = NormalizeToAxis(player.foot.transform.position - Center_Now);
-            Center_Now += Center_direction * TerrainData.ChunkWidth;
-
-            //添加Chunk
-            AddtoCreateChunks(Center_direction);
-            AddtoRemoveChunks(Center_direction);
-
-        }
-        //玩家移动过远距离
-        else if (Get2DLengthforVector3(player.foot.transform.position - Center_Now) > ((StartToRender + 1) * 16f))
-        {
-            Update_CenterWithNoInit();
-        }
-    }
-
-    /// <summary>
-    /// 时刻检测线程
-    /// </summary>
-    void ThreadUpdateController()
-    {
-        CreateMeshCoroutineManager(); //Mesh线程常驻
-        RenderCoroutineManager();//渲染线程常驻
-    }
-
-    #endregion
-
-    #region 初始化地图
 
     public IEnumerator Init_Map_Thread(bool _isInitPlayerLocation)
     {
@@ -395,6 +359,33 @@ public class MC_Service_World : MonoBehaviour
     #endregion
 
     #region 动态加载地图
+
+    /// <summary>
+    /// 更新区块
+    /// </summary>
+    void ChunkUpdateController()
+    {
+        //玩家移动刷新
+        //如果大于16f
+        if (Get2DLengthforVector3(player.foot.transform.position - Center_Now) > (StartToRender * 16f) && Get2DLengthforVector3(player.foot.transform.position - Center_Now) <= ((StartToRender + 1) * 16f))
+        {
+
+            //更新Center
+            Center_direction = NormalizeToAxis(player.foot.transform.position - Center_Now);
+            Center_Now += Center_direction * TerrainData.ChunkWidth;
+
+            //添加Chunk
+            AddtoCreateChunks(Center_direction);
+            AddtoRemoveChunks(Center_direction);
+
+        }
+        //玩家移动过远距离
+        else if (Get2DLengthforVector3(player.foot.transform.position - Center_Now) > ((StartToRender + 1) * 16f))
+        {
+            Update_CenterWithNoInit();
+        }
+    }
+
 
     public void Update_CenterWithNoInit()
     {
@@ -915,78 +906,15 @@ public class MC_Service_World : MonoBehaviour
 
     #endregion
 
-    #region 隐藏区块(什么狗屎代码)
+    #region 线程和协程
 
-    void Chunk_HideOrRemove(Vector3 chunklocation)
+    /// <summary>
+    /// 时刻检测线程
+    /// </summary>
+    void ThreadUpdateController()
     {
-        obj.HideChunk();
-    }
-
-    #endregion
-
-    #region 渲染部分
-
-    //渲染协程池
-    public void RenderCoroutineManager()
-    {
-        // 如果等待渲染的队列不为空，并且没有正在运行的渲染协程
-        if (WaitToRender.Count != 0 && Render_Coroutine == null)
-        {
-            //print($"启动渲染协程");
-            Render_Coroutine = StartCoroutine(Render_0());
-        }
-    }
-
-    // 一条渲染协程
-    IEnumerator Render_0()
-    {
-        bool hasError = false;  // 标记是否发生异常
-
-        while (true)
-        {
-            try
-            {
-                // 尝试从队列中取出要渲染的Chunk
-                if (WaitToRender.TryDequeue(out Chunk chunktemp))
-                {
-                    //print($"{GetRelaChunkLocation(chunktemp.myposition)}开始渲染");
-
-                    // 如果Chunk已经准备好渲染，调用CreateMesh
-                    if (chunktemp.isReadyToRender)
-                    {
-                        chunktemp.CreateMesh();
-                    }
-                }
-
-                // 如果队列为空，停止协程
-                if (WaitToRender.Count == 0)
-                {
-                    //print($"队列为空，停止协程");
-                    Render_Coroutine = null;
-                    RenderLock = false;
-                    break;
-                }
-            }
-            catch (Exception ex)
-            {
-                // 捕获异常，防止协程因异常终止
-                Debug.LogError($"渲染协程出错: {ex.Message}\n{ex.StackTrace}");
-
-                hasError = true;  // 标记发生错误
-                break;  // 退出当前循环，等待后重新启动
-            }
-
-            // 正常情况等待一段时间以控制渲染频率
-            yield return new WaitForSeconds(0.001f);
-        }
-
-        // 如果发生了异常，等待并重启协程
-        if (hasError)
-        {
-            Render_Coroutine = null;  // 重置协程状态
-            yield return new WaitForSeconds(1f);  // 等待一段时间
-            RenderCoroutineManager();  // 重新启动渲染协程
-        }
+        CreateMeshCoroutineManager(); //Mesh线程常驻
+        RenderCoroutineManager();//渲染线程常驻
     }
 
     //Mesh协程
@@ -1001,7 +929,6 @@ public class MC_Service_World : MonoBehaviour
         }
 
     }
-
     bool hasExec_CaculateInitTime = true;
     public float OneChunkRenderTime;
     IEnumerator Mesh_0()
@@ -1055,11 +982,94 @@ public class MC_Service_World : MonoBehaviour
 
     }
 
+
+
+    //渲染协程池
+    public void RenderCoroutineManager()
+    {
+        // 如果等待渲染的队列不为空，并且没有正在运行的渲染协程
+        if (WaitToRender.Count != 0 && Render_Coroutine == null)
+        {
+            //print($"启动渲染协程");
+            Render_Coroutine = StartCoroutine(Render_0());
+        }
+    }
+
+
+    // 一条渲染协程
+    IEnumerator Render_0()
+    {
+        bool hasError = false;  // 标记是否发生异常
+
+        while (true)
+        {
+            try
+            {
+                // 尝试从队列中取出要渲染的Chunk
+                if (WaitToRender.TryDequeue(out Chunk chunktemp))
+                {
+                    //print($"{GetRelaChunkLocation(chunktemp.myposition)}开始渲染");
+
+                    // 如果Chunk已经准备好渲染，调用CreateMesh
+                    if (chunktemp.isReadyToRender)
+                    {
+                        chunktemp.CreateMesh();
+                    }
+                }
+
+                // 如果队列为空，停止协程
+                if (WaitToRender.Count == 0)
+                {
+                    //print($"队列为空，停止协程");
+                    Render_Coroutine = null;
+                    RenderLock = false;
+                    break;
+                }
+            }
+            catch (Exception ex)
+            {
+                // 捕获异常，防止协程因异常终止
+                Debug.LogError($"渲染协程出错: {ex.Message}\n{ex.StackTrace}");
+
+                hasError = true;  // 标记发生错误
+                break;  // 退出当前循环，等待后重新启动
+            }
+
+            // 正常情况等待一段时间以控制渲染频率
+            yield return new WaitForSeconds(0.001f);
+        }
+
+        // 如果发生了异常，等待并重启协程
+        if (hasError)
+        {
+            Render_Coroutine = null;  // 重置协程状态
+            yield return new WaitForSeconds(1f);  // 等待一段时间
+            RenderCoroutineManager();  // 重新启动渲染协程
+        }
+    }
+
+
+
+
+
     #endregion
 
-    #region 返回Chunk对象
+    #region 隐藏区块(什么狗屎代码)
 
-    //Vector3 --> 大区块对象
+    void Chunk_HideOrRemove(Vector3 chunklocation)
+    {
+        obj.HideChunk();
+    }
+
+    #endregion
+
+    #region 工具
+
+    /// <summary>
+    /// 大区块对象
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
     public Chunk GetChunkObject(Vector3 pos)
     {
 
@@ -1069,7 +1079,12 @@ public class MC_Service_World : MonoBehaviour
 
     }
 
-    //New-获取区块对象
+    /// <summary>
+    /// 获取区块对象
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="chunktemp"></param>
+    /// <returns></returns>
     public bool TryGetChunkObject(Vector3 pos, out Chunk chunktemp)
     {
 
@@ -1083,9 +1098,6 @@ public class MC_Service_World : MonoBehaviour
         return false;
     }
 
-    #endregion
-
-    #region 获取方块
 
     /// <summary>
     /// 返回方块类型,输入的是绝对坐标
@@ -1113,57 +1125,21 @@ public class MC_Service_World : MonoBehaviour
 
     }
 
-    #endregion
 
-    #region 结构方块(未应用)
-
-    //用于记录建筑
-    //recordData.pos存的是绝对坐标
-    private List<EditStruct> recordData = new List<EditStruct>();
-
-    //记录建筑
-    public void RecordBuilding(Vector3 _Start, Vector3 _End)
-    {
-        recordData.Clear();
-
-
-        for (int x = 0; x < 10; x++)
-        {
-            for (int z = 0; z < 10; z++)
-            {
-
-            }
-        }
-    }
-
-    //释放建筑
-    //根据0下标和end下标，计算其包含的区块，然后把数据丢给区块即可
-    public void ReleaseBuilding(Vector3 place, List<EditStruct> _recordData)
-    {
-
-        Vector3 start = _recordData[0].editPos;
-        Vector3 end = _recordData[_recordData.Count - 1].editPos;
-
-        for (float x = start.x; x < end.x; x += 16f)
-        {
-            for (float z = start.z; z < end.z; z += 16f)
-            {
-
-            }
-        }
-    }
-
-
-    #endregion
-
-    #region 修改方块
-
-    //外界修改方块
+    /// <summary>
+    /// 外界修改方块
+    /// </summary>
+    /// <param name="_pos"></param>
+    /// <param name="_target"></param>
     public void EditBlock(Vector3 _pos, byte _target)
     {
         Allchunks[GetRelaChunkLocation(_pos)].EditData(_pos, _target);
     }
 
+    /// <summary>
+    /// 外界修改方块
+    /// </summary>
+    /// <param name="_editStructs"></param>
     public void EditBlock(List<EditStruct> _editStructs)
     {
         List<Vector3> _ChunkLocations = new List<Vector3>();
@@ -1225,12 +1201,12 @@ public class MC_Service_World : MonoBehaviour
         editBlockCoroutine = null;
     }
 
-    #endregion
-
-    #region 方块检测
-
-    //对玩家碰撞盒的方块判断
-    //true：有碰撞
+    /// <summary>
+    /// 对玩家碰撞盒的方块判断
+    /// true：有碰撞
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
     public bool CollisionCheckForVoxel(Vector3 pos)
     {
 
@@ -1247,7 +1223,7 @@ public class MC_Service_World : MonoBehaviour
             return false;
 
         //如果是自定义碰撞
-        if (blocktypes[targetBlock].isSolid && blocktypes[targetBlock].isDIYCollision)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[targetBlock].isSolid && MC_Runtime_StaticData.Instance.ItemData.items[targetBlock].isDIYCollision)
         {
             realLocation = CollisionOffset(realLocation, targetBlock);
             Vector3 OffsetrelaLocation = GetRelaPos(realLocation);
@@ -1263,7 +1239,7 @@ public class MC_Service_World : MonoBehaviour
         }
 
         //返回固体还是空气
-        return blocktypes[Allchunks[GetRelaChunkLocation(realLocation)].voxelMap[(int)relaLocation.x, (int)relaLocation.y, (int)relaLocation.z].voxelType].isSolid;
+        return MC_Runtime_StaticData.Instance.ItemData.items[Allchunks[GetRelaChunkLocation(realLocation)].voxelMap[(int)relaLocation.x, (int)relaLocation.y, (int)relaLocation.z].voxelType].isSolid;
 
     }
 
@@ -1274,9 +1250,9 @@ public class MC_Service_World : MonoBehaviour
     public Vector3 CollisionOffset(Vector3 _realPos, byte _targetType)
     {
         Vector3 _input = new Vector3(managerhub.player.horizontalInput, managerhub.player.Facing.y, managerhub.player.verticalInput);
-        float _x = _realPos.x; Vector2 _xRange = blocktypes[_targetType].CollosionRange.xRange; float _xOffset = _x - (int)_x;
-        float _y = _realPos.y; Vector2 _yRange = blocktypes[_targetType].CollosionRange.yRange; float _yOffset = _y - (int)_y;
-        float _z = _realPos.z; Vector2 _zRange = blocktypes[_targetType].CollosionRange.zRange; float _zOffset = _z - (int)_z;
+        float _x = _realPos.x; Vector2 _xRange = MC_Runtime_StaticData.Instance.ItemData.items[_targetType].CollosionRange.xRange; float _xOffset = _x - (int)_x;
+        float _y = _realPos.y; Vector2 _yRange = MC_Runtime_StaticData.Instance.ItemData.items[_targetType].CollosionRange.yRange; float _yOffset = _y - (int)_y;
+        float _z = _realPos.z; Vector2 _zRange = MC_Runtime_StaticData.Instance.ItemData.items[_targetType].CollosionRange.zRange; float _zOffset = _z - (int)_z;
 
 
         //X
@@ -1301,8 +1277,12 @@ public class MC_Service_World : MonoBehaviour
         return new Vector3(_x, _y, _z);
     }
 
-    //放置高亮方块的
-    //用于眼睛射线的检测
+    /// <summary>
+    /// 放置高亮方块的
+    /// 用于眼睛射线的检测
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
     public bool RayCheckForVoxel(Vector3 pos)
     {
 
@@ -1323,7 +1303,7 @@ public class MC_Service_World : MonoBehaviour
 
 
         //如果是自定义碰撞
-        if (blocktypes[targetBlock].isDIYCollision)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[targetBlock].isDIYCollision)
         {
             realLocation = CollisionOffset(realLocation, targetBlock);
             Vector3 OffsetrelaLocation = GetRelaPos(realLocation);
@@ -1339,16 +1319,17 @@ public class MC_Service_World : MonoBehaviour
         }
 
         //返回固体还是空气
-        return blocktypes[Allchunks[GetRelaChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z].voxelType].canBeChoose;
+        return MC_Runtime_StaticData.Instance.ItemData.items[Allchunks[GetRelaChunkLocation(new Vector3(pos.x, pos.y, pos.z))].voxelMap[(int)vec.x, (int)vec.y, (int)vec.z].voxelType].canBeChoose;
 
     }
 
 
-    #endregion
-
-    #region 指定方向寻址
-
-    //指定方向寻址
+    /// <summary>
+    /// 指定方向寻址
+    /// </summary>
+    /// <param name="_start"></param>
+    /// <param name="_direct"></param>
+    /// <returns></returns>
     public Vector3 AddressingBlock(Vector3 _start, int _direct)
     {
         Vector3 _address = _start;
@@ -1378,7 +1359,12 @@ public class MC_Service_World : MonoBehaviour
 
     }
 
-    //给定一个初始坐标和初始方向，朝着这个方向遍历ChunkHeight，返回一个非空气坐标
+    /// <summary>
+    /// 给定一个初始坐标和初始方向，朝着这个方向遍历ChunkHeight，返回一个非空气坐标
+    /// </summary>
+    /// <param name="_start"></param>
+    /// <param name="_direct"></param>
+    /// <returns></returns>
     public Vector3 LoopAndFindABestLocation(Vector3 _start, Vector3 _direct)
     {
         _direct.x = _direct.x > 0 ? 1 : 0;
@@ -1403,10 +1389,12 @@ public class MC_Service_World : MonoBehaviour
         return _start;
     }
 
-    #endregion
 
-    #region 返回可用出生点
-
+    /// <summary>
+    /// 返回可用出生点
+    /// </summary>
+    /// <param name="_pos"></param>
+    /// <param name="_Spawns"></param>
     public void GetSpawnPos(Vector3 _pos, out List<Vector3> _Spawns)
     {
         _Spawns = new List<Vector3>();

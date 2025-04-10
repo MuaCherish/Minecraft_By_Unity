@@ -49,5 +49,6 @@ MonoBehaviour:
   GenerateTwoFaceWithAir: 0
   OtherFaceCheck: []
   isTool: 1
-  canBreakBlockWithMouse1: 0
+  BreakLock: 1
+  isNeedRotation: 0
   CustomRotation: {x: 0, y: 0, z: 0}

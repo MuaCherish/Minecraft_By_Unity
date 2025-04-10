@@ -20,9 +20,9 @@ public class Chunk : MonoBehaviour
     //Biome
     public int worldType = 5;
     //public bool isSuperPlainMode; 
-
+    
     //Transform
-    MC_Service_World world;
+    MC_Service_World Service_World;
     ManagerHub managerhub;
     public GameObject chunkObject;
     public MeshFilter meshFilter;
@@ -87,27 +87,27 @@ public class Chunk : MonoBehaviour
 
 
         //World
-        world = _managerhub.Service_World;
+        Service_World = _managerhub.Service_World;
         managerhub = _managerhub;
-        caveWidth = world.BiomeData.biomeProperties.cave_width;
-        //debug_CanLookCave = !world.debug_CanLookCave;
+        caveWidth = MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.cave_width;
+        //debug_CanLookCave = !Service_World.debug_CanLookCave;
         BaseChunk = _BaseChunk;
-        noise3d_scale = world.BiomeData.biomeProperties.noise3d_scale;
-        Normal_treecount = world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Normal_treecount;
-        Forest_treecount = world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
+        noise3d_scale = MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.noise3d_scale;
+        Normal_treecount = MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Normal_treecount;
+        Forest_treecount = MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
         //isSuperPlainMode = _isSuperPlainMode;
 
         //Self
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
-        meshRenderer.sharedMaterial = world.TerrainMatData.material_Terrain;
+        meshRenderer.sharedMaterial = MC_Runtime_StaticData.Instance.TerrainMatData.material_Terrain;
         chunkObject.transform.SetParent(SceneData.GetChunkParent().transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
         myposition = chunkObject.transform.position;
         rand = new System.Random(managerhub.Service_Saving.worldSetting.seed);
-        //print(world.worldSetting.seed);
+        //print(Service_World.worldSetting.seed);
 
         //初始化Voxel数组
         InitVoxelStruct();
@@ -166,14 +166,14 @@ public class Chunk : MonoBehaviour
 
 
         //World
-        world = _managerhub.Service_World;
+        Service_World = _managerhub.Service_World;
         managerhub = _managerhub;
-        caveWidth = world.BiomeData.biomeProperties.cave_width;
-        //debug_CanLookCave = !world.debug_CanLookCave;
+        caveWidth = MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.cave_width;
+        //debug_CanLookCave = !Service_World.debug_CanLookCave;
         BaseChunk = _BaseChunk;
-        noise3d_scale = world.BiomeData.biomeProperties.noise3d_scale;
-        Normal_treecount = world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Normal_treecount;
-        Forest_treecount = world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
+        noise3d_scale = MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.noise3d_scale;
+        Normal_treecount = MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Normal_treecount;
+        Forest_treecount = MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.密林树木采样次数Forest_treecount;
         //isSuperPlainMode = _isSuperPlainMode;
         isSaving = true;
         EditList = _editList;
@@ -182,7 +182,7 @@ public class Chunk : MonoBehaviour
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
-        meshRenderer.sharedMaterial = world.TerrainMatData.material_Terrain;
+        meshRenderer.sharedMaterial = MC_Runtime_StaticData.Instance.TerrainMatData.material_Terrain;
         chunkObject.transform.SetParent(SceneData.GetChunkParent().transform);
         chunkObject.transform.position = new Vector3(thisPosition.x * TerrainData.ChunkWidth, 0f, thisPosition.z * TerrainData.ChunkWidth);
         chunkObject.name = thisPosition.x + "," + thisPosition.z;
@@ -371,7 +371,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, world.BiomeData.biomeProperties);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties);
 
 
                     //矿洞噪声
@@ -411,7 +411,7 @@ public class Chunk : MonoBehaviour
                         }
                     }
                     //空气部分
-                    else if (y > noiseHigh && y > world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
+                    else if (y > noiseHigh && y > MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         //地上一层
@@ -423,42 +423,42 @@ public class Chunk : MonoBehaviour
                             {
 
                                 //灌木丛
-                                if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bush))
+                                if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bush))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.Bush);
 
                                 }
                                 //BlueFlower
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_BlueFlower))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_BlueFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.BlueFlower);
 
                                 }
                                 //WhiteFlower_1
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower1))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower1))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_1);
 
                                 }
                                 //WhiteFlower_2
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower2))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower2))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_2);
 
                                 }
                                 //YellowFlower
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_YellowFlower))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_YellowFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.YellowFlower);
 
                                 }
                                 //草地雪碎片
-                                else if (y > world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10)
+                                else if (y > MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10)
                                 {
                                     UpdateBlock(x, y, z, VoxelData.SnowPower);
                                 }
@@ -478,7 +478,7 @@ public class Chunk : MonoBehaviour
 
 
                             //沙子层
-                            else if (terrainFace == VoxelData.Sand && GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bamboo))
+                            else if (terrainFace == VoxelData.Sand && GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bamboo))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Air) ;
@@ -502,7 +502,7 @@ public class Chunk : MonoBehaviour
                     }
 
                     //判断水面
-                    else if (y > noiseHigh && y - 1 < world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
+                    else if (y > noiseHigh && y - 1 < MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         UpdateBlock(x, y, z, VoxelData.Water) ;
@@ -518,7 +518,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //沙漠气候
-                            if (MC_Static_Noise.GetBiomeType(x, z, myposition,world.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition,MC_Runtime_StaticData.Instance.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
@@ -529,13 +529,13 @@ public class Chunk : MonoBehaviour
                             else
                             {
                                 //100雪地
-                                if (y > world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level)
+                                if (y > MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level)
                                 {
                                     UpdateBlock(x, y, z, VoxelData.Snow) ;
                                 }
 
                                 //90~100概率生成雪地
-                                else if ((y > (world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(70))
+                                else if ((y > (MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(70))
                                 {
                                     UpdateBlock(x, y, z, VoxelData.Snow) ;
                                 }
@@ -543,11 +543,11 @@ public class Chunk : MonoBehaviour
 
 
                                 //高于海平面
-                                else if (y > world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
+                                else if (y > MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
                                 {
 
                                     //是否是菌丝体
-                                    if (MC_Static_Noise.GetBiomeType(x, z, myposition,world.BiomeData.biomeProperties) == TerrainData.Biome_Marsh)
+                                    if (MC_Static_Noise.GetBiomeType(x, z, myposition,MC_Runtime_StaticData.Instance.BiomeData.biomeProperties) == TerrainData.Biome_Marsh)
                                     {
                                         UpdateBlock(x, y, z, VoxelData.Mycelium) ;
                                     }
@@ -582,7 +582,7 @@ public class Chunk : MonoBehaviour
                         else if (y > noiseHigh - 7)
                         {
                             //沙漠判断
-                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, world.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -596,7 +596,7 @@ public class Chunk : MonoBehaviour
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
                         {
                             //沙漠判断
-                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, world.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -625,7 +625,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //煤炭
-                            if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
+                            if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Stone) ;
@@ -634,7 +634,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //铁
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Iron) ;
@@ -642,7 +642,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //金
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Gold) ;
@@ -650,7 +650,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //青金石
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Blue_Crystal) ;
@@ -658,7 +658,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //钻石
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Diamond) ;
@@ -702,8 +702,8 @@ public class Chunk : MonoBehaviour
             LoadData(EditList);
         }
 
-        //交给world来create
-        world.WaitToCreateMesh.Enqueue(this);
+        //交给Service_World来create
+        Service_World.WaitToCreateMesh.Enqueue(this);
 
     }
 
@@ -743,8 +743,8 @@ public class Chunk : MonoBehaviour
         }
 
 
-        //交给world来create
-        world.WaitToCreateMesh.Enqueue(this);
+        //交给Service_World来create
+        Service_World.WaitToCreateMesh.Enqueue(this);
         //UpdateChunkMesh_WithSurround(false, true);
     }
 
@@ -763,7 +763,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, world.BiomeData.biomeProperties);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties);
                     //矿洞噪声
                     float noise3d = GetCaveNoise(x, y, z);
 
@@ -796,14 +796,14 @@ public class Chunk : MonoBehaviour
                         }
                     }
                     //空气部分
-                    else if (y > noiseHigh && y > world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
+                    else if (y > noiseHigh && y > MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         //地上一层
                         if (y - 1 < noiseHigh)
                         {
 
-                            if (terrainFace == VoxelData.Sand && GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bamboo))
+                            if (terrainFace == VoxelData.Sand && GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bamboo))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Air) ;
@@ -845,7 +845,7 @@ public class Chunk : MonoBehaviour
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
                         {
                             //沙漠判断
-                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, world.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -869,7 +869,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //煤炭
-                            if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
+                            if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Stone) ;
@@ -878,7 +878,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //铁
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Iron) ;
@@ -886,7 +886,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //金
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Gold) ;
@@ -894,7 +894,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //青金石
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Blue_Crystal) ;
@@ -902,7 +902,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //钻石
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Diamond) ;
@@ -946,8 +946,8 @@ public class Chunk : MonoBehaviour
             LoadData(EditList);
         }
 
-        //交给world来create
-        world.WaitToCreateMesh.Enqueue(this);
+        //交给Service_World来create
+        Service_World.WaitToCreateMesh.Enqueue(this);
     }
 
     //沼泽群系
@@ -965,7 +965,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, world.BiomeData.biomeProperties);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties);
 
 
                     //矿洞噪声
@@ -1001,7 +1001,7 @@ public class Chunk : MonoBehaviour
                         }
                     }
                     //空气部分
-                    else if (y > noiseHigh && y > world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
+                    else if (y > noiseHigh && y > MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         //地上一层
@@ -1013,42 +1013,42 @@ public class Chunk : MonoBehaviour
                             {
 
                                 //灌木丛
-                                if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bush))
+                                if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bush))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.Bush) ;
 
                                 }
                                 //BlueFlower
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_BlueFlower))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_BlueFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.BlueFlower) ;
 
                                 }
                                 //WhiteFlower_1
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower1))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower1))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_1) ;
 
                                 }
                                 //WhiteFlower_2
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower2))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower2))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_2) ;
 
                                 }
                                 //YellowFlower
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_YellowFlower))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_YellowFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.YellowFlower);
 
                                 }
                                 //草地雪碎片
-                                else if (y > world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10)
+                                else if (y > MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10)
                                 {
                                     UpdateBlock(x, y, z, VoxelData.SnowPower);
                                 }
@@ -1068,7 +1068,7 @@ public class Chunk : MonoBehaviour
 
 
                             //沙子层
-                            else if (terrainFace == VoxelData.Sand && GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bamboo))
+                            else if (terrainFace == VoxelData.Sand && GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bamboo))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Air) ;
@@ -1092,7 +1092,7 @@ public class Chunk : MonoBehaviour
                     }
 
                     //判断水面
-                    else if (y > noiseHigh && y - 1 < world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
+                    else if (y > noiseHigh && y - 1 < MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level)
                     {
 
                         UpdateBlock(x, y, z, VoxelData.Water) ;
@@ -1143,7 +1143,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //煤炭
-                            if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
+                            if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Stone) ;
@@ -1152,7 +1152,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //铁
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Iron) ;
@@ -1160,7 +1160,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //金
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Gold) ;
@@ -1168,7 +1168,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //青金石
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Blue_Crystal) ;
@@ -1176,7 +1176,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //钻石
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Diamond) ;
@@ -1211,7 +1211,7 @@ public class Chunk : MonoBehaviour
             int random_x = rand.Next(2, TerrainData.ChunkWidth - 2);
             int random_z = rand.Next(2, TerrainData.ChunkWidth - 2);
             int random_y = TerrainData.ChunkHeight;
-            int random_Tree_High = rand.Next(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+            int random_Tree_High = rand.Next(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
             //如果可以生成树桩
             //向上延伸树干
@@ -1252,8 +1252,8 @@ public class Chunk : MonoBehaviour
             LoadData(EditList);
         }
 
-        //交给world来create
-        world.WaitToCreateMesh.Enqueue(this);
+        //交给Service_World来create
+        Service_World.WaitToCreateMesh.Enqueue(this);
 
     }
 
@@ -1290,7 +1290,7 @@ public class Chunk : MonoBehaviour
 
     public void GenerateTree(int _x, int _y, int _z)
     {
-        int random_Tree_High = rand.Next(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+        int random_Tree_High = rand.Next(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
 
         for (int i = 0; i <= random_Tree_High; i++)
@@ -1336,7 +1336,7 @@ public class Chunk : MonoBehaviour
 
                     //地形噪声
                     //float noiseHigh = GetTotalNoiseHigh(x, z);
-                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, world.BiomeData.biomeProperties);
+                    float noiseHigh = MC_Static_Noise.GetTotalNoiseHigh_Biome(x, z, myposition, managerhub.Service_Saving.worldSetting.worldtype, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties);
 
 
                     //矿洞噪声
@@ -1389,42 +1389,42 @@ public class Chunk : MonoBehaviour
                             {
 
                                 //灌木丛
-                                if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bush))
+                                if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Bush))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.Bush) ;
 
                                 }
                                 //BlueFlower
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_BlueFlower))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_BlueFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.BlueFlower) ;
 
                                 }
                                 //WhiteFlower_1
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower1))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower1))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_1) ;
 
                                 }
                                 //WhiteFlower_2
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower2))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_WhiteFlower2))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.WhiteFlower_2) ;
 
                                 }
                                 //YellowFlower
-                                else if (GetProbability(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_YellowFlower))
+                                else if (GetProbability(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_YellowFlower))
                                 {
 
                                     UpdateBlock(x, y, z, VoxelData.YellowFlower) ;
 
                                 }
                                 //草地雪碎片
-                                else if (y > world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10)
+                                else if (y > MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10)
                                 {
                                     UpdateBlock(x, y, z, VoxelData.SnowPower) ;
                                 }
@@ -1475,13 +1475,13 @@ public class Chunk : MonoBehaviour
                         {
 
                             //100雪地
-                            if (y > world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level)
+                            if (y > MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Snow) ;
                             }
 
                             //90~100概率生成雪地
-                            else if ((y > (world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(70))
+                            else if ((y > (MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f)) && GetProbability(70))
                             {
                                 UpdateBlock(x, y, z, VoxelData.Snow) ;
                             }
@@ -1519,7 +1519,7 @@ public class Chunk : MonoBehaviour
                         else if (y > noiseHigh - 7)
                         {
                             //沙漠判断
-                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, world.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -1533,7 +1533,7 @@ public class Chunk : MonoBehaviour
                         else if (y >= (noiseHigh - 10) && y <= (noiseHigh - 7) && GetProbability(50))
                         {
                             //沙漠判断
-                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, world.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
+                            if (MC_Static_Noise.GetBiomeType(x, z, myposition, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties) == TerrainData.Biome_Dessert)
                             {
                                 UpdateBlock(x, y, z, VoxelData.Sand) ;
                             }
@@ -1562,7 +1562,7 @@ public class Chunk : MonoBehaviour
                         {
 
                             //煤炭
-                            if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
+                            if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Coal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Stone) ;
@@ -1571,7 +1571,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //铁
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Iron))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Iron) ;
@@ -1579,7 +1579,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //金
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Gold))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Gold) ;
@@ -1587,7 +1587,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //青金石
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Blue_Crystal))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Blue_Crystal) ;
@@ -1595,7 +1595,7 @@ public class Chunk : MonoBehaviour
                             }
 
                             //钻石
-                            else if (GetProbabilityTenThousandth(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
+                            else if (GetProbabilityTenThousandth(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Random_Diamond))
                             {
 
                                 UpdateBlock(x, y, z, VoxelData.Diamond) ;
@@ -1681,8 +1681,8 @@ public class Chunk : MonoBehaviour
             LoadData(EditList);
         }
 
-        //交给world来create
-        world.WaitToCreateMesh.Enqueue(this);
+        //交给Service_World来create
+        Service_World.WaitToCreateMesh.Enqueue(this);
 
     }
 
@@ -1694,7 +1694,7 @@ public class Chunk : MonoBehaviour
     void CreateTree(int _x, int _z)
     {
         //密林群系
-        if (MC_Static_Noise.GetBiomeType(_x, _z, myposition, world.BiomeData.biomeProperties) == TerrainData.Biome_Forest)
+        if (MC_Static_Noise.GetBiomeType(_x, _z, myposition, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties) == TerrainData.Biome_Forest)
         {
             //[确定XZ]xoz上随便选择5个点
             while (Forest_treecount-- != 0)
@@ -1703,7 +1703,7 @@ public class Chunk : MonoBehaviour
                 int random_x = rand.Next(2, TerrainData.ChunkWidth - 2);
                 int random_z = rand.Next(2, TerrainData.ChunkWidth - 2);
                 int random_y = TerrainData.ChunkHeight;
-                int random_Tree_High = rand.Next(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+                int random_Tree_High = rand.Next(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
                 //如果可以生成树桩
                 //向上延伸树干
@@ -1750,7 +1750,7 @@ public class Chunk : MonoBehaviour
                 int random_x = rand.Next(2, TerrainData.ChunkWidth - 2);
                 int random_z = rand.Next(2, TerrainData.ChunkWidth - 2);
                 int random_y = TerrainData.ChunkHeight;
-                int random_Tree_High = rand.Next(world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
+                int random_Tree_High = rand.Next(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_min, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.TreeHigh_max + 1);
 
                 //如果可以生成树桩
                 //向上延伸树干
@@ -1839,7 +1839,7 @@ public class Chunk : MonoBehaviour
             CreateLeaves(_x, _y + 1, _z);
 
             //生成雪的判定
-            if (((_y + 1) >= world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < TerrainData.ChunkHeight))
+            if (((_y + 1) >= MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < TerrainData.ChunkHeight))
             {
                 UpdateBlock(_x, _y + 2, _z, VoxelData.SnowPower) ;
             }
@@ -1857,7 +1857,7 @@ public class Chunk : MonoBehaviour
             CreateLeaves(_x, _y + 1, _z - 1);
 
             //生成雪的判定
-            if (((_y + 1) >= world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < TerrainData.ChunkHeight))
+            if (((_y + 1) >= MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 2) < TerrainData.ChunkHeight))
             {
                 UpdateBlock(_x, _y + 2, _z + 1, VoxelData.SnowPower);
                 UpdateBlock(_x - 1, _y + 2, _z, VoxelData.SnowPower);
@@ -1875,7 +1875,7 @@ public class Chunk : MonoBehaviour
         CreateLeaves(_x, _y, _z + 1);
 
         //生成雪的判定
-        if (((_y) >= world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 1) < TerrainData.ChunkHeight) && GetBlock(_x - 1, _y + 1, _z).voxelType != VoxelData.Leaves)
+        if (((_y) >= MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f) && ((_y + 1) < TerrainData.ChunkHeight) && GetBlock(_x - 1, _y + 1, _z).voxelType != VoxelData.Leaves)
         {
 
             UpdateBlock(_x - 1, _y + 1, _z, VoxelData.SnowPower);
@@ -1912,7 +1912,7 @@ public class Chunk : MonoBehaviour
         CreateLeaves(_x + 1, _y - 1, _z - 2);
 
         //Snow
-        if ((_y - 1) >= world.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f)
+        if ((_y - 1) >= MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Snow_Level - 10f)
         {
             UpdateBlock(_x, _y, _z + 2, VoxelData.SnowPower);
             UpdateBlock(_x - 1, _y, _z + 2, VoxelData.SnowPower);
@@ -2196,7 +2196,7 @@ public class Chunk : MonoBehaviour
 
     //                // 非空气 - 渲染
     //                // 水面上 - 渲染
-    //                if (world.blocktypes[GetBlock(_x, _y, _z).voxelType].DrawMode != DrawMode.Air)
+    //                if (MC_Runtime_StaticData.Instance.ItemData.items[GetBlock(_x, _y, _z).voxelType].DrawMode != DrawMode.Air)
     //                    UpdateMeshData(new Vector3(_x, _y, _z));
 
     //            }
@@ -2209,14 +2209,14 @@ public class Chunk : MonoBehaviour
 
     //    hasExec_isHadupdateWater = true;
 
-    //    //添加到world的渲染队列
+    //    //添加到Service_World的渲染队列
     //    isReadyToRender = true;
 
     //    //交给渲染线程
-    //    if (world.RenderLock)
+    //    if (Service_World.RenderLock)
     //    {
 
-    //        world.WaitToRender_temp.Enqueue(this);
+    //        Service_World.WaitToRender_temp.Enqueue(this);
     //        //print($"{GetRelaChunkLocation(myposition)}被堵塞，入队temp");
 
     //    }
@@ -2224,7 +2224,7 @@ public class Chunk : MonoBehaviour
     //    {
 
     //        //print($"{GetRelaChunkLocation(myposition)}入队");
-    //        world.WaitToRender.Enqueue(this);
+    //        Service_World.WaitToRender.Enqueue(this);
 
     //    }
 
@@ -2247,7 +2247,7 @@ public class Chunk : MonoBehaviour
     //            {
 
     //                //能获取到对面Chunk
-    //                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks_WaterFlow[_p], out Chunk chunktemp))
+    //                if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks_WaterFlow[_p], out Chunk chunktemp))
     //                {
 
     //                    Vector3 directlocation = GetDirectChunkVoxelMapLocation(new Vector3(_x, _y, _z) + VoxelData.faceChecks_WaterFlow[_p]);
@@ -2305,7 +2305,7 @@ public class Chunk : MonoBehaviour
 
        
         //悬浮方块
-        if (world.blocktypes[GetBlock(_x, _y, _z).voxelType].NotSuspended &&
+        if (MC_Runtime_StaticData.Instance.ItemData.items[GetBlock(_x, _y, _z).voxelType].NotSuspended &&
             GetBlock(_x, _y - 1, _z).voxelType == VoxelData.Air
             )
         {
@@ -2403,7 +2403,7 @@ public class Chunk : MonoBehaviour
                     //}
 
                     //如果是空气则不渲染
-                    if (world.blocktypes[GetBlock(_x, _y, _z).voxelType].DrawMode != DrawMode.Air)
+                    if (MC_Runtime_StaticData.Instance.ItemData.items[GetBlock(_x, _y, _z).voxelType].DrawMode != DrawMode.Air)
                     {
                         UpdateMeshData(new Vector3(_x, _y, _z));
                     }
@@ -2424,24 +2424,24 @@ public class Chunk : MonoBehaviour
         {
 
             Chunk DirectChunk;
-            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
+            if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
             {
-                world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                Service_World.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                 //DirectChunk.UpdateChunkMesh_WithSurround();
             }
-            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
+            if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
             {
-                world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                Service_World.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                 //DirectChunk.UpdateChunkMesh_WithSurround();
             }
-            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
+            if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
             {
-                world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                Service_World.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                 //DirectChunk.UpdateChunkMesh_WithSurround();
             }
-            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
+            if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
             {
-                world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                Service_World.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                 //DirectChunk.UpdateChunkMesh_WithSurround();
             }
 
@@ -2452,7 +2452,7 @@ public class Chunk : MonoBehaviour
 
 
 
-        //添加到world的渲染队列
+        //添加到Service_World的渲染队列
         isReadyToRender = true;
 
         if (isCalled)
@@ -2465,7 +2465,7 @@ public class Chunk : MonoBehaviour
         {
 
             //print($"{GetRelaChunkLocation(myposition)}Mesh完成");
-            world.MeshLock = false;
+            Service_World.MeshLock = false;
 
         }
 
@@ -2477,10 +2477,10 @@ public class Chunk : MonoBehaviour
         else
         {
             
-            if (world.RenderLock)
+            if (Service_World.RenderLock)
             {
 
-                world.WaitToRender_temp.Enqueue(this);
+                Service_World.WaitToRender_temp.Enqueue(this);
                 //print($"{GetRelaChunkLocation(myposition)}被堵塞，入队temp");
 
             }
@@ -2488,7 +2488,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //print($"{GetRelaChunkLocation(myposition)}入队");
-                world.WaitToRender.Enqueue(this);
+                Service_World.WaitToRender.Enqueue(this);
 
             }
         }
@@ -2540,7 +2540,7 @@ public class Chunk : MonoBehaviour
                     //}
 
                     //如果是空气则不渲染
-                    if (world.blocktypes[GetBlock(_x, _y, _z).voxelType].DrawMode != DrawMode.Air)
+                    if (MC_Runtime_StaticData.Instance.ItemData.items[GetBlock(_x, _y, _z).voxelType].DrawMode != DrawMode.Air)
                     {
                         UpdateMeshData(new Vector3(_x, _y, _z));
                     }
@@ -2567,36 +2567,36 @@ public class Chunk : MonoBehaviour
 
                 if (Orient.x > 0)
                 {
-                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
+                    if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(1.0f, 0.0f, 0.0f), out DirectChunk))
                     {
-                        world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                        Service_World.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                         //DirectChunk.UpdateChunkMesh_WithSurround();
                     }
                 }
 
                 if (Orient.x < 0)
                 {
-                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
+                    if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(-1.0f, 0.0f, 0.0f), out DirectChunk))
                     {
-                        world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                        Service_World.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                         //DirectChunk.UpdateChunkMesh_WithSurround();
                     }
                 }
 
                 if (Orient.z > 0)
                 {
-                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
+                    if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, 1.0f), out DirectChunk))
                     {
-                        world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                        Service_World.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                         //DirectChunk.UpdateChunkMesh_WithSurround();
                     }
                 }
 
                 if (Orient.z < 0)
                 {
-                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
+                    if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + new Vector3(0.0f, 0.0f, -1.0f), out DirectChunk))
                     {
-                        world.WaitToFlashChunkQueue.Enqueue(DirectChunk);
+                        Service_World.WaitToFlashChunkQueue.Enqueue(DirectChunk);
                         //DirectChunk.UpdateChunkMesh_WithSurround();
                     }
                 }
@@ -2609,7 +2609,7 @@ public class Chunk : MonoBehaviour
 
 
 
-        //添加到world的渲染队列
+        //添加到Service_World的渲染队列
         isReadyToRender = true;
 
         if (isCalled)
@@ -2622,7 +2622,7 @@ public class Chunk : MonoBehaviour
         {
 
             //print($"{GetRelaChunkLocation(myposition)}Mesh完成");
-            world.MeshLock = false;
+            Service_World.MeshLock = false;
 
         }
 
@@ -2636,14 +2636,14 @@ public class Chunk : MonoBehaviour
 
             if (iscaller)
             {
-                world.WaitToFlashChunkQueue.Enqueue(this);
+                Service_World.WaitToFlashChunkQueue.Enqueue(this);
             }
             else
             {
-                if (world.RenderLock)
+                if (Service_World.RenderLock)
                 {
 
-                    world.WaitToRender_temp.Enqueue(this);
+                    Service_World.WaitToRender_temp.Enqueue(this);
                     //print($"{GetRelaChunkLocation(myposition)}被堵塞，入队temp");
 
                 }
@@ -2651,7 +2651,7 @@ public class Chunk : MonoBehaviour
                 {
 
                     //print($"{GetRelaChunkLocation(myposition)}入队");
-                    world.WaitToRender.Enqueue(this);
+                    Service_World.WaitToRender.Enqueue(this);
 
                 }
             }
@@ -2749,7 +2749,7 @@ public class Chunk : MonoBehaviour
         UpdateBlock(x, y, z, targetBlocktype);
 
         //更新朝向
-        if (world.blocktypes[targetBlocktype].IsOriented)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[targetBlocktype].IsOriented)
             UpdateBlockOriented(new Vector3(x, y, z), managerhub.player.RealBacking);
 
         //保存数据
@@ -2760,10 +2760,10 @@ public class Chunk : MonoBehaviour
 
 
         //挤开玩家
-        //if (world.blocktypes[thisType].isSolid)
+        //if (MC_Runtime_StaticData.Instance.ItemData.items[thisType].isSolid)
         //{
         //    Vector3 _targetCenter = new Vector3((int)pos.x, (int)pos.y, (int)pos.z);
-        //    CollosionRange _collosionRange = managerhub.world.blocktypes[thisType].CollosionRange;
+        //    CollosionRange _collosionRange = managerhub.MC_Runtime_StaticData.Instance.ItemData.items[thisType].CollosionRange;
         //    float _width = _collosionRange.zRange.y - _collosionRange.zRange.x;
         //    float _hight = _collosionRange.yRange.y - _collosionRange.yRange.x;
         //    _targetCenter.x += (_collosionRange.xRange.x + _collosionRange.xRange.y) / 2f;
@@ -2781,14 +2781,14 @@ public class Chunk : MonoBehaviour
         
 
         //Music
-        if (world.blocktypes[thisType].broken_clip != null)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[thisType].broken_clip != null)
         {
 
-            managerhub.Service_Music.PlayOneShot(world.blocktypes[thisType].broken_clip);
+            managerhub.Service_Music.PlayOneShot(MC_Runtime_StaticData.Instance.ItemData.items[thisType].broken_clip);
         }
         else
         {
-            managerhub.Service_Music.PlayOneShot(world.blocktypes[VoxelData.Stone].broken_clip);
+            managerhub.Service_Music.PlayOneShot(MC_Runtime_StaticData.Instance.ItemData.items[VoxelData.Stone].broken_clip);
         }
 
 
@@ -2805,7 +2805,7 @@ public class Chunk : MonoBehaviour
     bool NeedReturn(byte _this, byte _target, Vector3 _vec)
     {
         //把门顶掉的问题
-        if (!world.blocktypes[_this].CanBeCover && _target != VoxelData.Air)
+        if (!MC_Runtime_StaticData.Instance.ItemData.items[_this].CanBeCover && _target != VoxelData.Air)
             return true;
 
         //出界判断
@@ -2897,11 +2897,11 @@ public class Chunk : MonoBehaviour
                     GameObject particleInstance = Instantiate(managerhub.player.Particle_Broken);
                     particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
                     //pos
-                    if (world.blocktypes[thisType].isDIYCollision)
+                    if (MC_Runtime_StaticData.Instance.ItemData.items[thisType].isDIYCollision)
                     {
-                        float Xmax = world.blocktypes[thisType].CollosionRange.xRange.y;
-                        float Ymax = world.blocktypes[thisType].CollosionRange.yRange.y;
-                        float Zmax = world.blocktypes[thisType].CollosionRange.zRange.y;
+                        float Xmax = MC_Runtime_StaticData.Instance.ItemData.items[thisType].CollosionRange.xRange.y;
+                        float Ymax = MC_Runtime_StaticData.Instance.ItemData.items[thisType].CollosionRange.yRange.y;
+                        float Zmax = MC_Runtime_StaticData.Instance.ItemData.items[thisType].CollosionRange.zRange.y;
                         particleInstance.transform.position = new Vector3((int)_EditList[i].editPos.x + Xmax / 2f, (int)_EditList[i].editPos.y + Ymax / 2f + 0.2f, (int)_EditList[i].editPos.z + Zmax / 2f);
                     }
                     else
@@ -2958,11 +2958,11 @@ public class Chunk : MonoBehaviour
         GameObject particleInstance = Instantiate(managerhub.player.Particle_Broken);
         particleInstance.transform.parent = managerhub.player.particel_Broken_transform;
 
-        if (world.blocktypes[_beBrokenType].isDIYCollision)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[_beBrokenType].isDIYCollision)
         {
-            float Xmax = world.blocktypes[_beBrokenType].CollosionRange.xRange.y;
-            float Ymax = world.blocktypes[_beBrokenType].CollosionRange.yRange.y;
-            float Zmax = world.blocktypes[_beBrokenType].CollosionRange.zRange.y;
+            float Xmax = MC_Runtime_StaticData.Instance.ItemData.items[_beBrokenType].CollosionRange.xRange.y;
+            float Ymax = MC_Runtime_StaticData.Instance.ItemData.items[_beBrokenType].CollosionRange.yRange.y;
+            float Zmax = MC_Runtime_StaticData.Instance.ItemData.items[_beBrokenType].CollosionRange.zRange.y;
             particleInstance.transform.position = new Vector3((int)_pos.x + Xmax / 2f, (int)_pos.y + Ymax / 2f + 0.2f, (int)_pos.z + Zmax / 2f);
         }
         else
@@ -2981,7 +2981,7 @@ public class Chunk : MonoBehaviour
             return;
 
         //条件返回 - 得能掉掉落物
-        if (!world.blocktypes[_beBrokenType].candropBlock)
+        if (!MC_Runtime_StaticData.Instance.ItemData.items[_beBrokenType].candropBlock)
             return;
 
         //树叶掉落苹果
@@ -3023,10 +3023,12 @@ public class Chunk : MonoBehaviour
         int _Targety = Mathf.FloorToInt(pos.y);
         int _Targetz = Mathf.FloorToInt(pos.z);
 
+        Vector3 thisPos = pos - VoxelData.faceChecks[_p];
+        byte thisType = voxelMap[(int)thisPos.x, (int)thisPos.y, (int)thisPos.z].voxelType;
 
-        
-      //print($"{x},{y},{z}");
-
+        //提前返回-如果一直绘制
+        if(MC_Runtime_StaticData.Instance.ItemData.items[thisType].AlwaysGenerateFace) 
+            return false;
 
         //如果目标出界
         if (_Targetx < 0 || _Targetx > TerrainData.ChunkWidth - 1 || _Targety < 0 || _Targety > TerrainData.ChunkHeight - 1 || _Targetz < 0 || _Targetz > TerrainData.ChunkWidth - 1)
@@ -3037,7 +3039,7 @@ public class Chunk : MonoBehaviour
             //	print("");
             //}
 
-            if (!BaseChunk)
+            if (!BaseChunk) 
             {
 
                 //Front
@@ -3045,7 +3047,7 @@ public class Chunk : MonoBehaviour
                 {
 
                     //如果能查到
-                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                    if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
 
                         //[已废弃，代码统一到一个函数里了]
@@ -3055,7 +3057,7 @@ public class Chunk : MonoBehaviour
                         //{
                         //    chunktemp.voxelMap[x, y, 0] = VoxelData.Water;
 
-                        //    world.WaitToCreateMesh.Enqueue(chunktemp);
+                        //    Service_World.WaitToCreateMesh.Enqueue(chunktemp);
 
                         //    return true;
                         //}
@@ -3066,7 +3068,7 @@ public class Chunk : MonoBehaviour
                         //且自己不是透明的
                         //则返回false
                         //(目标是透明的 || 目标是水) && (自己不是透明的 && 自己不是水)
-                        //if (((world.blocktypes[chunktemp.voxelMap[x, y, 0]].isTransparent || chunktemp.voxelMap[x, y, 0] == VoxelData.Water)  && (!world.blocktypes[voxelMap[x, y, z - 1]].isTransparent && voxelMap[x, y, z - 1] != VoxelData.Water)))
+                        //if (((MC_Runtime_StaticData.Instance.ItemData.items[chunktemp.voxelMap[x, y, 0]].isTransparent || chunktemp.voxelMap[x, y, 0] == VoxelData.Water)  && (!MC_Runtime_StaticData.Instance.ItemData.items[voxelMap[x, y, z - 1]].isTransparent && voxelMap[x, y, z - 1] != VoxelData.Water)))
                         //{
 
                         //    return false;
@@ -3090,7 +3092,7 @@ public class Chunk : MonoBehaviour
                         //    return true;
                         //}
 
-                        return !world.isGenChunkSurrendFace;
+                        return !Service_World.isGenChunkSurrendFace;
 
                     }
 
@@ -3102,7 +3104,7 @@ public class Chunk : MonoBehaviour
                 {
 
                     //如果能查到
-                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                    if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
 
 
@@ -3120,7 +3122,7 @@ public class Chunk : MonoBehaviour
 
                         //如果target是空气，则返回false
                         //target是水
-                        //if (((world.blocktypes[chunktemp.voxelMap[x, y, TerrainData.ChunkWidth - 1]].isTransparent || chunktemp.voxelMap[x, y, TerrainData.ChunkWidth - 1] == VoxelData.Water) && (!world.blocktypes[voxelMap[x, y, z + 1]].isTransparent && voxelMap[x, y, z + 1] != VoxelData.Water)))
+                        //if (((MC_Runtime_StaticData.Instance.ItemData.items[chunktemp.voxelMap[x, y, TerrainData.ChunkWidth - 1]].isTransparent || chunktemp.voxelMap[x, y, TerrainData.ChunkWidth - 1] == VoxelData.Water) && (!MC_Runtime_StaticData.Instance.ItemData.items[voxelMap[x, y, z + 1]].isTransparent && voxelMap[x, y, z + 1] != VoxelData.Water)))
                         //{
                         //    return false;
                         //}
@@ -3145,7 +3147,7 @@ public class Chunk : MonoBehaviour
                         //    return true;
                         //}
 
-                        return !world.isGenChunkSurrendFace;
+                        return !Service_World.isGenChunkSurrendFace;
 
                     }
 
@@ -3158,7 +3160,7 @@ public class Chunk : MonoBehaviour
                 {
 
                     //如果能查到
-                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                    if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
 
 
@@ -3174,7 +3176,7 @@ public class Chunk : MonoBehaviour
 
                         //如果target是空气，则返回false
                         //target是水
-                        //if (((world.blocktypes[chunktemp.voxelMap[TerrainData.ChunkWidth - 1, y, z]].isTransparent || chunktemp.voxelMap[TerrainData.ChunkWidth - 1, y, z] == VoxelData.Water) && (!world.blocktypes[voxelMap[x + 1, y, z]].isTransparent && voxelMap[x + 1, y, z] != VoxelData.Water)))
+                        //if (((MC_Runtime_StaticData.Instance.ItemData.items[chunktemp.voxelMap[TerrainData.ChunkWidth - 1, y, z]].isTransparent || chunktemp.voxelMap[TerrainData.ChunkWidth - 1, y, z] == VoxelData.Water) && (!MC_Runtime_StaticData.Instance.ItemData.items[voxelMap[x + 1, y, z]].isTransparent && voxelMap[x + 1, y, z] != VoxelData.Water)))
                         //{
                         //    return false;
                         //}
@@ -3197,7 +3199,7 @@ public class Chunk : MonoBehaviour
                         //        return true;
                         //    }
 
-                        return !world.isGenChunkSurrendFace;
+                        return !Service_World.isGenChunkSurrendFace;
 
                     }
 
@@ -3209,7 +3211,7 @@ public class Chunk : MonoBehaviour
                 {
 
                     //如果能查到
-                    if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                    if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                     {
 
 
@@ -3226,7 +3228,7 @@ public class Chunk : MonoBehaviour
 
                         //如果target是空气，则返回false
                         //target是水
-                        //if (((world.blocktypes[chunktemp.voxelMap[0, y, z]].isTransparent || chunktemp.voxelMap[0, y, z] == VoxelData.Water) && (!world.blocktypes[voxelMap[x - 1, y, z]].isTransparent && voxelMap[x - 1, y, z] != VoxelData.Water)))
+                        //if (((MC_Runtime_StaticData.Instance.ItemData.items[chunktemp.voxelMap[0, y, z]].isTransparent || chunktemp.voxelMap[0, y, z] == VoxelData.Water) && (!MC_Runtime_StaticData.Instance.ItemData.items[voxelMap[x - 1, y, z]].isTransparent && voxelMap[x - 1, y, z] != VoxelData.Water)))
                         //{
                         //    return false;
                         //}
@@ -3249,7 +3251,7 @@ public class Chunk : MonoBehaviour
                         //    return true;
                         //}
 
-                        return !world.isGenChunkSurrendFace;
+                        return !Service_World.isGenChunkSurrendFace;
 
                     }
 
@@ -3323,10 +3325,10 @@ public class Chunk : MonoBehaviour
     {
 
         //先检查需要检测的额外面
-        if (world.blocktypes[_self].OtherFaceCheck.Count != 0)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[_self].OtherFaceCheck.Count != 0)
         {
             int i = 0;
-            foreach (FaceCheckMode temp in world.blocktypes[_self].OtherFaceCheck)
+            foreach (FaceCheckMode temp in MC_Runtime_StaticData.Instance.ItemData.items[_self].OtherFaceCheck)
             {
                 
                 //检查方向
@@ -3350,7 +3352,7 @@ public class Chunk : MonoBehaviour
                     else if (temp.checktype == FaceCheck_Enum.appointDrawmode)
                     {
                         //print("c");
-                        if (world.blocktypes[_target].DrawMode == temp.appointDrawmode)
+                        if (MC_Runtime_StaticData.Instance.ItemData.items[_target].DrawMode == temp.appointDrawmode)
                         {
                             return !temp.isCreateFace;
                         } 
@@ -3364,7 +3366,7 @@ public class Chunk : MonoBehaviour
 
 
         //半砖专区
-        //if (_self == VoxelData.SnowPower && world.blocktypes[_target].isSolid)
+        //if (_self == VoxelData.SnowPower && MC_Runtime_StaticData.Instance.ItemData.items[_target].isSolid)
         //{
         //    //如果固体在自己上方则生成，其他不生成
         //    if (_targetRelativeY == 1)
@@ -3393,7 +3395,7 @@ public class Chunk : MonoBehaviour
         //        }
         //    }
         //    //如果自己是固体
-        //    else if (world.blocktypes[_self].isSolid)
+        //    else if (MC_Runtime_StaticData.Instance.ItemData.items[_self].isSolid)
         //    {
         //        //上方是半砖时不生成, 其他生成
         //        if (_targetRelativeY == 1)
@@ -3416,7 +3418,7 @@ public class Chunk : MonoBehaviour
 
         //通用判断
         //判断是不是透明方块
-        if (world.blocktypes[_target].isTransparent || _target == VoxelData.Air)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[_target].isTransparent || _target == VoxelData.Air)
         {
 
             return false;
@@ -3429,7 +3431,7 @@ public class Chunk : MonoBehaviour
             return false;
         }
 
-        if (world.blocktypes[_target].DrawMode == world.blocktypes[_self].DrawMode)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[_target].DrawMode == MC_Runtime_StaticData.Instance.ItemData.items[_self].DrawMode)
         {
             return true;
         }
@@ -3452,12 +3454,12 @@ public class Chunk : MonoBehaviour
             return true;
 
         }
-        if (_self == VoxelData.Water && world.blocktypes[_target].isSolid)
+        if (_self == VoxelData.Water && MC_Runtime_StaticData.Instance.ItemData.items[_target].isSolid)
         {
             return true;
         }
 
-        //if (_target == VoxelData.Air || world.blocktypes[_target].isTransparent)
+        //if (_target == VoxelData.Air || MC_Runtime_StaticData.Instance.ItemData.items[_target].isTransparent)
         //{
         //    return false;
         //}
@@ -3473,17 +3475,17 @@ public class Chunk : MonoBehaviour
         //        return false;
         //    }
         //}
-        //if (world.blocktypes[_target].isSolid)
+        //if (MC_Runtime_StaticData.Instance.ItemData.items[_target].isSolid)
         //{ 
         //    return true;
         //}
 
 
         //print("生成了奇怪的面");
-        return world.blocktypes[_self].isSolid;
+        return MC_Runtime_StaticData.Instance.ItemData.items[_self].isSolid;
 
         // 如果目标是空气或者透明，无论如何生成面
-        //if (world.blocktypes[_target].isTransparent || _target == VoxelData.Air)
+        //if (MC_Runtime_StaticData.Instance.ItemData.items[_target].isTransparent || _target == VoxelData.Air)
         //{
 
         //    return false;
@@ -3502,7 +3504,7 @@ public class Chunk : MonoBehaviour
         //if (_self == VoxelData.Water)
         //{
 
-        //    if (world.blocktypes[_target].isSolid)
+        //    if (MC_Runtime_StaticData.Instance.ItemData.items[_target].isSolid)
         //    {
 
         //        return true;
@@ -3518,13 +3520,13 @@ public class Chunk : MonoBehaviour
 
         //    //目标是水，生成
         //    //目标是transparent，生成
-        //    if (world.blocktypes[_target].isTransparent || _target == VoxelData.Water || _target == _self)
+        //    if (MC_Runtime_StaticData.Instance.ItemData.items[_target].isTransparent || _target == VoxelData.Water || _target == _self)
         //    {
         //        return true;
         //    }
 
         //    //目标是固体，不生成
-        //    if (world.blocktypes[_target].isSolid)
+        //    if (MC_Runtime_StaticData.Instance.ItemData.items[_target].isSolid)
         //    {
         //        return false;
         //    }
@@ -3536,7 +3538,7 @@ public class Chunk : MonoBehaviour
         ////如果自己是固体
         ////目标是固体，则不生成
         ////其他都生成
-        //if (world.blocktypes[_self].isSolid)
+        //if (MC_Runtime_StaticData.Instance.ItemData.items[_self].isSolid)
         //{
 
         //    return false;
@@ -3573,7 +3575,7 @@ public class Chunk : MonoBehaviour
 
 
         //方块绘制模式
-        switch (world.blocktypes[blockID].DrawMode)
+        switch (MC_Runtime_StaticData.Instance.ItemData.items[blockID].DrawMode)
         {
             // Bush绘制模式
             case DrawMode.Bush:
@@ -3588,7 +3590,7 @@ public class Chunk : MonoBehaviour
 
 
 
-                    AddTexture_Bush(world.blocktypes[blockID].GetTextureID(0));
+                    AddTexture_Bush(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(0));
 
                     triangles.Add(vertexIndex);
                     triangles.Add(vertexIndex + 1);
@@ -3627,7 +3629,7 @@ public class Chunk : MonoBehaviour
                         //AddTexture(1);
 
                         //根据p生成对应的面，对应的UV
-                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                        AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
 
                         triangles.Add(vertexIndex);
                         triangles.Add(vertexIndex + 1);
@@ -3663,7 +3665,7 @@ public class Chunk : MonoBehaviour
                             //print("上下方有水");
 
                             //如果需要双面绘制
-                            if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            if (MC_Runtime_StaticData.Instance.ItemData.items[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                             {
                                 vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
                                 vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
@@ -3706,7 +3708,7 @@ public class Chunk : MonoBehaviour
                             uvs.Add(new Vector2(1f, 0f));
                             uvs.Add(new Vector2(1f, 1f));
                             //根据p生成对应的面，对应的UV
-                            //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
 
                             triangles_Water.Add(vertexIndex);
                             triangles_Water.Add(vertexIndex + 1);
@@ -3828,13 +3830,13 @@ public class Chunk : MonoBehaviour
                             //        //int _z = Mathf.FloorToInt((pos + VoxelData.faceChecks[p]).z);
 
                             //        //如果需要双面绘制
-                            //        if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            //        if (MC_Runtime_StaticData.Instance.ItemData.items[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                             //        {
                             //            //print("绘制了");
                             //            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                            //            vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
+                            //            vertices.Add(pos + Service_World.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
                             //            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
-                            //            vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(1, 1, _zz)));
+                            //            vertices.Add(pos + Service_World.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(1, 1, _zz)));
 
                             //            triangles_Water.Add(vertexIndex);
                             //            triangles_Water.Add(vertexIndex + 2);
@@ -3845,40 +3847,40 @@ public class Chunk : MonoBehaviour
                             //            vertexIndex += 4;
 
                             //            //根据p生成对应的面，对应的UV
-                            //            //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //            //AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
                             //            uvs.Add(new Vector2(0f, 0f));
-                            //            uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
+                            //            uvs.Add(Service_World.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
                             //            uvs.Add(new Vector2(1f, 0f));
-                            //            uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(1, _zz)));
+                            //            uvs.Add(Service_World.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(1, _zz)));
                             //        }
                             //        else
                             //        {
-                            //            print($"self: {blockID} , bool: {world.blocktypes[blockID].GenerateTwoFaceWithAir} , target: {GetBlock(pos, p).voxelType}");
+                            //            print($"self: {blockID} , bool: {MC_Runtime_StaticData.Instance.ItemData.items[blockID].GenerateTwoFaceWithAir} , target: {GetBlock(pos, p).voxelType}");
                             //        }
 
                             //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                            //        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
+                            //        vertices.Add(pos + Service_World.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
                             //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]]);
-                            //        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(1, 1, _zz)));
+                            //        vertices.Add(pos + Service_World.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(1, 1, _zz)));
 
 
                             //        //根据p生成对应的面，对应的UV
-                            //        //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //        //AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
                             //        uvs.Add(new Vector2(0f, 0f));
-                            //        uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
+                            //        uvs.Add(Service_World.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
                             //        uvs.Add(new Vector2(1f, 0f));
-                            //        uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(1, _zz)));
+                            //        uvs.Add(Service_World.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(1, _zz)));
 
                             //    }
                             //    else
                             //    {
                             //        //如果需要双面绘制
-                            //        if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            //        if (MC_Runtime_StaticData.Instance.ItemData.items[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                             //        {
                             //            vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                            //            vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
-                            //            vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]], new Vector3(_xx, 1, 1)));
-                            //            vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(_xx, 1, _zz)));
+                            //            vertices.Add(pos + Service_World.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
+                            //            vertices.Add(pos + Service_World.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]], new Vector3(_xx, 1, 1)));
+                            //            vertices.Add(pos + Service_World.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(_xx, 1, _zz)));
 
                             //            triangles_Water.Add(vertexIndex);
                             //            triangles_Water.Add(vertexIndex + 2);
@@ -3889,24 +3891,24 @@ public class Chunk : MonoBehaviour
                             //            vertexIndex += 4;
 
                             //            //根据p生成对应的面，对应的UV
-                            //            //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //            //AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
                             //            uvs.Add(new Vector2(0f, 0f));
-                            //            uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
-                            //            uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 0f), new Vector2(_xx, 1)));
-                            //            uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(_xx, _zz)));
+                            //            uvs.Add(Service_World.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
+                            //            uvs.Add(Service_World.ComponentwiseMultiply(new Vector2(1f, 0f), new Vector2(_xx, 1)));
+                            //            uvs.Add(Service_World.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(_xx, _zz)));
                             //        }
                             //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
-                            //        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
-                            //        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]], new Vector3(_xx, 1, 1)));
-                            //        vertices.Add(pos + world.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(_xx, 1, _zz)));
+                            //        vertices.Add(pos + Service_World.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]], new Vector3(1, 1, _zz)));
+                            //        vertices.Add(pos + Service_World.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 2]], new Vector3(_xx, 1, 1)));
+                            //        vertices.Add(pos + Service_World.ComponentwiseMultiply(VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]], new Vector3(_xx, 1, _zz)));
 
 
                             //        //根据p生成对应的面，对应的UV
-                            //        //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //        //AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
                             //        uvs.Add(new Vector2(0f, 0f));
-                            //        uvs.Add(world.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
-                            //        uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 0f), new Vector2(_xx, 1)));
-                            //        uvs.Add(world.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(_xx, _zz)));
+                            //        uvs.Add(Service_World.ComponentwiseMultiply(new Vector2(0f, 1f), new Vector2(1, _zz)));
+                            //        uvs.Add(Service_World.ComponentwiseMultiply(new Vector2(1f, 0f), new Vector2(_xx, 1)));
+                            //        uvs.Add(Service_World.ComponentwiseMultiply(new Vector2(1f, 1f), new Vector2(_xx, _zz)));
 
                             //    }
 
@@ -3923,7 +3925,7 @@ public class Chunk : MonoBehaviour
                             //{
                             //    //print("侧面");
                             //    //如果需要双面绘制
-                            //    if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            //    if (MC_Runtime_StaticData.Instance.ItemData.items[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                             //    {
                             //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
                             //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
@@ -3931,7 +3933,7 @@ public class Chunk : MonoBehaviour
                             //        vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
 
                             //        //根据p生成对应的面，对应的UV
-                            //        //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //        //AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
                             //        uvs.Add(new Vector2(0f, 0f));
                             //        uvs.Add(new Vector2(0f, 1f));
                             //        uvs.Add(new Vector2(1f, 0f));
@@ -3956,7 +3958,7 @@ public class Chunk : MonoBehaviour
                             //    vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
 
                             //    //根据p生成对应的面，对应的UV
-                            //    //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //    //AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
                             //    uvs.Add(new Vector2(0f, 0f));
                             //    uvs.Add(new Vector2(0f, 1f));
                             //    uvs.Add(new Vector2(1f, 0f));
@@ -3972,7 +3974,7 @@ public class Chunk : MonoBehaviour
                             //}
 
 
-                            if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            if (MC_Runtime_StaticData.Instance.ItemData.items[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                             {
                                 vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 0]]);
                                 vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 1]]);
@@ -3980,7 +3982,7 @@ public class Chunk : MonoBehaviour
                                 vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
 
                                 //根据p生成对应的面，对应的UV
-                                //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                                //AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
                                 uvs.Add(new Vector2(0f, 0f));
                                 uvs.Add(new Vector2(0f, 1f));
                                 uvs.Add(new Vector2(1f, 0f));
@@ -4005,7 +4007,7 @@ public class Chunk : MonoBehaviour
                             vertices.Add(pos + VoxelData.voxelVerts_Water[VoxelData.voxelTris[p, 3]]);
 
                             //根据p生成对应的面，对应的UV
-                            //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
                             uvs.Add(new Vector2(0f, 0f));
                             uvs.Add(new Vector2(0f, 1f));
                             uvs.Add(new Vector2(1f, 0f));
@@ -4025,7 +4027,7 @@ public class Chunk : MonoBehaviour
                         {
                             //print($"else:p = {p}");
                             //如果需要双面绘制
-                            if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                            if (MC_Runtime_StaticData.Instance.ItemData.items[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                             {
 
                                 vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
@@ -4066,7 +4068,7 @@ public class Chunk : MonoBehaviour
                             uvs.Add(new Vector2(1f, 0f));
                             uvs.Add(new Vector2(1f, 1f));
                             //根据p生成对应的面，对应的UV
-                            //AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                            //AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
 
                             triangles_Water.Add(vertexIndex);
                             triangles_Water.Add(vertexIndex + 1);
@@ -4114,7 +4116,7 @@ public class Chunk : MonoBehaviour
                         //AddTexture(1);
 
                         //根据p生成对应的面，对应的UV
-                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                        AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
 
                         triangles.Add(vertexIndex);
                         triangles.Add(vertexIndex + 1);
@@ -4152,7 +4154,7 @@ public class Chunk : MonoBehaviour
                         //AddTexture(1);
 
                         //根据p生成对应的面，对应的UV
-                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                        AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
 
                         triangles.Add(vertexIndex);
                         triangles.Add(vertexIndex + 1);
@@ -4194,7 +4196,7 @@ public class Chunk : MonoBehaviour
                         //AddTexture(1);
 
                         //根据p生成对应的面，对应的UV
-                        AddTexture(world.blocktypes[blockID].GetTextureID(p));
+                        AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(p));
 
                         triangles.Add(vertexIndex);
                         triangles.Add(vertexIndex + 1);
@@ -4225,7 +4227,7 @@ public class Chunk : MonoBehaviour
                     {
 
                         //如果需要双面绘制
-                        if (world.blocktypes[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
+                        if (MC_Runtime_StaticData.Instance.ItemData.items[blockID].GenerateTwoFaceWithAir && GetBlock(pos, p).voxelType == VoxelData.Air)
                         {
                             vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
                             vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
@@ -4240,7 +4242,7 @@ public class Chunk : MonoBehaviour
                             triangles.Add(vertexIndex + 2);
                             vertexIndex += 4;
 
-                            AddTexture(world.blocktypes[blockID].GetTextureID(ChangeBlockFacing(p, GetBlock(_x, _y, _z).blockOriented)));
+                            AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(ChangeBlockFacing(p, GetBlock(_x, _y, _z).blockOriented)));
                         }
 
 
@@ -4268,7 +4270,7 @@ public class Chunk : MonoBehaviour
 
                         //根据p生成对应的面，对应的UV
                         //ChangeBlockFacing：方块面的朝向
-                        AddTexture(world.blocktypes[blockID].GetTextureID(ChangeBlockFacing(p, GetBlock(_x, _y, _z).blockOriented)));
+                        AddTexture(MC_Runtime_StaticData.Instance.ItemData.items[blockID].GetTextureID(ChangeBlockFacing(p, GetBlock(_x, _y, _z).blockOriented)));
 
 
 
@@ -4314,7 +4316,7 @@ public class Chunk : MonoBehaviour
     public void CreateMesh()
     {
 
-        world.RenderLock = true;
+        Service_World.RenderLock = true;
 
         //print($"{GetRelaChunkLocation(myposition)}CreateMesh 开始");
 
@@ -4352,7 +4354,7 @@ public class Chunk : MonoBehaviour
         //mesh.triangles = triangles.ToArray();
 
         //使用双材质
-        meshRenderer.materials = new Material[] { world.TerrainMatData.material_Terrain, world.TerrainMatData.material_Water };
+        meshRenderer.materials = new Material[] { MC_Runtime_StaticData.Instance.TerrainMatData.material_Terrain, MC_Runtime_StaticData.Instance.TerrainMatData.material_Water };
         mesh.subMeshCount = 2;
         mesh.SetTriangles(triangles.ToArray(), 0); // 第一个子网格使用triangles数组
         mesh.SetTriangles(triangles_Water.ToArray(), 1); // 第二个子网格使用triangles_2数组
@@ -4366,12 +4368,12 @@ public class Chunk : MonoBehaviour
 
         //print($"{GetRelaChunkLocation(myposition)}CreateMesh 结束");
 
-        world.RenderLock = false;
+        Service_World.RenderLock = false;
 
-        while (world.WaitToRender_temp.Count > 0)
+        while (Service_World.WaitToRender_temp.Count > 0)
         {
-            world.WaitToRender_temp.TryDequeue(out Chunk chunktemp);
-            world.WaitToRender.Enqueue(chunktemp);
+            Service_World.WaitToRender_temp.TryDequeue(out Chunk chunktemp);
+            Service_World.WaitToRender.Enqueue(chunktemp);
         }
 
         InitializeVoxelMap_state();
@@ -4639,7 +4641,7 @@ public class Chunk : MonoBehaviour
     //        {
     //            _p = 1;
     //            //如果能查到
-    //            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
     //            {
     //                //if (isOutOfRange(_x,_y,_z))
     //                //{
@@ -4662,7 +4664,7 @@ public class Chunk : MonoBehaviour
     //        {
     //            _p = 0;
     //            //如果能查到
-    //            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
     //            {
     //                return chunktemp.voxelMap[_x, _y, TerrainData.ChunkWidth - 1];
 
@@ -4682,7 +4684,7 @@ public class Chunk : MonoBehaviour
     //        {
     //            _p = 4;
     //            //如果能查到
-    //            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
     //            {
 
     //                return chunktemp.voxelMap[TerrainData.ChunkWidth - 1, _y, _z];
@@ -4702,7 +4704,7 @@ public class Chunk : MonoBehaviour
     //        {
     //            _p = 5;
     //            //如果能查到
-    //            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+    //            if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
     //            {
 
     //                return chunktemp.voxelMap[0, _y, _x];
@@ -4765,7 +4767,7 @@ public class Chunk : MonoBehaviour
 
 
 
-            if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + TargetChunkDirection, out Chunk chunktemp))
+            if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + TargetChunkDirection, out Chunk chunktemp))
             {
                 if (isOutOfRange(_relaX, _relaY, _relaZ))
                 {
@@ -4807,7 +4809,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
                     return chunktemp.voxelMap[_x, _y, 0];
                 }
@@ -4825,7 +4827,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
                     return chunktemp.voxelMap[_x, _y, TerrainData.ChunkWidth - 1];
 
@@ -4845,7 +4847,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
                     return chunktemp.voxelMap[TerrainData.ChunkWidth - 1, _y, _z];
@@ -4865,7 +4867,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
                     return chunktemp.voxelMap[0, _y, _z];
@@ -4918,7 +4920,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
                     return chunktemp.voxelMap[_x, _y, 0];
                 }
@@ -4936,7 +4938,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
                     return chunktemp.voxelMap[_x, _y, TerrainData.ChunkWidth - 1];
 
@@ -4956,7 +4958,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
                     return chunktemp.voxelMap[TerrainData.ChunkWidth - 1, _y, _z];
@@ -4976,7 +4978,7 @@ public class Chunk : MonoBehaviour
             {
 
                 //如果能查到
-                if (world.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
+                if (Service_World.Allchunks.TryGetValue(GetRelaChunkLocation(myposition) + VoxelData.faceChecks[_p], out Chunk chunktemp))
                 {
 
                     return chunktemp.voxelMap[0, _y, _x];
@@ -5162,7 +5164,7 @@ public class Chunk : MonoBehaviour
     //{
 
     //    //float possible = 0;
-    //    //float mid = world.soil_max / 2;
+    //    //float mid = Service_World.soil_max / 2;
 
     //    //// 如果y越接近0，则possible越接近0，反之越接近1
     //    //float ratio = y / mid;

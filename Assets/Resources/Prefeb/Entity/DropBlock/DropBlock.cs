@@ -116,7 +116,7 @@ public class DropBlock: MonoBehaviour, IEntityBrain
         }
 
 
-        if (managerhub.Service_World.blocktypes[myItem._blocktype].is2d)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[myItem._blocktype].is2d)
         {
             GenMesh_2D();
 
@@ -131,7 +131,7 @@ public class DropBlock: MonoBehaviour, IEntityBrain
 
     void GenMesh_2D()
     {
-        managerhub.textureTo3D.ProcessSprite(managerhub.Service_World.blocktypes[myItem._blocktype].sprite, FloatingCube.transform, 9.5f, false);
+        managerhub.textureTo3D.ProcessSprite(MC_Runtime_StaticData.Instance.ItemData.items[myItem._blocktype].sprite, FloatingCube.transform, 9.5f, false);
     }
 
     void GenMesh_3D()
@@ -139,11 +139,11 @@ public class DropBlock: MonoBehaviour, IEntityBrain
         FindFaces();
 
         // 假设 Faces 的顺序为 front-back-left-right-up-down
-        Texture2D atlasTexture = managerhub.Service_World.TerrainMatData.atlasTexture;
-        Rect frontRect = managerhub.Service_World.blocktypes[myItem._blocktype].front_sprite.rect; // 获取前面纹理的矩形区域
-        Rect upRect = managerhub.Service_World.blocktypes[myItem._blocktype].top_sprit.rect; // 获取上面纹理的矩形区域
-        Rect bottomRect = managerhub.Service_World.blocktypes[myItem._blocktype].buttom_sprit.rect; // 获取下面纹理的矩形区域
-        Rect surroundRect = managerhub.Service_World.blocktypes[myItem._blocktype].sprite.rect; // 获取周围的矩形区域
+        Texture2D atlasTexture = MC_Runtime_StaticData.Instance.TerrainMatData.atlasTexture;
+        Rect frontRect = MC_Runtime_StaticData.Instance.ItemData.items[myItem._blocktype].front_sprite.rect; // 获取前面纹理的矩形区域
+        Rect upRect = MC_Runtime_StaticData.Instance.ItemData.items[myItem._blocktype].top_sprit.rect; // 获取上面纹理的矩形区域
+        Rect bottomRect = MC_Runtime_StaticData.Instance.ItemData.items[myItem._blocktype].buttom_sprit.rect; // 获取下面纹理的矩形区域
+        Rect surroundRect = MC_Runtime_StaticData.Instance.ItemData.items[myItem._blocktype].sprite.rect; // 获取周围的矩形区域
 
         // 创建材质实例，将材质附着到 Faces 下对应的 MeshRenderer 上
         for (int i = 0; i < 6; i++)

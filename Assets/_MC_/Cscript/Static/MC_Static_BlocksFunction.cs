@@ -98,7 +98,7 @@ public static class MC_Static_BlocksFunction
             Vector3 currentPos = queue.Dequeue();
 
             // 检查当前方块是否为空气
-            if (!managerhub.Service_World.blocktypes[managerhub.Service_World.GetBlockType(currentPos)].isSolid)
+            if (!MC_Runtime_StaticData.Instance.ItemData.items[managerhub.Service_World.GetBlockType(currentPos)].isSolid)
             {
                 _editNumber.Add(new EditStruct(currentPos, VoxelData.Wool_White)); // 你可以用适当的烟雾体素替换 VoxelData.Smoke
 
@@ -109,7 +109,7 @@ public static class MC_Static_BlocksFunction
                     // 如果相邻方块未访问过并且在半径范围内
                     if (!visited.Contains(neighborPos) && Vector3.Distance(_originPos, neighborPos) <= Smoke_Radius)
                     {
-                        if (!managerhub.Service_World.blocktypes[managerhub.Service_World.GetBlockType(neighborPos)].isSolid)
+                        if (!MC_Runtime_StaticData.Instance.ItemData.items[managerhub.Service_World.GetBlockType(neighborPos)].isSolid)
                         {
                             hasExpandableNeighbor = true; // 有可扩展的邻居
                             visited.Add(neighborPos);

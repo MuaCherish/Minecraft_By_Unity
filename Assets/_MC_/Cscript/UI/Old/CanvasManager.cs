@@ -1288,7 +1288,7 @@ public class CanvasManager : MonoBehaviour
         //不分类
         if (_classfy == BlockClassfy.全部方块)
         {
-            for (byte index = 0; index < Service_World.blocktypes.Length; index++)
+            for (byte index = 0; index < MC_Runtime_StaticData.Instance.ItemData.items.Count; index++)
             {
                 CreateBlockItem(new BlockItem(index, 0));
             }
@@ -1297,9 +1297,9 @@ public class CanvasManager : MonoBehaviour
         //分类
         else
         {
-            for (byte index = 0; index < Service_World.blocktypes.Length; index++)
+            for (byte index = 0; index < MC_Runtime_StaticData.Instance.ItemData.items.Count; index++)
             {
-                if (Service_World.blocktypes[index].BlockClassfy == _classfy)
+                if (MC_Runtime_StaticData.Instance.ItemData.items[index].BlockClassfy == _classfy)
                 {
                     CreateBlockItem(new BlockItem(index, 0));
                 }
@@ -1338,21 +1338,21 @@ public class CanvasManager : MonoBehaviour
 
 
         //是否显示3d图形
-        if (!Service_World.blocktypes[_item._blocktype].is2d)
+        if (!MC_Runtime_StaticData.Instance.ItemData.items[_item._blocktype].is2d)
         {
             icon2D.SetActive(false);
             icon3D.SetActive(true);
 
-            instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].top_sprit;
-            instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].sprite;
-            instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].sprite;
+            instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[_item._blocktype].top_sprit;
+            instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[_item._blocktype].sprite;
+            instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[_item._blocktype].sprite;
         }
         else
         {
             icon2D.SetActive(true);
             icon3D.SetActive(false);
 
-            instance.transform.Find("Icon").GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].icon;
+            instance.transform.Find("Icon").GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[_item._blocktype].icon;
         }
     }
 
@@ -1404,7 +1404,7 @@ public class CanvasManager : MonoBehaviour
         }
         else
         {
-            创造背包text_ShowName.GetComponent<TextMeshProUGUI>().text = $"{Service_World.blocktypes[_type].blockName} - {_type}";
+            创造背包text_ShowName.GetComponent<TextMeshProUGUI>().text = $"{MC_Runtime_StaticData.Instance.ItemData.items[_type].name} - {_type}";
         }
 
     }
@@ -1487,21 +1487,21 @@ public class CanvasManager : MonoBehaviour
 
 
         //是否显示3d图形
-        if (!Service_World.blocktypes[_item._blocktype].is2d)
+        if (!MC_Runtime_StaticData.Instance.ItemData.items[_item._blocktype].is2d)
         {
             icon2D.SetActive(false);
             icon3D.SetActive(true);
 
-            instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].top_sprit;
-            instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].sprite;
-            instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].sprite;
+            instance.transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[_item._blocktype].top_sprit;
+            instance.transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[_item._blocktype].sprite;
+            instance.transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[_item._blocktype].sprite;
         }
         else
         {
             icon2D.SetActive(true);
             icon3D.SetActive(false);
 
-            instance.transform.Find("Icon").GetComponent<Image>().sprite = Service_World.blocktypes[_item._blocktype].icon;
+            instance.transform.Find("Icon").GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[_item._blocktype].icon;
         }
 
     }
@@ -1907,7 +1907,7 @@ public class CanvasManager : MonoBehaviour
         if (_blocktype == 255)
         {
             //显示这个方块的名字2s
-            selectblockname.text = Service_World.blocktypes[BackPackManager.slots[player.selectindex].blockId].blockName;
+            selectblockname.text = MC_Runtime_StaticData.Instance.ItemData.items[BackPackManager.slots[player.selectindex].blockId].name;
 
             yield return new WaitForSeconds(2f);
 
@@ -1918,7 +1918,7 @@ public class CanvasManager : MonoBehaviour
         else
         {
             //显示这个方块的名字2s
-            selectblockname.text = Service_World.blocktypes[_blocktype].blockName;
+            selectblockname.text = MC_Runtime_StaticData.Instance.ItemData.items[_blocktype].name;
 
             yield return new WaitForSeconds(2f);
 

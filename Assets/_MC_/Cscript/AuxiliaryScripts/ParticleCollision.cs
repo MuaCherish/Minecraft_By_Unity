@@ -4,7 +4,6 @@ public class ParticleCollision : MonoBehaviour
 {
     private ParticleSystem _particleSystem;
     ManagerHub managerhub;
-    MC_Service_World Service_World;
     public Vector3 gravity = new Vector3(0, -9.81f, 0); // 自定义重力
     private int MaxRandomCutCount = 20;
     public float Y_Offset = 0.2f;
@@ -17,7 +16,6 @@ public class ParticleCollision : MonoBehaviour
         // 获取粒子系统组件
         _particleSystem = GetComponent<ParticleSystem>();
         managerhub = SceneData.GetManagerhub();
-        Service_World = managerhub.Service_World;
     }
 
     public void Particle_Play(byte _targetType)
@@ -28,7 +26,7 @@ public class ParticleCollision : MonoBehaviour
         }
 
         // 生成10张随机裁剪后的Sprite
-        Sprite originalSprite = Service_World.blocktypes[_targetType].icon;
+        Sprite originalSprite = MC_Runtime_StaticData.Instance.ItemData.items[_targetType].icon;
 
         for (int i = 0; i < MaxRandomCutCount; i++)
         {

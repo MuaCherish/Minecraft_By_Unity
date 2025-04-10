@@ -572,7 +572,7 @@ namespace MCEntity
                             }
 
                             //获取目标最大高度
-                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.zRange.x;
+                            float _blockY = MC_Runtime_StaticData.Instance.ItemData.items[_targetType].CollosionRange.zRange.x;
 
                             //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -609,7 +609,7 @@ namespace MCEntity
                             }
 
                             //获取目标最大高度
-                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.zRange.y;
+                            float _blockY = MC_Runtime_StaticData.Instance.ItemData.items[_targetType].CollosionRange.zRange.y;
 
                             //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -647,7 +647,7 @@ namespace MCEntity
                             }
 
                             //获取目标最大高度
-                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.xRange.y;
+                            float _blockY = MC_Runtime_StaticData.Instance.ItemData.items[_targetType].CollosionRange.xRange.y;
 
                             //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -683,7 +683,7 @@ namespace MCEntity
                             }
 
                             //获取目标最大高度
-                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.xRange.x;
+                            float _blockY = MC_Runtime_StaticData.Instance.ItemData.items[_targetType].CollosionRange.xRange.x;
 
                             //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -719,7 +719,7 @@ namespace MCEntity
                             }
 
                             //获取目标最低高度
-                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.yRange.x;
+                            float _blockY = MC_Runtime_StaticData.Instance.ItemData.items[_targetType].CollosionRange.yRange.x;
 
                             print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 
@@ -756,7 +756,7 @@ namespace MCEntity
                             }
 
                             //获取目标最大高度
-                            float _blockY = Service_World.blocktypes[_targetType].CollosionRange.yRange.y;
+                            float _blockY = MC_Runtime_StaticData.Instance.ItemData.items[_targetType].CollosionRange.yRange.y;
 
                             //print($"遍历了{_pos}, 当前方块类型:{_targetType}, 当前方块高度: {_blockY}");
 

@@ -9,7 +9,7 @@ public class OldMusicManager : MonoBehaviour
     #region 周期函数
 
     ManagerHub managerhub;
-    MC_Service_World Service_World;
+ 
     Player player;
      
 
@@ -40,7 +40,6 @@ public class OldMusicManager : MonoBehaviour
     private void Awake()
     {
         managerhub = SceneData.GetManagerhub();
-        Service_World = managerhub.Service_World;
         player = managerhub.player;
     }
 
@@ -166,7 +165,7 @@ public class OldMusicManager : MonoBehaviour
     {
         if (managerhub.backpackManager.istheindexHaveBlock(player.selectindex))
         {
-            managerhub.Service_Music.PlayOneShot(Service_World.blocktypes[managerhub.backpackManager.slots[player.selectindex].blockId].broken_clip);
+            managerhub.Service_Music.PlayOneShot(MC_Runtime_StaticData.Instance.ItemData.items[managerhub.backpackManager.slots[player.selectindex].blockId].broken_clip);
 
         }
 
@@ -199,13 +198,13 @@ public class OldMusicManager : MonoBehaviour
                     {
                         isbroking = true;
 
-                        if (Service_World.blocktypes[player.point_Block_type].broking_clip != null)
+                        if (MC_Runtime_StaticData.Instance.ItemData.items[player.point_Block_type].broking_clip != null)
                         {
-                            Audio_player_broke.clip = Service_World.blocktypes[player.point_Block_type].broking_clip;
+                            Audio_player_broke.clip = MC_Runtime_StaticData.Instance.ItemData.items[player.point_Block_type].broking_clip;
                         }
                         else
                         {
-                            Audio_player_broke.clip = Service_World.blocktypes[VoxelData.Stone].broking_clip;
+                            Audio_player_broke.clip = MC_Runtime_StaticData.Instance.ItemData.items[VoxelData.Stone].broking_clip;
                         }
 
 
@@ -420,16 +419,16 @@ public class OldMusicManager : MonoBehaviour
                 if (footBlocktype != VoxelData.Air)
                 {
                     //如果有专属音效
-                    if (footBlocktype != 255 && Service_World.blocktypes[footBlocktype].walk_clips[item] != null)
+                    if (footBlocktype != 255 && MC_Runtime_StaticData.Instance.ItemData.items[footBlocktype].walk_clips[item] != null)
                     {
                         if (item == 0)
                         {
-                            managerhub.Service_Music.PlayOneShot(Service_World.blocktypes[footBlocktype].walk_clips[item]);
+                            managerhub.Service_Music.PlayOneShot(MC_Runtime_StaticData.Instance.ItemData.items[footBlocktype].walk_clips[item]);
                             item = 1;
                         }
                         else
                         {
-                            managerhub.Service_Music.PlayOneShot(Service_World.blocktypes[footBlocktype].walk_clips[item]);
+                            managerhub.Service_Music.PlayOneShot(MC_Runtime_StaticData.Instance.ItemData.items[footBlocktype].walk_clips[item]);
                             item = 0;
                         }
                     }
@@ -438,12 +437,12 @@ public class OldMusicManager : MonoBehaviour
                     {
                         if (item == 0)
                         {
-                            managerhub.Service_Music.PlayOneShot(Service_World.blocktypes[VoxelData.Stone].walk_clips[item]);
+                            managerhub.Service_Music.PlayOneShot(MC_Runtime_StaticData.Instance.ItemData.items[VoxelData.Stone].walk_clips[item]);
                             item = 1;
                         }
                         else
                         {
-                            managerhub.Service_Music.PlayOneShot(Service_World.blocktypes[VoxelData.Stone].walk_clips[item]);
+                            managerhub.Service_Music.PlayOneShot(MC_Runtime_StaticData.Instance.ItemData.items[VoxelData.Stone].walk_clips[item]);
                             item = 0;
                         }
                     }

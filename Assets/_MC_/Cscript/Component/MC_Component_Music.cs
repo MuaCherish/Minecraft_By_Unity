@@ -202,14 +202,14 @@ public class MC_Component_Music : MonoBehaviour
     AudioClip GetFootstepClip(byte blockType)
     {
         // 检查该类型是否有专属音效
-        AudioClip[] clips = managerhub.Service_World.blocktypes[blockType].walk_clips;
+        AudioClip[] clips = MC_Runtime_StaticData.Instance.ItemData.items[blockType].walk_clips;
 
         // 如果该类型的音效存在且有效，返回对应的音效
         if (blockType != VoxelData.Air && blockType != 255 && clips[item] != null)
             return clips[item];
 
         // 否则，返回默认石头音效
-        return managerhub.Service_World.blocktypes[VoxelData.Stone].walk_clips[item];
+        return MC_Runtime_StaticData.Instance.ItemData.items[VoxelData.Stone].walk_clips[item];
     }
 
 

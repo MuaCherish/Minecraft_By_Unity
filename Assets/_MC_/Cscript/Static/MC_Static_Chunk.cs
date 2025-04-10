@@ -66,7 +66,7 @@ public class MC_Static_Chunk
     {
         byte _BlockType = managerhub.Service_World.GetBlockType(_pos);
 
-        if (_BlockType == 255 || Service_world.blocktypes[_BlockType].isSolid)
+        if (_BlockType == 255 || MC_Runtime_StaticData.Instance.ItemData.items[_BlockType].isSolid)
         {
             return true;
         }

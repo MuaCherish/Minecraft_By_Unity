@@ -143,7 +143,7 @@ public static class MC_Static_Navigation
         //提前返回-起始点被堵住 || 起始点悬空
         byte _StartPosBlockType = managerhub.Service_World.GetBlockType(_thisPos);
         byte _StartDownPosBlockType = managerhub.Service_World.GetBlockType(_thisPos + Vector3.down);
-        if (_StartPosBlockType == 255 || Service_World.blocktypes[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
+        if (_StartPosBlockType == 255 || MC_Runtime_StaticData.Instance.ItemData.items[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
             return;
 
         // 迭代 N 步
@@ -184,7 +184,7 @@ public static class MC_Static_Navigation
         //提前返回-起始点被堵住 || 起始点悬空
         byte _StartPosBlockType = managerhub.Service_World.GetBlockType(_thisPos);
         byte _StartDownPosBlockType = managerhub.Service_World.GetBlockType(_thisPos + Vector3.down);
-        if (_StartPosBlockType == 255 || Service_World.blocktypes[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
+        if (_StartPosBlockType == 255 || MC_Runtime_StaticData.Instance.ItemData.items[_StartPosBlockType].isSolid || _StartDownPosBlockType == VoxelData.Air)
             return;
 
         // 迭代 N 步

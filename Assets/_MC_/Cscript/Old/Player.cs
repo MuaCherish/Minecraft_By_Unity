@@ -476,7 +476,7 @@ public class Player : MonoBehaviour
         Vector3 RelaPosition = GetRelaPos(cam.position);
         Vector3 _ChunkLocation = GetRelaChunkLocation(cam.position);
         //print($"RelaPosition: {RelaPosition} , ChunkLocation = {_ChunkLocation}");
-        float NoiseY = MC_Static_Noise.GetTotalNoiseHigh_Biome((int)RelaPosition.x, (int)RelaPosition.z, new Vector3((int)_ChunkLocation.x * 16f, 0f, (int)_ChunkLocation.z * 16f), managerhub.Service_Saving.worldSetting.worldtype, Service_World.BiomeData.biomeProperties);
+        float NoiseY = MC_Static_Noise.GetTotalNoiseHigh_Biome((int)RelaPosition.x, (int)RelaPosition.z, new Vector3((int)_ChunkLocation.x * 16f, 0f, (int)_ChunkLocation.z * 16f), managerhub.Service_Saving.worldSetting.worldtype, MC_Runtime_StaticData.Instance.BiomeData.biomeProperties);
 
         //print($"PlayerY：{playerY} , NoiseY：{NoiseY} , 差: {NoiseY - playerY}");
 
@@ -892,7 +892,7 @@ public class Player : MonoBehaviour
         }
 
         // 如果在水中按下跳跃键 && leg低于水面，触发跳跃请求 
-        if (isSwiming && Input.GetKey(KeyCode.Space) && (leg.position.y - 0.1f < Service_World.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level))
+        if (isSwiming && Input.GetKey(KeyCode.Space) && (leg.position.y - 0.1f < MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.sea_level))
         {
 
             jumpRequest = true;
@@ -986,7 +986,7 @@ public class Player : MonoBehaviour
             MC_RayCastStruct _rayCast = MC_Static_Raycast.RayCast(managerhub,MC_RayCast_FindType.AllFind,cam.position, cam.forward, reach, -1, checkIncrement);
             test_Normal = _rayCast.hitNormal;
 
-            if (_rayCast.isHit == 1 && hasExec_isChangedBlock && Service_World.blocktypes[managerhub.Service_World.GetBlockType(_rayCast.hitPoint)].canBeChoose)
+            if (_rayCast.isHit == 1 && hasExec_isChangedBlock && MC_Runtime_StaticData.Instance.ItemData.items[managerhub.Service_World.GetBlockType(_rayCast.hitPoint)].canBeChoose)
             {
                 OldPointLocation = new Vector3(Mathf.FloorToInt(_rayCast.hitPoint.x), Mathf.FloorToInt(_rayCast.hitPoint.y), Mathf.FloorToInt(_rayCast.hitPoint.z));
                 hasExec_isChangedBlock = false;
@@ -1046,7 +1046,7 @@ public class Player : MonoBehaviour
                 byte _selecttype = managerhub.backpackManager.slots[selectindex].blockId;
 
                 //右键可互动方块
-                if (_targettype < Service_World.blocktypes.Length && Service_World.blocktypes[_targettype].isinteractable && !isSquating)
+                if (_targettype < MC_Runtime_StaticData.Instance.ItemData.items.Count && MC_Runtime_StaticData.Instance.ItemData.items[_targettype].isinteractable && !isSquating)
                 {
                     //print("isinteractable");
 
@@ -1120,7 +1120,7 @@ public class Player : MonoBehaviour
                 }
 
                 //如果是工具方块，则不进行方块的放置
-                if (_selecttype < Service_World.blocktypes.Length && !Service_World.blocktypes[_selecttype].isTool)
+                if (_selecttype < MC_Runtime_StaticData.Instance.ItemData.items.Count && !MC_Runtime_StaticData.Instance.ItemData.items[_selecttype].isTool)
                 {
                     //如果打到 && 距离大于2f && 且不是脚底下
                     if (_rayCast.isHit == 1 && (_rayCast.hitPoint_Previous - cam.position).magnitude > max_hand_length && !CanPutBlock(new Vector3(_rayCast.hitPoint_Previous.x, _rayCast.hitPoint_Previous.y - 1f, _rayCast.hitPoint_Previous.z)))
@@ -1136,7 +1136,7 @@ public class Player : MonoBehaviour
 
 
                             //Edit
-                            if (Service_World.blocktypes[point_Block_type].CanBeCover)
+                            if (MC_Runtime_StaticData.Instance.ItemData.items[point_Block_type].CanBeCover)
                             {
                                 managerhub.Service_World.GetChunkObject(_rayCast.hitPoint).EditData(_rayCast.hitPoint, backpackmanager.slots[selectindex].blockId);
 
@@ -1420,7 +1420,7 @@ public class Player : MonoBehaviour
     float GetDestroyTime(byte _SelectType, byte _beBrokenType)
     {
         //提前返回, 如果是宝剑则永远不会破坏方块
-        if (_SelectType != 255 && !Service_World.blocktypes[_SelectType].canBreakBlockWithMouse1)
+        if (_SelectType != 255 && MC_Runtime_StaticData.Instance.ItemData.items[_SelectType].BreakLock)
             return Mathf.Infinity;
 
         //创造模式
@@ -1461,7 +1461,7 @@ public class Player : MonoBehaviour
         }
 
 
-        return Service_World.blocktypes[_beBrokenType].DestroyTime;
+        return MC_Runtime_StaticData.Instance.ItemData.items[_beBrokenType].DestroyTime;
     }
 
 
@@ -1660,9 +1660,9 @@ public class Player : MonoBehaviour
 
 
         //动态改变HighLightBlock大小
-        if (Service_World.blocktypes[point_Block_type].isDIYCollision)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[point_Block_type].isDIYCollision)
         {
-            CollosionRange _collisionRange = Service_World.blocktypes[point_Block_type].CollosionRange;
+            CollosionRange _collisionRange = MC_Runtime_StaticData.Instance.ItemData.items[point_Block_type].CollosionRange;
             float offsetX = _collisionRange.xRange.y - _collisionRange.xRange.x;
             float offsetY = _collisionRange.yRange.y - _collisionRange.yRange.x;
             float offsetZ = _collisionRange.zRange.y - _collisionRange.zRange.x;
@@ -1731,34 +1731,34 @@ public class Player : MonoBehaviour
         //pos
         float _brokingOffset = 0.5f;
 
-        if (Service_World.blocktypes[point_Block_type].isDIYCollision)
+        if (MC_Runtime_StaticData.Instance.ItemData.items[point_Block_type].isDIYCollision)
         {
-            //Service_World.blocktypes[point_Block_type].CollosionRange.xRange
+            //Service_World.ItemData.items[point_Block_type].CollosionRange.xRange
 
             switch (_rayCast.hitNormal)
             {
                 case Vector3 v when v == Vector3.up:       // (0, 1, 0)
-                    _brokingOffset = Service_World.blocktypes[point_Block_type].CollosionRange.yRange.y - 0.5f;
+                    _brokingOffset = MC_Runtime_StaticData.Instance.ItemData.items[point_Block_type].CollosionRange.yRange.y - 0.5f;
                     break;
 
                 case Vector3 v when v == Vector3.down:     // (0, -1, 0)
-                    _brokingOffset = Service_World.blocktypes[point_Block_type].CollosionRange.yRange.x - 0.5f;
+                    _brokingOffset = MC_Runtime_StaticData.Instance.ItemData.items[point_Block_type].CollosionRange.yRange.x - 0.5f;
                     break;
 
                 case Vector3 v when v == Vector3.right:    // (1, 0, 0)
-                    _brokingOffset = Service_World.blocktypes[point_Block_type].CollosionRange.xRange.y - 0.5f;
+                    _brokingOffset = MC_Runtime_StaticData.Instance.ItemData.items[point_Block_type].CollosionRange.xRange.y - 0.5f;
                     break;
 
                 case Vector3 v when v == Vector3.left:     // (-1, 0, 0)
-                    _brokingOffset = Service_World.blocktypes[point_Block_type].CollosionRange.xRange.x - 0.5f;
+                    _brokingOffset = MC_Runtime_StaticData.Instance.ItemData.items[point_Block_type].CollosionRange.xRange.x - 0.5f;
                     break;
 
                 case Vector3 v when v == Vector3.forward:  // (0, 0, 1)
-                    _brokingOffset = Service_World.blocktypes[point_Block_type].CollosionRange.zRange.y - 0.5f;
+                    _brokingOffset = MC_Runtime_StaticData.Instance.ItemData.items[point_Block_type].CollosionRange.zRange.y - 0.5f;
                     break;
 
                 case Vector3 v when v == Vector3.back:     // (0, 0, -1)
-                    _brokingOffset = Service_World.blocktypes[point_Block_type].CollosionRange.zRange.x - 0.5f;
+                    _brokingOffset = MC_Runtime_StaticData.Instance.ItemData.items[point_Block_type].CollosionRange.zRange.x - 0.5f;
                     break;
             }
 
@@ -1793,7 +1793,7 @@ public class Player : MonoBehaviour
         // 位置调整，防止穿模
         if (isGrounded && hasExec_AdjustPlayerToGround)
         {
-            if (!Service_World.blocktypes[managerhub.Service_World.GetBlockType(foot.position)].isDIYCollision)
+            if (!MC_Runtime_StaticData.Instance.ItemData.items[managerhub.Service_World.GetBlockType(foot.position)].isDIYCollision)
             {
                 Vector3 myposition = transform.position;
                 Vector3 Vec = GetRelaPos(foot.position); // 获取脚部应有的Y坐标

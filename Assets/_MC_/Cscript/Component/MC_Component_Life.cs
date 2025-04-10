@@ -152,7 +152,7 @@ namespace MCEntity
             Color targetColor = save_Color;  
 
             // 如果被挤压
-            if (Service_World.blocktypes[managerhub.Service_World.GetBlockType(Component_Physics.EyesPoint)].isSolid)
+            if (MC_Runtime_StaticData.Instance.ItemData.items[managerhub.Service_World.GetBlockType(Component_Physics.EyesPoint)].isSolid)
                 targetColor = Color_UnderBlock;
             // 如果在水里
             else if (Component_Physics.IsInTheWater(Component_Physics.HeadPoint))

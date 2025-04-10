@@ -205,14 +205,14 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
                 //print(MyItem._blocktype);
                 // «∑Òœ‘ æ3dÕº–Œ
-                if (!managerhub.Service_World.blocktypes[MyItem._blocktype].is2d)
+                if (!MC_Runtime_StaticData.Instance.ItemData.items[MyItem._blocktype].is2d)
                 {
                     icon2D.SetActive(false);
                     icon3D.SetActive(true);
 
-                    transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = managerhub.Service_World.blocktypes[MyItem._blocktype].top_sprit;
-                    transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = managerhub.Service_World.blocktypes[MyItem._blocktype].sprite;
-                    transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = managerhub.Service_World.blocktypes[MyItem._blocktype].sprite;
+                    transform.Find("3Dicon/up").gameObject.GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[MyItem._blocktype].top_sprit;
+                    transform.Find("3Dicon/left").gameObject.GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[MyItem._blocktype].sprite;
+                    transform.Find("3Dicon/right").gameObject.GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[MyItem._blocktype].sprite;
                 }
                 else
                 {
@@ -220,7 +220,7 @@ public class SlotBlockItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                     icon2D.GetComponent<Image>().color = new Color(1, 1, 1, 1);
                     icon3D.SetActive(false);
 
-                    transform.Find("Icon").GetComponent<Image>().sprite = managerhub.Service_World.blocktypes[MyItem._blocktype].icon;
+                    transform.Find("Icon").GetComponent<Image>().sprite = MC_Runtime_StaticData.Instance.ItemData.items[MyItem._blocktype].icon;
                 }
 
 
