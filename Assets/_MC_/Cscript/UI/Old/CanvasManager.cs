@@ -10,6 +10,11 @@ using Homebrew;
 using static MC_Static_Unity;
 using static MC_Static_Name;
 
+
+/*
+ * 1. 调用allmanager其实不需要在canvas完成每个manager自己调用自己的Init就行了
+ */
+
 public class CanvasManager : MonoBehaviour
 {
     ManagerHub managerhub;
@@ -80,7 +85,7 @@ public class CanvasManager : MonoBehaviour
         }
         waittoFinishSaveAndBackToMenuCoroutine = null;
 
-        
+        PointSaving = "";
 
         // 初始化修改值参数
         isPausing = false;
@@ -1032,6 +1037,7 @@ public class CanvasManager : MonoBehaviour
         InitCanvasManager();
         //musicmanager.InitMusicManager();
         managerhub.Service_World.InitWorldManager();
+        managerhub.Service_Saving.InitManager();
         player.InitPlayerManager();
         BackPackManager.InitBackPackManager();
         LifeManager.InitLifeManager();

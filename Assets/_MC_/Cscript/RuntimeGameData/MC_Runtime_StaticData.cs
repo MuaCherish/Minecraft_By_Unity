@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 并不是静态而是需要Load的数据
+/// </summary>
 public class MC_Runtime_StaticData
 {
     private static MC_Runtime_StaticData _instance;

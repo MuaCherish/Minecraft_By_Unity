@@ -9,6 +9,7 @@ public class MC_Static_Chunk
 
     #region BlockType
 
+
     /// <summary>
     /// 给定绝对坐标，返回其类型。<para/>
     /// 不包含自定义形状。

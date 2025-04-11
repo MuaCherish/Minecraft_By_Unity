@@ -21,26 +21,6 @@ public class WorldSetting
     }
 }
 
-
-
-//玩家修改的数据缓存
-[Serializable]
-public class EditStruct
-{
-    public Vector3 editPos;
-    public byte targetType;
-
-
-    public EditStruct(Vector3 _editPos, byte _targetType)
-    {
-        editPos = _editPos;
-        targetType = _targetType;
-    }
-
-}
-
-
-
 //最终保存的结构体
 [Serializable]
 public class SavingData

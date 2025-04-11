@@ -54,15 +54,7 @@ public static class TerrainData
 }
 
 
-//方块种类结构体
-public class VoxelStruct
-{
-    public byte voxelType = VoxelData.Air;
-    public int blockOriented = 0;
 
-    //面生成的六个方向
-    public bool up = true;
-}
 
 
 //群系系统
@@ -551,6 +543,22 @@ public static class VoxelData
 
 }
 
+
+//玩家修改的数据缓存
+[System.Serializable]
+public class EditStruct
+{
+    public Vector3 editPos;
+    public byte targetType;
+
+
+    public EditStruct(Vector3 _editPos, byte _targetType)
+    {
+        editPos = _editPos;
+        targetType = _targetType;
+    }
+
+}
 
 //比如 门：{0, isSolid false} 代表后方如果是Solid则不生成面
 // 0 1  2   3  4  5

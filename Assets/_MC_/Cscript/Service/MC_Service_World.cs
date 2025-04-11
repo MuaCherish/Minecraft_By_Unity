@@ -11,139 +11,53 @@ using Homebrew;
 /// <summary>
 /// 主要处理区块的加载和卸载
 /// </summary>
-public class MC_Service_World : MonoBehaviour
+public class MC_Service_World : MC_Tick_Base
 {
 
     #region 周期函数
 
-    ManagerHub managerhub;
     MC_Service_Saving Service_Saving;
     Player player;
 
     private void Awake()
     {
-        managerhub = SceneData.GetManagerhub();
         Service_Saving = managerhub.Service_Saving;
         player = managerhub.player;
     }
 
-    bool hasExec_Start = true;
-    bool hasExec_Loading = true;
-    bool hasExec_Playing = true;
-    bool hasExec_Pause = true;
-    private void Update()
+    public override void Handle_GameState_Tick()
     {
-        Handle_AlwaysUpdate();
-
-        switch (MC_Runtime_DynamicData.instance.GetGameState())
-        {
-            case Game_State.Start:
-                Handle_GameState_Start();
-                if (!hasExec_Loading)
-                    hasExec_Loading = true;
-                if (!hasExec_Playing)
-                    hasExec_Playing = true;
-                if (!hasExec_Pause)
-                    hasExec_Pause = true;
-                break;
-
-            case Game_State.Loading:
-                Handle_GameState_Loading();
-                if (!hasExec_Start)
-                    hasExec_Start = true;
-                if (!hasExec_Playing)
-                    hasExec_Playing = true;
-                if (!hasExec_Pause)
-                    hasExec_Pause = true;
-                break;
-
-            case Game_State.Playing:
-                Handle_GameState_Playing();
-                if (!hasExec_Start)
-                    hasExec_Start = true;
-                if (!hasExec_Loading)
-                    hasExec_Loading = true;
-                if (!hasExec_Pause)
-                    hasExec_Pause = true;
-                break;
-
-            case Game_State.Pause:
-                Handle_GameState_Pause();
-                if (!hasExec_Start)
-                    hasExec_Start = true;
-                if (!hasExec_Loading)
-                    hasExec_Loading = true;
-                if (!hasExec_Playing)
-                    hasExec_Playing = true;
-                break;
-        }
-
-    }
-
-    /// <summary>
-    /// 任何状态更新
-    /// </summary>
-    void Handle_AlwaysUpdate()
-    {
+        base.Handle_GameState_Tick();
         ThreadUpdateController();
     }
 
-    /// <summary>
-    /// Start状态更新
-    /// </summary>
-    void Handle_GameState_Start()
+    public override void Handle_GameState_Start_Once()
     {
-        if (hasExec_Start)
-        {
-            InitWorldManager();
-            hasExec_Start = false;
-            Service_Saving.isFinishUpdateEditNumber = false;
-        }
-
+        base.Handle_GameState_Start_Once();
+        InitWorldManager();
+        Service_Saving.isFinishUpdateEditNumber = false;
 
     }
 
-    /// <summary>
-    /// Loading状态更新
-    /// </summary>
-    void Handle_GameState_Loading()
+    public override void Handle_GameState_Loading_Once()
     {
-        if (hasExec_Loading)
-        {
+        base .Handle_GameState_Loading_Once();
+        InitStartTime = Time.time;
 
-            InitStartTime = Time.time;
-
-            //开始初始化
-            Update_CenterChunks(true);
-
-            hasExec_Loading = false;
-        }
+        //开始初始化
+        Update_CenterChunks(true);
     }
 
-    /// <summary>
-    /// Playing状态更新
-    /// </summary>
-    void Handle_GameState_Playing()
+    public override void Handle_GameState_Playing_Once()
     {
-        if (hasExec_Playing)
-        {
-            MC_Static_Unity.LockMouse(true);
-            hasExec_Playing = false;
-        }
+        base.Handle_GameState_Playing_Once();
+        MC_Static_Unity.LockMouse(true);
+    }
 
+    public override void Handle_GameState_Playing()
+    {
+        base.Handle_GameState_Playing();
         ChunkUpdateController();
-
-    }
-
-    /// <summary>
-    /// Pause状态更新
-    /// </summary>
-    void Handle_GameState_Pause()
-    {
-        if (hasExec_Pause)
-        {
-            hasExec_Pause = false;
-        }
     }
 
     void OnApplicationQuit()
@@ -155,9 +69,58 @@ public class MC_Service_World : MonoBehaviour
         //等待Render线程
         if (myThread_Render != null && myThread_Render.IsAlive)
             myThread_Render.Join(); // 等待线程安全地终止
-
     }
 
+    /// <summary>
+    /// Init
+    /// </summary>
+    public void InitWorldManager()
+    {
+
+        //Runtime
+        MC_Runtime_DynamicData.instance.SetGameState(Game_State.Start);
+        MC_Runtime_DynamicData.instance.SetGameMode(GameMode.Survival);
+
+        //World
+        renderSize = 10;
+        StartToRender = 1f;
+        DestroySize = 7f;
+        InitStartTime = 0f;
+        InitEndTime = 0f;
+        Start_Position = new Vector3(1600f, 127f, 1600f);
+        hasExec_RandomPlayerLocation = true;
+
+        //数据结构
+        Allchunks = new Dictionary<Vector3, Chunk>();
+        myThread_Render = null;
+        CreateCoroutine = null;
+        RemoveCoroutine = null;
+        Render_Coroutine = null;
+        Mesh_Coroutine = null;
+        MeshLock = false;
+        RenderLock = false;
+        WatingToCreate_Chunks = new List<Vector3>();
+        WatingToRemove_Chunks = new List<Vector3>();
+        WaitToCreateMesh = new ConcurrentQueue<Chunk>();
+        WaitToRender = new ConcurrentQueue<Chunk>();
+        WaitToRender_temp = new ConcurrentQueue<Chunk>();
+        WaitToFlashChunkQueue = new ConcurrentQueue<Chunk>();
+        WaitToRender_New = new ConcurrentQueue<Chunk>();
+
+        //Chunks
+        Center_Now = Vector3.zero;
+        Center_direction = Vector3.zero;
+        GameObject ChunkParent = SceneData.GetChunkParent();
+        foreach (Transform child in ChunkParent.transform)
+            Destroy(child.gameObject);
+
+        //Debug
+        isGenChunkSurrendFace = managerhub.是否生成Chunk侧面;
+        if (managerhub.低区块模式)
+            renderSize = 2;
+        if (managerhub.无黑夜模式 && managerhub.Service_Time.gameObject.activeSelf)
+            managerhub.Service_Time.gameObject.SetActive(false);
+    }
 
 
     #endregion
@@ -211,91 +174,6 @@ public class MC_Service_World : MonoBehaviour
     #endregion
 
     #region 初始化地图
-
-    /// <summary>
-    /// Init
-    /// </summary>
-    public void InitWorldManager()
-    {
-        hasExec_RandomPlayerLocation = true;
-        MC_Runtime_DynamicData.instance.SetGameMode(GameMode.Survival);
-
-        Service_Saving.isLoadSaving = false;
-        isGenChunkSurrendFace = managerhub.是否生成Chunk侧面;
-
-        // 使用 persistentDataPath 作为根目录
-        Service_Saving.savingPATH = Path.Combine(Application.persistentDataPath);
-
-        // 确保目录存在
-        if (!Directory.Exists(Service_Saving.savingPATH))
-        {
-            Directory.CreateDirectory(Service_Saving.savingPATH);
-        }
-
-        // 打印目录路径以确认
-        //Debug.Log("存档目录: " + savingPATH);
-
-
-        //初始化
-        Start_Position = new Vector3(1600f, 127f, 1600f);
-
-        MC_Runtime_DynamicData.instance.SetGameState(Game_State.Start);
-        Service_Saving.TheSaving = new List<SavingData>();
-        Service_Saving.EditNumber = new List<EditStruct>();
-        //savingDatas = new List<SavingData>();
-        renderSize = 10;
-        StartToRender = 1f;
-        DestroySize = 7f;
-
-        Allchunks = new Dictionary<Vector3, Chunk>();
-        WatingToCreate_Chunks = new List<Vector3>();
-        WatingToRemove_Chunks = new List<Vector3>();
-        myThread_Render = null;
-        WaitToRender_New = new ConcurrentQueue<Chunk>();
-        //是否生成Chunk侧面 = false;
-        Center_Now = Vector3.zero;
-        Center_direction = Vector3.zero;
-        CreateCoroutine = null;
-        RemoveCoroutine = null;
-        Render_Coroutine = null;
-        Mesh_Coroutine = null;
-        MeshLock = false;
-        WaitToCreateMesh = new ConcurrentQueue<Chunk>();
-        RenderLock = false;
-        WaitToRender = new ConcurrentQueue<Chunk>();
-        WaitToRender_temp = new ConcurrentQueue<Chunk>();
-        WaitToFlashChunkQueue = new ConcurrentQueue<Chunk>();
-
-        // 销毁 Chunks 大纲目录下的所有子物体
-        GameObject ChunkParent = SceneData.GetChunkParent();
-        foreach (Transform child in ChunkParent.transform)
-        {
-            Destroy(child.gameObject);
-        }
-
-        //-------顺序不能变化------------------
-        MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 100000000);
-        Service_Saving.worldSetting = new WorldSetting(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Seed);
-        UnityEngine.Random.InitState(Service_Saving.worldSetting.seed);
-        //-------------------------------------
-
-        managerhub.canvasManager.PointSaving = "";
-
-        //初始化计数时间
-        InitStartTime = 0f;
-        InitEndTime = 0f;
-
-        if (managerhub.低区块模式)
-        {
-            renderSize = 2;
-        }
-        if (managerhub.无黑夜模式)
-        {
-            if (managerhub.Service_Time.gameObject.activeSelf)
-                managerhub.Service_Time.gameObject.SetActive(false);
-        }
-    }
-
 
     public IEnumerator Init_Map_Thread(bool _isInitPlayerLocation)
     {
@@ -725,11 +603,11 @@ public class MC_Service_World : MonoBehaviour
         //调用Chunk
         if (Service_Saving.ContainsChunkLocation(_ChunkLocation))
         {
-            _chunk_temp = new Chunk(_ChunkLocation, managerhub, false, Service_Saving.TheSaving[Service_Saving.GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
+            _chunk_temp = new Chunk(_ChunkLocation,  false, Service_Saving.TheSaving[Service_Saving.GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
         }
         else
         {
-            _chunk_temp = new Chunk(_ChunkLocation, managerhub, false);
+            _chunk_temp = new Chunk(_ChunkLocation,  false);
         }
 
         //GameObject chunkGameObject = new GameObject($"{Mathf.FloorToInt(pos.x)}, 0, {Mathf.FloorToInt(pos.z)}");
@@ -761,11 +639,11 @@ public class MC_Service_World : MonoBehaviour
         //调用Chunk
         if (Service_Saving.ContainsChunkLocation(_ChunkLocation))
         {
-            _chunk_temp = new Chunk(_ChunkLocation, managerhub, false, Service_Saving.TheSaving[Service_Saving.GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
+            _chunk_temp = new Chunk(_ChunkLocation,  false, Service_Saving.TheSaving[Service_Saving.GetIndexOfChunkLocation(_ChunkLocation)].EditDataInChunkList);
         }
         else
         {
-            _chunk_temp = new Chunk(_ChunkLocation, managerhub, false);
+            _chunk_temp = new Chunk(_ChunkLocation,  false);
         }
 
 

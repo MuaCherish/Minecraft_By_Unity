@@ -9,8 +9,21 @@ using static MC_Static_Chunk;
 using Homebrew;
 
 
-public class MC_Service_Saving : MonoBehaviour
+public class MC_Service_Saving : MC_Tick_Base
 {
+
+    #region 周期函数
+
+    public override void Handle_GameState_Start_Once()
+    {
+        base.Handle_GameState_Start_Once();
+
+        InitManager();
+
+    }
+
+    #endregion
+
 
     //Save
     #region Saving:存档管理
@@ -26,6 +39,24 @@ public class MC_Service_Saving : MonoBehaviour
 
     // 推送玩家更新的具体方块
     public List<EditStruct> WaitToAdd_EditList = new List<EditStruct>();
+
+    //Init
+    public void InitManager()
+    {
+        if (!Directory.Exists(savingPATH))
+            Directory.CreateDirectory(savingPATH);
+        savingPATH = Path.Combine(Application.persistentDataPath);// 使用 persistentDataPath 作为根目录
+        TheSaving = new List<SavingData>();
+        EditNumber = new List<EditStruct>();
+        isLoadSaving = false;
+
+        //-------顺序不能变化------------------
+        MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Seed = UnityEngine.Random.Range(0, 100000000);
+        worldSetting = new WorldSetting(MC_Runtime_StaticData.Instance.BiomeData.biomeProperties.terrainLayerProbabilitySystem.Seed);
+        UnityEngine.Random.InitState(worldSetting.seed);
+        //-------------------------------------
+    }
+
 
     //删除存档
     public void DeleteSave(string savepath)
