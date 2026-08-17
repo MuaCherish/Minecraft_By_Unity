@@ -26,10 +26,3 @@ A long-term project from beginner
 | V[3.17.0] | Portals & Special Dimensions                      |      |
 | V[3.18.0] | Boss Battle System                                |      |
 | V[4.0.0]  | Better UI & Loading Style                         |      |
-
-
-
-
-
-## ⚙️ Attention:
-  * If there is a font display issue during runtime, please place the font package in the Font folder inside the Assets directory in the Release.
