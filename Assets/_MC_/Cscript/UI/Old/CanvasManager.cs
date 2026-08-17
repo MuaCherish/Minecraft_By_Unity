@@ -999,6 +999,7 @@ public class CanvasManager : MonoBehaviour
 
     }
 
+    [NonSerialized]
     public Coroutine waittoFinishSaveAndBackToMenuCoroutine;
     IEnumerator waittoFinishSaveAndBackToMenu()
     {
@@ -1422,7 +1423,7 @@ public class CanvasManager : MonoBehaviour
     public GameObject SwapBlockPrefeb;
     public SwapBlockStruct SwapBlock = null;
 
-    [SerializeField]
+    [System.Serializable]
     public class SwapBlockStruct
     {
         public GameObject _object;
@@ -1961,6 +1962,7 @@ public class UIChild
 
 
 //固定大小的栈
+[System.Serializable]
 public class FixedStack<T>
 { 
     private List<T> stack;

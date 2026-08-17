@@ -70,7 +70,7 @@ public class Chunk : MonoBehaviour
 
     //多线程变量
     Thread myThread;
-    public System.Random rand;
+    [System.NonSerialized] public System.Random rand;
     public Vector3 myposition;
 
     #endregion

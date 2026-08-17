@@ -812,7 +812,7 @@ namespace MCEntity
                     return;
                 }
 
-                EntityInfo _info = Component_Registration.GetEntityId();
+                EntityInfo _info = GetComponent<MC_Component_Registration>().Component_Registration_GetEntityId();
                 if (Model == null)
                     print($"Model搜索不到, id:{_info._id}, name:{_info._name}");
 
@@ -1042,7 +1042,7 @@ namespace MCEntity
 
             // 获取范围内的实体，如果没有则提前返回
             float _maxR = Mathf.Max(hitBoxWidth, hitBoxHeight);
-            if (!managerhub.Service_Entity.GetOverlapSphereEntity(transform.position, _maxR, GetComponent<MC_Component_Registration>().GetEntityId()._id, out List<EntityInfo> _entities))
+            if (!managerhub.Service_Entity.GetOverlapSphereEntity(transform.position, _maxR, GetComponent<MC_Component_Registration>().Component_Registration_GetEntityId()._id, out List<EntityInfo> _entities))
                 return;
 
             // 进一步过滤，剔除没有和自己重叠的实体

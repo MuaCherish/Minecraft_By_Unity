@@ -49,7 +49,7 @@ public class SunMoving : MonoBehaviour
 
     void Handle_GameState_Playing()
     {
-        DynamicLightCast();
+        //DynamicLightCast();
 
         SunMoon_Moving();
 
@@ -116,52 +116,52 @@ public class SunMoving : MonoBehaviour
     #region 光线后处理
 
 
-    void DynamicLightCast()
-    {
-        if (isOpenLightCast)
-        {
-            if (managerhub.crepuscularScript != null && !managerhub.crepuscularScript.enabled)
-            {
-                managerhub.crepuscularScript.enabled = true;
-                DirectionalLight.gameObject.SetActive(true);
-                DirectionalLightMain.gameObject.SetActive(false);
-            }
+    //void DynamicLightCast()
+    //{
+    //    if (isOpenLightCast)
+    //    {
+    //        if (managerhub.crepuscularScript != null && !managerhub.crepuscularScript.enabled)
+    //        {
+    //            managerhub.crepuscularScript.enabled = true;
+    //            DirectionalLight.gameObject.SetActive(true);
+    //            DirectionalLightMain.gameObject.SetActive(false);
+    //        }
 
-            // 获取 Directional Light 的 Light 组件
-            // 使用 Mathf.Lerp 在不同时间平滑调整强度
-            // 设置灯光强度
+    //        // 获取 Directional Light 的 Light 组件
+    //        // 使用 Mathf.Lerp 在不同时间平滑调整强度
+    //        // 设置灯光强度
             
             
 
 
-            // 使用 Quaternion.LookRotation 使灯光 Z 轴对齐到方向向量
-            // 如果需要调整灯光的朝向，可以通过第二个参数传入一个自定义的“上”方向（默认为 Vector3.up）
-            // 计算从 Sun 到 Player 的方向向量
-            Vector3 Lightdirection = Vector3.zero;
-            if (!managerhub.Service_Time.IsNight())
-            {
-                Lightdirection = playerPosition - Sun.transform.position;
-            }
-            else
-            {
-                Lightdirection = playerPosition - Moon.transform.position;
-            }
+    //        // 使用 Quaternion.LookRotation 使灯光 Z 轴对齐到方向向量
+    //        // 如果需要调整灯光的朝向，可以通过第二个参数传入一个自定义的“上”方向（默认为 Vector3.up）
+    //        // 计算从 Sun 到 Player 的方向向量
+    //        Vector3 Lightdirection = Vector3.zero;
+    //        if (!managerhub.Service_Time.IsNight())
+    //        {
+    //            Lightdirection = playerPosition - Sun.transform.position;
+    //        }
+    //        else
+    //        {
+    //            Lightdirection = playerPosition - Moon.transform.position;
+    //        }
 
-            DirectionalLight.transform.rotation = Quaternion.LookRotation(Lightdirection, Vector3.up);
-        }
-        else
-        {
-            if (managerhub.crepuscularScript != null && managerhub.crepuscularScript.enabled)
-            {
-                managerhub.crepuscularScript.enabled = false;
-                DirectionalLight.gameObject.SetActive(false);
-                DirectionalLightMain.gameObject.SetActive(true);
-            }
+    //        DirectionalLight.transform.rotation = Quaternion.LookRotation(Lightdirection, Vector3.up);
+    //    }
+    //    else
+    //    {
+    //        if (managerhub.crepuscularScript != null && managerhub.crepuscularScript.enabled)
+    //        {
+    //            managerhub.crepuscularScript.enabled = false;
+    //            DirectionalLight.gameObject.SetActive(false);
+    //            DirectionalLightMain.gameObject.SetActive(true);
+    //        }
 
-            //Test
+    //        //Test
             
-        }
-    }
+    //    }
+    //}
 
     /// <summary>
     /// 改变灯光

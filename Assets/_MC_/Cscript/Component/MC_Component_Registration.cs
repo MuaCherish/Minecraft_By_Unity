@@ -67,7 +67,7 @@ public class MC_Component_Registration : MonoBehaviour
     #region ÊµÌå×¢²á
 
     
-    public EntityInfo GetEntityId()
+    public EntityInfo Component_Registration_GetEntityId()
     {
         return currentID;
     }

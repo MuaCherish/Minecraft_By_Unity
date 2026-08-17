@@ -31,7 +31,6 @@ public class ManagerHub : MonoBehaviour
     [Foldout("Others", true)]
     public TextureTo3D textureTo3D;
     public CloudManager cloudManager;
-    public Crepuscular crepuscularScript;
     public SunMoving sunMoving;
     public ChatManager chatManager;
 
